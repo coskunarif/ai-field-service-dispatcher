@@ -2,14 +2,42 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>AI Dispatcher for Field Service</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Dispatcher for Field Service | Scale Your Operations</title>
+    <style>
+        :root { --primary: #2563eb; --secondary: #0f172a; --bg: #ffffff; --text-main: #1e293b; --text-muted: #64748b; }
+        body { font-family: sans-serif; line-height: 1.7; color: var(--text-main); background: var(--bg); margin: 0; }
+        header { padding: 20px; text-align: center; border-bottom: 1px solid #e2e8f0; }
+        .hero { padding: 80px 20px; text-align: center; max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; }
+        h1 { font-size: 3.5rem; font-weight: 800; margin-bottom: 24px; color: var(--secondary); letter-spacing: -0.05em; max-width: 700px; }
+        p { font-size: 1.25rem; color: var(--text-muted); margin-bottom: 40px; max-width: 600px; }
+        .features-container { max-width: 1100px; margin: 0 auto; padding: 40px 20px; }
+        .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; margin-top: 30px; justify-items: center; }
+        .feature-card { background: #f1f5f9; padding: 30px; border-radius: 16px; width: 280px; }
+        .form-section { max-width: 500px; margin: 60px auto; padding: 40px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    </style>
 </head>
 <body>
-    <h1>Dispatch Your Jobs in Seconds.</h1>
-    <p>The AI-powered assistant for HVAC/Plumbing pros.</p>
-    <form action="https://formspree.io/f/mqakezpw" method="POST">
-        <input type="email" name="email" placeholder="Your Email" required>
-        <button type="submit">Join Early Access</button>
-    </form>
+    <header><strong>FieldServiceAI</strong></header>
+    <main>
+        <div class="hero">
+            <h1>Dispatch Your Jobs in Seconds, Not Hours.</h1>
+            <p>The AI-powered assistant designed for HVAC, Plumbing, and Landscaping pros.</p>
+        </div>
+        <section class="features-container">
+            <h2 style="text-align: center;">Key Features</h2>
+            <div class="features">
+                <div class="feature-card"><h3>🚀 Automated Dispatch</h3></div>
+                <div class="feature-card"><h3>💰 Faster Invoicing</h3></div>
+                <div class="feature-card"><h3>📱 Mobile-First</h3></div>
+            </div>
+        </section>
+        <div class="form-section">
+            <form action="https://formspree.io/f/mqakezpw" method="POST">
+                <input type="text" name="name" placeholder="Name" required style="width:100%; padding:10px; margin-bottom:10px;">
+                <button type="submit" style="width:100%; padding:10px; background:#2563eb; color:white; border:none;">Join</button>
+            </form>
+        </div>
+    </main>
 </body>
 </html>
