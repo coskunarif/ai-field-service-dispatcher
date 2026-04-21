@@ -1,3 +1,4 @@
-[services.mindful-imagination]
-build_command = "cd api && npm install && npm run build"
-start_command = "cd api && node dist/server.js"
+[services.api-service]
+root = "api"
+buildCommand = "npm install && npm run build"
+startCommand = "node dist/server.js"
