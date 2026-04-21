@@ -1,2 +1,3 @@
 [services.mindful-imagination]
-dockerfile_path = "api/Dockerfile"
+build_command = "cd api && npm install && npm run build"
+start_command = "cd api && node dist/server.js"
