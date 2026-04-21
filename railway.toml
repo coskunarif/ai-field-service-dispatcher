@@ -1,0 +1,6 @@
+[build]
+root = "api"
+
+[services.mindful-imagination]
+build_command = "npm install"
+start_command = "node server.js"
