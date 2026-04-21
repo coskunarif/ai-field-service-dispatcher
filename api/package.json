@@ -1,0 +1,14 @@
+{
+  "name": "ai-field-service-backend",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "build": "tsc"
+  },
+  "dependencies": {
+    "fastify": "^5.0.0",
+    "postgres": "^3.4.4",
+    "typescript": "^5.0.0"
+  }
+}
