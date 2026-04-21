@@ -1,8 +1,0 @@
-[services]
-  [services.web]
-    root = "."
-    build_command = "sed -i 's/listen       80;/listen $PORT;/' /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
-  [services.api]
-    root = "api/"
-    build_command = "npm install && npm run build"
-    start_command = "npm start"
