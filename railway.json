@@ -1,5 +1,9 @@
 {
-  "build": {
-    "root": "api/"
+  "services": {
+    "mindful-imagination": {
+      "root": "api/",
+      "buildCommand": "npm install && npm run build",
+      "startCommand": "node server.js"
+    }
   }
 }
