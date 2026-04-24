@@ -20,4 +20,4 @@ Field service owners hate daily dispatching — it's repetitive, time-consuming,
 AI automatically matches jobs to the right technicians. Owners stop doing it manually.
 
 ## Current Status
-Landing page live with waitlist collecting emails via Formspree.
+Prototype landing page live with waitlist collecting emails via the API backend and storing leads in Postgres.
