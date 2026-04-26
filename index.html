@@ -56,6 +56,9 @@ a:focus-visible,button:focus-visible,input:focus-visible,summary:focus-visible{o
 .cta-secondary{background:rgba(255,255,255,.8);color:var(--tm);border-color:rgba(14,165,233,.18)}
 .cta-secondary:hover{border-color:var(--p);transform:translateY(-1px)}
 .hero-note{font-size:.95rem;color:var(--tmu);max-width:660px;margin:0 auto}
+.section-nav{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-start;margin-top:18px}
+.section-nav a{display:inline-flex;align-items:center;padding:10px 14px;border-radius:999px;border:1px solid rgba(14,165,233,.14);background:rgba(255,255,255,.74);color:var(--tm);font-size:.86rem;font-weight:800;box-shadow:0 8px 18px rgba(14,165,233,.05);transition:transform 150ms ease,border-color 150ms ease,box-shadow 150ms ease,color 150ms ease}
+.section-nav a:hover{transform:translateY(-1px);border-color:var(--p);color:var(--td);box-shadow:0 12px 24px rgba(14,165,233,.08)}
 .section{padding:var(--s3) var(--sx);max-width:1180px;margin:0 auto}
 .section-head{text-align:center;max-width:760px;margin:0 auto var(--s2)}
 .section-head h2{font-size:clamp(1.6rem,3vw,2.5rem);font-weight:800;color:var(--td);letter-spacing:-.02em;margin-bottom:10px}
@@ -229,6 +232,14 @@ Gainhelm
 <a href="#how-it-works" class="cta-secondary">See how it works</a>
 </div>
 <p class="hero-note">Built for teams that need a simple, modern way to run dispatch, coordinate technicians, and stay on top of daily jobs.</p>
+<div class="section-nav" aria-label="Jump to sections">
+<a href="#what-it-does">What it does</a>
+<a href="#why-it-matters">Why teams switch</a>
+<a href="#how-it-works">How it works</a>
+<a href="#best-for">Best for</a>
+<a href="#faq">FAQ</a>
+<a href="#waitlist">Get early access</a>
+</div>
 <div class="badge-row" aria-label="Industries served">
 <span class="badge">HVAC</span>
 <span class="badge">Plumbing</span>
@@ -324,7 +335,7 @@ Gainhelm
 </div>
 </div>
 </section>
-<section class="section">
+<section class="section" id="best-for">
 <div class="section-head">
 <div class="kicker">Best for</div>
 <h2>Made for small teams that want modern dispatch without enterprise complexity.</h2>
@@ -374,7 +385,7 @@ Gainhelm
 </details>
 </div>
 </section>
-<section class="section" aria-labelledby="related-pages">
+<section class="section" id="related-pages" aria-labelledby="related-pages">
 <div class="section-head">
 <div class="kicker">Explore the dispatch cluster</div>
 <h2 id="related-pages">Built for the search terms people actually use.</h2>
@@ -388,7 +399,7 @@ Gainhelm
 <div class="info-card"><h3><a href="/field-service-scheduling">Field service scheduling app</a></h3><p>For teams comparing dispatch boards, technician assignment, and route planning tools.</p></div>
 </div>
 </section>
-<section class="section" aria-labelledby="search-terms">
+<section class="section" id="search-terms" aria-labelledby="search-terms">
 <div class="section-head">
 <div class="kicker">Search terms we cover</div>
 <h2 id="search-terms">The phrases buyers actually use when they need dispatch software.</h2>

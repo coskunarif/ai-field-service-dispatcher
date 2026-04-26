@@ -30,6 +30,9 @@ header{display:flex;justify-content:space-between;align-items:center;gap:16px;fl
 .kicker{font-size:.85rem;text-transform:uppercase;letter-spacing:.12em;font-weight:800;color:var(--p);margin-bottom:10px}
 h1{font-size:clamp(2rem,4vw,3.4rem);line-height:1.05;color:var(--td);margin-bottom:14px}
 p{font-size:1.05rem;color:var(--tmu)}
+.section-nav{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 8px}
+.section-nav a{display:inline-flex;align-items:center;padding:10px 14px;border-radius:999px;border:1px solid rgba(14,165,233,.14);background:rgba(255,255,255,.76);color:var(--tm);font-size:.86rem;font-weight:800;transition:transform 150ms ease,border-color 150ms ease,box-shadow 150ms ease,color 150ms ease;box-shadow:0 8px 18px rgba(14,165,233,.05)}
+.section-nav a:hover{transform:translateY(-1px);border-color:var(--p);color:var(--td);box-shadow:0 12px 24px rgba(14,165,233,.08)}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px;margin:28px 0}
 .card{background:var(--w);border:1px solid rgba(14,165,233,.08);border-radius:var(--rl);padding:22px;box-shadow:var(--cs)}
 .card h2,.card h3{color:var(--td);margin-bottom:10px}
@@ -129,9 +132,15 @@ p{font-size:1.05rem;color:var(--tmu)}
 <h1>HVAC dispatch app vs spreadsheets: what changes when the board gets busy?</h1>
 <p>If your team is still moving service calls through Excel, Google Sheets, or a shared calendar, this page explains what an HVAC dispatch app gives you that a spreadsheet usually cannot: faster assignment, clearer ownership, and less phone tag.</p>
 <div class="note">This is a practical buying guide for owners and dispatchers comparing a manual board with a dedicated HVAC dispatch app.</div>
+<div class="section-nav" aria-label="Jump to sections">
+<a href="#key-differences">Key differences</a>
+<a href="#when-to-switch">When to switch</a>
+<a href="#related-pages">Related pages</a>
+<a href="#quick-answer">Quick answer</a>
+</div>
 </section>
 
-<section class="grid" aria-label="Key differences">
+<section class="grid" id="key-differences" aria-label="Key differences">
 <div class="card">
 <span class="badge">Spreadsheets</span>
 <h2>Good when you are tiny</h2>
@@ -157,7 +166,7 @@ p{font-size:1.05rem;color:var(--tmu)}
 <tr><td>Reduced phone tag</td><td>Teams still bounce between calls, texts, and edits</td><td>One system helps reduce back-and-forth</td></tr>
 </table>
 
-<section class="grid">
+<section class="grid" id="when-to-switch">
 <div class="card">
 <h3>When to switch</h3>
 <ul>
@@ -179,7 +188,7 @@ p{font-size:1.05rem;color:var(--tmu)}
 </div>
 </section>
 
-<section class="grid">
+<section class="grid" id="related-pages">
 <div class="card">
 <h3>Related pages</h3>
 <ul>
@@ -190,7 +199,7 @@ p{font-size:1.05rem;color:var(--tmu)}
 </ul>
 <a class="cta" href="/">See the main Gainhelm home page</a>
 </div>
-<div class="card">
+<div class="card" id="quick-answer">
 <h3>Quick answer</h3>
 <p>If your team is small and low-volume, spreadsheets can work for a while. If you want fewer mistakes, easier assignment, and a clearer schedule, an HVAC dispatch app is usually the better fit.</p>
 </div>
