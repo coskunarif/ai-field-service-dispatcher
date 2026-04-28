@@ -8,6 +8,19 @@ const sql = process.env.DATABASE_URL ? postgres(process.env.DATABASE_URL) : null
 const port = process.env.PORT ? parseInt(process.env.PORT) : 3000;
 const root = process.cwd();
 
+const legacyGonePaths = new Set([
+  '/managebystats-alternative',
+  '/tools/ad-spend-roi-calculator',
+  '/blog/understanding-amazon-seller-fees',
+  '/vs/inventory-lab',
+  '/integrations/tiktok-ads',
+  '/use-cases/private-label',
+  '/comparisons',
+  '/tools/amazon-fba-fees-calculator',
+]);
+
+const normalizePath = (url) => new URL(url, 'http://localhost').pathname.replace(/\/+$/, '') || '/';
+
 const pages = {
   '/': 'index.html',
   '/hvac-dispatch-software': 'hvac-dispatch-software.html',
@@ -30,6 +43,14 @@ for (const asset of ['robots.txt', 'sitemap.xml', 'llms.txt']) {
     reply.type(mime).send(readFileSync(join(root, asset), 'utf8'));
   });
 }
+
+fastify.setNotFoundHandler((request, reply) => {
+  const pathname = normalizePath(request.raw.url);
+  if (legacyGonePaths.has(pathname)) {
+    return reply.code(410).type('text/plain').send('Gone');
+  }
+  return reply.code(404).type('text/plain').send('Not found');
+});
 
 fastify.post('/waitlist', async (request, reply) => {
   const { name, email, company } = request.body || {};
