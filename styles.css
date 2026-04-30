@@ -297,8 +297,8 @@ main {
 }
 
 .hero h1 {
-  max-width: 11ch;
-  font-size: clamp(3.1rem, 6vw, 6rem);
+  max-width: 11.5ch;
+  font-size: clamp(2.9rem, 5vw, 5rem);
   color: #fff;
   text-wrap: balance;
 }
@@ -784,9 +784,9 @@ section:not(.hero):not(.form-section) > * {
 .note {
   padding: 18px 20px;
   border-radius: 18px;
-  background: linear-gradient(135deg, hsl(var(--brand) / 0.08), hsl(var(--surface) / 0.96));
-  border: 1px solid hsl(var(--brand) / 0.16);
-  color: hsl(var(--text-2));
+  background: linear-gradient(135deg, hsl(var(--brand) / 0.1), hsl(var(--surface) / 0.98));
+  border: 1px solid hsl(var(--brand) / 0.2);
+  color: hsl(var(--text));
   box-shadow: var(--shadow-sm);
 }
 
@@ -1178,14 +1178,16 @@ footer {
   .nav {
     width: 100%;
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 8px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 6px;
   }
 
   .nav a {
     width: 100%;
-    padding: 8px 10px;
-    font-size: 0.82rem;
+    padding: 7px 8px;
+    font-size: 0.72rem;
+    text-align: center;
+    line-height: 1.1;
   }
 
   .hero {
@@ -1199,7 +1201,7 @@ footer {
 
   .hero h1 {
     max-width: 13ch;
-    font-size: clamp(2.6rem, 11vw, 4.4rem);
+    font-size: clamp(2.4rem, 9vw, 3.9rem);
   }
 
   .hero-metrics,
