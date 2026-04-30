@@ -36,10 +36,10 @@ for (const [route, file] of Object.entries(pages)) {
   });
 }
 
-for (const asset of ['robots.txt', 'sitemap.xml', 'llms.txt']) {
+for (const asset of ['robots.txt', 'sitemap.xml', 'llms.txt', 'styles.css']) {
   fastify.get(`/${asset}`, async (_request, reply) => {
     if (!existsSync(join(root, asset))) return reply.code(404).send('Not found');
-    const mime = asset.endsWith('.xml') ? 'application/xml' : 'text/plain';
+    const mime = asset.endsWith('.xml') ? 'application/xml' : asset.endsWith('.css') ? 'text/css' : 'text/plain';
     reply.type(mime).send(readFileSync(join(root, asset), 'utf8'));
   });
 }
