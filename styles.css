@@ -211,6 +211,12 @@ header {
   transform: translateY(-1px);
 }
 
+.nav a.active {
+  background: hsl(var(--surface-2));
+  color: hsl(var(--text));
+  box-shadow: var(--shadow-sm);
+}
+
 main {
   display: grid;
   gap: 24px;
@@ -297,8 +303,8 @@ main {
 }
 
 .hero h1 {
-  max-width: 12ch;
-  font-size: clamp(2.7rem, 4.4vw, 4.4rem);
+  max-width: 13ch;
+  font-size: clamp(2.45rem, 4vw, 4rem);
   color: #fff;
   text-wrap: balance;
 }
@@ -1191,15 +1197,18 @@ footer {
 
   .nav a {
     width: 100%;
-    padding: 7px 8px;
-    font-size: 0.72rem;
+    padding: 6px 6px;
+    font-size: 0.68rem;
     text-align: center;
-    line-height: 1.1;
+    line-height: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .hero {
     width: min(calc(100% - 16px), var(--container));
-    padding: 26px;
+    padding: 22px;
   }
 
   .hero-layout {
@@ -1207,8 +1216,8 @@ footer {
   }
 
   .hero h1 {
-    max-width: 13ch;
-    font-size: clamp(2.2rem, 8.2vw, 3.3rem);
+    max-width: 12ch;
+    font-size: clamp(2rem, 7.2vw, 3rem);
   }
 
   .hero-metrics,

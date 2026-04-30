@@ -16,6 +16,7 @@ Gainhelm is an AI dispatch app and software for field service teams.
 - https://gainhelm.com/how-to-choose-hvac-dispatch-app
 - https://gainhelm.com/plumbing-dispatch-software
 - https://gainhelm.com/field-service-scheduling
+- https://gainhelm.com/how-hvac-dispatch-apps-reduce-phone-tag
 - https://gainhelm.com/robots.txt
 - https://gainhelm.com/sitemap.xml
 

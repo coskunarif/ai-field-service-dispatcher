@@ -7,6 +7,7 @@
 - How to choose an HVAC dispatch app: https://gainhelm.com/how-to-choose-hvac-dispatch-app
 - Plumbing dispatch software: https://gainhelm.com/plumbing-dispatch-software
 - Field service scheduling software: https://gainhelm.com/field-service-scheduling
+- How HVAC dispatch apps reduce phone tag: https://gainhelm.com/how-hvac-dispatch-apps-reduce-phone-tag
 
 ## Why this cluster matters
 These pages match the highest-intent search terms around dispatch, scheduling, and field service management. They give Google multiple entry points into the product instead of forcing every query through a single homepage.
@@ -18,7 +19,7 @@ These pages match the highest-intent search terms around dispatch, scheduling, a
 - Field service page: field service scheduling app, field service scheduling software, technician scheduling app
 
 ## Supporting content ideas
-- How dispatch apps reduce phone tag
+- How HVAC dispatch apps reduce phone tag
 - How HVAC teams schedule service calls faster
 - How plumbing shops organize daily dispatch
 - How to choose a field service scheduling app

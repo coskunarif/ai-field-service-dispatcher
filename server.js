@@ -28,6 +28,7 @@ const pages = {
   '/how-to-choose-hvac-dispatch-app': 'how-to-choose-hvac-dispatch-app.html',
   '/plumbing-dispatch-software': 'plumbing-dispatch-software.html',
   '/field-service-scheduling': 'field-service-scheduling.html',
+  '/how-hvac-dispatch-apps-reduce-phone-tag': 'how-hvac-dispatch-apps-reduce-phone-tag.html',
 };
 
 for (const [route, file] of Object.entries(pages)) {
