@@ -8,6 +8,7 @@
 - Plumbing dispatch software: https://gainhelm.com/plumbing-dispatch-software
 - Field service scheduling software: https://gainhelm.com/field-service-scheduling
 - How HVAC dispatch apps reduce phone tag: https://gainhelm.com/how-hvac-dispatch-apps-reduce-phone-tag
+- Dispatch software on iPad: https://gainhelm.com/mobile-dispatch-board
 
 ## Why this cluster matters
 These pages match the highest-intent search terms around dispatch, scheduling, and field service management. They give Google multiple entry points into the product instead of forcing every query through a single homepage.
@@ -31,6 +32,7 @@ These pages match the highest-intent search terms around dispatch, scheduling, a
 - Why spreadsheets fail for dispatch and scheduling
 - What to look for in technician assignment software
 - How route planning improves field service productivity
+- How to keep dispatch boards readable on iPad and mobile
 
 ## Internal linking rules
 - Homepage links to every cluster page

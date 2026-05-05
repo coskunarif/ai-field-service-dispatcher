@@ -21,3 +21,18 @@ AI automatically matches jobs to the right technicians. Owners stop doing it man
 
 ## Current Status
 Prototype landing page live with waitlist collecting emails via the API backend and storing leads in Postgres.
+
+## Philosophy
+We use SEO and GEO as a listening system before building product features.
+Landing pages are probes for demand, not just marketing pages.
+Search Console is the signal source: if users repeatedly search for a problem, that problem earns the next build.
+
+## What We Want To Build
+A simple dispatch product that reduces phone tag, keeps scheduling clear, and helps small field service teams work faster without spreadsheet chaos.
+
+## Rules Of The Map
+- one page = one intent
+- one intent = one clear problem
+- build only after signal repeats
+- keep the first screen simple and readable
+- prefer clarity over feature bloat

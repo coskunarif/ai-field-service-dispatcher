@@ -20,6 +20,8 @@
 - https://gainhelm.com/how-to-choose-hvac-dispatch-app
 - https://gainhelm.com/plumbing-dispatch-software
 - https://gainhelm.com/field-service-scheduling
+- https://gainhelm.com/how-hvac-dispatch-apps-reduce-phone-tag
+- https://gainhelm.com/mobile-dispatch-board
 
 ## Early GSC signal
 - Query observed: `hvac dispatch app`
@@ -52,3 +54,4 @@
 - Add testimonials or customer proof when available
 - Expand internal links from homepage and cluster pages
 - Publish one useful article per week tied to the target keywords
+- Keep adding mobile/iPad-oriented pages when GSC keeps surfacing tablet or real-time-update language
