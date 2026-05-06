@@ -1,0 +1,23 @@
+GSC baseline (filtered current targets only; managebystats excluded)
+
+Query: hvac dispatch app
+- clicks 0, impressions 61, CTR 0, position 72.08196721311475
+Query: hvac dispatch software
+- clicks 0, impressions 15, CTR 0, position 79.33333333333333
+Query: plumbing dispatch app
+- clicks 0, impressions 3, CTR 0, position 87
+Query: plumbing dispatch software
+- clicks 0, impressions 13, CTR 0, position 83.53846153846153
+
+Pages:
+- https://gainhelm.com/hvac-dispatch-software: 191 impressions, position 74.82198952879581
+- https://gainhelm.com/plumbing-dispatch-software: 138 impressions, position 78.8913043478261
+- https://gainhelm.com/field-service-scheduling: discovered - currently not indexed
+
+Local rendered verification:
+- /hvac-dispatch-software title = HVAC Dispatch App & Software for Scheduling Service Calls | Gainhelm
+- /plumbing-dispatch-software title = Plumbing Dispatch App & Software for Scheduling Service Calls | Gainhelm
+- /field-service-scheduling title = Field Service Scheduling Software | Gainhelm
+
+Sitemap submit:
+- https://gainhelm.com/sitemap.xml submitted successfully to sc-domain:gainhelm.com

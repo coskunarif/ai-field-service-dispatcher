@@ -3,3 +3,11 @@
 
 # Dependencies
 node_modules/
+
+# TillDone/runtime state
+.tilldone-lite-state.json
+
+# Generated proof artifacts: commit only curated SEO evidence bundles
+artifacts/*
+!artifacts/gainhelm-seo/
+!artifacts/gainhelm-seo/**

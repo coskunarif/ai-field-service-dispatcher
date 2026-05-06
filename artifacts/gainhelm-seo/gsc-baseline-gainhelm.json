@@ -1,0 +1,75 @@
+{
+  "property": "sc-domain:gainhelm.com",
+  "dateRange": {
+    "start": "2026-04-08",
+    "end": "2026-05-06"
+  },
+  "excluded": [
+    "legacy query",
+    "legacy page"
+  ],
+  "summary": {
+    "queries": {
+      "clicks": 0,
+      "impressions": 92,
+      "ctr": 0,
+      "averagePosition": 80.50971084621411
+    },
+    "pages": {
+      "clicks": 0,
+      "impressions": 329,
+      "ctr": 0,
+      "averagePosition": 76.85664693831174
+    }
+  },
+  "queryPagePairings": [
+    {
+      "query": "hvac dispatch app",
+      "page": "https://gainhelm.com/hvac-dispatch-software",
+      "clicks": 0,
+      "impressions": 61,
+      "ctr": 0,
+      "averagePosition": 72.08196721311475
+    },
+    {
+      "query": "hvac dispatch software",
+      "page": "https://gainhelm.com/hvac-dispatch-software",
+      "clicks": 0,
+      "impressions": 15,
+      "ctr": 0,
+      "averagePosition": 79.33333333333333
+    },
+    {
+      "query": "plumbing dispatch app",
+      "page": "https://gainhelm.com/plumbing-dispatch-software",
+      "clicks": 0,
+      "impressions": 3,
+      "ctr": 0,
+      "averagePosition": 87
+    },
+    {
+      "query": "plumbing dispatch software",
+      "page": "https://gainhelm.com/plumbing-dispatch-software",
+      "clicks": 0,
+      "impressions": 13,
+      "ctr": 0,
+      "averagePosition": 83.53846153846153
+    }
+  ],
+  "pageSignals": [
+    {
+      "page": "https://gainhelm.com/hvac-dispatch-software",
+      "impressions": 191,
+      "averagePosition": 74.82198952879581
+    },
+    {
+      "page": "https://gainhelm.com/plumbing-dispatch-software",
+      "impressions": 138,
+      "averagePosition": 78.8913043478261
+    },
+    {
+      "page": "https://gainhelm.com/field-service-scheduling",
+      "status": "discovered - currently not indexed"
+    }
+  ]
+}
