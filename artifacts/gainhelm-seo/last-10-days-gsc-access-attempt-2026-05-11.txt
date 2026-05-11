@@ -1,0 +1,14 @@
+Last-10-day GSC window attempted: 2026-05-01 to 2026-05-10
+Credentials: artifacts/gainhelm-searchconsole-cli-key.json (path only; content not printed)
+Sites list:
+[]
+--- dimension=query
+{"error":"User does not have sufficient permission for site 'sc-domain:gainhelm.com'. See also: https://support.google.com/webmasters/answer/2451999.","code":403}
+--- dimension=page
+{"error":"User does not have sufficient permission for site 'sc-domain:gainhelm.com'. See also: https://support.google.com/webmasters/answer/2451999.","code":403}
+--- dimension=country
+{"error":"User does not have sufficient permission for site 'sc-domain:gainhelm.com'. See also: https://support.google.com/webmasters/answer/2451999.","code":403}
+--- dimension=device
+{"error":"User does not have sufficient permission for site 'sc-domain:gainhelm.com'. See also: https://support.google.com/webmasters/answer/2451999.","code":403}
+--- dimension=searchAppearance
+{"error":"User does not have sufficient permission for site 'sc-domain:gainhelm.com'. See also: https://support.google.com/webmasters/answer/2451999.","code":403}
