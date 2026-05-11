@@ -1,0 +1,15 @@
+Live crawl files:
+https://gainhelm.com/ status=200 content_type=text/html
+https://gainhelm.com/robots.txt status=200 content_type=text/plain
+https://gainhelm.com/sitemap.xml status=200 content_type=application/xml
+https://gainhelm.com/llms.txt status=200 content_type=text/plain
+
+Live page SEO/waitlist audit:
+https://gainhelm.com/ status=200 title=Gainhelm | AI Dispatch App & Software for Field Service Teams desc_len=162 canonical=https://gainhelm.com/ h1_count=1 jsonld=1 waitlist_forms=1 api_waitlist=True
+https://gainhelm.com/hvac-dispatch-software status=200 title=HVAC Dispatch App & Software for Scheduling Service Calls | Gainhelm desc_len=145 canonical=https://gainhelm.com/hvac-dispatch-software h1_count=1 jsonld=1 waitlist_forms=1 api_waitlist=True
+https://gainhelm.com/plumbing-dispatch-software status=200 title=Plumbing Dispatch App & Software for Scheduling Service Calls | Gainhelm desc_len=146 canonical=https://gainhelm.com/plumbing-dispatch-software h1_count=1 jsonld=1 waitlist_forms=1 api_waitlist=True
+https://gainhelm.com/field-service-scheduling status=200 title=Field Service Scheduling Software | Gainhelm desc_len=120 canonical=https://gainhelm.com/field-service-scheduling h1_count=1 jsonld=1 waitlist_forms=1 api_waitlist=True
+https://gainhelm.com/hvac-dispatch-app-vs-spreadsheets status=200 title=HVAC Dispatch App vs Spreadsheets | Gainhelm desc_len=146 canonical=https://gainhelm.com/hvac-dispatch-app-vs-spreadsheets h1_count=1 jsonld=1 waitlist_forms=0 api_waitlist=False
+https://gainhelm.com/how-to-choose-hvac-dispatch-app status=200 title=How to Choose an HVAC Dispatch App | Gainhelm desc_len=140 canonical=https://gainhelm.com/how-to-choose-hvac-dispatch-app h1_count=1 jsonld=1 waitlist_forms=0 api_waitlist=False
+https://gainhelm.com/how-hvac-dispatch-apps-reduce-phone-tag status=200 title=How HVAC Dispatch Apps Reduce Phone Tag | Gainhelm desc_len=126 canonical=https://gainhelm.com/how-hvac-dispatch-apps-reduce-phone-tag h1_count=1 jsonld=1 waitlist_forms=0 api_waitlist=False
+https://gainhelm.com/mobile-dispatch-board status=200 title=Dispatch Software on iPad for HVAC and Plumbing Teams | Gainhelm desc_len=156 canonical=https://gainhelm.com/mobile-dispatch-board h1_count=1 jsonld=1 waitlist_forms=1 api_waitlist=True
