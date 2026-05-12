@@ -1,0 +1,173 @@
+## Vault orientation
+$ vault --help
+vault — workspace knowledge gateway
+
+Don't guess. Don't use memory. Ask vault first.
+Per-command help: vault help <command>
+
+── ORIENT ──────────────────────────────────────────────────────────────
+  vault orient                        # one-word bootstrap (= read workspace-map --compact)
+  vault orient --meta                 # metadata only — triage without consuming context
+  vault read file="workspace-map"     # equivalent, explicit form
+
+── RETRIEVE ────────────────────────────────────────────────────────────
+  read file="name"               read known truth directly; refuses ambiguity    [free]
+  search query=".." [--limit N]  discover files/tools (default 5 compact, 12)    [free]
+    [--type T] [--since H]       filter by type (prefix/plural ok) and/or recency
+  search-deep query=".."         cross-file reasoning (~25s, ~$0.008)            [api]
+
+── INVENTORY ───────────────────────────────────────────────────────────
+  list [--compact] [--brief]     searchable inventory: skills, knowledge, scripts, projects [free]
+  recent [N] [--since H]         N most recently changed files (default 20)       [free]
+  diff [--compact]               what changed since last catalog build             [free]
+
+── WRITE BACK ──────────────────────────────────────────────────────────
+  append file="name" entry=".."  file a discovery (deterministic local write, --dry-run) [free]
+
+── INSPECT ─────────────────────────────────────────────────────────────
+  stats [--compact]              counts, freshness, health summary                [free]
+  health [--compact]             structural health check (9 checks)               [free]
+  profile [--compact]            index size breakdown by type                     [free]
+
+── MAINTAIN ────────────────────────────────────────────────────────────
+  lint [--compact] [--file X]    content health — contradictions, gaps            [api]
+  sweep [--compact] [--file X]   decay review — stale, superseded entries         [api]
+  catalog [--check] [--compact]  rebuild skill catalog (auto-heals drift)         [free]
+  index [--compact]              force-rebuild retrieval index                    [free]
+  selftest [--compact]           smoke test all commands                          [free]
+  bench [--compact]              retrieval precision benchmark (file-backed, 60-120s) [free]
+
+── UTILITY ─────────────────────────────────────────────────────────────
+  version [--compact]            version, paths, dirs, benchmark
+  help [command]                 per-command help with examples
+
+── ALIASES ─────────────────────────────────────────────────────────────
+  s/find/grep/lookup → search       r/get/show/open/cat → read
+  sd/deep/reason → search-deep      a/add/write/log → append
+  ls/dir/all → list              latest/new/modified → recent
+  status/info → stats            check/validate → lint
+  clean/decay/stale → sweep      test/smoke → selftest
+  h/-h/--help → help             -V/--version → version
+
+── AGENT OUTPUT (--compact / --json) ───────────────────────────────────
+  Every command supports --compact (or --json) for machine-readable JSON.
+  Envelope: ok, command, _vault, _schema, _ts, _cost, _latency_ms on every response.
+  _schema: integer — increments on breaking output changes. Current: 1.
+  _cost: "free" or "api" — check before calling api-backed commands.
+  _latency_ms: actual wall-clock time for the command.
+  _alias: present only when an alias was used (e.g., "s" → search).
+  _index_rebuilt: true when index was rebuilt during this call (explains latency spikes).
+  Errors: ok=false + error.type + error.message + error.recoverable.
+  search --limit N controls result count (default 5 in --compact, 12 human).
+  search --type T filters by source type (knowledge, skill, script, doc=project docs + overlays).
+$ vault read file="workspace-map" --compact
+{'name': 'workspace-map', 'title': 'Workspace Map', 'has_seo_geo': True}
+## Focused Vault discovery
+$ vault search query="Gainhelm SEO GEO HVAC" --compact --limit 5
+{"query":"Gainhelm SEO GEO HVAC","count":5,"total_results":10,"limit":5,"has_more":true,"top_confidence":"medium","ambiguous_top_results":false,"results":[{"rank":1,"name":"seo-geo","title":"SEO + GEO Skill","type":"skill","path":"/home/ubuntuadmin/projects/arif-skills/business/seo-geo/SKILL.md","score":6.6771,"trust_tier":80,"alias_exact":false,"lexical_score":1.5577,"semantic_score":0.1743,"name_anchor":false,"modified":"2026-04-28","age_days":13,"freshness":"recent","size_class":"large","tokens_est":3038,"snippet":"Complete SEO + GEO (Generative Engine Optimization) skill. Covers traditional technical SEO audits, content optimization for AI citation, and dual-track ranking strategy for Google and AI search engines.","snippet_truncated":false},{"rank":2,"name":"distribution-playbook","title":"Distribution & GEO Playbook","type":"knowledge","path":"/home/ubuntuadmin/projects/knowledge/distribution-playbook.md","score":5.4594,"trust_tier":100,"alias_exact":false,"lexical_score":1.5961,"semantic_score":0.1488,"name_anchor":false,"modified":"2026-03-24","age_days":48,"freshness":"aging","size_class":"medium","tokens_est":2121,"snippet":"Operational knowledge for driving Shopify app distribution. Loaded when working on ProfitHelm/adspendguard growth, marketing, or distribution.","snippet_truncated":false,"freshness_warning":"aging: last modified 48d ago. Re-verify before acting."},{"rank":3,"name":"seo-monitoring","title":"Gainhelm SEO Monitoring","type":"doc:projects/ai-field-service-dispatcher","path":"/home/ubuntuadmin/projects/ai-field-service-dispatcher/seo-monitoring.md","score":5.0339,"trust_tier":35,"alias_exact":false,"lexical_score":2.0,"semantic_score":0.2611,"name_anchor":true,"modified":"2026-05-05","age_days":6,"freshness":"fresh","size_class":"medium","tokens_est":588,"snippet":"- AI dispatch app","snippet_truncated":false,"name_anchor_hits":["gainhelm"]},{"rank":4,"name":"marketing","title":"ProfitHelm Marketing","type":"skill:ProfitHelm","path":"/home/ubuntuadmin/projects/ProfitHelm/.agents/skills/marketing/SKILL.md","score":4.9541,"trust_tier":65,"alias_exact":false,"lexical_score":1.6302,"semantic_score":0.2253,"name_anchor":false,"modified":"2026-03-17","age_days":55,"freshness":"aging","size_class":"medium","tokens_est":1609,"snippet":"ProfitHelm marketing, SEO, and backlink strategy expertise. This skill should be used when: (1) Discussing backlink acquisition, directory submissions, or link building (2) Planning SEO improvements or content marketing ","snippet_truncated":true,"freshness_warning":"aging: last modified 55d ago. Re-verify before acting."},{"rank":5,"name":"situational-inventory","title":"Situational Inventory \u2014 When X Happens \u2192 Use Y","type":"knowledge","path":"/home/ubuntuadmin/projects/knowledge/situational-inventory.md","score":4.0654,"trust_tier":100,"alias_exact":false,"lexical_score":0.5221,"semantic_score":0.1873,"name_anchor":false,"modified":"2026-05-01","age_days":10,"freshness":"recent","size_class":"medium","tokens_est":1873,"snippet":"Quick lookup for proven paths. Each entry is a tested, working route.","snippet_truncated":false}],"confidence_reason":"close_scores","next_action":"vault read file=\"seo-geo\" --compact --meta","next_action_alt":["vault read file=\"distribution-playbook\" --compact --meta","vault search query=\"Gainhelm SEO GEO HVAC\" --compact --limit 10"],"next_action_hint":"Ambiguous: top results span different types. Use --meta on each to compare, or --type to narrow.","ok":true,"command":"search","_vault":"3.34.2","_schema":1,"_ts":"2026-05-12T00:38:59Z","_cost":"free","_latency_ms":23253}
+$ vault search query="seo geo" --type skill --compact --limit 5
+{"query":"seo geo","count":5,"total_results":10,"limit":5,"has_more":true,"top_confidence":"high","ambiguous_top_results":false,"results":[{"rank":1,"name":"seo-geo","title":"SEO + GEO Skill","type":"skill","path":"/home/ubuntuadmin/projects/arif-skills/business/seo-geo/SKILL.md","score":16.5703,"trust_tier":80,"alias_exact":true,"lexical_score":2.5577,"semantic_score":0.1893,"name_anchor":false,"modified":"2026-04-28","age_days":13,"freshness":"recent","size_class":"large","tokens_est":3038,"snippet":"Complete SEO + GEO (Generative Engine Optimization) skill. Covers traditional technical SEO audits, content optimization for AI citation, and dual-track ranking strategy for Google and AI search engines.","snippet_truncated":false},{"rank":2,"name":"marketing","title":"ProfitHelm Marketing","type":"skill:ProfitHelm","path":"/home/ubuntuadmin/projects/ProfitHelm/.agents/skills/marketing/SKILL.md","score":3.8876,"trust_tier":65,"alias_exact":false,"lexical_score":1.3042,"semantic_score":0.1809,"name_anchor":false,"modified":"2026-03-17","age_days":55,"freshness":"aging","size_class":"medium","tokens_est":1609,"snippet":"ProfitHelm marketing, SEO, and backlink strategy expertise. This skill should be used when: (1) Discussing backlink acquisition, directory submissions, or link building (2) Planning SEO improvements or content marketing ","snippet_truncated":true,"freshness_warning":"aging: last modified 55d ago. Re-verify before acting.","low_relevance":true},{"rank":3,"name":"resume-ats-optimizer","title":"Resume ATS Optimizer","type":"skill","path":"/home/ubuntuadmin/projects/arif-skills/community/resume-skills/resume-ats-optimizer/SKILL.md","score":3.3581,"trust_tier":80,"alias_exact":false,"lexical_score":0.4912,"semantic_score":0.1696,"name_anchor":false,"modified":"2026-04-07","age_days":34,"freshness":"aging","size_class":"medium","tokens_est":2292,"snippet":"Optimize resumes for Applicant Tracking Systems, check ATS compatibility, and analyze keyword match","snippet_truncated":false,"freshness_warning":"aging: last modified 34d ago. Re-verify before acting.","low_relevance":true},{"rank":4,"name":"pchain","title":"pchain \u2014 Multi-Agent Chain Runner","type":"skill","path":"/home/ubuntuadmin/projects/arif-skills/agent/pchain/SKILL.md","score":3.1209,"trust_tier":80,"alias_exact":false,"lexical_score":0.0,"semantic_score":0.2925,"name_anchor":false,"modified":"2026-04-12","age_days":29,"freshness":"recent","size_class":"small","tokens_est":469,"snippet":"Run the full-cycle agent chain on a project. Use when the user wants to build, refactor, or fix something in a project using the multi-agent pipeline. Triggers on: 'run chain on', 'pchain', 'use the chain', 'full-cycle',","snippet_truncated":true,"low_relevance":true},{"rank":5,"name":"copywriting","title":"Copywriting","type":"skill","path":"/home/ubuntuadmin/projects/arif-skills/community/copywriting/SKILL.md","score":3.0044,"trust_tier":80,"alias_exact":false,"lexical_score":0.2467,"semantic_score":0.1731,"name_anchor":false,"modified":"2026-04-07","age_days":34,"freshness":"aging","size_class":"medium","tokens_est":2134,"snippet":"When the user wants to write, rewrite, edit, review, or improve marketing copy for any page \u2014 including homepage, landing pages, pricing pages, feature pages, about pages, or product pages. Also use when the user says 'w","snippet_truncated":true,"freshness_warning":"aging: last modified 34d ago. Re-verify before acting.","low_relevance":true}],"confidence_reason":"alias_exact","type_filter":"skill","next_action":"vault read file=\"seo-geo\" --compact --meta","next_action_hint":"Large result (3038 tokens). Use --meta for triage + toc, then --section","next_action_alt":["vault search query=\"seo geo\" --compact --limit 10 --type skill"],"ok":true,"command":"search","_vault":"3.34.2","_schema":1,"_ts":"2026-05-12T00:39:01Z","_cost":"free","_latency_ms":1670}
+$ vault read file="seo-geo" --compact --section "Audit Workflow"
+## Audit Workflow
+
+### `/seo audit [url]`
+
+Run these in parallel, then synthesize into a unified 0–100 score:
+
+**Phase 1 — Technical (25pts)**
+```
+- Fetch robots.txt → check AI crawler permissions
+- Check sitemap.xml presence and validity
+- Verify canonical tags in raw HTML (not JS-injected)
+- Check HTTPS, redirect chains (max 1 hop)
+- Mobile viewport meta tag
+- Core Web Vitals proxy: page size, render-blocking resources
+- llms.txt presence
+```
+
+**Phase 2 — On-Page (20pts)**
+```
+- Title tag: 50–60 chars, contains primary keyword, compelling
+- Meta description: 140–160 chars, includes CTA
+- H1: one only, matches search intent
+- H2/H3: logical hierarchy, question-based where relevant
+- URL: lowercase, hyphens, keyword-containing, max 60 chars
+- Internal links: min 3 relevant, descriptive anchor text
+- Image alt text: all images described
+```
+
+**Phase 3 — Content Quality / E-E-A-T (25pts)**
+```
+- Experience: first-hand data, original research, case studies
+- Expertise: author credentials, depth, accuracy
+- Authoritativeness: external citations, mentions
+- Trustworthiness: About page, contact, privacy, HTTPS
+- Freshness: publication + last-updated dates present
+- Depth: covers topic comprehensively vs thin content
+```
+
+**Phase 4 — GEO Readiness (15pts)**
+```
+- Direct answer in first 60 words?
+- Definition blocks using "X is..." pattern?
+- Statistics with sources cited?
+- Self-contained 134–167 word blocks?
+- FAQ section present?
+- Author bio present?
+- Schema present (FAQPage, Article, SoftwareApplication)?
+```
+
+**Phase 5 — Schema (10pts)**
+```
+- JSON-LD present (not Microdata/RDFa)
+- Types valid for 2026: Organization, SoftwareApplication, FAQPage, Article, Review
+- No deprecated types: HowTo (Sept 2023), SpecialAnnouncement (Jul 2025), Dataset (late 2025)
+- Server-rendere
+$ vault read file="content-cluster" --compact
+# Gainhelm Content Cluster
+
+## Core pages now live
+- Homepage: https://gainhelm.com/
+- HVAC dispatch software: https://gainhelm.com/hvac-dispatch-software
+- HVAC dispatch app vs spreadsheets: https://gainhelm.com/hvac-dispatch-app-vs-spreadsheets
+- How to choose an HVAC dispatch app: https://gainhelm.com/how-to-choose-hvac-dispatch-app
+- Plumbing dispatch software: https://gainhelm.com/plumbing-dispatch-software
+- Field service scheduling software: https://gainhelm.com/field-service-scheduling
+- How HVAC dispatch apps reduce phone tag: https://gainhelm.com/how-hvac-dispatch-apps-reduce-phone-tag
+- Dispatch software on iPad: https://gainhelm.com/mobile-dispatch-board
+
+## Why this cluster matters
+These pages match the highest-intent search terms around dispatch, scheduling, and field service management. They give Google multiple entry points into the product instead of forcing every query through a single homepage.
+
+## What each page should rank for
+- Homepage: Gainhelm / AI dispatch app and software brand query
+- HVAC page: HVAC dispatch app, HVAC dispatch software, HVAC scheduling app
+- Plumbing page: plumbing dispatch app, plumbing dispatch software, plumber scheduling app
+- Field
+## Scenario frontier
+- HVAC intent copy: target last-10-day GSC query family around HVAC dispatch software/programs while preserving one H1 and current route/canonical.
+- Citation-ready GEO answer: add concise direct answer block explaining what Gainhelm is, who it is for, current early-access/waitlist status, and supported dispatch/scheduling outcomes.
+- No-feature-claim safety: avoid unbuilt payments/CRM/route-optimization/technician-app claims; use conservative board/scheduling/assignment/phone-tag wording already present in the site.
+- Waitlist CTA preservation: keep existing #waitlist anchor, form id `waitlist-form`, and API URL `https://api.gainhelm.com/waitlist`; only clarify CTA copy.
+- Responsive/readability risk: avoid layout/CSS changes; verify mobile rendered output via screenshot/snapshot.
+- Metadata/snippet impact: preserve title/meta/canonical/JSON-LD and one H1; strengthen visible snippet-supporting copy without changing public product scope.
+## Git status after frontier capture
+?? artifacts/gainhelm-seo/draft-field-service-meta-snippet.md
+?? artifacts/gainhelm-seo/draft-hvac-meta-snippet.md
+?? artifacts/gainhelm-seo/draft-hvac-query-page-opportunity.md
+?? artifacts/gainhelm-seo/draft-plumbing-meta-snippet.md
+?? artifacts/gainhelm-seo/draft-plumbing-query-page-opportunity.md
+?? artifacts/gainhelm-seo/field-service-snippet-continuity-check.md
+?? artifacts/gainhelm-seo/hvac-snippet-continuity-check.md
+?? artifacts/gainhelm-seo/metadata-implementation-path-map.md
+?? artifacts/gainhelm-seo/next-seo-opportunity-selection.md
+?? artifacts/gainhelm-seo/plumbing-snippet-continuity-check.md
+?? artifacts/gainhelm-seo/remaining-seo-opportunity-audit.md
+?? artifacts/gainhelm-seo/reusable-snippet-pattern.md
+?? artifacts/gainhelm-seo/seo-approval-checklist.md
+?? artifacts/gainhelm-seo/seo-approval-request.md
+?? artifacts/gainhelm-seo/snippet-continuity-checklist.md
+?? artifacts/gainhelm-seo/snippet-implementation-instructions.md
+?? artifacts/gainhelm-seo/snippet-publish-test-recommendation.md
+?? redesign-gainhelm-landing-page.zip
+?? redesign-gainhelm-landing-page.zip:Zone.Identifier
