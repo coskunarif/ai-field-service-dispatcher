@@ -1,0 +1,252 @@
+- banner
+  - link "Gainhelm home" [ref=e1]
+    - image
+    - StaticText "Gainhelm"
+  - navigation "Primary" [ref=e2]
+    - link "Home" [ref=e8]
+    - link "HVAC" [ref=e9]
+    - link "Compare" [ref=e10]
+    - link "Plumbing" [ref=e11]
+    - link "Schedule" [ref=e12]
+- main
+  - generic
+    - StaticText "AI DISPATCH APP FOR FIELD SERVICE TEAMS"
+    - heading "HVAC dispatch software for scheduling service calls." [level=1, ref=e16]
+    - paragraph
+      - StaticText "Gainhelm helps small HVAC teams schedule service calls, assign technicians faster, reduce phone tag, and keep the dispatch board readable on desktop, iPad, and mobile."
+    - paragraph
+      - StaticText "If you're comparing HVAC dispatch software or dispatch programs for HVAC, look for a clean workflow, quick technician assignment, and a board your office can scan without extra back-and-forth."
+    - paragraph
+      - StaticText "For small HVAC offices, that usually means one clear place to see open jobs, same-day changes, and who should handle the next service call."
+    - paragraph
+      - StaticText "That kind of clarity matters most when you want fewer callbacks and faster same-day dispatch decisions."
+    - paragraph
+      - StaticText "Gainhelm is currently collecting early-access waitlist signups from teams that want simpler HVAC scheduling and dispatch before adding more product surface area."
+    - link "Join the waitlist" [ref=e17]
+    - link "See how it works" [ref=e18]
+    - paragraph
+      - StaticText "Built for teams that need a simple, modern way to run dispatch, coordinate technicians, and stay on top of daily jobs."
+    - generic "Industries served"
+      - StaticText "HVAC"
+      - StaticText "Plumbing"
+      - StaticText "Landscaping"
+      - StaticText "Field service"
+    - generic
+      - generic
+        - StaticText "SAMPLE DISPATCH BOARD"
+        - StaticText "BUILT FOR FAST SCANS"
+      - generic
+        - strong
+          - StaticText "Emergency AC repair"
+        - StaticText "Northside job · Needs a same-day tech"
+        - StaticText "Needs assignment"
+        - strong
+          - StaticText "Kitchen leak follow-up"
+        - StaticText "Assigned to Maria · Route confirmed"
+        - StaticText "Scheduled"
+        - strong
+          - StaticText "Landscaping maintenance"
+        - StaticText "Recurring visit · Crew notified"
+        - StaticText "Ready to go"
+  - region "A clearer way to manage HVAC jobs, schedule technicians, and reduce callbacks." [ref=e3]
+    - generic
+      - StaticText "WHAT GAINHELM DOES"
+      - heading "A clearer way to manage HVAC jobs, schedule technicians, and reduce callbacks." [level=2, ref=e19]
+      - paragraph
+        - StaticText "Gainhelm gives HVAC teams a clean workflow for service-call assignment, route planning, and follow-up so the day feels easier to run."
+    - paragraph
+      - strong
+        - StaticText "Gainhelm is HVAC dispatch software for small service teams."
+      - StaticText " It helps HVAC offices organize service-call scheduling, technician assignment, and daily dispatch handoffs in a simpler board-style workflow. The product is still in early access, so the current goal is to learn from real search demand and collect waitlist signups before building more features."
+  - region "Covers HVAC dispatch software, dispatch programs for HVAC, and scheduling-and-dispatch queries." [ref=e4]
+    - generic
+      - StaticText "SEARCH INTENT WE SEE IN GSC"
+      - heading "Covers HVAC dispatch software, dispatch programs for HVAC, and scheduling-and-dispatch queries." [level=2, ref=e20]
+      - paragraph
+        - StaticText "People searching these phrases want a cleaner board, faster assignment, and a dispatch workflow that stays readable on desktop, tablet, or mobile."
+    - generic
+      - generic
+        - heading "iPad and mobile" [level=3, ref=e27]
+        - paragraph
+          - StaticText "Keep the board readable on tablets when techs are in the field or the office is moving fast."
+      - generic
+        - heading "Scheduling and dispatch" [level=3, ref=e28]
+        - paragraph
+          - StaticText "Keep jobs, technician assignment, and same-day changes in one source of truth."
+      - generic
+        - heading "Best HVAC dispatch software" [level=3, ref=e29]
+        - paragraph
+          - StaticText "Choose a simple tool if you want clearer service-call scheduling, faster technician assignment, and less phone tag without enterprise complexity."
+  - region "Stop losing time to text threads, spreadsheet schedules, and manual handoffs." [ref=e5]
+    - generic
+      - StaticText "WHY TEAMS SWITCH"
+      - heading "Stop losing time to text threads, spreadsheet schedules, and manual handoffs." [level=2, ref=e21]
+      - paragraph
+        - StaticText "When your dispatch workflow is scattered, jobs slip, customers wait, and your team wastes time on coordination instead of service."
+    - generic
+      - generic
+        - heading "Dispatch faster" [level=3, ref=e30]
+        - paragraph
+          - StaticText "See open jobs, assign the right tech, and move work through the day without relying on constant calls or guesswork."
+      - generic
+        - heading "Keep the schedule clear" [level=3, ref=e31]
+        - paragraph
+          - StaticText "Organize work in one place so the office and field have a shared view of what is happening next."
+      - generic
+        - heading "Reduce coordination friction" [level=3, ref=e32]
+        - paragraph
+          - StaticText "Replace scattered notes and repeated follow-ups with a workflow that is easier to understand and easier to manage."
+  - generic
+    - generic
+      - StaticText "HOW IT WORKS"
+      - heading "Three steps to a cleaner dispatch flow." [level=2, ref=e22]
+      - paragraph
+        - StaticText "Simple enough to explain in seconds, structured enough to be useful for a real team."
+    - generic
+      - generic
+        - StaticText "1"
+        - heading "Add the job" [level=3, ref=e33]
+        - paragraph
+          - StaticText "Capture the customer request and the work that needs to be done."
+      - generic
+        - StaticText "2"
+        - heading "Assign the right technician" [level=3, ref=e34]
+        - paragraph
+          - StaticText "Keep the schedule moving by matching work to the right person at the right time."
+      - generic
+        - StaticText "3"
+        - heading "Follow through" [level=3, ref=e35]
+        - paragraph
+          - StaticText "Keep the day organized from dispatch to completion so nothing gets lost between the office and the field."
+  - generic
+    - generic
+      - StaticText "BEST FOR"
+      - heading "Made for HVAC teams that want modern dispatch without enterprise complexity." [level=2, ref=e23]
+      - paragraph
+        - StaticText "If you run HVAC service calls across the office and the field, Gainhelm is designed to feel simple, focused, and easy to adopt."
+    - generic
+      - generic
+        - heading "HVAC teams" [level=3, ref=e36]
+        - paragraph
+          - StaticText "Use it to keep service calls organized, reduce missed handoffs, and move emergency work faster."
+      - generic
+        - heading "Plumbing companies" [level=3, ref=e37]
+        - paragraph
+          - StaticText "Track new jobs, schedule arrivals, and keep the office and technicians on the same page."
+      - generic
+        - heading "Landscaping crews" [level=3, ref=e38]
+        - paragraph
+          - StaticText "Coordinate recurring work and day-of changes without losing visibility across the schedule."
+  - region "Questions people ask before joining the waitlist." [ref=e6]
+    - generic
+      - StaticText "FAQ"
+      - heading "Questions people ask before joining the waitlist." [level=2, ref=e24]
+      - paragraph
+        - StaticText "Clear answers help both people and search engines understand what Gainhelm is and who it is for."
+    - generic
+      - group
+        - DisclosureTriangle "What is Gainhelm for HVAC teams? +" [expanded=false]
+          - StaticText "What is Gainhelm for HVAC teams?"
+          - StaticText "+"
+      - group
+        - DisclosureTriangle "Who is this page for? +" [expanded=false]
+          - StaticText "Who is this page for?"
+          - StaticText "+"
+      - group
+        - DisclosureTriangle "How do I compare the best HVAC dispatch software? +" [expanded=false]
+          - StaticText "How do I compare the best HVAC dispatch software?"
+          - StaticText "+"
+      - group
+        - DisclosureTriangle "Does Gainhelm work on iPad or tablet? +" [expanded=false]
+          - StaticText "Does Gainhelm work on iPad or tablet?"
+          - StaticText "+"
+      - group
+        - DisclosureTriangle "Is this a fit for tradesmen and other service crews? +" [expanded=false]
+          - StaticText "Is this a fit for tradesmen and other service crews?"
+          - StaticText "+"
+      - group
+        - DisclosureTriangle "Is Gainhelm ready for HVAC teams? +" [expanded=false]
+          - StaticText "Is Gainhelm ready for HVAC teams?"
+          - StaticText "+"
+      - group
+        - DisclosureTriangle "How do I get early access? +" [expanded=false]
+          - StaticText "How do I get early access?"
+          - StaticText "+"
+      - group
+        - DisclosureTriangle "What does it replace? +" [expanded=false]
+          - StaticText "What does it replace?"
+          - StaticText "+"
+  - region "Built for the search terms people actually use." [ref=e7]
+    - generic
+      - StaticText "EXPLORE THE DISPATCH CLUSTER"
+      - heading "Built for the search terms people actually use." [level=2, ref=e25]
+      - paragraph
+        - StaticText "Gainhelm now has focused pages for HVAC dispatch, plumbing scheduling, and field service scheduling so Google can understand the product from multiple intent angles."
+    - generic
+      - generic
+        - heading "HVAC dispatch software" [level=3, ref=e39]
+          - link "HVAC dispatch software" [ref=e50]
+        - paragraph
+          - StaticText "For teams that need faster service-call assignment and clearer technician scheduling."
+      - generic
+        - heading "HVAC dispatch app vs spreadsheets" [level=3, ref=e40]
+          - link "HVAC dispatch app vs spreadsheets" [ref=e51]
+        - paragraph
+          - StaticText "For owners comparing manual boards with a dedicated dispatch workflow."
+      - generic
+        - heading "How to choose an HVAC dispatch app" [level=3, ref=e41]
+          - link "How to choose an HVAC dispatch app" [ref=e52]
+        - paragraph
+          - StaticText "For owners who want a practical buying checklist before they switch tools."
+      - generic
+        - heading "Plumbing dispatch app" [level=3, ref=e42]
+          - link "Plumbing dispatch app" [ref=e53]
+        - paragraph
+          - StaticText "For plumbing shops that want fewer handoffs, less chaos, and a cleaner day plan."
+      - generic
+        - heading "Field service scheduling software" [level=3, ref=e43]
+          - link "Field service scheduling software" [ref=e54]
+        - paragraph
+          - StaticText "For teams comparing dispatch boards, technician assignment, and route planning tools."
+      - generic
+        - heading "Dispatch software on iPad" [level=3, ref=e44]
+          - link "Dispatch software on iPad" [ref=e55]
+        - paragraph
+          - StaticText "For teams that want a readable mobile board and faster schedule updates."
+      - generic
+        - heading "How HVAC dispatch apps reduce phone tag" [level=3, ref=e45]
+          - link "How HVAC dispatch apps reduce phone tag" [ref=e56]
+        - paragraph
+          - StaticText "For teams that want fewer callbacks, less text-thread chaos, and a cleaner intake-to-assignment flow."
+  - generic
+    - heading "Get HVAC early access" [level=2, ref=e26]
+    - paragraph
+      - StaticText "Join the waitlist if your HVAC team wants a simpler dispatch board for service-call scheduling, technician assignment, and fewer phone-tag handoffs."
+    - generic
+      - LabelText
+        - StaticText "Full Name"
+      - textbox "Full Name" [required, ref=e46]
+      - LabelText
+        - StaticText "Work Email"
+      - textbox "Work Email" [required, ref=e47]
+      - LabelText
+        - StaticText "Company"
+      - textbox "Company" [ref=e48]
+      - button "Join the waitlist" [ref=e49]
+- contentinfo
+  - paragraph
+    - StaticText "© 2026 Gainhelm. All rights reserved."
+  - generic
+    - link "robots.txt" [ref=e13]
+    - StaticText " · "
+    - link "sitemap.xml" [ref=e14]
+    - StaticText " · "
+    - link "llms.txt" [ref=e15]
+- StaticText "+"
+- StaticText "+"
+- StaticText "+"
+- StaticText "+"
+- StaticText "+"
+- StaticText "+"
+- StaticText "+"
+- StaticText "+"
