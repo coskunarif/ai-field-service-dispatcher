@@ -117,6 +117,7 @@
 }</script>
 </head>
 <body>
+<a class="skip-link" href="#top">Skip to main content</a>
 <header>
 <a href="/" class="logo" aria-label="Gainhelm home">
 <div class="logo-icon">
@@ -130,18 +131,19 @@ Gainhelm
 <a href="/hvac-dispatch-app-vs-spreadsheets">Compare</a>
 <a href="/plumbing-dispatch-software">Plumbing</a>
 <a href="/field-service-scheduling">Schedule</a>
+<a href="#waitlist" class="nav-cta">Join the waitlist</a>
 </nav>
 </header>
 <main>
 <section class="hero" id="top">
 <div class="hero-layout">
 <div class="hero-copy">
-<div class="brand-chip">AI dispatch command center for field service teams</div>
-<h1>Turn service calls into assigned jobs without the dispatch scramble.</h1>
-<p>Gainhelm helps HVAC, plumbing, and landscaping teams see every open job, match it to the right technician, and keep the office and field aligned from intake to arrival.</p>
+<div class="brand-chip">AI dispatch software for HVAC, plumbing, and landscaping teams</div>
+<h1>Turn service calls into scheduled jobs—without the dispatch scramble.</h1>
+<p>Gainhelm helps small field service teams see every open job, match it to the right technician, and keep the office and field aligned from intake to arrival.</p>
 <div class="hero-actions">
-<a href="#waitlist" class="cta-primary">Get early access</a>
-<a href="#how-it-works" class="cta-secondary">See the dispatch flow</a>
+<a href="#waitlist" class="cta-primary">Join the waitlist</a>
+<a href="#how-it-works" class="cta-secondary">See how it works</a>
 </div>
 <p class="cta-assurance">Early access waitlist · Built for 1–20 tech teams · No credit card needed</p>
 <div class="hero-metrics" aria-label="Key product benefits">
@@ -372,14 +374,14 @@ Gainhelm
 <span>Small-team friendly</span>
 <span>Early access updates</span>
 </div>
-<form id="waitlist-form" data-api-url="https://api.gainhelm.com/waitlist">
+<form id="waitlist-form" data-api-url="https://api.gainhelm.com/waitlist" novalidate>
 <div class="form-group">
-<label for="name">Full Name</label>
+<label for="name">Full Name <span class="field-required" aria-hidden="true">*</span><span class="sr-only"> required</span></label>
 <input type="text" id="name" name="name" placeholder="John Smith" required>
 </div>
 <div class="form-group">
-<label for="email">Work Email</label>
-<input type="email" id="email" name="email" placeholder="john@company.com" required>
+<label for="email">Work Email <span class="field-required" aria-hidden="true">*</span><span class="sr-only"> required</span></label>
+<input type="email" id="email" name="email" placeholder="john@company.com" required aria-describedby="waitlist-help">
 </div>
 <div class="form-group">
 <label for="company">Company</label>
@@ -387,11 +389,14 @@ Gainhelm
 </div>
 <button type="submit" class="form-submit">Join the waitlist</button>
 </form>
+<div id="waitlist-help" class="waitlist-help">We’ll only use this to follow up about early access.</div>
 <div id="waitlist-status" class="waitlist-status" role="status" aria-live="polite" hidden></div>
 <script>
 const form = document.getElementById('waitlist-form');
 const status = document.getElementById('waitlist-status');
 const submitButton = form.querySelector('.form-submit');
+const emailInput = document.getElementById('email');
+const nameInput = document.getElementById('name');
 const showStatus = (message, type) => {
   status.hidden = false;
   status.className = `waitlist-status ${type}`;
@@ -401,6 +406,19 @@ const showStatus = (message, type) => {
 form.addEventListener('submit', async (event) => {
   event.preventDefault();
   status.hidden = true;
+
+  if (!nameInput.value.trim()) {
+    showStatus('Please add your name so we know who to contact.', 'error');
+    nameInput.focus();
+    return;
+  }
+
+  if (!emailInput.value.trim()) {
+    showStatus('Please add a work email so we can send your early access update.', 'error');
+    emailInput.focus();
+    return;
+  }
+
   submitButton.disabled = true;
   submitButton.textContent = 'Submitting...';
 
@@ -438,7 +456,7 @@ form.addEventListener('submit', async (event) => {
 </main>
 <footer>
 <p>&copy; 2026 Gainhelm. All rights reserved.</p>
-<div class="footer-links"><a href="/robots.txt">robots.txt</a> · <a href="/sitemap.xml">sitemap.xml</a> · <a href="/llms.txt">llms.txt</a></div>
+<div class="footer-links"><a href="#waitlist">Join the waitlist</a> · <a href="/robots.txt">robots.txt</a> · <a href="/sitemap.xml">sitemap.xml</a> · <a href="/llms.txt">llms.txt</a></div>
 </footer>
 </body>
 </html>

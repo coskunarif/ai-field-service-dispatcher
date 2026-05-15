@@ -157,6 +157,23 @@ header {
   box-shadow: 0 22px 58px hsl(220 40% 2% / 0.12);
 }
 
+.skip-link {
+  position: absolute;
+  left: 50%;
+  top: 8px;
+  transform: translate(-50%, -140%);
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: hsl(var(--text));
+  color: hsl(var(--surface));
+  font-weight: 800;
+  z-index: 100;
+}
+
+.skip-link:focus {
+  transform: translate(-50%, 0);
+}
+
 .logo {
   display: inline-flex;
   align-items: center;
@@ -203,6 +220,17 @@ header {
   color: hsl(var(--text-3));
   font-size: 0.9rem;
   font-weight: 700;
+}
+
+.nav-cta {
+  background: linear-gradient(135deg, hsl(var(--cta)), hsl(var(--cta-2)));
+  color: #fff !important;
+  box-shadow: 0 12px 24px hsl(var(--cta) / 0.18);
+}
+
+.nav-cta:hover {
+  transform: translateY(-1px);
+  color: #fff;
 }
 
 .nav a:hover {
@@ -1122,6 +1150,13 @@ section:not(.hero):not(.form-section) > * {
   z-index: 1;
 }
 
+.waitlist-help {
+  margin-top: 14px;
+  text-align: center;
+  color: hsl(var(--text-3));
+  font-size: 0.92rem;
+}
+
 .form-proof span {
   display: inline-flex;
   align-items: center;
@@ -1159,6 +1194,22 @@ section:not(.hero):not(.form-section) > * {
   color: hsl(var(--text-2));
 }
 
+.field-required {
+  color: hsl(var(--cta-2));
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .form-group input {
   width: 100%;
   min-height: 50px;
@@ -1187,6 +1238,11 @@ section:not(.hero):not(.form-section) > * {
   min-height: 52px;
   margin-top: 4px;
   border: none;
+}
+
+.form-submit:focus-visible {
+  outline: 3px solid hsl(var(--brand) / 0.34);
+  outline-offset: 4px;
 }
 
 .form-submit:disabled {
@@ -1272,19 +1328,22 @@ footer {
   .nav {
     width: 100%;
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 6px;
   }
 
   .nav a {
     width: 100%;
-    padding: 6px 6px;
-    font-size: 0.68rem;
+    min-height: 44px;
+    padding: 10px 8px;
+    font-size: 0.7rem;
     text-align: center;
-    line-height: 1;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    line-height: 1.1;
+    white-space: normal;
+  }
+
+  .nav-cta {
+    grid-column: 1 / -1;
   }
 
   .hero {
@@ -1331,6 +1390,10 @@ footer {
   .form-group:nth-of-type(3),
   .form-submit {
     grid-column: auto;
+  }
+
+  .waitlist-help {
+    text-align: left;
   }
 
   .preview-top,

@@ -78,6 +78,7 @@
 <a href="/hvac-dispatch-app-vs-spreadsheets">Compare</a>
 <a href="/plumbing-dispatch-software">Plumbing</a>
 <a href="/field-service-scheduling">Schedule</a>
+<a href="#waitlist" class="nav-cta">Join the waitlist</a>
 </nav>
 </header>
 <main>
@@ -85,6 +86,7 @@
 <div class="kicker">Supporting guide</div>
 <h1>Dispatch software on iPad for HVAC and plumbing teams.</h1>
 <p>When dispatch lives on a tablet or phone, the question is simple: can the office and field team read the board fast enough to act? Teams searching for HVAC dispatch software iPad or plumbing scheduling with real-time updates usually want one thing: a schedule that stays clear without extra calls.</p>
+<div class="hero-actions"><a href="#waitlist" class="cta-primary">Join the waitlist</a><a href="#why-mobile-matters" class="cta-secondary">See why mobile matters</a></div>
 <div class="note">Mobile-friendly dispatch is about speed, readability, and fewer handoff mistakes — not more tabs or more admin work.</div>
 <div class="section-nav" aria-label="Jump to sections">
 <a href="#why-mobile-matters">Why it matters</a>
@@ -164,14 +166,14 @@
 <div class="form-card">
 <h2>Get early access</h2>
 <p>Join the waitlist if you want a dispatch board built for HVAC and plumbing teams that need a cleaner mobile workflow.</p>
-<form id="waitlist-form" data-api-url="https://api.gainhelm.com/waitlist">
+<form id="waitlist-form" data-api-url="https://api.gainhelm.com/waitlist" novalidate>
 <div class="form-group">
-<label for="name">Full Name</label>
+<label for="name">Full Name <span class="field-required" aria-hidden="true">*</span><span class="sr-only"> required</span></label>
 <input type="text" id="name" name="name" placeholder="John Smith" required>
 </div>
 <div class="form-group">
-<label for="email">Work Email</label>
-<input type="email" id="email" name="email" placeholder="john@company.com" required>
+<label for="email">Work Email <span class="field-required" aria-hidden="true">*</span><span class="sr-only"> required</span></label>
+<input type="email" id="email" name="email" placeholder="john@company.com" required aria-describedby="waitlist-help">
 </div>
 <div class="form-group">
 <label for="company">Company</label>
@@ -179,6 +181,7 @@
 </div>
 <button type="submit" class="form-submit">Join the waitlist</button>
 </form>
+<div id="waitlist-help" class="waitlist-help">We’ll only use this to follow up about early access.</div>
 <div id="waitlist-status" class="waitlist-status" role="status" aria-live="polite" hidden></div>
 <script>
 const form = document.getElementById('waitlist-form');
@@ -231,7 +234,7 @@ form.addEventListener('submit', async (event) => {
 </main>
 <footer>
 <p>© 2026 Gainhelm. Built for HVAC, plumbing, and field service teams.</p>
-<div class="footer-links"><a href="/robots.txt">robots.txt</a> · <a href="/sitemap.xml">sitemap.xml</a> · <a href="/llms.txt">llms.txt</a></div>
+<div class="footer-links"><a href="#waitlist">Join the waitlist</a> · <a href="/robots.txt">robots.txt</a> · <a href="/sitemap.xml">sitemap.xml</a> · <a href="/llms.txt">llms.txt</a></div>
 </footer>
 </body>
 </html>

@@ -94,6 +94,7 @@
 <a href="/hvac-dispatch-app-vs-spreadsheets">Compare</a>
 <a href="/plumbing-dispatch-software">Plumbing</a>
 <a href="/field-service-scheduling">Schedule</a>
+<a href="#waitlist" class="nav-cta">Join the waitlist</a>
 </nav>
 </header>
 <main>
@@ -101,6 +102,7 @@
 <div class="kicker">Support guide</div>
 <h1>How to choose an HVAC dispatch app</h1>
 <p>If you run an HVAC company, the best app is not the one with the longest feature list. It is the one that helps your office assign service calls quickly, keep the board clear, and reduce the back-and-forth that slows down the day.</p>
+<div class="hero-actions"><a href="#waitlist" class="cta-primary">Join the waitlist</a><a href="#what-to-look-for" class="cta-secondary">See what to look for</a></div>
 <div class="note">This guide is written for owners and service managers comparing manual boards, spreadsheets, and a real HVAC dispatch app.</div>
 <div class="section-nav" aria-label="Jump to sections">
 <a href="#what-to-look-for">What to look for</a>
@@ -157,10 +159,38 @@
 <a class="cta" href="/">Back to the homepage</a>
 </div>
 </section>
+<section class="form-section" id="waitlist">
+<div class="form-card">
+<h2>Get early access</h2>
+<p>Want a simpler HVAC dispatch workflow? Join the waitlist to get early access updates.</p>
+<div class="form-proof" aria-label="Waitlist expectations">
+<span>No credit card</span>
+<span>Small-team friendly</span>
+<span>Early access updates</span>
+</div>
+<form id="waitlist-form" data-api-url="https://api.gainhelm.com/waitlist" novalidate>
+<div class="form-group"><label for="name">Full Name <span class="field-required" aria-hidden="true">*</span><span class="sr-only"> required</span></label><input type="text" id="name" name="name" placeholder="John Smith" required></div>
+<div class="form-group"><label for="email">Work Email <span class="field-required" aria-hidden="true">*</span><span class="sr-only"> required</span></label><input type="email" id="email" name="email" placeholder="john@company.com" required aria-describedby="waitlist-help"></div>
+<div class="form-group"><label for="company">Company</label><input type="text" id="company" name="company" placeholder="Your Company Name"></div>
+<button type="submit" class="form-submit">Join the waitlist</button>
+</form>
+<div id="waitlist-help" class="waitlist-help">We’ll only use this to follow up about early access.</div>
+<div id="waitlist-status" class="waitlist-status" role="status" aria-live="polite" hidden></div>
+<script>
+const form = document.getElementById('waitlist-form');
+const status = document.getElementById('waitlist-status');
+const submitButton = form.querySelector('.form-submit');
+const emailInput = document.getElementById('email');
+const nameInput = document.getElementById('name');
+const showStatus = (message, type) => { status.hidden = false; status.className = `waitlist-status ${type}`; status.textContent = message; };
+form.addEventListener('submit', async (event) => { event.preventDefault(); status.hidden = true; if (!nameInput.value.trim()) { showStatus('Please add your name so we know who to contact.', 'error'); nameInput.focus(); return; } if (!emailInput.value.trim()) { showStatus('Please add a work email so we can send your early access update.', 'error'); emailInput.focus(); return; } submitButton.disabled = true; submitButton.textContent = 'Submitting...'; try { const formData = new FormData(form); const payload = { name: formData.get('name'), email: formData.get('email'), company: formData.get('company') }; const response = await fetch(form.dataset.apiUrl || '/waitlist', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }); if (!response.ok) { showStatus("We couldn't submit your request right now. Please try again in a moment.", 'error'); return; } form.reset(); showStatus("Thanks! You're on the waitlist. We'll be in touch soon.", 'success'); } catch (error) { showStatus('We had trouble submitting your request. Please try again.', 'error'); } finally { submitButton.disabled = false; submitButton.textContent = 'Join the waitlist'; } });
+</script>
+</div>
+</section>
 </main>
 <footer>
 <p>&copy; 2026 Gainhelm</p>
-<div class="footer-links"><a href="/robots.txt">robots.txt</a> · <a href="/sitemap.xml">sitemap.xml</a> · <a href="/llms.txt">llms.txt</a></div>
+<div class="footer-links"><a href="#waitlist">Join the waitlist</a> · <a href="/robots.txt">robots.txt</a> · <a href="/sitemap.xml">sitemap.xml</a> · <a href="/llms.txt">llms.txt</a></div>
 </footer>
 </body>
 </html>
