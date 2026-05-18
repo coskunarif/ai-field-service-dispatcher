@@ -169,14 +169,14 @@
 <form id="waitlist-form" data-api-url="https://api.gainhelm.com/waitlist" novalidate>
 <div class="form-group">
 <label for="name">Full Name <span class="field-required" aria-hidden="true">*</span><span class="sr-only"> required</span></label>
-<input type="text" id="name" name="name" placeholder="John Smith" required>
+<input type="text" id="name" name="name" placeholder="John Smith" required aria-describedby="waitlist-status">
 </div>
 <div class="form-group">
 <label for="email">Work Email <span class="field-required" aria-hidden="true">*</span><span class="sr-only"> required</span></label>
-<input type="email" id="email" name="email" placeholder="john@company.com" required aria-describedby="waitlist-help">
+<input type="email" id="email" name="email" placeholder="john@company.com" required aria-describedby="waitlist-help waitlist-status">
 </div>
 <div class="form-group">
-<label for="company">Company</label>
+<label for="company">Company <span class="sr-only">optional</span></label>
 <input type="text" id="company" name="company" placeholder="Your Company Name">
 </div>
 <button type="submit" class="form-submit">Join the waitlist</button>
@@ -187,17 +187,21 @@
 const form = document.getElementById('waitlist-form');
 const status = document.getElementById('waitlist-status');
 const submitButton = form.querySelector('.form-submit');
+const nameInput = document.getElementById('name');
+const emailInput = document.getElementById('email');
 const showStatus = (message, type) => {
   status.hidden = false;
   status.className = `waitlist-status ${type}`;
   status.textContent = message;
 };
+const markInvalid = (input, invalid = true) => { input.setAttribute('aria-invalid', invalid ? 'true' : 'false'); };
+[nameInput, emailInput].forEach((input) => { input.addEventListener('input', () => markInvalid(input, false)); });
 
 form.addEventListener('submit', async (event) => {
   event.preventDefault();
   status.hidden = true;
-  submitButton.disabled = true;
-  submitButton.textContent = 'Submitting...';
+  markInvalid(nameInput, false);
+  markInvalid(emailInput, false);
 
   const payload = {
     name: form.name.value.trim(),
@@ -205,6 +209,30 @@ form.addEventListener('submit', async (event) => {
     company: form.company.value.trim(),
     source: 'mobile-dispatch-board'
   };
+
+  if (!payload.name) {
+    markInvalid(nameInput);
+    showStatus('Please add your name so we know who to contact.', 'error');
+    nameInput.focus();
+    return;
+  }
+
+  if (!payload.email) {
+    markInvalid(emailInput);
+    showStatus('Please add a work email so we can send your early access update.', 'error');
+    emailInput.focus();
+    return;
+  }
+
+  if (!emailInput.validity.valid) {
+    markInvalid(emailInput);
+    showStatus('Please enter a valid work email address, like name@company.com.', 'error');
+    emailInput.focus();
+    return;
+  }
+
+  submitButton.disabled = true;
+  submitButton.textContent = 'Submitting waitlist request...';
 
   try {
     const response = await fetch(form.dataset.apiUrl, {
@@ -219,7 +247,7 @@ form.addEventListener('submit', async (event) => {
     }
 
     form.reset();
-    showStatus(data.message || 'Thanks — you are on the list.', 'success');
+    showStatus(data.message || "Thanks! You're on the waitlist. We'll be in touch soon.", 'success');
   } catch (error) {
     console.error(error);
     showStatus(error.message || 'Something went wrong. Please try again.', 'error');

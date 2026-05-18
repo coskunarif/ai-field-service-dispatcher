@@ -138,15 +138,15 @@ Gainhelm
 <section class="hero" id="top">
 <div class="hero-layout">
 <div class="hero-copy">
-<div class="brand-chip">AI dispatch app for HVAC, plumbing, and landscaping teams</div>
-<h1>AI dispatch app for small field service teams.</h1>
-<p>Gainhelm helps small field service teams turn service calls into scheduled jobs, assign the right technician, and keep the office and field aligned from intake to arrival.</p>
-<p><strong>What is Gainhelm?</strong> Gainhelm is an early-access AI dispatch app for HVAC, plumbing, landscaping, and field service teams that want a clearer way to organize calls, schedules, and handoffs without relying on spreadsheets and text threads.</p>
+<div class="brand-chip">AI dispatch app for 1–20 tech field-service teams</div>
+<h1>Turn service calls into assigned jobs faster.</h1>
+<p class="hero-lede">Gainhelm gives owners and office managers one clear dispatch flow: capture the call, see who can take it, assign the right technician, and keep everyone aligned from intake to arrival.</p>
+<p class="hero-subcopy"><strong>Built for HVAC, plumbing, and landscaping teams</strong> that are outgrowing texts, spreadsheets, whiteboards, and memory.</p>
 <div class="hero-actions">
-<a href="#waitlist" class="cta-primary">Join the waitlist</a>
-<a href="#how-it-works" class="cta-secondary">See how it works</a>
+<a href="#waitlist" class="cta-primary">Join the early-access waitlist</a>
+<a href="#how-it-works" class="cta-secondary">See how dispatch works</a>
 </div>
-<p class="cta-assurance">Early access waitlist · Built for 1–20 tech teams · No credit card needed</p>
+<p class="cta-assurance">Early access · For 1–20 tech teams · No credit card needed</p>
 <div class="hero-metrics" aria-label="Key product benefits">
 <div class="metric-card">
 <span>Intake</span>
@@ -378,11 +378,11 @@ Gainhelm
 <form id="waitlist-form" data-api-url="https://api.gainhelm.com/waitlist" novalidate>
 <div class="form-group">
 <label for="name">Full Name <span class="field-required" aria-hidden="true">*</span><span class="sr-only"> required</span></label>
-<input type="text" id="name" name="name" placeholder="John Smith" required>
+<input type="text" id="name" name="name" placeholder="John Smith" required aria-describedby="waitlist-status">
 </div>
 <div class="form-group">
 <label for="email">Work Email <span class="field-required" aria-hidden="true">*</span><span class="sr-only"> required</span></label>
-<input type="email" id="email" name="email" placeholder="john@company.com" required aria-describedby="waitlist-help">
+<input type="email" id="email" name="email" placeholder="john@company.com" required aria-describedby="waitlist-help waitlist-status">
 </div>
 <div class="form-group">
 <label for="company">Company</label>
@@ -403,19 +403,36 @@ const showStatus = (message, type) => {
   status.className = `waitlist-status ${type}`;
   status.textContent = message;
 };
+const markInvalid = (input, invalid = true) => {
+  input.setAttribute('aria-invalid', invalid ? 'true' : 'false');
+};
+[nameInput, emailInput].forEach((input) => {
+  input.addEventListener('input', () => markInvalid(input, false));
+});
 
 form.addEventListener('submit', async (event) => {
   event.preventDefault();
   status.hidden = true;
+  markInvalid(nameInput, false);
+  markInvalid(emailInput, false);
 
   if (!nameInput.value.trim()) {
+    markInvalid(nameInput);
     showStatus('Please add your name so we know who to contact.', 'error');
     nameInput.focus();
     return;
   }
 
   if (!emailInput.value.trim()) {
+    markInvalid(emailInput);
     showStatus('Please add a work email so we can send your early access update.', 'error');
+    emailInput.focus();
+    return;
+  }
+
+  if (!emailInput.validity.valid) {
+    markInvalid(emailInput);
+    showStatus('Please enter a valid work email address, like name@company.com.', 'error');
     emailInput.focus();
     return;
   }

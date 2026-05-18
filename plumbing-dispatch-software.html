@@ -141,11 +141,11 @@ Gainhelm
 <h1>Plumbing dispatch software and scheduling app for service calls.</h1>
 <p>Gainhelm helps plumbing teams assign jobs faster, reduce back-and-forth, organize work-order handoffs, and keep the schedule clean without spreadsheet chaos.</p>
 <p><strong>What is plumbing dispatch software?</strong> It is a daily scheduling workspace for service calls, plumber assignment, work orders, same-day changes, and office-to-field handoffs. Gainhelm focuses on that core dispatch workflow for small plumbing teams that want a clearer board.</p>
-<p>If you're comparing plumbing dispatch software, a plumbing scheduling app, or dispatch software for plumbers, this page highlights the workflow, mobile visibility, and board clarity to look for.</p>
 <div class="hero-actions">
 <a href="#waitlist" class="cta-primary">Join the waitlist</a>
 <a href="#how-it-works" class="cta-secondary">See how it works</a>
 </div>
+<p>If you're comparing plumbing dispatch software, a plumbing scheduling app, or dispatch software for plumbers, this page highlights the workflow, mobile visibility, and board clarity to look for.</p>
 <p class="hero-note">Built for teams that need a simple, modern way to run dispatch, coordinate technicians, and stay on top of daily jobs.</p>
 <div class="badge-row" aria-label="Industries served">
 <span class="badge">HVAC</span>
@@ -333,14 +333,14 @@ Gainhelm
 <form id="waitlist-form" data-api-url="https://api.gainhelm.com/waitlist" novalidate>
 <div class="form-group">
 <label for="name">Full Name <span class="field-required" aria-hidden="true">*</span><span class="sr-only"> required</span></label>
-<input type="text" id="name" name="name" placeholder="John Smith" required>
+<input type="text" id="name" name="name" placeholder="John Smith" required aria-describedby="waitlist-status">
 </div>
 <div class="form-group">
 <label for="email">Work Email <span class="field-required" aria-hidden="true">*</span><span class="sr-only"> required</span></label>
-<input type="email" id="email" name="email" placeholder="john@company.com" required aria-describedby="waitlist-help">
+<input type="email" id="email" name="email" placeholder="john@company.com" required aria-describedby="waitlist-help waitlist-status">
 </div>
 <div class="form-group">
-<label for="company">Company</label>
+<label for="company">Company <span class="sr-only">optional</span></label>
 <input type="text" id="company" name="company" placeholder="Your Company Name">
 </div>
 <button type="submit" class="form-submit">Join the waitlist</button>
@@ -358,25 +358,42 @@ const showStatus = (message, type) => {
   status.className = `waitlist-status ${type}`;
   status.textContent = message;
 };
+const markInvalid = (input, invalid = true) => {
+  input.setAttribute('aria-invalid', invalid ? 'true' : 'false');
+};
+[nameInput, emailInput].forEach((input) => {
+  input.addEventListener('input', () => markInvalid(input, false));
+});
 
 form.addEventListener('submit', async (event) => {
   event.preventDefault();
   status.hidden = true;
+  markInvalid(nameInput, false);
+  markInvalid(emailInput, false);
 
   if (!nameInput.value.trim()) {
+    markInvalid(nameInput);
     showStatus('Please add your name so we know who to contact.', 'error');
     nameInput.focus();
     return;
   }
 
   if (!emailInput.value.trim()) {
+    markInvalid(emailInput);
     showStatus('Please add a work email so we can send your early access update.', 'error');
     emailInput.focus();
     return;
   }
 
+  if (!emailInput.validity.valid) {
+    markInvalid(emailInput);
+    showStatus('Please enter a valid work email address, like name@company.com.', 'error');
+    emailInput.focus();
+    return;
+  }
+
   submitButton.disabled = true;
-  submitButton.textContent = 'Submitting...';
+  submitButton.textContent = 'Submitting waitlist request...';
 
   try {
     const formData = new FormData(form);
