@@ -1,3 +1,3 @@
 [services.mindful-imagination]
-root = "api"
+root = "."
 start_command = "node server.js"
