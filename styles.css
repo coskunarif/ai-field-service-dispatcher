@@ -218,7 +218,8 @@ header {
   flex-wrap: wrap;
 }
 
-.nav a {
+.nav a,
+.nav-menu summary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -227,6 +228,65 @@ header {
   color: hsl(var(--text-3));
   font-size: 0.9rem;
   font-weight: 700;
+}
+
+.nav-menu {
+  position: relative;
+}
+
+.nav-menu summary {
+  min-height: 44px;
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+}
+
+.nav-menu summary::-webkit-details-marker {
+  display: none;
+}
+
+.nav-menu summary::after {
+  content: '▾';
+  margin-left: 7px;
+  font-size: 0.72em;
+  color: hsl(var(--text-3));
+}
+
+.nav-menu[open] summary,
+.nav-menu summary.active {
+  background: hsl(var(--surface-2));
+  color: hsl(var(--text));
+  box-shadow: var(--shadow-sm);
+}
+
+.nav-menu-panel {
+  position: fixed;
+  left: 50%;
+  top: 104px;
+  z-index: 80;
+  width: min(760px, calc(100vw - 32px));
+  max-height: calc(100vh - 128px);
+  overflow: auto;
+  transform: translateX(-50%);
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+  padding: 12px;
+  border: 1px solid hsl(var(--line));
+  border-radius: 22px;
+  background: hsl(var(--surface) / 0.98);
+  box-shadow: var(--shadow-lg);
+}
+
+.nav-menu-panel a {
+  justify-content: flex-start;
+  border-radius: 14px;
+  white-space: normal;
+  text-align: left;
+}
+
+.nav-menu:not([open]) .nav-menu-panel {
+  display: none;
 }
 
 .nav-cta {
@@ -240,7 +300,8 @@ header {
   color: hsl(220 34% 10%);
 }
 
-.nav a:hover {
+.nav a:hover,
+.nav-menu summary:hover {
   background: hsl(var(--surface-2));
   color: hsl(var(--text));
   transform: translateY(-1px);
@@ -256,6 +317,10 @@ main {
   display: grid;
   gap: 24px;
   padding-bottom: 32px;
+}
+
+#main-content {
+  scroll-margin-top: 150px;
 }
 
 .hero {
@@ -1269,7 +1334,8 @@ section:not(.hero):not(.form-section) > * {
   border: none;
 }
 
-.form-submit:focus-visible {
+.form-submit:focus-visible,
+.waitlist-form button:focus-visible {
   outline: 3px solid hsl(var(--brand-3));
   outline-offset: 4px;
   box-shadow: 0 0 0 6px hsl(var(--brand) / 0.14), 0 18px 34px hsl(var(--cta) / 0.24);
@@ -1359,6 +1425,21 @@ footer {
   animation: rise 600ms ease-out both;
 }
 
+@media (max-width: 1100px) {
+  .nav-menu {
+    position: static;
+  }
+
+  .nav-menu-panel {
+    left: 16px;
+    right: 16px;
+    top: 148px;
+    width: auto;
+    max-height: min(58vh, 430px);
+    transform: none;
+  }
+}
+
 @media (max-width: 960px) {
   html {
     scroll-padding-top: 16px;
@@ -1386,7 +1467,8 @@ footer {
     display: none;
   }
 
-  .nav a {
+  .nav a,
+  .nav-menu summary {
     flex: 0 0 auto;
     min-height: 44px;
     padding: 10px 11px;
@@ -1394,6 +1476,21 @@ footer {
     text-align: center;
     line-height: 1.1;
     white-space: nowrap;
+  }
+
+  .nav-menu {
+    flex: 0 0 auto;
+    position: static;
+  }
+
+  .nav-menu-panel {
+    left: 8px;
+    right: 8px;
+    top: 118px;
+    width: auto;
+    max-height: min(58vh, 430px);
+    grid-template-columns: 1fr 1fr;
+    transform: none;
   }
 
   .hero {
@@ -1547,6 +1644,31 @@ footer {
 
   .form-card {
     padding: 24px 18px;
+  }
+}
+
+@media (forced-colors: active) {
+  .nav a.active,
+  .nav-menu summary.active,
+  .nav-menu[open] summary {
+    border: 2px solid CanvasText;
+    forced-color-adjust: auto;
+  }
+
+  .cta-primary,
+  .nav-cta,
+  .form-submit,
+  .waitlist-form button {
+    border: 2px solid ButtonText;
+  }
+
+  .nav-menu-panel {
+    border: 2px solid CanvasText;
+  }
+
+  .waitlist-form button:focus-visible {
+    outline: 3px solid Highlight !important;
+    outline-offset: 4px;
   }
 }
 
