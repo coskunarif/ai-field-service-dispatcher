@@ -16,6 +16,19 @@ Gainhelm is an AI dispatch app and software for field service teams.
 - https://gainhelm.com/hvac-dispatch-app-vs-spreadsheets
 - https://gainhelm.com/how-to-choose-hvac-dispatch-app
 - https://gainhelm.com/plumbing-dispatch-software
+- https://gainhelm.com/electrical-dispatch-software
+- https://gainhelm.com/appliance-repair-dispatch-software
+- https://gainhelm.com/pest-control-dispatch-software
+- https://gainhelm.com/garage-door-dispatch-software
+- https://gainhelm.com/cleaning-dispatch-software
+- https://gainhelm.com/landscaping-dispatch-software
+- https://gainhelm.com/roofing-dispatch-software
+- https://gainhelm.com/locksmith-dispatch-software
+- https://gainhelm.com/pool-service-dispatch-software
+- https://gainhelm.com/commercial-facilities-dispatch-software
+- https://gainhelm.com/septic-service-dispatch-software
+- https://gainhelm.com/emergency-restoration-dispatch-software
+- https://gainhelm.com/restoration-job-management-software
 - https://gainhelm.com/field-service-scheduling
 - https://gainhelm.com/how-hvac-dispatch-apps-reduce-phone-tag
 - https://gainhelm.com/mobile-dispatch-board
@@ -29,6 +42,18 @@ Gainhelm is an AI dispatch app and software for field service teams.
 - how to choose an hvac dispatch app
 - plumbing dispatch app
 - plumbing dispatch software
+- electrical dispatch software
+- appliance repair dispatch software
+- pest control dispatch software
+- garage door dispatch software
+- cleaning dispatch software
+- landscaping dispatch software
+- roofing dispatch software
+- locksmith dispatch software
+- pool service dispatch software
+- commercial facilities dispatch software
+- septic service dispatch software
+- restoration job management software
 - field service scheduling app
 - field service scheduling software
 - technician scheduling app
