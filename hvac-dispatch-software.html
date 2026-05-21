@@ -415,7 +415,7 @@ Gainhelm
 <div class="form-card">
 <h2>Get HVAC early access</h2>
 <p>Join the waitlist if your HVAC team wants a simpler dispatch board for service-call scheduling, technician assignment, and fewer phone-tag handoffs.</p>
-<form id="waitlist-form" data-api-url="/waitlist" novalidate>
+<form id="waitlist-form" action="/waitlist" method="post" data-api-url="/waitlist" novalidate>
 <div class="form-group">
 <label for="name">Full Name <span class="field-required" aria-hidden="true">*</span><span class="sr-only"> required</span></label>
 <input type="text" id="name" name="name" placeholder="John Smith" required>
