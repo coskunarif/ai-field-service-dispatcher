@@ -22,14 +22,26 @@ Use this when improving Gainhelm landing-page SEO/GEO copy without implementing 
 4. Keep claims conservative. Do not add public claims for unbuilt product scope such as payments, CRM, route optimization, technician app, or broad route-planning unless current product evidence explicitly supports it.
 5. Verify with tool-visible evidence after edits:
    - `node --check server.js`
+   - `npm run audit:seo-geo` for local sitemap/robots/llms/canonical/H1/JSON-LD/waitlist/Twitter-card checks
+   - optional live parity after deploy: `BASE_URL=https://gainhelm.com npm run audit:seo-geo`
    - local route returns HTTP 200, e.g. `/hvac-dispatch-software`
-   - HTML assertions for one H1, canonical, JSON-LD, key SEO/GEO copy, waitlist form/API, and CTA
-   - grep/assertions showing risky unbuilt-feature terms are absent or justified
+   - targeted HTML assertions for the changed route's key SEO/GEO copy, waitlist form/API, CTA, and risky unbuilt-feature claims
    - mobile screenshot/snapshot artifact when copy/layout changed
 6. For internal-link SEO support, prefer one contextual in-body link from a relevant support page to the target page; keep nav/card links unchanged. Proven examples:
    - `/hvac-dispatch-app-vs-spreadsheets` -> `/hvac-dispatch-software` with anchor `HVAC dispatch software`
    - `/field-service-scheduling` -> `/hvac-dispatch-software` with anchor `HVAC dispatch software`
 7. Commit only intentional source/artifact changes and show `git log --stat` plus clean tracked diff/status proof.
+
+## Fast crawl-surface audit
+
+This repo has a reusable audit command extracted from the 2026-05-20 live SEO/GEO Objective Loop run, where agents repeatedly hand-wrote Python checks for sitemap routes, robots, llms.txt coverage, metadata, JSON-LD, and waitlist-form preservation.
+
+```bash
+npm run audit:seo-geo
+BASE_URL=https://gainhelm.com npm run audit:seo-geo  # post-deploy/live parity
+```
+
+Use it before manual page-by-page review. It intentionally fails on crawl blockers and warns on softer snippet/intent issues; follow with route-specific checks only for pages you changed.
 
 ## Deployment path
 
