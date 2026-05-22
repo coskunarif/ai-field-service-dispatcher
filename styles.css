@@ -552,15 +552,27 @@ main {
 
 .cta-secondary {
   padding: 15px 24px;
+  background: hsl(var(--surface-2) / 0.86);
+  color: hsl(var(--text));
+  border-color: hsl(var(--line));
+  box-shadow: var(--shadow-sm);
+}
+
+.cta-secondary:hover {
+  background: hsl(var(--surface));
+  transform: translateY(-1px);
+}
+
+.hero .cta-secondary {
   background: hsl(0 0% 100% / 0.08);
   color: #fff;
   border-color: hsl(0 0% 100% / 0.14);
   backdrop-filter: blur(12px);
+  box-shadow: none;
 }
 
-.cta-secondary:hover {
+.hero .cta-secondary:hover {
   background: hsl(0 0% 100% / 0.13);
-  transform: translateY(-1px);
 }
 
 .hero-note {
@@ -1574,12 +1586,22 @@ footer {
     flex-wrap: nowrap;
     gap: 6px;
     overflow-x: auto;
-    padding-bottom: 2px;
-    scrollbar-width: none;
+    padding-bottom: 6px;
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--brand) / 0.45) transparent;
   }
 
   .nav::-webkit-scrollbar {
-    display: none;
+    height: 4px;
+  }
+
+  .nav::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .nav::-webkit-scrollbar-thumb {
+    background: hsl(var(--brand) / 0.45);
+    border-radius: 999px;
   }
 
   .nav a,
