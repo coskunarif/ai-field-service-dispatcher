@@ -445,6 +445,12 @@ const showStatus = (message, type) => {
 form.addEventListener('submit', async (event) => {
   event.preventDefault();
   status.hidden = true;
+
+  if (!form.reportValidity()) {
+    form.querySelector(':invalid')?.focus();
+    return;
+  }
+
   submitButton.disabled = true;
   submitButton.textContent = 'Submitting...';
 
