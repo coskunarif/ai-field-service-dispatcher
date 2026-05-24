@@ -122,7 +122,7 @@ const wantsHtml = (request) => String(request.headers.accept || '').includes('te
 const renderWaitlistResponsePage = ({ statusCode, title, heading, message, returnPath = '/' }) => {
   const indexHtml = readFileSync(join(root, 'index.html'), 'utf8');
   const header = (indexHtml.match(/<header>[\s\S]*?<\/header>/)?.[0] || '')
-    .replace('href="#waitlist" class="nav-cta"', 'href="/#waitlist" class="nav-cta"');
+    .replace('href="#waitlist-form" class="nav-cta"', 'href="/#waitlist-form" class="nav-cta"');
   const currentScript = indexHtml.match(/<script>\s*\(\(\) => \{[\s\S]*?currentPath = location\.pathname[\s\S]*?\}\)\(\);\s*<\/script>/)?.[0] || '';
   const safeReturnPath = normalizePath(returnPath);
 
@@ -144,7 +144,7 @@ ${header}
 <div class="brand-chip">${statusCode} waitlist update</div>
 <h1>${escapeHtml(heading)}</h1>
 <p>${escapeHtml(message)}</p>
-<div class="hero-actions"><a href="${escapeHtml(safeReturnPath)}#waitlist" class="cta-primary">Return to the waitlist</a><a href="/field-service-scheduling" class="cta-secondary">View scheduling software</a></div>
+<div class="hero-actions"><a href="${escapeHtml(safeReturnPath)}#waitlist-form" class="cta-primary">Return to the waitlist</a><a href="/field-service-scheduling" class="cta-secondary">View scheduling software</a></div>
 </div></div>
 </section>
 </main>
@@ -157,7 +157,7 @@ ${currentScript}
 const renderRecoveryPage = ({ pathname, statusCode, title, heading, message }) => {
   const indexHtml = readFileSync(join(root, 'index.html'), 'utf8');
   const header = (indexHtml.match(/<header>[\s\S]*?<\/header>/)?.[0] || '')
-    .replace('href="#waitlist" class="nav-cta"', 'href="/#waitlist" class="nav-cta"');
+    .replace('href="#waitlist-form" class="nav-cta"', 'href="/#waitlist-form" class="nav-cta"');
   const currentScript = indexHtml.match(/<script>\s*\(\(\) => \{[\s\S]*?currentPath = location\.pathname[\s\S]*?\}\)\(\);\s*<\/script>/)?.[0] || '';
   const safePath = escapeHtml(pathname);
 

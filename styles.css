@@ -221,6 +221,7 @@ header {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  min-height: 44px;
   padding: 10px 14px;
   border-radius: 999px;
   color: hsl(var(--text-3));
@@ -1171,6 +1172,12 @@ section:not(.hero):not(.form-section) > * {
   margin-bottom: 10px;
 }
 
+.info-card h3 a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+
 .info-card h3::before,
 .step h3::before {
   content: '';
@@ -1493,9 +1500,11 @@ footer {
 }
 
 .footer-links a {
+  min-width: 44px;
   min-height: 44px;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   color: hsl(var(--text-2));
   font-weight: 700;
 }
