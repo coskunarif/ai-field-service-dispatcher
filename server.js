@@ -238,7 +238,7 @@ fastify.post('/waitlist', async (request, reply) => {
         returnPath,
       }));
     }
-    return reply.status(500).send({ error: 'DATABASE_URL is required' });
+    return reply.send({ success: false, error: 'Waitlist storage is temporarily unavailable' });
   }
 
   try {

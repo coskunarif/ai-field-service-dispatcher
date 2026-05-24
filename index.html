@@ -398,6 +398,7 @@ Gainhelm
 <span>Small-team friendly</span>
 <span>Early access updates</span>
 </div>
+<div id="waitlist-status" class="waitlist-status" role="status" aria-live="polite" hidden></div>
 <form id="waitlist-form" action="/waitlist" method="post" data-api-url="/waitlist" novalidate>
 <div class="form-group">
 <label for="name">Full Name <span class="field-required" aria-hidden="true">*</span><span class="sr-only"> required</span></label>
@@ -414,7 +415,6 @@ Gainhelm
 <button type="submit" class="form-submit">Join the waitlist</button>
 </form>
 <div id="waitlist-help" class="waitlist-help">We’ll only use this to follow up about early access.</div>
-<div id="waitlist-status" class="waitlist-status" role="status" aria-live="polite" hidden></div>
 <script>
 const form = document.getElementById('waitlist-form');
 const status = document.getElementById('waitlist-status');
@@ -477,8 +477,13 @@ form.addEventListener('submit', async (event) => {
       body: JSON.stringify(payload),
     });
 
-    if (!response.ok) {
-      showStatus("We couldn't submit your request right now. Please try again in a moment.", 'error');
+    const result = await response.json().catch(() => ({}));
+
+    if (!response.ok || result.success === false) {
+      const message = result.error
+        ? `${result.error}. Please try again in a moment.`
+        : "We couldn't submit your request right now. Please try again in a moment.";
+      showStatus(message, 'error');
       return;
     }
 
