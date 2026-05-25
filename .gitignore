@@ -7,6 +7,9 @@ node_modules/
 # TillDone/runtime state
 .tilldone-lite-state.json
 
+# Local agent workspace skills are indexed by Vault, not committed here
+.agents/skills/
+
 # Generated proof artifacts: commit only curated SEO evidence bundles
 artifacts/*
 !artifacts/gainhelm-seo/
