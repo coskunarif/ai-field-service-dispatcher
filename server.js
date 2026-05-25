@@ -5,6 +5,7 @@ import { join } from 'path';
 
 const fastify = Fastify({ logger: true });
 const sql = process.env.DATABASE_URL ? postgres(process.env.DATABASE_URL) : null;
+const waitlistApiUrl = process.env.WAITLIST_API_URL || 'https://api.gainhelm.com/waitlist';
 const port = process.env.PORT ? parseInt(process.env.PORT) : 3000;
 const root = process.cwd();
 
@@ -228,20 +229,41 @@ fastify.post('/waitlist', async (request, reply) => {
     return reply.status(400).send({ error: 'Email is required' });
   }
 
-  if (!sql) {
-    if (wantsHtml(request)) {
-      return reply.status(503).type('text/html').send(renderWaitlistResponsePage({
-        statusCode: 503,
-        title: 'Waitlist temporarily unavailable',
-        heading: 'We could not save your waitlist request right now.',
-        message: 'Please return to the form and try again in a moment. Your browser stayed on Gainhelm instead of sending you to a dead end.',
-        returnPath,
-      }));
-    }
-    return reply.send({ success: false, error: 'Waitlist storage is temporarily unavailable' });
-  }
-
   try {
+    if (!sql) {
+      const response = await fetch(waitlistApiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, company }),
+      });
+
+      if (!response.ok) {
+        const result = await response.json().catch(() => ({}));
+        const message = result.error || 'Failed to save lead';
+        if (wantsHtml(request)) {
+          return reply.status(response.status).type('text/html').send(renderWaitlistResponsePage({
+            statusCode: response.status,
+            title: 'Waitlist submission failed',
+            heading: 'We had trouble saving your waitlist request.',
+            message: 'Please return to the form and try again in a moment.',
+            returnPath,
+          }));
+        }
+        return reply.status(response.status).send({ error: message });
+      }
+
+      if (wantsHtml(request)) {
+        return reply.type('text/html').send(renderWaitlistResponsePage({
+          statusCode: 200,
+          title: 'Waitlist request received',
+          heading: "You're on the waitlist.",
+          message: "Thanks for joining. We'll be in touch when early access is ready.",
+          returnPath,
+        }));
+      }
+      return { success: true };
+    }
+
     await sql`INSERT INTO waitlist_leads (name, email, company) VALUES (${name}, ${email}, ${company})`;
     if (wantsHtml(request)) {
       return reply.type('text/html').send(renderWaitlistResponsePage({
