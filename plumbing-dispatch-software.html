@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=Manrope:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/styles.css?v=20260525-waitlist">
+<link rel="stylesheet" href="/styles.css?v=20260526-polish">
 <script type="application/ld+json">{
   "@context": "https://schema.org",
   "@graph": [
@@ -373,6 +373,7 @@ Gainhelm
 <div class="form-card">
 <h2>Get early access</h2>
 <p>Join the waitlist to be first in line for Gainhelm, built to reduce call chaos and keep jobs moving.</p>
+<div id="waitlist-status" class="waitlist-status" role="status" aria-live="polite" hidden></div>
 <form id="waitlist-form" action="/waitlist" method="post" data-api-url="/waitlist" novalidate>
 <div class="form-group">
 <label for="name">Full Name <span class="field-required" aria-hidden="true">*</span><span class="sr-only"> required</span></label>
@@ -389,7 +390,6 @@ Gainhelm
 <button type="submit" class="form-submit">Join the waitlist</button>
 </form>
 <div id="waitlist-help" class="waitlist-help">We’ll only use this to follow up about early access.</div>
-<div id="waitlist-status" class="waitlist-status" role="status" aria-live="polite" hidden></div>
 <script>
 const form = document.getElementById('waitlist-form');
 const status = document.getElementById('waitlist-status');
@@ -436,7 +436,8 @@ form.addEventListener('submit', async (event) => {
   }
 
   submitButton.disabled = true;
-  submitButton.textContent = 'Submitting waitlist request...';
+  submitButton.textContent = 'Submitting...';
+  showStatus('Submitting your waitlist request...', 'pending');
 
   try {
     const formData = new FormData(form);
@@ -452,8 +453,13 @@ form.addEventListener('submit', async (event) => {
       body: JSON.stringify(payload),
     });
 
-    if (!response.ok) {
-      showStatus("We couldn't submit your request right now. Please try again in a moment.", 'error');
+    const result = await response.json().catch(() => ({}));
+
+    if (!response.ok || result.success === false) {
+      const message = result.error
+        ? `${result.error}. Please try again in a moment.`
+        : "We couldn't submit your request right now. Please try again in a moment.";
+      showStatus(message, 'error');
       return;
     }
 

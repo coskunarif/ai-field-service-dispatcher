@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=Manrope:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/styles.css?v=20260525-waitlist">
+<link rel="stylesheet" href="/styles.css?v=20260526-polish">
 <script type="application/ld+json">{
   "@context": "https://schema.org",
   "@graph": [
@@ -159,7 +159,7 @@ Gainhelm
 <section class="hero" id="top">
 <div class="hero-layout">
 <div class="hero-copy">
-<div class="brand-chip">AI dispatch app for 1–20 tech field-service teams</div>
+<div class="brand-chip">AI dispatch for 1–20 tech teams</div>
 <h1>Turn service calls into assigned jobs faster.</h1>
 <p class="hero-lede">Gainhelm gives owners and office managers one clear dispatch flow: capture the call, see who can take it, assign the right technician, and keep everyone aligned from intake to arrival.</p>
 <p class="hero-subcopy"><strong>Built for HVAC, plumbing, and landscaping teams</strong> that are outgrowing texts, spreadsheets, whiteboards, and memory.</p>
@@ -462,6 +462,7 @@ form.addEventListener('submit', async (event) => {
 
   submitButton.disabled = true;
   submitButton.textContent = 'Submitting...';
+  showStatus('Submitting your waitlist request...', 'pending');
 
   try {
     const formData = new FormData(form);

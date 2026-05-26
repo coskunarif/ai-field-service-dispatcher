@@ -322,10 +322,11 @@ header {
   }
 }
 
-.nav-cta {
+.nav a.nav-cta {
   background: linear-gradient(135deg, hsl(var(--cta)), hsl(var(--cta-2)));
   color: hsl(220 34% 10%) !important;
-  box-shadow: 0 12px 24px hsl(var(--cta) / 0.18);
+  font-weight: 800;
+  box-shadow: 0 14px 28px hsl(var(--cta) / 0.24), inset 0 1px 0 hsl(0 0% 100% / 0.24);
 }
 
 .nav-cta:hover {
@@ -1282,9 +1283,17 @@ section:not(.hero):not(.form-section) > * {
 
 .form-section {
   width: min(calc(100% - 24px), 860px);
-  margin: 0 auto;
+  margin: 0 auto clamp(180px, 34vh, 300px);
   padding: 0 0 12px;
-  scroll-margin-top: 128px;
+  scroll-margin-top: 150px;
+}
+
+#waitlist-form {
+  scroll-margin-top: clamp(340px, 56vh, 560px);
+}
+
+.compact-waitlist {
+  scroll-margin-top: 28px;
 }
 
 .form-card {
@@ -1527,6 +1536,12 @@ section:not(.hero):not(.form-section) > * {
   border-color: hsl(0 80% 88%);
 }
 
+.waitlist-status.pending {
+  background: hsl(var(--brand) / 0.12);
+  color: hsl(var(--brand-2));
+  border-color: hsl(var(--brand) / 0.24);
+}
+
 footer {
   width: min(calc(100% - 24px), var(--container));
   margin: 0 auto 18px;
@@ -1658,22 +1673,12 @@ footer {
     flex-wrap: nowrap;
     gap: 6px;
     overflow-x: auto;
-    padding-bottom: 6px;
-    scrollbar-width: thin;
-    scrollbar-color: hsl(var(--brand) / 0.45) transparent;
+    padding-bottom: 2px;
+    scrollbar-width: none;
   }
 
   .nav::-webkit-scrollbar {
-    height: 4px;
-  }
-
-  .nav::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  .nav::-webkit-scrollbar-thumb {
-    background: hsl(var(--brand) / 0.45);
-    border-radius: 999px;
+    display: none;
   }
 
   .nav a,

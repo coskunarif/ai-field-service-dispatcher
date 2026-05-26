@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=Manrope:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/styles.css?v=20260525-waitlist">
+<link rel="stylesheet" href="/styles.css?v=20260526-polish">
 <script type="application/ld+json">{
   "@context": "https://schema.org",
   "@graph": [
@@ -191,13 +191,14 @@ Gainhelm
 <section class="hero" id="top">
 <div class="hero-layout">
 <div class="hero-copy">
-<div class="brand-chip">AI dispatch app for field service teams</div>
+<div class="brand-chip">HVAC dispatch for small teams</div>
 <h1>HVAC dispatch app and software for small service teams.</h1>
-<p>Gainhelm helps small HVAC teams schedule service calls, assign technicians faster, reduce phone tag, and keep the dispatch board readable without relying on spreadsheets or scattered texts.</p>
+<p class="hero-lede">Gainhelm helps small HVAC teams schedule service calls, assign technicians faster, reduce phone tag, and keep the dispatch board readable without relying on spreadsheets or scattered texts.</p>
 <div class="hero-actions">
 <a href="#waitlist" class="cta-primary">Join the waitlist</a>
 <a href="#how-it-works" class="cta-secondary">See how it works</a>
 </div>
+<p class="cta-assurance">Early access · Built for 1–20 tech HVAC teams · No credit card needed</p>
 <p><strong>What is HVAC dispatch software?</strong> It is a daily scheduling workspace for service calls, technician assignment, same-day changes, and office-to-field handoffs. Gainhelm focuses on that core dispatch workflow for small HVAC teams that want a clearer board before adding more tools.</p>
 <p>If you're comparing an HVAC dispatch app, HVAC scheduling software, or dispatch programs for HVAC, look for a clean workflow, quick technician assignment, mobile updates, and a board your office can scan without extra back-and-forth. If your team uses tablets in the field, review the <a href="/mobile-dispatch-board">HVAC dispatch software for iPad and mobile</a> guide for the tablet-readability checks that matter. For broader scheduling needs, compare the <a href="/field-service-scheduling">field service scheduling software</a> page, or join the <a href="#waitlist">HVAC dispatch waitlist</a> when you are ready for early access.</p>
 <p>For small HVAC offices, that usually means one clear place to see open jobs, same-day changes, and who should handle the next service call.</p>
@@ -415,14 +416,20 @@ Gainhelm
 <div class="form-card">
 <h2>Get HVAC early access</h2>
 <p>Join the waitlist if your HVAC team wants a simpler dispatch board for service-call scheduling, technician assignment, and fewer phone-tag handoffs.</p>
+<div class="form-proof" aria-label="Waitlist expectations">
+<span>No credit card</span>
+<span>Small-team friendly</span>
+<span>Early access updates</span>
+</div>
+<div id="waitlist-status" class="waitlist-status" role="status" aria-live="polite" hidden></div>
 <form id="waitlist-form" action="/waitlist" method="post" data-api-url="/waitlist" novalidate>
 <div class="form-group">
 <label for="name">Full Name <span class="field-required" aria-hidden="true">*</span><span class="sr-only"> required</span></label>
-<input type="text" id="name" name="name" autocomplete="name" placeholder="John Smith" required>
+<input type="text" id="name" name="name" autocomplete="name" placeholder="John Smith" required aria-describedby="waitlist-status">
 </div>
 <div class="form-group">
 <label for="email">Work Email <span class="field-required" aria-hidden="true">*</span><span class="sr-only"> required</span></label>
-<input type="email" id="email" name="email" autocomplete="email" inputmode="email" placeholder="john@company.com" required aria-describedby="waitlist-help">
+<input type="email" id="email" name="email" autocomplete="email" inputmode="email" placeholder="john@company.com" required aria-describedby="waitlist-help waitlist-status">
 </div>
 <div class="form-group">
 <label for="company">Company</label>
@@ -431,28 +438,54 @@ Gainhelm
 <button type="submit" class="form-submit">Join the waitlist</button>
 </form>
 <div id="waitlist-help" class="waitlist-help">We’ll only use this to follow up about early access.</div>
-<div id="waitlist-status" class="waitlist-status" role="status" aria-live="polite" hidden></div>
 <script>
 const form = document.getElementById('waitlist-form');
 const status = document.getElementById('waitlist-status');
 const submitButton = form.querySelector('.form-submit');
+const emailInput = document.getElementById('email');
+const nameInput = document.getElementById('name');
 const showStatus = (message, type) => {
   status.hidden = false;
   status.className = `waitlist-status ${type}`;
   status.textContent = message;
 };
+const markInvalid = (input, invalid = true) => {
+  input.setAttribute('aria-invalid', invalid ? 'true' : 'false');
+};
+[nameInput, emailInput].forEach((input) => {
+  input.addEventListener('input', () => markInvalid(input, false));
+});
 
 form.addEventListener('submit', async (event) => {
   event.preventDefault();
   status.hidden = true;
+  markInvalid(nameInput, false);
+  markInvalid(emailInput, false);
 
-  if (!form.reportValidity()) {
-    form.querySelector(':invalid')?.focus();
+  if (!nameInput.value.trim()) {
+    markInvalid(nameInput);
+    showStatus('Please add your name so we know who to contact.', 'error');
+    nameInput.focus();
+    return;
+  }
+
+  if (!emailInput.value.trim()) {
+    markInvalid(emailInput);
+    showStatus('Please add a work email so we can send your early access update.', 'error');
+    emailInput.focus();
+    return;
+  }
+
+  if (!emailInput.validity.valid) {
+    markInvalid(emailInput);
+    showStatus('Please enter a valid work email address, like name@company.com.', 'error');
+    emailInput.focus();
     return;
   }
 
   submitButton.disabled = true;
   submitButton.textContent = 'Submitting...';
+  showStatus('Submitting your waitlist request...', 'pending');
 
   try {
     const formData = new FormData(form);
@@ -468,8 +501,13 @@ form.addEventListener('submit', async (event) => {
       body: JSON.stringify(payload),
     });
 
-    if (!response.ok) {
-      showStatus("We couldn't submit your request right now. Please try again in a moment.", 'error');
+    const result = await response.json().catch(() => ({}));
+
+    if (!response.ok || result.success === false) {
+      const message = result.error
+        ? `${result.error}. Please try again in a moment.`
+        : "We couldn't submit your request right now. Please try again in a moment.";
+      showStatus(message, 'error');
       return;
     }
 
