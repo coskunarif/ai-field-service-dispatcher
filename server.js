@@ -89,6 +89,10 @@ const pages = {
   '/field-service-scheduling': 'field-service-scheduling.html',
   '/how-hvac-dispatch-apps-reduce-phone-tag': 'how-hvac-dispatch-apps-reduce-phone-tag.html',
   '/mobile-dispatch-board': 'mobile-dispatch-board.html',
+  '/servicetitan-alternative': 'servicetitan-alternative.html',
+  '/jobber-alternative': 'jobber-alternative.html',
+  '/housecallpro-alternative': 'housecallpro-alternative.html',
+  '/servicefusion-alternative': 'servicefusion-alternative.html',
 };
 
 for (const [route, file] of Object.entries(pages)) {

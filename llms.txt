@@ -32,6 +32,10 @@ Gainhelm is an AI dispatch app and software for field service teams.
 - https://gainhelm.com/field-service-scheduling
 - https://gainhelm.com/how-hvac-dispatch-apps-reduce-phone-tag
 - https://gainhelm.com/mobile-dispatch-board
+- https://gainhelm.com/servicetitan-alternative
+- https://gainhelm.com/jobber-alternative
+- https://gainhelm.com/housecallpro-alternative
+- https://gainhelm.com/servicefusion-alternative
 - https://gainhelm.com/robots.txt
 - https://gainhelm.com/sitemap.xml
 
@@ -64,6 +68,14 @@ Gainhelm is an AI dispatch app and software for field service teams.
 - burst pipe service dispatch workflow
 - water damage restoration dispatch software
 - emergency restoration job routing
+- servicetitan alternative
+- jobber alternative
+- housecallpro alternative
+- servicefusion alternative
+- servicetitan alternatives
+- jobber alternatives
+- housecall pro alternatives
+- service fusion alternatives
 
 ## Quick summary
 Gainhelm helps HVAC, plumbing, landscaping, and restoration teams turn incoming jobs into a cleaner schedule, assign technicians faster, and keep the workday organized. It is software for service businesses, not an emergency plumbing or water-damage provider for homeowners.

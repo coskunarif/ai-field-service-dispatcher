@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "start": "node server.js",
-    "audit:seo-geo": "node scripts/gainhelm-seo-geo-audit.mjs"
+    "audit:seo-geo": "node scripts/gainhelm-seo-geo-audit.mjs",
+    "find-leads": "node scripts/find-social-leads.mjs"
   },
   "dependencies": {
     "fastify": "^5.0.0",
