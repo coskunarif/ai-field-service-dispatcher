@@ -1,0 +1,117 @@
+target,url,type,status,notes
+Capterra/G2 Digital Markets,https://app.g2digitalmarkets.com/get-listed/start,directory,needs-login,Filled initial form; error says sign in instead
+G2,https://www.g2.com/products/new,directory,needs-human,DataDome verification
+SourceForge,https://sourceforge.net/software/vendors/new,directory,needs-human,Cloudflare verification
+SaaSworthy,https://www.saasworthy.com/submit,software-directory,needs-human,Cloudflare challenge.
+Crozdesk,https://crozdesk.com/claim-listing,directory,investigate,/vendors 404; claim-listing candidate
+SoftwareSuggest,https://www.softwaresuggest.com/,directory,listed-confirmed-email,"Received SoftwareSuggest onboarding email from Ron Holmes congratulating ProfitHelm on listing; upsell/call offer only, no action needed unless paid demand-gen desired."
+AlternativeTo,https://alternativeto.net/,directory,needs-account,Submit via account/dashboard
+Product Hunt,https://www.producthunt.com/,launch,needs-account,"Need sign in, product new URL changed"
+BetaList,https://betalist.com/,launch,needs-account,Homepage accessible; Submit Startup present but no navigation without sign-in/JS; mark account-gated.
+SaaSHub,https://www.saashub.com/,directory,needs-account,Submit page accessible; product submission appears account-gated via Register/Login.
+Reddit r/HVAC,https://www.reddit.com/r/HVAC/comments/1f2hzmb/what_dispatchservice_software_does_your_company/,community,rejected,Archived; cannot comment
+Quora plumbers apps,https://www.quora.com/What-are-some-useful-mobile-software-apps-that-help-plumbers-to-do-their-work,community,needs-account,Accessible; sign-in required
+Spiceworks HVAC software,https://community.spiceworks.com/t/hvac-business-what-software-do-you-use/266391,community,needs-account,Live thread; Reply visible; Log In/Join required.
+PlumbingZone FSM thread,https://www.plumbingzone.com/threads/field-service-management-software.89410/,community,needs-account,Live thread; Reply visible; Login/Join required.
+LaunchPedia,https://launchpedia.co/submit/,directory,outreach-sent,Embedded submit form unusable; emailed launchpediateam@gmail.com with GainHelm details.
+StartupRanked,https://startupranked.com/submit,directory,outreach-sent,Submit redirects to sign-in; emailed sebastian@startupranked.com with GainHelm details.
+Launch Llama,https://tools.launchllama.co/,directory/newsletter,needs-account,Submit dialog requires Google/email sign-in.
+B2B SaaS Market,https://b2bsaasmarket.com/submit,directory,submitted,"Submitted GainHelm free listing; redirected to home after JS click. Category Project Management, Freemium, free trial."
+HowToBuySaaS,https://www.howtobuysaas.com/list-your-saas/,directory,skipped-paid,Listing requires paid partnership program ($29 or $199 lifetime); skipped to avoid billing decision.
+Toolvoro,https://toolvoro.com/contact/,directory/review,attempted-unclear,"Filled contact form for submit a tool; form did not show success after click, may require hidden validation. Screenshot saved."
+SaaS Lee,https://saaslee.com/contact/,directory/review,outreach-sent,Emailed growingpress@gmail.com with GainHelm details.
+LeaGron,https://leagron.com/software-product-listing/,directory,skipped-paid,Requires $10/$20 paid listing; skipped billing decision.
+FindASaaS,https://findasaas.com/advertise,directory/ad,skipped-paid,No-registration path is $5/week Stripe ad; submit/listing appears account-gated.
+MicroSaaS Directory,https://microsaasdirectory.com/register,directory,needs-account,Submit routes require registration.
+LeadrPro,https://www.leadrpro.com/contact,software-directory,contact-submitted,Contact form submitted; visible success confirmation within 24h.
+AIForest,https://www.aiforest.app/submit-tool,ai-directory,blocked-custom-form,"Generated/uploaded assets, but category/keyword/pricing custom comboboxes not operable via current browser path."
+VenkatSoftware,https://www.venkatsoftware.com/contact,software-directory,outreach-sent,Add Software requires login; emailed Venkat@venkatsoftware.com with GainHelm details.
+DigitalJudas,https://digitaljudas.com/submit,directory,blocked-custom-form-human,Quick-add extracted details; blocked by category/screenshot requirements and hCaptcha on contact.
+Startup Starter Kit,https://www.thestartupstarterkit.com/,directory,broken-submit,Footer Submit a Tool path stayed on 404/contact; no email found.
+AI Launch Zone,https://ailaunchzone.com/submit,ai-directory,attempted-unclear,Form filled and submit clicked; no visible success/error.
+AI Tools Directory,https://aitoolsdirectory.com/submit-tool,ai-directory,skipped-policy,Free form exists but explicitly rejects AI-generated descriptions; needs human-written copy.
+AICentralResources,https://www.aicentralresources.com/submit-tool,ai-directory,blocked-upload,Completed basics/details/category; required logo upload hidden input caused CDP hang before final submit.
+Tuvavo,https://tuvavo.com/contact,ai-directory,outreach-sent,Submit form gave no visible confirmation; emailed submit@tuvavo.com.
+AI ToolsXplorer,https://www.aitoolsxplorer.in/submit-tool,ai-directory,outreach-sent,Form category control was unreliable; emailed contact@aitoolsxplorer.in.
+Tools AI Online,https://www.tools-ai.online/submit-tool,ai-directory,outreach-sent,Form has reCAPTCHA and required screenshot; emailed info@tools-ai.online.
+AI You Imagine,https://aiyouimagine.com/submit,ai-directory,attempted-unclear,Filled free submission fields; category selector did not visibly persist and no success/error after submit.
+Resource.fyi,https://resource.fyi/support,resource-directory,attempted-form-error,Contact form filled but returned JSON invalid form 400.
+LaunchRocket,https://launchrocket.io/dashboard/products/new,launch-directory,needs-account,Submit Tool redirects to login/sign-up.
+ProductLaunchList,https://productlaunchlist.com/,paid-placement-network,skipped-paid,Placement/order/backlink service; paid/billing decision skipped.
+LaunchDirectories,https://launchdirectories.com/,directory-of-directories,research-source-only,"Used for discovery; submit link is for submitting a directory, not GainHelm product."
+Field Tech Tools,https://www.fieldtechtools.land/submit,field-service-directory,submitted,Submitted GainHelm under Field Service Management; visible confirmation: Submission Received.
+AiSoftO,https://aisofto.com/submit/,ai-directory,needs-account,Submit Tool redirects to login.
+The Claim Directory,https://theclaim.directory/submit,claims-restoration-directory,attempted-unclear,Submitted resource form for GainHelm; no visible success/error confirmation.
+ConTechStack,https://www.contechstack.com/submit/tool,construction-tech-directory,needs-account,Submit a Tool requires login/sign-up.
+All The AI Tools,https://alltheaitools.com/,ai-directory,needs-account,Submit Tool button leads to login/account flow.
+AI Hunter,https://ai-hunter.io/submit-a-tool/,ai-directory,attempted-unclear,Filled free submission form and clicked submit; no visible success/error.
+GPTBot,https://gptbot.io/submit-ai-tool,ai-directory,attempted-unclear,Filled standard/free submission waitlist form and clicked Join Waitlist; no visible success/error.
+AIDirectoryNow,https://www.aidirectorynow.com/submit-your-website,ai-directory,broken-submit,Submit Your Website route returns 404.
+HyzenPro,https://hyzenpro.com/submit-ai-tool/,ai-directory,outreach-sent,Filled intake form but no visible confirmation; emailed submissions@hyzenpro.com with full details.
+AISuperHub,https://www.aisuperhub.io/ai-tools/submit,ai-directory,broken-submit,Submit for Free link did not open an intake form; premium is paid so skipped.
+The Next AI,https://thenextai.com/,ai-directory,submitted-confirmed-email,"Received email ID 722: Submission Received, under review, free listings 3-5 business days."
+AITopTools,https://aitoptools.com/login?redirect_to=submit,ai-directory,needs-account-human,Submit requires login; contact form has reCAPTCHA. Paid 100+ directory service skipped.
+SubmitATool,https://submitatool.com/,directory-submission-service,research-source-only,Service/directory index; direct submission requires sign-up/service. Used for discovery only.
+Neil Patel AI Tools,https://aitools.neilpatel.com/submit/,ai-directory,needs-human,Cloudflare/Turnstile challenge.
+FinancesOnline,https://financesonline.com/add-product/,software-directory,needs-human,Add product form has reCAPTCHA.
+Business-Software.com,https://www.business-software.com/add-your-product/,software-directory,needs-human,Free add product form has image CAPTCHA.
+FiveTaco,https://fivetaco.com/submit,software-directory,needs-account,"URL submitted, then sign-up required to continue."
+Launching Next,https://www.launchingnext.com/submit/,startup-directory,attempted-unclear,Filled free startup submission form and clicked submit; page reset/no visible success.
+ToolPilot,https://www.toolpilot.ai/pages/submit-your-ai-tool,ai-directory,blocked-backlink-required,Free listing requires adding ToolPilot backlink/badge to GainHelm site before submission; paid tiers skipped.
+Uneed,https://www.uneed.best/submit-a-tool,launch-directory,needs-account,Submit requires login/account.
+AILibri,mailto:hi@ailibri.com,ai-directory,outreach-sent,Emailed GainHelm submission to hi@ailibri.com from SubmitATool index.
+AI Tool Mall,mailto:business@aitoolmall.com,ai-directory,outreach-sent,Emailed GainHelm submission to business@aitoolmall.com from SubmitATool index.
+Early Tools,https://www.early.tools/submit,startup-directory,needs-account,Submit route requires magic-link sign-in.
+AI Valley,https://aivalley.ai/submit-tool/,ai-directory,attempted-unclear,Filled and submitted simple contact form; fields cleared/no visible success.
+Raiday,https://raiday.ai/submit-ai-tool/,ai-directory,broken-submit,Page only showed reload/error.
+BestOfAI,mailto:hello@bestofai.com,ai-directory,outreach-sent,Add Tool path requires sign-in; emailed hello@bestofai.com.
+Simple Lister,https://simplelister.com/submit,directory,needs-account,Submit Product route requires sign-in/sign-up.
+Startup Collections,https://startupcollections.com/submit/,startup-directory,investigate,Submit page present but no usable visible product fields found in automation pass.
+The Rundown Supertools,https://supertools.therundown.ai/submit,ai-directory,needs-human,Submit path points to Typeform/Learn More; on-page form appears newsletter only.
+ChatGate AI,https://chatgate.ai/submit-your-tool/,ai-directory,broken-submit,Submit route returns 404.
+Tools.so,https://tools.so/submit,directory,submitted,Submitted GainHelm via Tally iframe; confirmation: Thanks for completing this form.
+NextGenTool,https://nextgentool.io/submit/,ai-directory,broken-domain,Domain appears parked/for sale.
+ChatAIApps / AIArtApps,mailto:hey@aiartapps.com,ai-directory,bounced,Email to hey@aiartapps.com bounced: 550 5.1.1 account does not exist.
+ToolsAI.net,https://toolsai.net/add-listing/,ai-directory,blocked-security,Chrome privacy/certificate warning.
+ToolsFine,https://toolsfine.com/submit-ai-tools-or-product,ai-directory,skipped-paid,Submit flow is paid only ($10 PayPal checkout).
+YourAITool,https://youraitool.com/submit-tool,ai-directory,broken-submit,Submit URL returns 410 Gone.
+Alternative.me,https://alternative.me/how-to/submit-software/,software-directory,needs-account,Submit software instructions require sign up/account.
+Webwiki,https://webwiki.com/info/add-website.html,web-directory,needs-human,Cloudflare/Turnstile challenge.
+Sitelike,https://www.sitelike.org/add-site/,web-directory,needs-human,Cloudflare/Turnstile challenge.
+Afford Hunt,https://www.affordhunt.com/submit,directory,broken-submit,Submit URL returns 404.
+StartupBase,https://startupbase.io/submissions/start,startup-directory,needs-account,Submission flow requires login/email verification.
+StartupRanking,https://www.startupranking.com/submit,startup-directory,needs-human,Cloudflare/Turnstile challenge.
+AI Tool Net,https://www.aitoolnet.com/submit,ai-directory,needs-human,Cloudflare/Turnstile challenge.
+AI Directory (.org),https://www.aidirectory.org/user-submit/,ai-directory,needs-human,Submission form includes Google reCAPTCHA.
+Faind AI,https://faind.ai/submit-a-tool/,ai-directory,broken-domain,Domain appears parked/for sale.
+Startup AI Tools,https://www.startupaitools.com/submit-ai-tools/,ai-directory,skipped-paid,Submission product is paid only ($6).
+Every AI,https://every-ai.com/submit-tool/,ai-directory,broken-submit,Submit page does not exist.
+Trackbes,https://trackbes.com/submit-tool,ai-directory,broken-domain,Domain appears parked/for sale.
+AI Tools Up,https://aitoolsup.com/submit-tool/,ai-directory,needs-account,Submit flow links to WordPress login.
+Toolsummary,https://toolsummary.com/submit-ai-tool/,ai-directory,outreach-sent,Form has reCAPTCHA; successfully emailed submission details to info.toolsummary@gmail.com.
+SoftwareWorld,https://softwareworld.co/submit-software/,software-directory,needs-human,Cloudflare/Turnstile challenge.
+StartupTracker,https://startuptracker.io/crowdsourcing/,startup-directory,blocked-custom-form,"Advanced multi-step form reached links step; uploaded logo and filled basics/founder info, but custom YES/NO widgets would not persist/progress."
+SaaS AI Tools,https://saasaitools.com/submit,saas-ai-directory,needs-account,Submit redirects to join/create account form.
+PitchWall / BetaPage,https://pitchwall.co/product/submit?plan=free,startup-directory,needs-account,Free product submit path redirects to login/social auth.
+Bizz.dev,https://bizz.dev/submit,startup-directory,blocked-access,Access denied.
+Cloudways SaaS submit,https://www.cloudways.com/en/saas-submit.php,saas-directory,needs-human,Cloudflare/Turnstile challenge.
+DiscoverCloud,https://www.discovercloud.com/submit,software-directory,needs-account,Submit page surfaces sign-up/sign-in; no direct product form.
+AllTopStartups,https://alltopstartups.com/submit-startup/,startup-directory,investigate,Submit page has content/links but no obvious direct form in first pass; may require contact/story route.
+TechPluto,https://www.techpluto.com/submit-startup/,startup-directory,attempted-unclear,"Filled embedded Google Form with GainHelm startup details and clicked Submit; no visible confirmation, form appeared reset/page returned to top."
+The Startup Pitch,https://thestartuppitch.com/post-a-pitch/,startup-directory,blocked-security,Chrome privacy/certificate warning.
+Startup Buffer,https://startupbuffer.com/site/submit,startup-directory,needs-human,Cloudflare/Turnstile challenge.
+Get Worm,https://getworm.com/submit-startup/,startup-directory,needs-account,Startup submission requires account signup/login.
+KillerStartups,https://killerstartups.com/submit-startup/,startup-directory,investigate,Submit page loaded; initial scan showed no simple form fields in first viewport/DOM slice.
+Startup Resources,https://startupresources.io/add-resource/,startup-directory,broken-submit,Add Resource Typeform is closed.
+Startup Radar,https://startup-radar.com/submit-startup/,startup-directory,blocked-timeout,Browser/CDP timed out during inspection.
+Startup Ideas,https://startupideas.com/submit,startup-directory,broken-submit,Submit URL page not found; only login/contact links visible.
+Startup Inspire,https://www.startupinspire.com/submit,startup-directory,skipped-paid,"Submit startup routes to pricing/account; paid/listing path, no free direct form found."
+Startuplist,https://startuplist.com/submit,startup-directory,broken-submit,Bare/empty parked-looking page; no usable form.
+Tiny Startups,https://tinystartups.com/submit,startup-directory,needs-account-paid,Submit page requires sign-in; visible paid options Featured £199 / Premium £499.
+My Startup Tool,https://mystartuptool.com/submit/,startup-directory,blocked-security,Chrome privacy/certificate warning.
+SaaS Directory,https://www.saasdirectory.com/suggest-an-app.php,saas-directory,broken-submit,Suggest-an-app page loads header/cookie only; no usable form after accepting cookie.
+SaaSGenius,https://www.saasgenius.com/get-listed/,saas-directory,skipped-paid,"Get Listed page says free listings are not currently accepted; paid listing service via contact@saasgenius.com, skipped billing decision."
+SaaS Mag,https://www.saasmag.com/submit/,saas-directory,broken-submit,Submit URL 404; contact/contribution links exist but no product listing form.
+SaaS Review,https://saasreview.com/submit,saas-directory,broken-domain,Domain for sale via HugeDomains.
+SaaS Scout,https://saasscout.com/submit/,saas-directory,needs-account,Submit redirects to login.
+SaaS Venture,https://saasventure.com/submit/,saas-directory,broken-domain,Domain for sale via HugeDomains.
