@@ -8,9 +8,64 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="canonical" href="https://gainhelm.com/" />
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://gainhelm.com/#organization",
+          "name": "Gainhelm",
+          "url": "https://gainhelm.com/"
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://gainhelm.com/#website",
+          "url": "https://gainhelm.com/",
+          "name": "Gainhelm",
+          "publisher": {
+            "@id": "https://gainhelm.com/#organization"
+          }
+        },
+        {
+          "@type": "WebPage",
+          "@id": "https://gainhelm.com/#webpage",
+          "url": "https://gainhelm.com/",
+          "name": "Gainhelm — AI Dispatch Software for Field Service Teams",
+          "description": "AI dispatch app and software for HVAC, plumbing, and landscaping teams. Assign work faster, cut phone tag, and keep schedules clear.",
+          "isPartOf": {
+            "@id": "https://gainhelm.com/#website"
+          },
+          "about": {
+            "@id": "https://gainhelm.com/#software"
+          }
+        },
+        {
+          "@type": "SoftwareApplication",
+          "@id": "https://gainhelm.com/#software",
+          "name": "Gainhelm",
+          "applicationCategory": "BusinessApplication",
+          "operatingSystem": "Web",
+          "url": "https://gainhelm.com/",
+          "description": "AI-powered dispatch board and scheduling software for small field service teams.",
+          "featureList": [
+            "Visual Dispatch Board",
+            "Technician Mobile View",
+            "AI Scheduling Assistance"
+          ],
+          "provider": {
+            "@id": "https://gainhelm.com/#organization"
+          }
+        }
+      ]
+    }
+    </script>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <h1>Gainhelm — AI Dispatch Software for Field Service Teams</h1>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
