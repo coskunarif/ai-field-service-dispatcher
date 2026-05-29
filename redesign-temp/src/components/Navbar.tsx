@@ -1,17 +1,40 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Wrench } from 'lucide-react';
+import { Menu, X, Wrench, ChevronDown } from 'lucide-react';
 
-const navLinks = [
-  { label: 'Features', href: '#features' },
-  { label: 'How it works', href: '#how-it-works' },
-  { label: 'Industries', href: '#industries' },
-  { label: 'FAQ', href: '#faq' },
+const servicesLinks = [
+  { label: 'Electrical', href: '/electrical-dispatch-software' },
+  { label: 'Appliance repair', href: '/appliance-repair-dispatch-software' },
+  { label: 'Pest control', href: '/pest-control-dispatch-software' },
+  { label: 'Garage door', href: '/garage-door-dispatch-software' },
+  { label: 'Cleaning', href: '/cleaning-dispatch-software' },
+  { label: 'Landscaping', href: '/landscaping-dispatch-software' },
+  { label: 'Roofing', href: '/roofing-dispatch-software' },
+  { label: 'Locksmith', href: '/locksmith-dispatch-software' },
+  { label: 'Pool service', href: '/pool-service-dispatch-software' },
+  { label: 'Facilities', href: '/commercial-facilities-dispatch-software' },
+  { label: 'Septic', href: '/septic-service-dispatch-software' },
+  { label: 'Emergency restoration', href: '/emergency-restoration-dispatch-software' },
+  { label: 'Restoration jobs', href: '/restoration-job-management-software' },
+];
+
+const alternativesLinks = [
+  { label: 'ServiceTitan Alternative', href: '/servicetitan-alternative' },
+  { label: 'Jobber Alternative', href: '/jobber-alternative' },
+  { label: 'Housecall Pro Alternative', href: '/housecallpro-alternative' },
+  { label: 'Service Fusion Alternative', href: '/servicefusion-alternative' },
+];
+
+const resourcesLinks = [
+  { label: 'Compare', href: '/hvac-dispatch-app-vs-spreadsheets' },
+  { label: 'Buying guide', href: '/how-to-choose-hvac-dispatch-app' },
+  { label: 'Phone tag guide', href: '/how-hvac-dispatch-apps-reduce-phone-tag' },
 ];
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -26,13 +49,13 @@ export default function Navbar() {
       transition={{ duration: 0.5, ease: 'easeOut' }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled
-          ? 'bg-slate-950/80 backdrop-blur-xl border-b border-slate-900'
+          ? 'bg-slate-950/90 backdrop-blur-xl border-b border-slate-900'
           : 'bg-transparent'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 lg:h-20">
-          <a href="#" className="flex items-center gap-2.5 group">
+          <a href="/" className="flex items-center gap-2.5 group">
             <div className="w-9 h-9 rounded-lg bg-brand-500 flex items-center justify-center shadow-lg shadow-brand-500/20 group-hover:shadow-brand-500/40 transition-shadow">
               <Wrench className="w-5 h-5 text-slate-950" />
             </div>
@@ -41,20 +64,120 @@ export default function Navbar() {
             </span>
           </a>
 
-          <div className="hidden md:flex items-center gap-8">
-            {navLinks.map((link) => (
-              <a
-                key={link.label}
-                href={link.href}
-                className="text-sm font-medium text-slate-300 hover:text-white transition-colors relative group"
-              >
-                {link.label}
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-brand-500 group-hover:w-full transition-all duration-300" />
-              </a>
-            ))}
+          {/* Desktop links */}
+          <div className="hidden xl:flex items-center gap-6">
+            <a href="/" className="text-sm font-medium text-slate-300 hover:text-white transition-colors">
+              Home
+            </a>
+            <a href="/hvac-dispatch-software" className="text-sm font-medium text-slate-300 hover:text-white transition-colors">
+              HVAC
+            </a>
+            <a href="/plumbing-dispatch-software" className="text-sm font-medium text-slate-300 hover:text-white transition-colors">
+              Plumbing
+            </a>
+
+            {/* Services Dropdown */}
+            <div
+              className="relative"
+              onMouseEnter={() => setActiveDropdown('services')}
+              onMouseLeave={() => setActiveDropdown(null)}
+            >
+              <button className="flex items-center gap-1 text-sm font-medium text-slate-300 hover:text-white transition-colors py-2">
+                Services <ChevronDown className="w-4 h-4" />
+              </button>
+              <AnimatePresence>
+                {activeDropdown === 'services' && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    className="absolute left-0 mt-1 w-64 bg-slate-900 border border-slate-800 rounded-xl shadow-2xl p-2 grid gap-1 z-55"
+                  >
+                    {servicesLinks.map((link) => (
+                      <a
+                        key={link.label}
+                        href={link.href}
+                        className="block px-3 py-2 text-xs text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"
+                      >
+                        {link.label}
+                      </a>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
+            <a href="/field-service-scheduling" className="text-sm font-medium text-slate-300 hover:text-white transition-colors">
+              Schedule
+            </a>
+            <a href="/mobile-dispatch-board" className="text-sm font-medium text-slate-300 hover:text-white transition-colors">
+              Mobile board
+            </a>
+
+            {/* Alternatives Dropdown */}
+            <div
+              className="relative"
+              onMouseEnter={() => setActiveDropdown('alternatives')}
+              onMouseLeave={() => setActiveDropdown(null)}
+            >
+              <button className="flex items-center gap-1 text-sm font-medium text-slate-300 hover:text-white transition-colors py-2">
+                Alternatives <ChevronDown className="w-4 h-4" />
+              </button>
+              <AnimatePresence>
+                {activeDropdown === 'alternatives' && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    className="absolute left-0 mt-1 w-56 bg-slate-900 border border-slate-800 rounded-xl shadow-2xl p-2 grid gap-1 z-55"
+                  >
+                    {alternativesLinks.map((link) => (
+                      <a
+                        key={link.label}
+                        href={link.href}
+                        className="block px-3 py-2 text-xs text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"
+                      >
+                        {link.label}
+                      </a>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
+            {/* Resources Dropdown */}
+            <div
+              className="relative"
+              onMouseEnter={() => setActiveDropdown('resources')}
+              onMouseLeave={() => setActiveDropdown(null)}
+            >
+              <button className="flex items-center gap-1 text-sm font-medium text-slate-300 hover:text-white transition-colors py-2">
+                Resources <ChevronDown className="w-4 h-4" />
+              </button>
+              <AnimatePresence>
+                {activeDropdown === 'resources' && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    className="absolute left-0 mt-1 w-56 bg-slate-900 border border-slate-800 rounded-xl shadow-2xl p-2 grid gap-1 z-55"
+                  >
+                    {resourcesLinks.map((link) => (
+                      <a
+                        key={link.label}
+                        href={link.href}
+                        className="block px-3 py-2 text-xs text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"
+                      >
+                        {link.label}
+                      </a>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           </div>
 
-          <div className="hidden md:flex items-center gap-3">
+          <div className="hidden xl:flex items-center gap-3">
             <a
               href="#waitlist"
               className="text-sm font-medium text-slate-400 hover:text-white transition-colors px-4 py-2"
@@ -71,7 +194,7 @@ export default function Navbar() {
 
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="md:hidden p-2 text-slate-300 hover:text-white"
+            className="xl:hidden p-2 text-slate-300 hover:text-white"
           >
             {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -84,19 +207,77 @@ export default function Navbar() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-slate-950/95 backdrop-blur-xl border-b border-slate-900 overflow-hidden"
+            className="xl:hidden bg-slate-950/95 backdrop-blur-xl border-b border-slate-900 overflow-y-auto max-h-[85vh] no-scrollbar"
           >
             <div className="px-4 py-4 space-y-3">
-              {navLinks.map((link) => (
-                <a
-                  key={link.label}
-                  href={link.href}
-                  onClick={() => setMobileOpen(false)}
-                  className="block text-base font-medium text-slate-300 hover:text-white py-2"
-                >
-                  {link.label}
-                </a>
-              ))}
+              <a href="/" onClick={() => setMobileOpen(false)} className="block text-base font-medium text-slate-300 hover:text-white py-1">
+                Home
+              </a>
+              <a href="/hvac-dispatch-software" onClick={() => setMobileOpen(false)} className="block text-base font-medium text-slate-300 hover:text-white py-1">
+                HVAC
+              </a>
+              <a href="/plumbing-dispatch-software" onClick={() => setMobileOpen(false)} className="block text-base font-medium text-slate-300 hover:text-white py-1">
+                Plumbing
+              </a>
+
+              {/* Mobile Services Accordion */}
+              <div className="py-1">
+                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Services</p>
+                <div className="pl-3 border-l border-slate-800 grid gap-2">
+                  {servicesLinks.map((link) => (
+                    <a
+                      key={link.label}
+                      href={link.href}
+                      onClick={() => setMobileOpen(false)}
+                      className="block text-sm text-slate-400 hover:text-white"
+                    >
+                      {link.label}
+                    </a>
+                  ))}
+                </div>
+              </div>
+
+              <a href="/field-service-scheduling" onClick={() => setMobileOpen(false)} className="block text-base font-medium text-slate-300 hover:text-white py-1">
+                Schedule
+              </a>
+              <a href="/mobile-dispatch-board" onClick={() => setMobileOpen(false)} className="block text-base font-medium text-slate-300 hover:text-white py-1">
+                Mobile board
+              </a>
+
+              {/* Mobile Alternatives Accordion */}
+              <div className="py-1">
+                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Alternatives</p>
+                <div className="pl-3 border-l border-slate-800 grid gap-2">
+                  {alternativesLinks.map((link) => (
+                    <a
+                      key={link.label}
+                      href={link.href}
+                      onClick={() => setMobileOpen(false)}
+                      className="block text-sm text-slate-400 hover:text-white"
+                    >
+                      {link.label}
+                    </a>
+                  ))}
+                </div>
+              </div>
+
+              {/* Mobile Resources Accordion */}
+              <div className="py-1">
+                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Resources</p>
+                <div className="pl-3 border-l border-slate-800 grid gap-2">
+                  {resourcesLinks.map((link) => (
+                    <a
+                      key={link.label}
+                      href={link.href}
+                      onClick={() => setMobileOpen(false)}
+                      className="block text-sm text-slate-400 hover:text-white"
+                    >
+                      {link.label}
+                    </a>
+                  ))}
+                </div>
+              </div>
+
               <a
                 href="#waitlist"
                 onClick={() => setMobileOpen(false)}
