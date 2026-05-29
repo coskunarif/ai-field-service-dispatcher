@@ -1,14 +1,14 @@
 :root {
-  color-scheme: light;
-  --bg: 215 15% 97%;       /* Slate-50 */
-  --bg-2: 213 27% 95%;     /* Slate-100 */
-  --surface: 0 0% 100%;
-  --surface-2: 210 40% 98%;   /* Slate-50 surface */
-  --surface-3: 213 27% 96%;   /* Slate-100 surface */
-  --line: 214 32% 91%;        /* Slate-200 border */
-  --text: 222 47% 11%;        /* Slate-900 */
-  --text-2: 215 25% 27%;      /* Slate-700 */
-  --text-3: 215 16% 47%;      /* Slate-500 */
+  color-scheme: dark;
+  --bg: 222 47% 6%;          /* Slate-950 */
+  --bg-2: 222 47% 3%;
+  --surface: 222 47% 10%;    /* Slate-900 */
+  --surface-2: 222 47% 12%;
+  --surface-3: 222 47% 15%;
+  --line: 222 30% 18%;       /* Slate-800 border */
+  --text: 210 40% 98%;       /* Slate-50 */
+  --text-2: 215 20% 80%;     /* Slate-300 */
+  --text-3: 215 15% 60%;     /* Slate-400 */
   --brand: 38 93% 50%;        /* Amber-500 */
   --brand-2: 45 100% 51%;     /* Amber-400 / Gold */
   --brand-3: 26 91% 37%;      /* Amber-700 */
@@ -19,32 +19,14 @@
   --hero-line: 222 30% 22%;
   --hero-text: 210 40% 98%;
   --hero-muted: 215 20% 76%;
-  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.05), 0 1px 2px rgba(15, 23, 42, 0.08);
-  --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.08), 0 2px 4px -2px rgba(15, 23, 42, 0.08);
-  --shadow-lg: 0 20px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.08);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3), 0 10px 20px rgba(0, 0, 0, 0.25);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.35), 0 12px 24px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 20px 30px rgba(0, 0, 0, 0.45), 0 30px 60px rgba(0, 0, 0, 0.4);
   --radius-xl: 28px;
   --radius-lg: 20px;
   --radius-md: 14px;
   --radius-sm: 10px;
   --container: 1200px;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    color-scheme: dark;
-    --bg: 222 47% 6%;          /* Slate-950 */
-    --bg-2: 222 47% 3%;
-    --surface: 222 47% 10%;    /* Slate-900 */
-    --surface-2: 222 47% 12%;
-    --surface-3: 222 47% 15%;
-    --line: 222 30% 18%;       /* Slate-800 border */
-    --text: 210 40% 98%;       /* Slate-50 */
-    --text-2: 215 20% 80%;     /* Slate-300 */
-    --text-3: 215 15% 60%;     /* Slate-400 */
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3), 0 10px 20px rgba(0, 0, 0, 0.25);
-    --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.35), 0 12px 24px rgba(0, 0, 0, 0.3);
-    --shadow-lg: 0 20px 30px rgba(0, 0, 0, 0.45), 0 30px 60px rgba(0, 0, 0, 0.4);
-  }
 }
 
 * {
