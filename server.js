@@ -107,6 +107,7 @@ const pages = {
   '/servicefusion-alternative': 'servicefusion-alternative.html',
   '/buildops-alternative': 'buildops-alternative.html',
   '/fieldedge-alternative': 'fieldedge-alternative.html',
+  '/tools/facebook-post-generator': 'tools-facebook-post-generator.html',
 };
 
 for (const [route, file] of Object.entries(pages)) {

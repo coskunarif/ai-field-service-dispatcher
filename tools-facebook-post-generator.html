@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Free Facebook Post Generator for Trades & Field Services | Gainhelm</title>
+<meta name="description" content="Use our free Facebook post generator to create high-converting social media posts for your HVAC, plumbing, electrical, or landscaping business in seconds.">
+<link rel="canonical" href="https://gainhelm.com/tools/facebook-post-generator">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://gainhelm.com/tools/facebook-post-generator">
+<meta property="og:title" content="Free Facebook Post Generator for Trades & Field Services | Gainhelm">
+<meta property="og:description" content="Generate high-converting Facebook posts for HVAC, plumbing, electrical, and landscaping teams. Free tool for trades business marketing.">
+<meta name="twitter:card" content="summary">
+<meta name="theme-color" content="#08111d">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styles.css">
+<style>
+  /* Custom overrides and grid styles for the generator page */
+  .tool-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    margin-top: 40px;
+  }
+  @media (max-width: 968px) {
+    .tool-grid {
+      grid-template-columns: 1fr;
+      gap: 30px;
+    }
+  }
+  .form-container {
+    background: hsl(var(--surface));
+    border: 1px solid hsl(var(--line));
+    border-radius: var(--radius-lg);
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    box-shadow: var(--shadow-sm);
+  }
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .form-group label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: hsl(var(--text-2));
+  }
+  .form-group input, .form-group select {
+    background: hsl(var(--bg-2));
+    border: 1px solid hsl(var(--line));
+    border-radius: var(--radius-sm);
+    padding: 12px 16px;
+    color: hsl(var(--text));
+    font-family: inherit;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+  }
+  .form-group input:focus, .form-group select:focus {
+    outline: none;
+    border-color: hsl(var(--brand));
+    box-shadow: 0 0 0 3px hsl(var(--brand) / 0.15);
+  }
+  .preview-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    position: sticky;
+    top: 100px;
+  }
+  /* Dynamic Variation Tabs */
+  .tabs-container {
+    display: flex;
+    border-bottom: 1px solid hsl(var(--line));
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .tab-btn {
+    background: none;
+    border: none;
+    padding: 10px 16px;
+    color: hsl(var(--text-3));
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s ease;
+  }
+  .tab-btn:hover {
+    color: hsl(var(--text-2));
+  }
+  .tab-btn.active {
+    color: hsl(var(--brand));
+    border-bottom-color: hsl(var(--brand));
+  }
+  /* Facebook Mock Card */
+  .fb-mock {
+    background: #18191a;
+    border: 1px solid #3e4042;
+    border-radius: 12px;
+    color: #e4e6eb;
+    font-family: system-ui, -apple-system, sans-serif;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    box-shadow: var(--shadow-sm);
+  }
+  .fb-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .fb-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, hsl(var(--brand)), hsl(var(--brand-2)));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-weight: bold;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+  }
+  .fb-meta {
+    display: flex;
+    flex-direction: column;
+  }
+  .fb-name {
+    font-weight: 700;
+    font-size: 0.93rem;
+  }
+  .fb-time {
+    font-size: 0.8rem;
+    color: #b0b3b8;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .fb-time svg {
+    fill: #b0b3b8;
+  }
+  .fb-content {
+    font-size: 0.93rem;
+    line-height: 1.4;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .fb-visual {
+    border-radius: 6px;
+    overflow: hidden;
+    aspect-ratio: 16/9;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    border: 1px solid #2f3032;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    text-align: center;
+    position: relative;
+  }
+  .fb-visual-glow {
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    background: hsl(var(--brand) / 0.15);
+    filter: blur(50px);
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .fb-visual-title {
+    font-weight: 800;
+    font-size: 1.6rem;
+    color: #fff;
+    margin-bottom: 8px;
+    z-index: 1;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.4);
+  }
+  .fb-visual-sub {
+    font-size: 0.95rem;
+    color: #b0b3b8;
+    z-index: 1;
+  }
+  .fb-action-row {
+    border-top: 1px solid #3e4042;
+    border-bottom: 1px solid #3e4042;
+    padding: 8px 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.88rem;
+    color: #b0b3b8;
+  }
+  .fb-action-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 4px;
+    transition: background 0.2s;
+  }
+  .fb-action-item:hover {
+    background: #2f3032;
+  }
+  .copy-btn {
+    background: hsl(var(--brand));
+    color: #000;
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px hsl(var(--brand) / 0.2);
+  }
+  .copy-btn:hover {
+    background: hsl(var(--brand-2));
+    transform: translateY(-2px);
+  }
+  .copy-btn:active {
+    transform: translateY(0);
+  }
+  
+  /* Lead magnet card styles */
+  .lead-card {
+    background: linear-gradient(135deg, hsl(var(--surface-2)) 0%, hsl(var(--surface-3)) 100%);
+    border: 1px solid hsl(var(--brand) / 0.3);
+    border-radius: var(--radius-lg);
+    padding: 30px;
+    margin-top: 60px;
+    position: relative;
+    overflow: hidden;
+  }
+  .lead-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 250px;
+    height: 250px;
+    background: radial-gradient(circle, hsl(var(--brand) / 0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .lead-content {
+    max-width: 800px;
+    position: relative;
+    z-index: 2;
+  }
+  .lead-title {
+    font-size: 1.75rem;
+    font-weight: 800;
+    margin-bottom: 12px;
+    color: #fff;
+  }
+  .lead-desc {
+    color: hsl(var(--text-2));
+    margin-bottom: 24px;
+    font-size: 1.05rem;
+    line-height: 1.6;
+  }
+  .lead-form-inline {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    max-width: 600px;
+  }
+  .lead-form-inline input {
+    flex: 1;
+    min-width: 200px;
+    background: hsl(var(--bg-2));
+    border: 1px solid hsl(var(--line));
+    border-radius: var(--radius-sm);
+    padding: 12px 16px;
+    color: hsl(var(--text));
+    font-family: inherit;
+  }
+  .lead-form-inline button {
+    background: hsl(var(--brand));
+    color: #000;
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 12px 24px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .lead-form-inline button:hover {
+    background: hsl(var(--brand-2));
+  }
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: #10b981;
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    font-weight: 600;
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 1000;
+  }
+  .toast.show {
+    transform: translateY(0);
+    opacity: 1;
+  }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main-content">Skip to main content</a>
+<header>
+<a href="/" class="logo" aria-label="Gainhelm home">
+<div class="logo-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-wrench"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div>
+Gainhelm
+</a>
+<nav class="nav" aria-label="Primary">
+<a href="/">Home</a>
+<a href="/hvac-dispatch-software">HVAC</a>
+<a href="/plumbing-dispatch-software">Plumbing</a>
+<details class="nav-menu">
+<summary>Services</summary>
+<div class="nav-menu-panel">
+<a href="/electrical-dispatch-software">Electrical</a>
+<a href="/appliance-repair-dispatch-software">Appliance repair</a>
+<a href="/pest-control-dispatch-software">Pest control</a>
+<a href="/garage-door-dispatch-software">Garage door</a>
+<a href="/cleaning-dispatch-software">Cleaning</a>
+<a href="/landscaping-dispatch-software">Landscaping</a>
+<a href="/roofing-dispatch-software">Roofing</a>
+<a href="/locksmith-dispatch-software">Locksmith</a>
+<a href="/pool-service-dispatch-software">Pool service</a>
+<a href="/commercial-facilities-dispatch-software">Facilities</a>
+<a href="/septic-service-dispatch-software">Septic</a>
+<a href="/emergency-restoration-dispatch-software">Emergency restoration</a>
+<a href="/restoration-job-management-software">Restoration jobs</a>
+<a href="/handyman-dispatch-software">Handyman</a>
+<a href="/carpet-cleaning-dispatch-software">Carpet cleaning</a>
+<a href="/tree-service-dispatch-software">Tree service</a>
+</div>
+</details>
+<a href="/field-service-scheduling">Schedule</a>
+<a href="/mobile-dispatch-board">Mobile board</a>
+<details class="nav-menu">
+<summary>Alternatives</summary>
+<div class="nav-menu-panel">
+<a href="/servicetitan-alternative">ServiceTitan Alternative</a>
+<a href="/jobber-alternative">Jobber Alternative</a>
+<a href="/housecallpro-alternative">Housecall Pro Alternative</a>
+<a href="/servicefusion-alternative">Service Fusion Alternative</a>
+<a href="/buildops-alternative">BuildOps Alternative</a>
+<a href="/fieldedge-alternative">FieldEdge Alternative</a>
+</div>
+</details>
+<details class="nav-menu">
+<summary>Resources</summary>
+<div class="nav-menu-panel">
+<a href="/hvac-dispatch-app-vs-spreadsheets">Compare</a>
+<a href="/how-to-choose-hvac-dispatch-app">Buying guide</a>
+<a href="/how-hvac-dispatch-apps-reduce-phone-tag">Phone tag guide</a>
+</div>
+</details>
+<a href="#waitlist-form" class="nav-cta">Join the waitlist</a>
+</nav>
+</header>
+
+<main id="main-content" tabindex="-1" style="max-width: var(--container); margin: 0 auto; padding: 40px 24px;">
+  <div style="text-align: center; max-width: 700px; margin: 0 auto 30px;">
+    <div class="brand-chip" style="display: inline-block; margin-bottom: 16px;">Free Lead Magnet Tool</div>
+    <h1 style="font-size: 2.75rem; margin-bottom: 12px; font-weight: 900;">Facebook Post Generator for Local Trades</h1>
+    <p style="color: hsl(var(--text-2)); font-size: 1.15rem;">Create high-converting social media posts to grow your plumbing, HVAC, electrical, or home service business. Generate variations instantly.</p>
+  </div>
+
+  <div class="tool-grid">
+    <!-- INPUT FORM -->
+    <div class="form-container">
+      <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 10px; border-bottom: 1px solid hsl(var(--line)); padding-bottom: 10px;">Customize Your Post</h2>
+      
+      <div class="form-group">
+        <label for="businessName">Business Name</label>
+        <input type="text" id="businessName" value="Apex Home Solutions" placeholder="e.g. Apex Mechanical Services">
+      </div>
+
+      <div class="form-group">
+        <label for="tradeSelect">Your Trade / Niche</label>
+        <select id="tradeSelect">
+          <option value="HVAC" selected>HVAC / AC & Heating</option>
+          <option value="Plumbing">Plumbing / Drain Cleaning</option>
+          <option value="Electrical">Electrical Contractor</option>
+          <option value="Landscaping">Landscaping & Lawn Care</option>
+          <option value="Carpet Cleaning">Carpet Cleaning</option>
+          <option value="Appliance Repair">Appliance Repair</option>
+          <option value="Pest Control">Pest Control</option>
+          <option value="Locksmith">Locksmith Services</option>
+          <option value="Pool Service">Pool Maintenance</option>
+          <option value="Restoration">Emergency Restoration / Water Damage</option>
+          <option value="Handyman">Handyman Services</option>
+          <option value="Tree Service">Tree Service & Removal</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="goalSelect">Campaign Goal / Post Style</label>
+        <select id="goalSelect">
+          <option value="seasonal" selected>Seasonal Promotion / Checkup</option>
+          <option value="review">Highlight a 5-Star Customer Review</option>
+          <option value="beforeAfter">Before & After Showcase</option>
+          <option value="discount">Special Discount or Offer</option>
+          <option value="urgent">Urgent / 24-7 Emergency Alert</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="offerValue">Discount / Special Offer</label>
+        <input type="text" id="offerValue" value="$50 Off First Service Call" placeholder="e.g. 10% Off, Free AC Safety Inspection">
+      </div>
+
+      <div class="form-group">
+        <label for="toneSelect">Tone of Voice</label>
+        <select id="toneSelect">
+          <option value="friendly" selected>Friendly & Trustworthy</option>
+          <option value="urgent">Direct & Urgent</option>
+          <option value="professional">Professional & Technical</option>
+          <option value="humorous">Humorous & Playful</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="contactInfo">Call to Action Details (Phone / Link)</label>
+        <input type="text" id="contactInfo" value="Call (555) 987-6543 or DM us today!" placeholder="e.g. Call (555) 123-4567 or visit ApexHome.com">
+      </div>
+    </div>
+
+    <!-- PREVIEW & GENERATION RESULTS -->
+    <div class="preview-wrapper">
+      <div style="background: hsl(var(--surface)); border: 1px solid hsl(var(--line)); border-radius: var(--radius-lg); padding: 24px; box-shadow: var(--shadow-sm);">
+        <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 14px;">Your Generated Facebook Posts</h2>
+        
+        <div class="tabs-container">
+          <button class="tab-btn active" onclick="switchTab(0)">Variation 1: Direct Offer</button>
+          <button class="tab-btn" onclick="switchTab(1)">Variation 2: Pain-Solution</button>
+          <button class="tab-btn" onclick="switchTab(2)">Variation 3: Local Connection</button>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+          <!-- Facebook Card Preview -->
+          <div class="fb-mock">
+            <div class="fb-header">
+              <div class="fb-avatar" id="fbAvatar">A</div>
+              <div class="fb-meta">
+                <div class="fb-name" id="fbName">Apex Home Solutions</div>
+                <div class="fb-time">
+                  Just now · 
+                  <svg viewBox="0 0 16 16" width="12" height="12" aria-label="Public"><path d="M8 0a8 8 0 100 16A8 8 0 008 0zm0 14.5a6.5 6.5 0 110-13 6.5 6.5 0 010 13zM6 4h4v1H6zm-1 3.5h6v1H5zm1 3.5h4v1H6z"/></svg>
+                </div>
+              </div>
+            </div>
+            
+            <div class="fb-content" id="fbContent">Generating your highly-engaging copy...</div>
+            
+            <div class="fb-visual">
+              <div class="fb-visual-glow"></div>
+              <div class="fb-visual-title" id="fbVisualTitle">AC Tune-Up Special</div>
+              <div class="fb-visual-sub" id="fbVisualSub"> Apex Home Solutions </div>
+            </div>
+
+            <div class="fb-action-row">
+              <div class="fb-action-item">👍 Like</div>
+              <div class="fb-action-item">💬 Comment</div>
+              <div class="fb-action-item">↪️ Share</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 12px; margin-bottom: 12px;">
+          <button class="copy-btn" style="flex: 1;" onclick="copyPostText()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+            Copy Text
+          </button>
+          <a href="https://www.facebook.com" target="_blank" rel="noopener" class="copy-btn" style="flex: 1; background: #1877f2; color: #fff; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 12px rgba(24, 119, 242, 0.25);" onclick="copyPostText()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            Post on Facebook
+          </a>
+        </div>
+        <p style="font-size: 0.8rem; color: hsl(var(--text-3)); text-align: center; margin-top: 4px;">
+          💡 <strong>Tip:</strong> Clicking "Post on Facebook" automatically copies the text to your clipboard. Just press <strong>Ctrl+V</strong> (or <strong>Cmd+V</strong>) to paste it when Facebook opens!
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- LEAD MAGNET WAITLIST CALL TO ACTION -->
+  <div class="lead-card" id="waitlist-form">
+    <div class="lead-content">
+      <div class="brand-chip" style="display: inline-block; margin-bottom: 12px; background: hsl(var(--brand) / 0.15); color: hsl(var(--brand-2)); border: 1px solid hsl(var(--brand) / 0.3);">Gainhelm Dispatch Planner</div>
+      <h2 class="lead-title">Turn Leads into Scheduled Work Orders Instantly</h2>
+      <p class="lead-desc">Now that you've got leads coming in, stop wasting 3+ hours daily shuffling schedules. Let Gainhelm automate technician dispatching, cut phone tag, and keep your workday structured.</p>
+      
+      <form class="lead-form-inline" action="/waitlist" method="POST">
+        <input type="text" name="name" placeholder="Your Name" required>
+        <input type="text" name="company" placeholder="Business Name" required>
+        <input type="email" name="email" placeholder="Work Email" required>
+        <button type="submit">Get Early Access</button>
+      </form>
+    </div>
+  </div>
+</main>
+
+<div class="toast" id="toast">📋 Copied successfully!</div>
+
+<footer>
+  <div style="max-width: var(--container); margin: 0 auto; padding: 30px 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; font-size: 0.9rem; color: hsl(var(--text-3)); border-top: 1px solid hsl(var(--line));">
+    <div>© 2026 Gainhelm. Automated Field Service Dispatch.</div>
+    <div style="display: flex; gap: 16px;">
+      <a href="/">Home</a>
+      <a href="/hvac-dispatch-software">HVAC</a>
+      <a href="/plumbing-dispatch-software">Plumbing</a>
+      <a href="/sitemap.xml">Sitemap</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  let currentTab = 0;
+  let variations = ["", "", ""];
+
+  const tradeData = {
+    HVAC: {
+      emoji: "❄️🔥",
+      name: "AC & Heating Experts",
+      problems: ["sweating in your own living room", "facing a broken furnace in freezing weather", "paying too much on high electric bills"],
+      solutions: ["keep your home perfectly comfortable year-round", "ensure safe, efficient HVAC operation", "prevent emergency breakdown costs"],
+      hashtags: ["#HVAC", "#AirConditioning", "#Heating", "#HomeComfort"]
+    },
+    Plumbing: {
+      emoji: "🚰💧",
+      name: "Plumbing Pros",
+      problems: ["dealing with a clogged drain", "worrying about leaky pipes under the sink", "hearing that constant, annoying running toilet"],
+      solutions: ["keep your water flowing perfectly", "tackle tough pipe repairs fast", "restore peace and clean drains"],
+      hashtags: ["#Plumbing", "#DrainCleaning", "#PlumberLife", "#HomeMaintenance"]
+    },
+    Electrical: {
+      emoji: "⚡🔌",
+      name: "Certified Electricians",
+      problems: ["flickering lights in the hallway", "outlets that don't work", "worrying about outdated breaker panels"],
+      solutions: ["keep your home safe and fully powered", "install modern, efficient lighting", "resolve electrical safety hazards today"],
+      hashtags: ["#Electrician", "#ElectricalSafety", "#SmartHome", "#LocalElectrician"]
+    },
+    Landscaping: {
+      emoji: "🏡🌱",
+      name: "Landscaping Masters",
+      problems: ["staring at a messy lawn", "spending your entire weekend weeding and trimming", "struggling with brown spots in your grass"],
+      solutions: ["give you the best-looking yard on the block", "free up your weekends for relaxation", "enhance your home's curb appeal"],
+      hashtags: ["#Landscaping", "#LawnCare", "#YardMaintenance", "#CurbAppeal"]
+    },
+    "Carpet Cleaning": {
+      emoji: "✨🧹",
+      name: "Carpet & Floor Cleaners",
+      problems: ["living with stubborn carpet stains", "worrying about pet odors in your rugs", "realizing your carpets look dull and high-traffic"],
+      solutions: ["restore your carpets to looking brand new", "remove deep allergens and pet dander", "bring freshness back to your floors"],
+      hashtags: ["#CarpetCleaning", "#CleanHome", "#FloorCare", "#FreshCarpets"]
+    },
+    "Appliance Repair": {
+      emoji: "🛠️📺",
+      name: "Appliance Repair Techs",
+      problems: ["dealing with a warm refrigerator", "hearing loud noises from your washing machine", "dishwasher leaving spots on every plate"],
+      solutions: ["get your household appliances running perfectly", "save money compared to buying a replacement", "provide fast, reliable diagnostics"],
+      hashtags: ["#ApplianceRepair", "#DryerRepair", "#FridgeFix", "#LocalService"]
+    },
+    "Pest Control": {
+      emoji: "🐜🚫",
+      name: "Pest Exterminators",
+      problems: ["finding unwanted bugs in your pantry", "hearing pests scratching in the walls", "worrying about wood-destroying termites"],
+      solutions: ["keep your family safe and pest-free", "eliminate insects and rodents at the source", "protect your home structure year-round"],
+      hashtags: ["#PestControl", "#BugFree", "#TermiteControl", "#HomeHealth"]
+    },
+    "Locksmith": {
+      emoji: "🔑🔒",
+      name: "Security Locksmiths",
+      problems: ["getting locked out of your home", "worrying about loose, outdated door locks", "needing spare keys for family members"],
+      solutions: ["keep your home secure and keyless", "provide fast lockout response", "upgrade to secure, modern smart locks"],
+      hashtags: ["#Locksmith", "#HomeSecurity", "#LockedOut", "#KeyReplacement"]
+    },
+    "Pool Service": {
+      emoji: "🏊‍♂️☀️",
+      name: "Pool Maintenance Experts",
+      problems: ["staring at a green, cloudy pool", "testing water chemicals with confusion", "struggling with leaves and pool filter issues"],
+      solutions: ["keep your pool crystal clear and swim-ready", "balance your chemicals perfectly every week", "take the chore out of pool ownership"],
+      hashtags: ["#PoolService", "#PoolMaintenance", "#CleanPool", "#SwimLife"]
+    },
+    Restoration: {
+      emoji: "🚨🌊",
+      name: "Emergency Restoration Crew",
+      problems: ["standing in water after a pipe burst", "discovering mold growth behind drywall", "dealing with smoke damage after a fire"],
+      solutions: ["restore your home to pre-loss condition", "extract water and dry your structure fast", "handle insurance claims directly with you"],
+      hashtags: ["#WaterDamage", "#MoldRestoration", "#EmergencyResponse", "#HomeRecovery"]
+    },
+    Handyman: {
+      emoji: "🔨🚪",
+      name: "Professional Handymen",
+      problems: ["staring at a growing honey-do list", "struggling with drywall repair or door alignment", "not having the right tools for basic house repairs"],
+      solutions: ["knock out all your repairs in a single visit", "do the job safely and professionally", "cross home projects off your list easily"],
+      hashtags: ["#Handyman", "#HomeRepair", "#FixIt", "#Maintenance"]
+    },
+    "Tree Service": {
+      emoji: "🌳🪓",
+      name: "Tree Care Specialists",
+      problems: ["worrying about dead branches hanging over the roof", "dealing with an overgrown tree blocking your window", "stumbling over ugly tree stumps in the yard"],
+      solutions: ["keep your property safe from falling branches", "expertly trim and shape your trees", "safely remove hazardous trees"],
+      hashtags: ["#TreeService", "#TreeTrimming", "#StumpRemoval", "#Arborist"]
+    }
+  };
+
+  const tones = {
+    friendly: {
+      intro: "Hey neighbors! 👋 We know how frustrating it is when you're ",
+      outro: "We are local, reliable, and here to help. 😊 Give us a shout today!"
+    },
+    urgent: {
+      intro: "🚨 DON'T WAIT: If you are currently ",
+      outro: "⏰ Slots fill up fast this week. Act now to secure your booking!"
+    },
+    professional: {
+      intro: "As experienced professionals, we understand the hassle of ",
+      outro: "Let our licensed and insured team handle the details safely. Contact us to schedule."
+    },
+    humorous: {
+      intro: "Life is too short to spend it ",
+      outro: "Don't try to DIY this and end up on a viral fail compilation. 😅 Leave it to the pros!"
+    }
+  };
+
+  function updatePosts() {
+    const bizName = document.getElementById("businessName").value || "Our Business";
+    const trade = document.getElementById("tradeSelect").value;
+    const goal = document.getElementById("goalSelect").value;
+    const offer = document.getElementById("offerValue").value || "Special Offer";
+    const tone = document.getElementById("toneSelect").value;
+    const cta = document.getElementById("contactInfo").value;
+
+    const data = tradeData[trade];
+    const tonePreset = tones[tone];
+
+    // Update avatar and preview styling
+    document.getElementById("fbAvatar").innerText = bizName.charAt(0);
+    document.getElementById("fbName").innerText = bizName;
+    document.getElementById("fbVisualSub").innerText = bizName;
+
+    let visualTitle = offer;
+    if (goal === "review") visualTitle = "⭐ 5-Star Service";
+    if (goal === "beforeAfter") visualTitle = "🛠️ Before & After";
+    if (goal === "urgent") visualTitle = "🚨 24/7 Response";
+    document.getElementById("fbVisualTitle").innerText = visualTitle;
+
+    // Tailor variations based on the goal
+    if (goal === "review") {
+      // Review Highlights
+      variations[0] = 
+`⭐️⭐️⭐️⭐️⭐️ "Highly recommend ${bizName}! They came out fast, solved our problem, and the technician was incredibly polite and professional." - Happy Customer
+
+We love getting feedback like this! ${data.emoji} 
+
+If you are ${data.problems[0]}, let us show you why our customers rate us 5 stars.
+
+👉 Special Offer: Get ${offer} when you call us and mention this review!
+
+📲 ${cta}
+
+${data.hashtags.join(" ")}`;
+
+      variations[1] = 
+`Nothing makes us happier than happy neighbors! 😊
+
+Here's what folks are saying about ${bizName}:
+"Fast, transparent, and fair pricing. They helped us ${data.solutions[0]} when we needed it most."
+
+Need help with your home? Give us a call. We're offering ${offer} on first-time bookings this week.
+
+📞 ${cta}
+
+${data.hashtags.join(" ")}`;
+
+      variations[2] = 
+`${tonePreset.intro}${data.problems[2]}...
+
+Local homeowners trust ${bizName} to get the job done right. Check out our latest 5-star review:
+"Prompt service and resolved our issue completely!"
+
+We are dedicated to helping you ${data.solutions[1]}. 
+
+✨ ${tonePreset.outro}
+
+👉 ${cta}
+
+${data.hashtags.join(" ")}`;
+
+    } else if (goal === "beforeAfter") {
+      // Before & After transformation
+      variations[0] = 
+`${data.emoji} TRANSFORMATION TUESDAY! ${data.emoji}
+
+Swipe to see how we helped a local home owner go from ${data.problems[0]} to total peace of mind.
+
+Our team got to work and delivered a clean, professional solution to ${data.solutions[0]}.
+
+Save on your upgrade: Mention this post for ${offer}!
+
+👉 ${cta}
+
+${data.hashtags.join(" ")}`;
+
+      variations[1] = 
+`Old, noisy, and inefficient vs. Brand New & Whisper-Quiet! 🛠️
+
+Are you tired of ${data.problems[1]}? 🛑
+
+We replaced a failing system this morning to help our customer ${data.solutions[0]}. 
+
+Check out the clean installation in the photos below. Want results like this?
+
+Get ${offer} on your next service:
+📞 ${cta}
+
+${data.hashtags.join(" ")}`;
+
+      variations[2] = 
+`${tonePreset.intro}${data.problems[2]}...
+
+We recently completed a full overhaul to help a neighbor ${data.solutions[1]}. Check out the before and after transition!
+
+No mess, no stress. Just quality craftsmanship.
+
+✨ ${tonePreset.outro}
+
+📲 ${cta}
+
+${data.hashtags.join(" ")}`;
+
+    } else if (goal === "urgent") {
+      // Urgent / Emergency response
+      variations[0] = 
+`🚨 EMERGENCY RESPONSE: (24/7 DISPATCH) 🚨
+
+Are you currently ${data.problems[0]}? Don't panic!
+
+At ${bizName}, we keep our trucks fully stocked and ready to roll. We will dispatch a certified technician to your door immediately.
+
+Special emergency rate: Get ${offer} when you contact us now.
+
+⚡ ${cta}
+
+${data.hashtags.join(" ")}`;
+
+      variations[1] = 
+`🛑 STOP: Don't ignore the warning signs of ${data.problems[1]}!
+
+What starts as a small concern can turn into a midnight disaster. At ${bizName}, we offer round-the-clock emergency support to help you ${data.solutions[0]} fast.
+
+• Fast arrival guarantees
+• Upfront, flat-rate pricing
+• Fully licensed emergency pros
+
+Save ${offer} on immediate dispatch:
+📞 ${cta}
+
+${data.hashtags.join(" ")}`;
+
+      variations[2] = 
+`Need rapid help? We are your local home service emergency line. 🚨
+
+If you're ${data.problems[2]}... don't wait until business hours.
+
+${bizName} offers immediate response dispatch to help you ${data.solutions[1]}.
+
+✨ ${tonePreset.outro}
+
+📲 ${cta}
+
+${data.hashtags.join(" ")}`;
+
+    } else if (goal === "discount") {
+      // Pure Discount / Promotional
+      variations[0] = 
+`💰 ${offer.toUpperCase()} SPECIAL OFFER 💰
+
+Looking to save on your next home service? We've got you covered.
+
+At ${bizName}, we are running a limited-time special: Get ${offer} on all standard jobs!
+
+Whether you need help ${data.solutions[0]} or are currently ${data.problems[0]}, now is the perfect time to book.
+
+👉 ${cta} (Limit 15 slots remaining!)
+
+${data.hashtags.join(" ")}`;
+
+      variations[1] = 
+`Ditch the stress (and keep your wallet happy) with ${bizName}! 💸
+
+Are you tired of ${data.problems[1]}? 
+
+Let our team ${data.solutions[0]} and save big at the same time. We are offering an exclusive ${offer} for our social media followers.
+
+Claim your discount today:
+📞 ${cta}
+
+${data.hashtags.join(" ")}`;
+
+      variations[2] = 
+`${tonePreset.intro}${data.problems[2]}...
+
+We know home repairs add up, which is why ${bizName} is offering a special neighborhood discount of ${offer} to help you ${data.solutions[1]}.
+
+We treat your home like our own. 
+
+✨ ${tonePreset.outro}
+
+👉 ${cta}
+
+${data.hashtags.join(" ")}`;
+
+    } else {
+      // Default: Seasonal / Checkup
+      variations[0] = 
+`${data.emoji} SEASONAL CHECKUP SPECIAL: ${offer}! ${data.emoji}
+
+Is your home ready for the season? At ${bizName}, we help you prevent costly breakdowns before they start.
+
+Whether you're currently ${data.problems[0]} or just want to ensure your system is running efficiently, book a safety check today.
+
+⭐️ Special: Get ${offer} when you schedule before Friday!
+
+👉 ${cta}
+
+${data.hashtags.join(" ")}`;
+
+      variations[1] = 
+`Don't get caught off guard by the weather! 🛑
+
+Are you tired of ${data.problems[1]}? 
+
+A seasonal tune-up from ${bizName} will help you ${data.solutions[0]} and lower your monthly bills.
+
+Schedule today and receive ${offer}:
+📞 ${cta}
+
+${data.hashtags.join(" ")}`;
+
+      variations[2] = 
+`${tonePreset.intro}${data.problems[2]}...
+
+We want to make sure your home stays safe and comfortable this season. Let ${bizName} help you ${data.solutions[1]} with a professional inspection.
+
+✨ ${tonePreset.outro}
+
+📲 ${cta}
+
+${data.hashtags.join(" ")}`;
+    }
+
+    // Update active tab content
+    document.getElementById("fbContent").innerText = variations[currentTab];
+  }
+
+  function switchTab(index) {
+    currentTab = index;
+    document.querySelectorAll(".tab-btn").forEach((btn, idx) => {
+      if (idx === index) btn.classList.add("active");
+      else btn.classList.remove("active");
+    });
+    document.getElementById("fbContent").innerText = variations[currentTab];
+  }
+
+  function copyPostText() {
+    const textToCopy = variations[currentTab];
+    navigator.clipboard.writeText(textToCopy).then(() => {
+      const toast = document.getElementById("toast");
+      toast.classList.add("show");
+      setTimeout(() => {
+        toast.classList.remove("show");
+      }, 2500);
+    });
+  }
+
+  // Setup event listeners
+  const inputs = ["businessName", "tradeSelect", "goalSelect", "offerValue", "toneSelect", "contactInfo"];
+  inputs.forEach(id => {
+    document.getElementById(id).addEventListener("input", updatePosts);
+    document.getElementById(id).addEventListener("change", updatePosts);
+  });
+
+  // Run on load
+  updatePosts();
+</script>
+</body>
+</html>

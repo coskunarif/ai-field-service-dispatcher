@@ -31,6 +31,7 @@ const pages = [
   '/servicefusion-alternative',
   '/buildops-alternative',
   '/fieldedge-alternative',
+  '/tools/facebook-post-generator',
 ];
 
 const redirects = {
