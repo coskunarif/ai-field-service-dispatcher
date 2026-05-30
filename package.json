@@ -5,10 +5,14 @@
   "scripts": {
     "start": "node server.js",
     "audit:seo-geo": "node scripts/gainhelm-seo-geo-audit.mjs",
-    "find-leads": "node scripts/find-social-leads.mjs"
+    "find-leads": "node scripts/find-social-leads.mjs",
+    "test": "playwright test"
   },
   "dependencies": {
     "fastify": "^5.0.0",
     "postgres": "^3.4.9"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.60.0"
   }
 }

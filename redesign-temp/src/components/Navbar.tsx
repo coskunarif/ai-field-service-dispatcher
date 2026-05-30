@@ -16,6 +16,9 @@ const servicesLinks = [
   { label: 'Septic', href: '/septic-service-dispatch-software' },
   { label: 'Emergency restoration', href: '/emergency-restoration-dispatch-software' },
   { label: 'Restoration jobs', href: '/restoration-job-management-software' },
+  { label: 'Handyman', href: '/handyman-dispatch-software' },
+  { label: 'Carpet cleaning', href: '/carpet-cleaning-dispatch-software' },
+  { label: 'Tree service', href: '/tree-service-dispatch-software' },
 ];
 
 const alternativesLinks = [
@@ -23,6 +26,8 @@ const alternativesLinks = [
   { label: 'Jobber Alternative', href: '/jobber-alternative' },
   { label: 'Housecall Pro Alternative', href: '/housecallpro-alternative' },
   { label: 'Service Fusion Alternative', href: '/servicefusion-alternative' },
+  { label: 'BuildOps Alternative', href: '/buildops-alternative' },
+  { label: 'FieldEdge Alternative', href: '/fieldedge-alternative' },
 ];
 
 const resourcesLinks = [

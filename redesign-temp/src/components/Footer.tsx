@@ -8,6 +8,9 @@ const footerSections = [
       { label: 'Plumbing Dispatch', href: '/plumbing-dispatch-software' },
       { label: 'Electrical Dispatch', href: '/electrical-dispatch-software' },
       { label: 'Emergency Restoration', href: '/emergency-restoration-dispatch-software' },
+      { label: 'Handyman Dispatch', href: '/handyman-dispatch-software' },
+      { label: 'Carpet Dispatch', href: '/carpet-cleaning-dispatch-software' },
+      { label: 'Tree Dispatch', href: '/tree-service-dispatch-software' },
     ],
   },
   {
@@ -25,6 +28,8 @@ const footerSections = [
       { label: 'Jobber Alt', href: '/jobber-alternative' },
       { label: 'Housecall Pro Alt', href: '/housecallpro-alternative' },
       { label: 'Service Fusion Alt', href: '/servicefusion-alternative' },
+      { label: 'BuildOps Alt', href: '/buildops-alternative' },
+      { label: 'FieldEdge Alt', href: '/fieldedge-alternative' },
     ],
   },
   {

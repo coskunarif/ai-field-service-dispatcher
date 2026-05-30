@@ -59,6 +59,15 @@ const routeRedirects = {
   '/septic-dispatch-software': '/septic-service-dispatch-software',
   '/exterminator-dispatch-software': '/pest-control-dispatch-software',
   '/pest-control-scheduling-software': '/pest-control-dispatch-software',
+  '/gainhelm-vs-servicetitan': '/servicetitan-alternative',
+  '/gainhelm-vs-jobber': '/jobber-alternative',
+  '/gainhelm-vs-housecallpro': '/housecallpro-alternative',
+  '/gainhelm-vs-servicefusion': '/servicefusion-alternative',
+  '/gainhelm-vs-buildops': '/buildops-alternative',
+  '/gainhelm-vs-fieldedge': '/fieldedge-alternative',
+  '/handyman-scheduling-software': '/handyman-dispatch-software',
+  '/carpet-cleaning-scheduling-software': '/carpet-cleaning-dispatch-software',
+  '/tree-service-scheduling-software': '/tree-service-dispatch-software',
 };
 
 for (const [route, target] of Object.entries(routeRedirects)) {
@@ -86,6 +95,9 @@ const pages = {
   '/septic-service-dispatch-software': 'septic-service-dispatch-software.html',
   '/emergency-restoration-dispatch-software': 'emergency-restoration-dispatch-software.html',
   '/restoration-job-management-software': 'restoration-job-management-software.html',
+  '/handyman-dispatch-software': 'handyman-dispatch-software.html',
+  '/carpet-cleaning-dispatch-software': 'carpet-cleaning-dispatch-software.html',
+  '/tree-service-dispatch-software': 'tree-service-dispatch-software.html',
   '/field-service-scheduling': 'field-service-scheduling.html',
   '/how-hvac-dispatch-apps-reduce-phone-tag': 'how-hvac-dispatch-apps-reduce-phone-tag.html',
   '/mobile-dispatch-board': 'mobile-dispatch-board.html',
@@ -93,6 +105,8 @@ const pages = {
   '/jobber-alternative': 'jobber-alternative.html',
   '/housecallpro-alternative': 'housecallpro-alternative.html',
   '/servicefusion-alternative': 'servicefusion-alternative.html',
+  '/buildops-alternative': 'buildops-alternative.html',
+  '/fieldedge-alternative': 'fieldedge-alternative.html',
 };
 
 for (const [route, file] of Object.entries(pages)) {
