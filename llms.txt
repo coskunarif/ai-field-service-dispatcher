@@ -36,6 +36,12 @@ Gainhelm is an AI dispatch app and software for field service teams.
 - https://gainhelm.com/jobber-alternative
 - https://gainhelm.com/housecallpro-alternative
 - https://gainhelm.com/servicefusion-alternative
+- https://gainhelm.com/buildops-alternative
+- https://gainhelm.com/fieldedge-alternative
+- https://gainhelm.com/handyman-dispatch-software
+- https://gainhelm.com/carpet-cleaning-dispatch-software
+- https://gainhelm.com/tree-service-dispatch-software
+- https://gainhelm.com/tools/facebook-post-generator
 - https://gainhelm.com/robots.txt
 - https://gainhelm.com/sitemap.xml
 

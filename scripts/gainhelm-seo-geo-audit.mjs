@@ -14,7 +14,13 @@ async function textFor(path) {
     return await res.text();
   }
   const route = path === '/' ? 'index.html' : path.slice(1);
-  const file = route.includes('.') ? route : `${route}.html`;
+  let file = route.includes('.') ? route : `${route}.html`;
+  if (!existsSync(file)) {
+    const hyphenated = route.replace(/\//g, '-') + (route.includes('.') ? '' : '.html');
+    if (existsSync(hyphenated)) {
+      file = hyphenated;
+    }
+  }
   return readFileSync(file, 'utf8');
 }
 
@@ -74,7 +80,13 @@ async function main() {
     if (form && !/method=["']post["']/i.test(form)) warnings.push(`${p}: waitlist form lacks method=post`);
     if (card && card !== 'summary') warnings.push(`${p}: twitter:card is ${card}, expected summary unless a real share image exists`);
     if (!/dispatch|scheduling|field service|waitlist/i.test(body)) warnings.push(`${p}: above-fold text may not state route intent early`);
-    const localFile = p === '/' ? 'index.html' : `${basename(p)}.html`;
+    let localFile = p === '/' ? 'index.html' : `${basename(p)}.html`;
+    if (!live && !existsSync(localFile)) {
+      const hyphenated = p.slice(1).replace(/\//g, '-') + '.html';
+      if (existsSync(hyphenated)) {
+        localFile = hyphenated;
+      }
+    }
     if (!live && !existsSync(localFile)) errors.push(`${p}: sitemap route has no local ${localFile}`);
   }
 
