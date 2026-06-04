@@ -3,22 +3,139 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>AI Plumbing Dispatch Software & Scheduling App | Gainhelm</title>
-<meta name="description" content="Save 3+ hours daily. Gainhelm is the AI plumbing dispatch software for small shops. Auto-assign plumbers, stop phone tag, and track service calls.">
+<title>AI Plumbing Dispatch Software & Plumber Scheduling App | Gainhelm</title>
+<meta name="description" content="Gainhelm is the AI plumbing dispatch software and plumber scheduling app for small shops. Streamline service calls, plumber scheduling, and emergency dispatch.">
 <link rel="canonical" href="https://gainhelm.com/plumbing-dispatch-software">
 <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://gainhelm.com/plumbing-dispatch-software">
-<meta property="og:title" content="AI Plumbing Dispatch Software & Scheduling App | Gainhelm">
-<meta property="og:description" content="Save 3+ hours daily. Gainhelm is the AI plumbing dispatch software for small shops. Auto-assign plumbers, stop phone tag, and track service calls.">
+<meta property="og:title" content="AI Plumbing Dispatch Software & Plumber Scheduling App | Gainhelm">
+<meta property="og:description" content="Gainhelm is the AI plumbing dispatch software and plumber scheduling app for small shops. Streamline service calls, plumber scheduling, and emergency dispatch.">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="AI Plumbing Dispatch Software & Scheduling App | Gainhelm">
-<meta name="twitter:description" content="Save 3+ hours daily. Gainhelm is the AI plumbing dispatch software for small shops. Auto-assign plumbers, stop phone tag, and track service calls.">
+<meta name="twitter:title" content="AI Plumbing Dispatch Software & Plumber Scheduling App | Gainhelm">
+<meta name="twitter:description" content="Gainhelm is the AI plumbing dispatch software and plumber scheduling app for small shops. Streamline service calls, plumber scheduling, and emergency dispatch.">
 <meta name="theme-color" content="#08111d">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/styles.css?v=20260526-polish">
+<style>
+.script-card {
+  background: hsl(var(--surface));
+  border: 1px solid hsl(var(--line));
+  border-radius: var(--radius-lg);
+  padding: 2.5rem;
+  margin-top: 2rem;
+  box-shadow: var(--shadow-md);
+}
+.script-tabs {
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 1px solid hsl(var(--line));
+  padding-bottom: 1rem;
+  margin-bottom: 1.5rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.script-tabs::-webkit-scrollbar {
+  display: none;
+}
+.script-tab {
+  background: transparent;
+  border: 1px solid transparent;
+  color: hsl(var(--text-3));
+  padding: 0.75rem 1.25rem;
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+.script-tab:hover {
+  color: hsl(var(--text-2));
+  background: hsl(var(--surface-2));
+}
+.script-tab.active {
+  color: hsl(var(--text));
+  background: hsl(var(--surface-3));
+  border-color: hsl(var(--line));
+}
+.script-panel {
+  animation: fadeIn 0.3s ease;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.script-meta-description {
+  background: hsl(var(--surface-2));
+  border-left: 3px solid hsl(var(--brand));
+  padding: 1rem 1.25rem;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  margin-bottom: 2rem;
+}
+.script-meta-description p {
+  font-size: 0.95rem;
+  color: hsl(var(--text-2));
+}
+.script-flow {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+.script-step {
+  border: 1px solid hsl(var(--line));
+  border-radius: var(--radius-sm);
+  padding: 1.25rem;
+  background: hsl(var(--bg-2) / 0.3);
+}
+.script-role {
+  display: inline-block;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  color: hsl(var(--brand-2));
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+.script-text {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: hsl(var(--text));
+  line-height: 1.5;
+  border-left: 2px solid hsl(var(--line));
+  padding-left: 1rem;
+  margin: 0.5rem 0;
+}
+.script-pro-tip {
+  display: block;
+  font-size: 0.85rem;
+  color: hsl(var(--text-3));
+  margin-top: 0.5rem;
+  font-style: italic;
+}
+.script-footer {
+  margin-top: 2.5rem;
+  border-top: 1px solid hsl(var(--line));
+  padding-top: 2rem;
+}
+.script-footer p {
+  font-size: 0.95rem;
+  color: hsl(var(--text-2));
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+.script-footer .cta-primary {
+  display: inline-block;
+}
+@media (max-width: 640px) {
+  .script-card {
+    padding: 1.5rem;
+  }
+}
+</style>
 <script type="application/ld+json">{
   "@context": "https://schema.org",
   "@graph": [
@@ -41,8 +158,8 @@
       "@type": "WebPage",
       "@id": "https://gainhelm.com/plumbing-dispatch-software#webpage",
       "url": "https://gainhelm.com/plumbing-dispatch-software",
-      "name": "Plumbing Dispatch Software & Scheduling App | Gainhelm",
-      "description": "Gainhelm is an AI plumbing dispatch software and scheduling app option for service calls, plumber assignment, work orders, integration planning, and a readable dispatch board.",
+      "name": "Plumbing Dispatch Software & Plumber Scheduling App | Gainhelm",
+      "description": "Gainhelm is an AI plumbing dispatch software and plumber scheduling app option for service calls, plumber scheduling, work orders, integration planning, and a readable dispatch board.",
       "isPartOf": {
         "@id": "https://gainhelm.com/#website"
       },
@@ -60,7 +177,9 @@
       "description": "Plumbing dispatch app and software for service shops.",
       "featureList": [
         "Service-call scheduling",
-        "Plumber assignment",
+        "Plumber scheduling & assignment",
+        "Emergency plumbing dispatch workflow",
+        "Plumbing dispatcher scripts",
         "Clearer dispatch board"
       ],
       "provider": {
@@ -117,6 +236,14 @@
           "acceptedAnswer": {
             "@type": "Answer",
             "text": "Gainhelm is early-access AI plumbing dispatch software focused first on service-call scheduling, plumber assignment, and cleaner work-order handoffs. Teams comparing integration needs should track the accounting, calendar, and field-service tools they need connected before choosing a dispatch system."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What should a plumbing dispatcher script include?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A plumbing dispatcher script should capture customer contact info, property address, details of the issue, and urgency. For emergency plumbing dispatch, it should prioritize immediate safety (like main water shut-off instructions) and fast plumber assignment on the dispatch board."
           }
         }
       ]
@@ -273,6 +400,71 @@ Gainhelm
 </div>
 </div>
 </section>
+<section class="section" id="dispatcher-script" aria-labelledby="dispatcher-script-heading">
+<div class="section-head">
+<div class="kicker">Interactive Script Templates</div>
+<h2 id="dispatcher-script-heading">Plumbing dispatcher script templates for service and emergency calls.</h2>
+<p>Use these interactive templates to train your team, ensure consistent customer intake, and make plumber scheduling more efficient.</p>
+</div>
+<div class="script-card">
+<div class="script-tabs" role="tablist" aria-label="Script templates">
+<button class="script-tab active" id="tab-standard" role="tab" aria-selected="true" aria-controls="panel-standard">Standard Service Call</button>
+<button class="script-tab" id="tab-emergency" role="tab" aria-selected="false" aria-controls="panel-emergency">Emergency Plumbing Call</button>
+</div>
+<div class="script-panel" id="panel-standard" role="tabpanel" aria-labelledby="tab-standard">
+<div class="script-meta-description">
+<p><strong>Standard service call script:</strong> Best for routine issues (e.g. slow drains, dripping faucets, fixture replacements) where same-day plumber scheduling is not critical.</p>
+</div>
+<div class="script-flow">
+<div class="script-step">
+<span class="script-role">Dispatcher Greeting</span>
+<p class="script-text">"Thank you for calling [Company Name], my name is [Your Name]. How can we make your plumbing work today?"</p>
+</div>
+<div class="script-step">
+<span class="script-role">Identify the Problem</span>
+<p class="script-text">"I can certainly help you with that. Can you describe the issue you're experiencing with your [drain/faucet/toilet]?"</p>
+<span class="script-pro-tip">Pro Tip: Ask when they first noticed it to gauge if it's a slow leak or active problem.</span>
+</div>
+<div class="script-step">
+<span class="script-role">Gather Customer Info</span>
+<p class="script-text">"Let's get your details so we can schedule a plumber. What is the address of the property, and what is the best phone number to reach you?"</p>
+</div>
+<div class="script-step">
+<span class="script-role">Confirm and Schedule</span>
+<p class="script-text">"We have our technician, [Technician Name], available in your area this [morning/afternoon] between [Time Window]. I'll book that window for you, and we will text you when they are on their way."</p>
+</div>
+</div>
+</div>
+<div class="script-panel" id="panel-emergency" role="tabpanel" aria-labelledby="tab-emergency" hidden>
+<div class="script-meta-description">
+<p><strong>Emergency plumbing script:</strong> Best for high-urgency burst pipes, active sewer backups, or flooding. Focuses on damage control and fast dispatcher routing.</p>
+</div>
+<div class="script-flow">
+<div class="script-step">
+<span class="script-role">Urgent Greeting</span>
+<p class="script-text">"Thank you for calling [Company Name] Emergency Services, this is [Your Name]. What is your plumbing emergency?"</p>
+</div>
+<div class="script-step">
+<span class="script-role">Assess and Instruct</span>
+<p class="script-text">"I understand this is urgent. If there is active flooding, do you know where the main water shut-off valve is located? Please turn it off immediately to minimize water damage while I dispatch a plumber."</p>
+<span class="script-pro-tip">Pro Tip: Guiding customers to shut off water is a crucial step in a burst pipe service dispatch workflow.</span>
+</div>
+<div class="script-step">
+<span class="script-role">Log Urgent Details</span>
+<p class="script-text">"What is the exact street address for the emergency? I am updating our team live as we speak."</p>
+</div>
+<div class="script-step">
+<span class="script-role">Immediate Dispatch Booking</span>
+<p class="script-text">"I have locked in our emergency plumber, [Technician Name]. They are wrapping up their current job and are routing to you next. Their estimated arrival is within [Time Window]. I will send a text notification the second they head your way."</p>
+</div>
+</div>
+</div>
+<div class="script-footer">
+<p>💡 <strong>How Gainhelm simplifies this:</strong> Instead of scribbling call details on paper and scrambling to find who is available, type these details directly into your Gainhelm board. Gainhelm automatically suggests the right plumber based on current proximity and availability, helping you run a seamless emergency plumbing dispatch workflow.</p>
+<a href="#waitlist" class="cta-primary">Try Gainhelm for your dispatch board</a>
+</div>
+</div>
+</section>
 <section class="section" aria-labelledby="why-it-matters">
 <div class="section-head">
 <div class="kicker">Why teams switch</div>
@@ -369,6 +561,10 @@ Gainhelm
 <details class="faq-item">
 <summary>Does Gainhelm support plumbing dispatch integrations?</summary>
 <p>Gainhelm is early-access AI plumbing dispatch software focused first on service-call scheduling, plumber assignment, and cleaner work-order handoffs. If you are comparing dispatch scheduling integrations, list the accounting, calendar, and field-service tools your plumbing team needs connected before choosing a system.</p>
+</details>
+<details class="faq-item">
+<summary>What should a plumbing dispatcher script include?</summary>
+<p>A plumbing dispatcher script should capture customer contact info, property address, details of the issue, and urgency. For emergency plumbing dispatch, it should prioritize immediate safety (like main water shut-off instructions for burst pipes) and fast plumber assignment on the dispatch board. Gainhelm helps log these details directly into a clean dispatch board without manual phone tag.</p>
 </details>
 </div>
 </section>
@@ -524,6 +720,27 @@ form.addEventListener('submit', async (event) => {
     if (!event.target.closest('.nav-menu')) {
       menus.forEach((menu) => { menu.open = false; });
     }
+  });
+})();
+
+// JavaScript for script tab switching
+(() => {
+  const tabs = document.querySelectorAll('.script-tab');
+  const panels = document.querySelectorAll('.script-panel');
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => {
+        t.classList.remove('active');
+        t.setAttribute('aria-selected', 'false');
+      });
+      panels.forEach(p => p.hidden = true);
+      
+      tab.classList.add('active');
+      tab.setAttribute('aria-selected', 'true');
+      const panelId = tab.getAttribute('aria-controls');
+      const panel = document.getElementById(panelId);
+      if (panel) panel.hidden = false;
+    });
   });
 })();
 </script>
