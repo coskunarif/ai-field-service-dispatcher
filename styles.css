@@ -1999,7 +1999,7 @@ footer {
 /* Workspace */
 .dashboard-workspace {
   display: grid;
-  grid-template-columns: 200px 1fr;
+  grid-template-columns: 160px 1fr;
   background: #030712;
   border-bottom: 1px solid hsl(var(--line));
 }
@@ -2125,8 +2125,7 @@ footer {
   font-family: 'IBM Plex Mono', monospace;
   font-size: 0.76rem;
   line-height: 1.4;
-  height: 220px;
-  overflow-y: auto;
+  height: auto;
 }
 
 .log-line {
