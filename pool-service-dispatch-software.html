@@ -52,7 +52,75 @@ Gainhelm
 <div class="badge-row" aria-label="Pool service dispatch terms"><span class="badge">Service request intake</span><span class="badge">Technician assignment</span><span class="badge">Schedule changes</span><span class="badge">Office-to-field handoffs</span></div>
 </div><div class="hero-preview" aria-label="Gainhelm AI Dispatcher Supervision Board">
   <div class="agent-dashboard-preview">
-    <img src="/gainhelm_dashboard.png" alt="Gainhelm AI Dispatcher Supervision Board Mockup" class="dashboard-img" />
+    <!-- Browser Header -->
+    <div class="dashboard-header">
+      <div class="header-dots">
+        <span class="dot red"></span>
+        <span class="dot yellow"></span>
+        <span class="dot green"></span>
+      </div>
+      <div class="header-address">gainhelm.com/supervision</div>
+    </div>
+    
+    <!-- Dashboard Workspace -->
+    <div class="dashboard-workspace">
+      <!-- Sidebar/Context -->
+      <div class="workspace-sidebar">
+        <h4>Context</h4>
+        <div class="context-section">
+          <h5>Technicians</h5>
+          <div class="tech-item">
+            <span class="tech-name">Sarah Connor</span>
+            <span class="tech-status status-active">Active</span>
+          </div>
+          <div class="tech-item">
+            <span class="tech-name">John Wick</span>
+            <span class="tech-status status-available">Available</span>
+          </div>
+        </div>
+        <div class="context-section">
+          <h5>Rules</h5>
+          <div class="rule-item">⏱️ Timeout: <strong>3m</strong></div>
+          <div class="rule-item">💰 Call Fee: <strong>$120</strong></div>
+        </div>
+      </div>
+      
+      <!-- Terminal Feed -->
+      <div class="workspace-feed">
+        <div class="feed-header">
+          <span>AI Dispatcher Logs</span>
+          <span class="feed-time">14:32:01</span>
+        </div>
+        <div class="feed-log">
+          <div class="log-line info">
+            <span class="log-time">[14:31:10]</span>
+            <span class="log-text"><strong>Job:</strong> Emergency service call.</span>
+          </div>
+          <div class="log-line ai">
+            <span class="log-time">[14:31:12]</span>
+            <span class="log-text"><strong>AI:</strong> Scanning active technicians...</span>
+          </div>
+          <div class="log-line ai">
+            <span class="log-time">[14:31:15]</span>
+            <span class="log-text">Sarah Connor matched (2.4km).</span>
+          </div>
+          <div class="log-line info">
+            <span class="log-time">[14:31:21]</span>
+            <span class="log-text"><strong>SMS Sent:</strong> "Job offer sent. Accept?"</span>
+          </div>
+          <div class="log-line success">
+            <span class="log-time">[14:31:25]</span>
+            <span class="log-text"><strong>SMS Recv:</strong> "YES" (Job accepted)</span>
+          </div>
+          <div class="log-line success">
+            <span class="log-time">[14:31:30]</span>
+            <span class="log-text"><strong>Booking:</strong> Calendar updated & client notified.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Caption -->
     <div class="dashboard-caption">
       <h3>🚀 Agent-First Dispatching</h3>
       <p>Instead of managing messy visual calendars, Gainhelm runs a headless AI dispatcher. Technicians coordinate jobs entirely via automated text messages, while you supervise real-time logs and business rules from a single dashboard.</p>
