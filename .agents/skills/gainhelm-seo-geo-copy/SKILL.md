@@ -1,3 +1,8 @@
+---
+name: gainhelm-seo-geo-copy
+description: Use when improving Gainhelm landing-page SEO/GEO copy, crawl surfaces, metadata, internal links, Search Console checks, or conservative no-feature-claim marketing copy.
+---
+
 # Gainhelm SEO/GEO copy updates
 
 Use this when improving Gainhelm landing-page SEO/GEO copy without implementing product features.

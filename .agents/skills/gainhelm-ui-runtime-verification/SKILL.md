@@ -1,3 +1,8 @@
+---
+name: gainhelm-ui-runtime-verification
+description: Use when validating gainhelm.com UI, UX, routing, waitlist form behavior, browser runtime evidence, local server checks, or live deploy/cache verification in ai-field-service-dispatcher.
+---
+
 # Gainhelm UI runtime verification
 
 Use this when validating gainhelm.com UI/UX changes in `ai-field-service-dispatcher`.

@@ -1074,6 +1074,8 @@ section:not(.hero):not(.form-section) > * {
   border-spacing: 0;
   border-radius: 22px;
   overflow: hidden;
+  background: linear-gradient(180deg, hsl(var(--surface) / 0.9), hsl(var(--surface-2) / 0.82));
+  backdrop-filter: blur(12px);
 }
 
 .compare th,
@@ -1096,6 +1098,14 @@ section:not(.hero):not(.form-section) > * {
   font-size: 0.96rem;
 }
 
+.compare tr {
+  transition: background-color 150ms ease;
+}
+
+.compare tr:hover td {
+  background: hsl(var(--surface-3) / 0.3);
+}
+
 .compare tr:last-child td {
   border-bottom: none;
 }
@@ -1106,23 +1116,27 @@ section:not(.hero):not(.form-section) > * {
 }
 
 .card-grid,
+.info-grid,
 .steps,
-.faq-list {
+.faq-list,
+.faq-grid {
   display: grid;
   gap: 18px;
 }
 
-.card-grid {
+.card-grid,
+.info-grid {
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
 }
 
 .info-card,
 .step,
 .faq-item {
-  background: linear-gradient(180deg, hsl(var(--surface) / 0.98), hsl(var(--surface-2) / 0.92));
+  backdrop-filter: blur(14px);
+  background: linear-gradient(180deg, hsl(var(--surface) / 0.85), hsl(var(--surface-2) / 0.75));
   border: 1px solid hsl(var(--line) / 0.86);
   box-shadow: var(--shadow-sm);
-  transition: transform 240ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 240ms cubic-bezier(0.16, 1, 0.3, 1), border-color 240ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 300ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 300ms cubic-bezier(0.16, 1, 0.3, 1), border-color 300ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .info-card,
@@ -1146,8 +1160,9 @@ section:not(.hero):not(.form-section) > * {
 .info-card:hover,
 .step:hover,
 .faq-item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 24px 50px hsl(220 40% 2% / 0.11);
+  transform: translateY(-4px) scale(1.005);
+  border-color: hsl(var(--brand) / 0.35);
+  box-shadow: 0 20px 40px hsl(220 40% 2% / 0.22), 0 0 24px hsl(var(--brand) / 0.05);
 }
 
 .info-card h3,
@@ -1268,7 +1283,8 @@ section:not(.hero):not(.form-section) > * {
   color: hsl(var(--text-3));
 }
 
-.form-section {
+.form-section,
+.waitlist-section {
   width: min(calc(100% - 24px), 860px);
   margin: 0 auto clamp(180px, 34vh, 300px);
   padding: 0 0 12px;
@@ -1283,7 +1299,8 @@ section:not(.hero):not(.form-section) > * {
   scroll-margin-top: 28px;
 }
 
-.form-card {
+.form-card,
+.waitlist-card {
   position: relative;
   overflow: hidden;
   border-radius: 30px;
@@ -1606,8 +1623,9 @@ footer {
 
 .hero,
 .preview-card,
-.section:not(.hero):not(.form-section),
+.section:not(.hero):not(.form-section):not(.waitlist-section),
 .form-card,
+.waitlist-card,
 .info-card,
 .step,
 .faq-item {
@@ -1736,8 +1754,9 @@ footer {
     grid-template-columns: 1fr;
   }
 
-  .section:not(.hero):not(.form-section),
-  .form-section {
+  .section:not(.hero):not(.form-section):not(.waitlist-section),
+  .form-section,
+  .waitlist-section {
     width: min(calc(100% - 16px), var(--container));
   }
 
@@ -1750,6 +1769,7 @@ footer {
   }
 
   .card-grid,
+  .info-grid,
   .steps {
     grid-template-columns: 1fr;
   }
@@ -1795,8 +1815,9 @@ footer {
 
   .hero,
   .preview-card,
-  .section:not(.hero):not(.form-section),
+  .section:not(.hero):not(.form-section):not(.waitlist-section),
   .form-card,
+  .waitlist-card,
   .info-card,
   .step,
   .faq-item {
@@ -1833,6 +1854,7 @@ footer {
 
   .preview-card,
   .form-card,
+  .waitlist-card,
   .info-card,
   .step,
   .faq-item summary,

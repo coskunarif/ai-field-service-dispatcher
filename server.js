@@ -216,7 +216,7 @@ const renderWaitlistResponsePage = ({ statusCode, title, heading, message, email
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${escapeHtml(title)} | Gainhelm</title>
 <meta name="robots" content="noindex,follow">
-<link rel="stylesheet" href="/styles.css">
+<link rel="stylesheet" href="/styles.css?v=20260604-redesign">
 </head>
 <body>
 <a class="skip-link" href="#top">Skip to main content</a>
@@ -252,7 +252,7 @@ const renderRecoveryPage = ({ pathname, statusCode, title, heading, message }) =
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${escapeHtml(title)} | Gainhelm</title>
 <meta name="robots" content="noindex,follow">
-<link rel="stylesheet" href="/styles.css">
+<link rel="stylesheet" href="/styles.css?v=20260604-redesign">
 </head>
 <body>
 <a class="skip-link" href="#top">Skip to main content</a>
@@ -406,7 +406,7 @@ fastify.post('/onboarding', async (request, reply) => {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Gainhelm AI Simulator</title>
 <meta name="robots" content="noindex,follow">
-<link rel="stylesheet" href="/styles.css">
+<link rel="stylesheet" href="/styles.css?v=20260604-redesign">
 <style>
   .phone-container {
     width: 320px;
@@ -604,7 +604,7 @@ const renderSetupPage = (email, context) => {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Gainhelm AI Dispatcher Setup</title>
 <meta name="robots" content="noindex,follow">
-<link rel="stylesheet" href="/styles.css">
+<link rel="stylesheet" href="/styles.css?v=20260604-redesign">
 <style>
   .setup-container {
     max-width: 800px;
@@ -785,7 +785,7 @@ const renderAppPage = (email, context) => {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Gainhelm AI Dispatch Board</title>
 <meta name="robots" content="noindex,follow">
-<link rel="stylesheet" href="/styles.css">
+<link rel="stylesheet" href="/styles.css?v=20260604-redesign">
 <style>
   .app-layout {
     display: grid;
@@ -1038,7 +1038,7 @@ fastify.get('/setup', async (request, reply) => {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Gainhelm AI Config Setup</title>
-<link rel="stylesheet" href="/styles.css">
+<link rel="stylesheet" href="/styles.css?v=20260604-redesign">
 <style>
   .setup-container {
     max-width: 480px;
