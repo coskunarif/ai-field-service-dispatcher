@@ -74,112 +74,12 @@ export default function Navbar() {
             <a href="/" className="text-sm font-medium text-slate-300 hover:text-white transition-colors">
               Home
             </a>
-            <a href="/hvac-dispatch-software" className="text-sm font-medium text-slate-300 hover:text-white transition-colors">
-              HVAC
-            </a>
-            <a href="/plumbing-dispatch-software" className="text-sm font-medium text-slate-300 hover:text-white transition-colors">
-              Plumbing
-            </a>
-
-            {/* Services Dropdown */}
-            <div
-              className="relative"
-              onMouseEnter={() => setActiveDropdown('services')}
-              onMouseLeave={() => setActiveDropdown(null)}
-            >
-              <button className="flex items-center gap-1 text-sm font-medium text-slate-300 hover:text-white transition-colors py-2">
-                Services <ChevronDown className="w-4 h-4" />
-              </button>
-              <AnimatePresence>
-                {activeDropdown === 'services' && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 10 }}
-                    className="absolute left-0 mt-1 w-64 bg-slate-900 border border-slate-800 rounded-xl shadow-2xl p-2 grid gap-1 z-55"
-                  >
-                    {servicesLinks.map((link) => (
-                      <a
-                        key={link.label}
-                        href={link.href}
-                        className="block px-3 py-2 text-xs text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"
-                      >
-                        {link.label}
-                      </a>
-                    ))}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-
             <a href="/field-service-scheduling" className="text-sm font-medium text-slate-300 hover:text-white transition-colors">
-              Schedule
+              Features
             </a>
-            <a href="/mobile-dispatch-board" className="text-sm font-medium text-slate-300 hover:text-white transition-colors">
-              Mobile board
+            <a href="#how-it-works" className="text-sm font-medium text-slate-300 hover:text-white transition-colors">
+              How it works
             </a>
-
-            {/* Alternatives Dropdown */}
-            <div
-              className="relative"
-              onMouseEnter={() => setActiveDropdown('alternatives')}
-              onMouseLeave={() => setActiveDropdown(null)}
-            >
-              <button className="flex items-center gap-1 text-sm font-medium text-slate-300 hover:text-white transition-colors py-2">
-                Alternatives <ChevronDown className="w-4 h-4" />
-              </button>
-              <AnimatePresence>
-                {activeDropdown === 'alternatives' && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 10 }}
-                    className="absolute left-0 mt-1 w-56 bg-slate-900 border border-slate-800 rounded-xl shadow-2xl p-2 grid gap-1 z-55"
-                  >
-                    {alternativesLinks.map((link) => (
-                      <a
-                        key={link.label}
-                        href={link.href}
-                        className="block px-3 py-2 text-xs text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"
-                      >
-                        {link.label}
-                      </a>
-                    ))}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-
-            {/* Resources Dropdown */}
-            <div
-              className="relative"
-              onMouseEnter={() => setActiveDropdown('resources')}
-              onMouseLeave={() => setActiveDropdown(null)}
-            >
-              <button className="flex items-center gap-1 text-sm font-medium text-slate-300 hover:text-white transition-colors py-2">
-                Resources <ChevronDown className="w-4 h-4" />
-              </button>
-              <AnimatePresence>
-                {activeDropdown === 'resources' && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 10 }}
-                    className="absolute left-0 mt-1 w-56 bg-slate-900 border border-slate-800 rounded-xl shadow-2xl p-2 grid gap-1 z-55"
-                  >
-                    {resourcesLinks.map((link) => (
-                      <a
-                        key={link.label}
-                        href={link.href}
-                        className="block px-3 py-2 text-xs text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"
-                      >
-                        {link.label}
-                      </a>
-                    ))}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
           </div>
 
           <div className="hidden xl:flex items-center gap-3">
@@ -218,71 +118,12 @@ export default function Navbar() {
               <a href="/" onClick={() => setMobileOpen(false)} className="block text-base font-medium text-slate-300 hover:text-white py-1">
                 Home
               </a>
-              <a href="/hvac-dispatch-software" onClick={() => setMobileOpen(false)} className="block text-base font-medium text-slate-300 hover:text-white py-1">
-                HVAC
-              </a>
-              <a href="/plumbing-dispatch-software" onClick={() => setMobileOpen(false)} className="block text-base font-medium text-slate-300 hover:text-white py-1">
-                Plumbing
-              </a>
-
-              {/* Mobile Services Accordion */}
-              <div className="py-1">
-                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Services</p>
-                <div className="pl-3 border-l border-slate-800 grid gap-2">
-                  {servicesLinks.map((link) => (
-                    <a
-                      key={link.label}
-                      href={link.href}
-                      onClick={() => setMobileOpen(false)}
-                      className="block text-sm text-slate-400 hover:text-white"
-                    >
-                      {link.label}
-                    </a>
-                  ))}
-                </div>
-              </div>
-
               <a href="/field-service-scheduling" onClick={() => setMobileOpen(false)} className="block text-base font-medium text-slate-300 hover:text-white py-1">
-                Schedule
+                Features
               </a>
-              <a href="/mobile-dispatch-board" onClick={() => setMobileOpen(false)} className="block text-base font-medium text-slate-300 hover:text-white py-1">
-                Mobile board
+              <a href="#how-it-works" onClick={() => setMobileOpen(false)} className="block text-base font-medium text-slate-300 hover:text-white py-1">
+                How it works
               </a>
-
-              {/* Mobile Alternatives Accordion */}
-              <div className="py-1">
-                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Alternatives</p>
-                <div className="pl-3 border-l border-slate-800 grid gap-2">
-                  {alternativesLinks.map((link) => (
-                    <a
-                      key={link.label}
-                      href={link.href}
-                      onClick={() => setMobileOpen(false)}
-                      className="block text-sm text-slate-400 hover:text-white"
-                    >
-                      {link.label}
-                    </a>
-                  ))}
-                </div>
-              </div>
-
-              {/* Mobile Resources Accordion */}
-              <div className="py-1">
-                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Resources</p>
-                <div className="pl-3 border-l border-slate-800 grid gap-2">
-                  {resourcesLinks.map((link) => (
-                    <a
-                      key={link.label}
-                      href={link.href}
-                      onClick={() => setMobileOpen(false)}
-                      className="block text-sm text-slate-400 hover:text-white"
-                    >
-                      {link.label}
-                    </a>
-                  ))}
-                </div>
-              </div>
-
               <a
                 href="#waitlist"
                 onClick={() => setMobileOpen(false)}
