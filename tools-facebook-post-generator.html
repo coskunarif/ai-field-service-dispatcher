@@ -512,13 +512,13 @@ Gainhelm
   </div>
 
   <!-- LEAD MAGNET WAITLIST CALL TO ACTION -->
-  <div class="lead-card" id="waitlist-form">
+  <div class="lead-card" id="waitlist">
     <div class="lead-content">
       <div class="brand-chip" style="display: inline-block; margin-bottom: 12px; background: hsl(var(--brand) / 0.15); color: hsl(var(--brand-2)); border: 1px solid hsl(var(--brand) / 0.3);">Gainhelm Dispatch Planner</div>
       <h2 class="lead-title">Turn Leads into Scheduled Work Orders Instantly</h2>
       <p class="lead-desc">Now that you've got leads coming in, stop wasting 3+ hours daily shuffling schedules. Let Gainhelm automate technician dispatching, cut phone tag, and keep your workday structured.</p>
       
-      <form class="lead-form-inline" action="/waitlist" method="POST">
+      <form id="waitlist-form" class="lead-form-inline" action="/waitlist" method="POST">
         <input type="text" name="name" placeholder="Your Name" required>
         <input type="text" name="company" placeholder="Business Name" required>
         <input type="email" name="email" placeholder="Work Email" required>

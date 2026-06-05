@@ -316,9 +316,9 @@ test.describe('Gainhelm Product Setup & App Board', () => {
 
     // 5. Navigate through wizard
     try {
-      await page.click('#btn-next', { timeout: 3000 }); // Step 2 rules
-      await page.click('#btn-next', { timeout: 3000 }); // Step 3 sandbox
-      await page.click('#btn-submit', { timeout: 3000 }); // Save & Launch
+      await page.click('#btn-next'); // Step 2 rules
+      await page.click('#btn-next'); // Step 3 sandbox
+      await page.click('#btn-submit'); // Save & Launch
     } catch (err) {
       console.log('PAGE CONTENT ON FAILURE:', await page.content());
       throw err;

@@ -129,7 +129,82 @@ Gainhelm
 </div></div></section>
 <section class="section" id="workflow" aria-labelledby="workflow-heading"><div class="section-head"><div class="kicker">Workflow</div><h2 id="workflow-heading">Keep cleaning jobs moving from intake to assignment.</h2><p>Cleaning dispatch can break down when requests, cleaner availability, visit notes, and schedule changes live in separate places. Gainhelm focuses on the simple dispatch layer: what came in, who is assigned, and what needs to happen next.</p></div><div class="info-grid"><div class="info-card"><h3>Capture service requests</h3><p>Record the service address, request type, priority, access notes, and customer context before assigning the job.</p></div><div class="info-card"><h3>Assign cleaners clearly</h3><p>Keep cleaner assignment, availability, same-day schedule changes, and office-to-field notes visible from one board.</p></div><div class="info-card"><h3>Use mobile-friendly updates</h3><p>Help office staff and field teams scan the schedule on desktop, tablet, or phone without relying on scattered texts.</p></div><div class="info-card"><h3>Stay focused on dispatch</h3><p>Gainhelm does not claim estimating, invoicing, payroll, GPS tracking, route optimization, inventory, inspections, quoting, payments, or accounting features for this early-access slice.</p></div></div></section>
 <section class="section" aria-labelledby="related-heading"><div class="section-head"><div class="kicker">Related dispatch pages</div><h2 id="related-heading">Compare nearby service-business workflows.</h2></div><div class="info-grid"><div class="info-card"><h3><a href="/field-service-scheduling">Field service scheduling software</a></h3><p>For teams comparing broad scheduling, technician assignment, and dispatch boards.</p></div><div class="info-card"><h3><a href="/mobile-dispatch-board">Mobile dispatch software</a></h3><p>For teams that need a readable board on iPad, tablet, or phone.</p></div><div class="info-card"><h3><a href="/appliance-repair-dispatch-software">Appliance repair dispatch software</a></h3><p>For repair teams coordinating service requests and schedule changes.</p></div></div></section>
-<section class="waitlist-section" id="waitlist" aria-labelledby="waitlist-heading"><div class="waitlist-card"><div><div class="kicker">Early access</div><h2 id="waitlist-heading">Tell us what cleaning dispatch workflow you need.</h2><p>Join the waitlist if you run cleaning, janitorial, appliance repair, electrical, HVAC, plumbing, or field service teams and want cleaner job assignment before adding heavy software.</p></div><form class="waitlist-form" action="/waitlist" method="post"><label>Name<input name="name" autocomplete="name"></label><label>Email <span class="field-required" aria-hidden="true">*</span><span class="sr-only"> required</span><input name="email" type="email" autocomplete="email" inputmode="email" required></label><label>Company<input name="company" autocomplete="organization"></label><button type="submit">Join the waitlist</button></form></div></section>
+<section class="form-section compact-waitlist" id="waitlist" aria-labelledby="waitlist-heading"><div class="form-card"><div class="kicker">Early access</div><h2 id="waitlist-heading">Tell us what cleaning dispatch workflow you need.</h2><p>Join the waitlist if you run cleaning, janitorial, appliance repair, electrical, HVAC, plumbing, or field service teams and want cleaner job assignment before adding heavy software.</p><div id="waitlist-status" class="waitlist-status" role="status" aria-live="polite" hidden></div><form id="waitlist-form" action="/waitlist" method="post" data-api-url="/waitlist" novalidate><div class="form-group"><label for="name">Full Name <span class="sr-only">optional</span></label><input type="text" id="name" name="name" autocomplete="name" placeholder="John Smith" aria-describedby="waitlist-status"></div><div class="form-group"><label for="email">Work Email <span class="field-required" aria-hidden="true">*</span><span class="sr-only"> required</span></label><input type="email" id="email" name="email" autocomplete="email" inputmode="email" placeholder="john@company.com" required aria-describedby="waitlist-help waitlist-status"></div><div class="form-group"><label for="company">Company <span class="sr-only">optional</span></label><input type="text" id="company" name="company" autocomplete="organization" placeholder="Your Company Name"></div><button type="submit" class="form-submit">Join the waitlist</button></form><div id="waitlist-help" class="waitlist-help">We’ll only use this to follow up about early access.</div><script>
+const form = document.getElementById('waitlist-form');
+const status = document.getElementById('waitlist-status');
+const submitButton = form.querySelector('.form-submit');
+const emailInput = document.getElementById('email');
+const nameInput = document.getElementById('name');
+const showStatus = (message, type) => {
+  status.hidden = false;
+  status.className = `waitlist-status ${type}`;
+  status.textContent = message;
+};
+const markInvalid = (input, invalid = true) => {
+  input.setAttribute('aria-invalid', invalid ? 'true' : 'false');
+};
+[nameInput, emailInput].forEach((input) => {
+  input.addEventListener('input', () => markInvalid(input, false));
+});
+
+form.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  status.hidden = true;
+  markInvalid(nameInput, false);
+  markInvalid(emailInput, false);
+
+  if (!emailInput.value.trim()) {
+    markInvalid(emailInput);
+    showStatus('Please add a work email so we can send your early access update.', 'error');
+    emailInput.focus();
+    return;
+  }
+
+  if (!emailInput.validity.valid) {
+    markInvalid(emailInput);
+    showStatus('Please enter a valid work email address, like name@company.com.', 'error');
+    emailInput.focus();
+    return;
+  }
+
+  submitButton.disabled = true;
+  submitButton.textContent = 'Submitting...';
+  showStatus('Submitting your waitlist request...', 'pending');
+
+  try {
+    const formData = new FormData(form);
+    const payload = {
+      name: formData.get('name'),
+      email: formData.get('email'),
+      company: formData.get('company'),
+    };
+
+    const response = await fetch(form.dataset.apiUrl || '/waitlist', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+
+    const result = await response.json().catch(() => ({}));
+
+    if (!response.ok || result.success === false) {
+      const message = result.error
+        ? `${result.error}. Please try again in a moment.`
+        : "We couldn't submit your request right now. Please try again in a moment.";
+      showStatus(message, 'error');
+      return;
+    }
+
+    form.reset();
+    showStatus("Thanks! You're on the waitlist. We'll be in touch soon.", 'success');
+  } catch (error) {
+    showStatus('We had trouble submitting your request. Please try again.', 'error');
+  } finally {
+    submitButton.disabled = false;
+    submitButton.textContent = 'Join the waitlist';
+  }
+});
+</script></div></section>
 </main>
 <footer><div>© 2026 Gainhelm. Built for field service dispatch.</div><div class="footer-links"><a href="#waitlist">Join the waitlist</a> · <a href="/hvac-dispatch-software">HVAC</a> · <a href="/plumbing-dispatch-software">Plumbing</a> · <a href="/electrical-dispatch-software">Electrical</a> · <a href="/appliance-repair-dispatch-software">Appliance Repair</a> · <a href="/pest-control-dispatch-software">Pest Control</a> · <a href="/garage-door-dispatch-software">Garage Door</a> · <a href="/cleaning-dispatch-software">Cleaning</a> · <a href="/landscaping-dispatch-software">Landscaping</a> · <a href="/roofing-dispatch-software">Roofing</a> · <a href="/locksmith-dispatch-software">Locksmith</a> · <a href="/pool-service-dispatch-software">Pool Service</a> · <a href="/commercial-facilities-dispatch-software">Facilities</a> · <a href="/septic-service-dispatch-software">Septic</a> · <a href="/emergency-restoration-dispatch-software">Emergency Restoration</a> · <a href="/restoration-job-management-software">Restoration Jobs</a> · <a href="/handyman-dispatch-software">Handyman</a> · <a href="/carpet-cleaning-dispatch-software">Carpet Cleaning</a> · <a href="/tree-service-dispatch-software">Tree Service</a> · <a href="/field-service-scheduling">Scheduling</a> · <a href="/mobile-dispatch-board">Mobile Board</a> · <a href="/servicetitan-alternative">ServiceTitan Alt</a> · <a href="/jobber-alternative">Jobber Alt</a> · <a href="/housecallpro-alternative">Housecall Pro Alt</a> · <a href="/servicefusion-alternative">Service Fusion Alt</a> · <a href="/buildops-alternative">BuildOps Alt</a> · <a href="/fieldedge-alternative">FieldEdge Alt</a> · <a href="/hvac-dispatch-app-vs-spreadsheets">Compare</a> · <a href="/how-to-choose-hvac-dispatch-app">Buying Guide</a> · <a href="/how-hvac-dispatch-apps-reduce-phone-tag">Phone Tag Guide</a> · <a href="/sitemap.xml">sitemap.xml</a> · <a href="/llms.txt">llms.txt</a></div></footer>
 <script>
