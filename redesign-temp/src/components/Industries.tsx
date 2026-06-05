@@ -9,6 +9,7 @@ const industries = [
     stat: '40% faster emergency response',
     color: 'bg-orange-500/10 text-orange-400 border-orange-500/20',
     imageColor: 'bg-gradient-to-br from-orange-500/10 to-amber-500/5',
+    href: '/hvac-dispatch-software',
   },
   {
     icon: Droplets,
@@ -17,6 +18,7 @@ const industries = [
     stat: '60% fewer missed appointments',
     color: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
     imageColor: 'bg-gradient-to-br from-blue-500/10 to-sky-500/5',
+    href: '/plumbing-dispatch-software',
   },
   {
     icon: TreePine,
@@ -25,6 +27,7 @@ const industries = [
     stat: '3x more jobs per day',
     color: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
     imageColor: 'bg-gradient-to-br from-emerald-500/10 to-green-500/5',
+    href: '/landscaping-dispatch-software',
   },
 ];
 
@@ -76,9 +79,12 @@ export default function Industries() {
                   <span className="text-xs font-bold text-brand-400 bg-brand-500/10 px-3 py-1.5 rounded-full border border-brand-500/20">
                     {industry.stat}
                   </span>
-                  <span className="text-sm font-medium text-slate-500 group-hover:text-brand-400 transition-colors flex items-center gap-1">
+                  <a
+                    href={industry.href}
+                    className="text-sm font-medium text-slate-500 group-hover:text-brand-400 transition-colors flex items-center gap-1"
+                  >
                     Learn more <ArrowRight className="w-4 h-4" />
-                  </span>
+                  </a>
                 </div>
               </div>
             </motion.div>

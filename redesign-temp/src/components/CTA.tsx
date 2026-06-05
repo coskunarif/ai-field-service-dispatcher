@@ -67,13 +67,13 @@ export default function CTA() {
           </p>
 
           {!submitted ? (
-            <form onSubmit={handleSubmit} className="space-y-4 max-w-md mx-auto text-left">
+            <form id="waitlist-form" onSubmit={handleSubmit} className="space-y-4 max-w-md mx-auto text-left">
               <div>
-                <label htmlFor="waitlist-name" className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                <label htmlFor="name" className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
                   Full Name <span className="text-brand-400">*</span>
                 </label>
                 <input
-                  id="waitlist-name"
+                  id="name"
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
@@ -84,11 +84,11 @@ export default function CTA() {
               </div>
 
               <div>
-                <label htmlFor="waitlist-email" className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                <label htmlFor="email" className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
                   Work Email <span className="text-brand-400">*</span>
                 </label>
                 <input
-                  id="waitlist-email"
+                  id="email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -99,11 +99,11 @@ export default function CTA() {
               </div>
 
               <div>
-                <label htmlFor="waitlist-company" className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                <label htmlFor="company" className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
                   Company
                 </label>
                 <input
-                  id="waitlist-company"
+                  id="company"
                   type="text"
                   value={company}
                   onChange={(e) => setCompany(e.target.value)}
@@ -136,12 +136,13 @@ export default function CTA() {
             </form>
           ) : (
             <motion.div
+              id="waitlist-status"
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="inline-flex items-center gap-3 px-8 py-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl"
+              className="waitlist-status success inline-flex items-center gap-3 px-8 py-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl"
             >
               <CheckCircle2 className="w-6 h-6 text-emerald-400" />
-              <span className="text-emerald-400 font-semibold">You're on the list! We'll be in touch soon.</span>
+              <span className="text-emerald-400 font-semibold">Thanks! You're on the waitlist</span>
             </motion.div>
           )}
 
