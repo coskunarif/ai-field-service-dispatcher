@@ -561,37 +561,65 @@ const renderSetupPage = (email, context) => {
   let techRows = '';
   if (technicians.length === 0) {
     techRows = `
-      <div class="tech-row" id="tech-row-0" style="display: flex; gap: 10px; margin-bottom: 12px; align-items: center;">
-        <input type="text" name="tech_name_0" placeholder="Name" required style="flex: 1; padding: 10px; background: #030712; border: 1px solid #374151; border-radius: 8px; color: #f3f4f6;">
-        <input type="tel" name="tech_phone_0" placeholder="Phone" required style="flex: 1; padding: 10px; background: #030712; border: 1px solid #374151; border-radius: 8px; color: #f3f4f6;">
-        <select name="tech_trade_0" style="padding: 10px; background: #030712; border: 1px solid #374151; border-radius: 8px; color: #f3f4f6;">
-          <option value="HVAC">HVAC</option>
-          <option value="Plumbing">Plumbing</option>
-          <option value="Electrical">Electrical</option>
-          <option value="Cleaning">Cleaning</option>
-          <option value="Landscaping">Landscaping</option>
-          <option value="Other">Other</option>
-        </select>
-        <input type="text" name="tech_skills_0" placeholder="Skills" style="flex: 1; padding: 10px; background: #030712; border: 1px solid #374151; border-radius: 8px; color: #f3f4f6;">
-        <button type="button" class="btn-remove" onclick="this.parentElement.remove()" style="padding: 10px 14px; background: #ef4444; border: none; border-radius: 8px; color: white; cursor: pointer; font-weight: bold;">✕</button>
+      <div class="tech-card" id="tech-row-0">
+        <div class="tech-card-grid">
+          <div>
+            <label>Name</label>
+            <input type="text" name="tech_name_0" placeholder="John Doe" required>
+          </div>
+          <div>
+            <label>Phone Number</label>
+            <input type="tel" name="tech_phone_0" placeholder="+1 (555) 0100" required>
+          </div>
+          <div>
+            <label>Trade Specialty</label>
+            <select name="tech_trade_0">
+              <option value="HVAC">HVAC</option>
+              <option value="Plumbing">Plumbing</option>
+              <option value="Electrical">Electrical</option>
+              <option value="Cleaning">Cleaning</option>
+              <option value="Landscaping">Landscaping</option>
+              <option value="Other">Other / General</option>
+            </select>
+          </div>
+          <div>
+            <label>Skills & Certifications</label>
+            <input type="text" name="tech_skills_0" placeholder="Emergency repair, wiring">
+          </div>
+        </div>
+        <button type="button" class="btn-remove-card" onclick="this.parentElement.remove()" title="Remove Technician">✕ Remove</button>
       </div>
     `;
   } else {
     technicians.forEach((t, i) => {
       techRows += `
-        <div class="tech-row" id="tech-row-${i}" style="display: flex; gap: 10px; margin-bottom: 12px; align-items: center;">
-          <input type="text" name="tech_name_${i}" value="${escapeHtml(t.name)}" placeholder="Name" required style="flex: 1; padding: 10px; background: #030712; border: 1px solid #374151; border-radius: 8px; color: #f3f4f6;">
-          <input type="tel" name="tech_phone_${i}" value="${escapeHtml(t.phone)}" placeholder="Phone" required style="flex: 1; padding: 10px; background: #030712; border: 1px solid #374151; border-radius: 8px; color: #f3f4f6;">
-          <select name="tech_trade_${i}" style="padding: 10px; background: #030712; border: 1px solid #374151; border-radius: 8px; color: #f3f4f6;">
-            <option value="HVAC" ${t.trade === 'HVAC' ? 'selected' : ''}>HVAC</option>
-            <option value="Plumbing" ${t.trade === 'Plumbing' ? 'selected' : ''}>Plumbing</option>
-            <option value="Electrical" ${t.trade === 'Electrical' ? 'selected' : ''}>Electrical</option>
-            <option value="Cleaning" ${t.trade === 'Cleaning' ? 'selected' : ''}>Cleaning</option>
-            <option value="Landscaping" ${t.trade === 'Landscaping' ? 'selected' : ''}>Landscaping</option>
-            <option value="Other" ${t.trade === 'Other' || !['HVAC','Plumbing','Electrical','Cleaning','Landscaping'].includes(t.trade) ? 'selected' : ''}>Other</option>
-          </select>
-          <input type="text" name="tech_skills_${i}" value="${escapeHtml(t.skills || '')}" placeholder="Skills" style="flex: 1; padding: 10px; background: #030712; border: 1px solid #374151; border-radius: 8px; color: #f3f4f6;">
-          <button type="button" class="btn-remove" onclick="this.parentElement.remove()" style="padding: 10px 14px; background: #ef4444; border: none; border-radius: 8px; color: white; cursor: pointer; font-weight: bold;">✕</button>
+        <div class="tech-card" id="tech-row-${i}">
+          <div class="tech-card-grid">
+            <div>
+              <label>Name</label>
+              <input type="text" name="tech_name_${i}" value="${escapeHtml(t.name)}" placeholder="John Doe" required>
+            </div>
+            <div>
+              <label>Phone Number</label>
+              <input type="tel" name="tech_phone_${i}" value="${escapeHtml(t.phone)}" placeholder="+1 (555) 0100" required>
+            </div>
+            <div>
+              <label>Trade Specialty</label>
+              <select name="tech_trade_${i}">
+                <option value="HVAC" ${t.trade === 'HVAC' ? 'selected' : ''}>HVAC</option>
+                <option value="Plumbing" ${t.trade === 'Plumbing' ? 'selected' : ''}>Plumbing</option>
+                <option value="Electrical" ${t.trade === 'Electrical' ? 'selected' : ''}>Electrical</option>
+                <option value="Cleaning" ${t.trade === 'Cleaning' ? 'selected' : ''}>Cleaning</option>
+                <option value="Landscaping" ${t.trade === 'Landscaping' ? 'selected' : ''}>Landscaping</option>
+                <option value="Other" ${t.trade === 'Other' || !['HVAC','Plumbing','Electrical','Cleaning','Landscaping'].includes(t.trade) ? 'selected' : ''}>Other / General</option>
+              </select>
+            </div>
+            <div>
+              <label>Skills & Certifications</label>
+              <input type="text" name="tech_skills_${i}" value="${escapeHtml(t.skills || '')}" placeholder="Emergency repair, wiring">
+            </div>
+          </div>
+          <button type="button" class="btn-remove-card" onclick="this.parentElement.remove()" title="Remove Technician">✕ Remove</button>
         </div>
       `;
     });
@@ -602,61 +630,229 @@ const renderSetupPage = (email, context) => {
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Gainhelm AI Dispatcher Setup</title>
+<title>Gainhelm AI Config Setup</title>
 <meta name="robots" content="noindex,follow">
 <link rel="stylesheet" href="/styles.css?v=20260604-redesign">
 <style>
+  body {
+    background:
+      radial-gradient(1200px 650px at 10% -10%, hsl(var(--brand) / 0.1), transparent 56%),
+      radial-gradient(900px 520px at 88% 2%, hsl(var(--cta) / 0.05), transparent 50%),
+      linear-gradient(180deg, hsl(var(--bg)) 0%, hsl(var(--bg-2)) 100%);
+  }
   .setup-container {
     max-width: 800px;
-    margin: 40px auto;
-    padding: 32px;
-    background: hsl(var(--surface) / 0.9);
+    margin: 40px auto 80px auto;
+    padding: 40px;
+    background: hsl(var(--surface) / 0.7);
+    backdrop-filter: blur(16px);
     border: 1px solid hsl(var(--line));
-    border-radius: 20px;
+    border-radius: 24px;
     box-shadow: var(--shadow-lg);
   }
-  .section-title {
+  .wizard-progress {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    margin-bottom: 40px;
+    padding: 0 10px;
+  }
+  .wizard-progress::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: hsl(var(--line));
+    z-index: 1;
+    transform: translateY(-50%);
+  }
+  .wizard-progress-bar {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 0%;
+    height: 3px;
+    background: linear-gradient(90deg, hsl(var(--brand)), hsl(var(--brand-2)));
+    z-index: 2;
+    transform: translateY(-50%);
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 0 8px hsl(var(--brand) / 0.5);
+  }
+  .progress-step {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: hsl(var(--surface));
+    border: 2px solid hsl(var(--line));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: hsl(var(--text-3));
+    z-index: 3;
+    transition: all 0.4s ease;
+    cursor: pointer;
+    font-size: 0.95rem;
+  }
+  .progress-step.active {
+    border-color: hsl(var(--brand-2));
+    background: hsl(var(--surface-3));
     color: hsl(var(--brand-2));
-    margin-bottom: 20px;
-    font-size: 1.4rem;
-    border-bottom: 1px solid hsl(var(--line));
-    padding-bottom: 8px;
+    box-shadow: 0 0 14px hsl(var(--brand) / 0.3);
+  }
+  .progress-step.completed {
+    border-color: hsl(var(--brand));
+    background: hsl(var(--brand));
+    color: hsl(var(--bg));
+  }
+  .step-label {
+    position: absolute;
+    top: 52px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: hsl(var(--text-3));
+    white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transform: translateX(-35%);
+  }
+  .progress-step.active .step-label {
+    color: hsl(var(--brand-2));
+  }
+  .progress-step.completed .step-label {
+    color: hsl(var(--text-2));
+  }
+  .wizard-panel {
+    display: none;
+    animation: fadeInSlide 0.4s ease-out forwards;
+  }
+  .wizard-panel.active {
+    display: block;
+  }
+  @keyframes fadeInSlide {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  .section-title {
+    color: #fff;
+    margin-bottom: 24px;
+    font-size: 1.6rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-subtitle {
+    color: hsl(var(--text-3));
+    font-size: 0.95rem;
+    margin-bottom: 30px;
+    line-height: 1.5;
+  }
+  .tech-card {
+    background: hsl(var(--surface-2) / 0.6);
+    border: 1px solid hsl(var(--line));
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 16px;
+    position: relative;
+    transition: all 0.3s ease;
+  }
+  .tech-card:hover {
+    border-color: hsl(var(--brand) / 0.4);
+    background: hsl(var(--surface-2) / 0.8);
+  }
+  .tech-card-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 600px) {
+    .tech-card-grid {
+      grid-template-columns: 1fr;
+    }
   }
   label {
     display: block;
-    margin-bottom: 6px;
-    font-size: 0.9rem;
-    font-weight: 600;
+    margin-bottom: 8px;
+    font-size: 0.85rem;
+    font-weight: 700;
     color: hsl(var(--text-2));
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
   }
-  input[type="text"], input[type="tel"], select, textarea {
+  input[type="text"], input[type="tel"], input[type="number"], select, textarea {
     width: 100%;
-    padding: 12px;
+    padding: 12px 16px;
     background: #030712;
     border: 1px solid hsl(var(--line));
-    border-radius: 8px;
-    color: hsl(var(--text));
+    border-radius: 10px;
+    color: #fff;
     font-size: 0.95rem;
+    transition: all 0.25s ease;
+    font-family: inherit;
   }
-  input[type="text"]:focus, input[type="tel"]:focus, select:focus, textarea:focus {
-    border-color: hsl(var(--brand));
+  input[type="text"]:focus, input[type="tel"]:focus, input[type="number"]:focus, select:focus, textarea:focus {
+    border-color: hsl(var(--brand-2));
     outline: none;
+    box-shadow: 0 0 0 3px hsl(var(--brand-2) / 0.15);
+    background: #080d1a;
   }
-  .form-group {
-    margin-bottom: 20px;
-  }
-  .btn-primary {
-    background: hsl(var(--brand));
-    color: #030712;
-    font-weight: bold;
-    border: none;
-    padding: 12px 24px;
-    border-radius: 8px;
+  .btn-remove-card {
+    margin-top: 14px;
+    background: hsl(0 72% 51% / 0.1);
+    color: hsl(0 100% 70%);
+    border: 1px solid hsl(0 72% 51% / 0.3);
+    padding: 6px 12px;
+    border-radius: 6px;
     cursor: pointer;
-    font-size: 1rem;
+    font-size: 0.82rem;
+    font-weight: 700;
+    transition: all 0.25s ease;
+    display: inline-flex;
+    align-items: center;
   }
-  .btn-primary:hover {
-    background: hsl(var(--brand-2));
+  .btn-remove-card:hover {
+    background: hsl(0 72% 51%);
+    color: #fff;
+  }
+  .preset-tray {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .preset-btn {
+    background: hsl(var(--surface-3));
+    border: 1px solid hsl(var(--line));
+    color: hsl(var(--text-2));
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s ease;
+  }
+  .preset-btn:hover {
+    border-color: hsl(var(--brand-2));
+    color: #fff;
+    background: hsl(var(--surface-3) / 1.5);
+  }
+  .button-bar {
+    margin-top: 40px;
+    padding-top: 24px;
+    border-top: 1px solid hsl(var(--line));
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
 </style>
 </head>
@@ -672,82 +868,222 @@ const renderSetupPage = (email, context) => {
 </header>
 <main style="padding: 0 20px;">
   <div class="setup-container">
-    <h1 style="color: #fff; margin-bottom: 8px; font-size: 2rem;">Setup your AI Dispatch Context</h1>
-    <p style="color: hsl(var(--text-3)); margin-bottom: 30px;">
-      Configure the rules and team details the AI agent uses to coordinate your dispatch operations automatically.
-    </p>
+    
+    <!-- Progress Indicator -->
+    <div class="wizard-progress">
+      <div class="wizard-progress-bar" id="progress-bar"></div>
+      <div class="progress-step active" id="step-dot-1" onclick="goToStep(1)">
+        1
+        <span class="step-label">👥 Team</span>
+      </div>
+      <div class="progress-step" id="step-dot-2" onclick="goToStep(2)">
+        2
+        <span class="step-label">⚙️ Rules</span>
+      </div>
+      <div class="progress-step" id="step-dot-3" onclick="goToStep(3)">
+        3
+        <span class="step-label">🔌 Launch</span>
+      </div>
+    </div>
 
-    <form action="/setup" method="POST">
+    <form action="/setup" method="POST" id="wizard-form">
       <input type="hidden" name="email" value="${escapeHtml(email)}">
 
-      <h3 class="section-title">1. Technicians Configuration</h3>
-      <div id="tech-list">
-        ${techRows}
-      </div>
-      <button type="button" class="cta-secondary" onclick="addTechRow()" style="margin-bottom: 30px; border: 1px dashed hsl(var(--line)); width: 100%; border-radius: 8px; padding: 12px; background: transparent; color: hsl(var(--brand-2)); font-weight: 600;">+ Add Technician</button>
-
-      <h3 class="section-title">2. AI Dispatch & Business Rules</h3>
-      <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-        <div>
-          <label>Response Timeout (Minutes)</label>
-          <input type="number" name="timeout" value="${escapeHtml(businessRules.timeout)}" min="1" max="60" required>
+      <!-- STEP 1: Technicians -->
+      <div class="wizard-panel active" id="step-panel-1">
+        <h2 class="section-title">👥 Configure Your Dispatch Team</h2>
+        <p class="section-subtitle">
+          Define the active technician roster. The AI dispatcher will route incoming job requests to these technicians via interactive SMS offers based on their trade specialty and skills.
+        </p>
+        <div id="tech-list">
+          ${techRows}
         </div>
-        <div>
-          <label>Base Diagnostic Call Fee ($)</label>
-          <input type="number" name="pricing" value="${escapeHtml(businessRules.pricing)}" min="0" required>
+        <button type="button" class="cta-secondary" onclick="addTechRow()" style="margin-top: 10px; border: 1px dashed hsl(var(--line)); width: 100%; border-radius: 12px; padding: 14px; background: transparent; color: hsl(var(--brand-2)); font-weight: 600; cursor: pointer;">
+          + Add Team Member
+        </button>
+      </div>
+
+      <!-- STEP 2: Business Rules -->
+      <div class="wizard-panel" id="step-panel-2">
+        <h2 class="section-title">⚙️ AI Dispatch Rules & Diagnostics</h2>
+        <p class="section-subtitle">
+          Specify response timeouts and call fees. Write custom guidelines to direct how the AI matches technicians, manages off-hours emergency schedules, or escalates unresolved dispatches.
+        </p>
+        
+        <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px;">
+          <div>
+            <label>Response Timeout (Minutes)</label>
+            <input type="number" name="timeout" value="${escapeHtml(businessRules.timeout)}" min="1" max="60" required>
+          </div>
+          <div>
+            <label>Base Call Fee ($)</label>
+            <input type="number" name="pricing" value="${escapeHtml(businessRules.pricing)}" min="0" required>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label>Custom Natural Language Guidelines</label>
+          <div class="preset-tray">
+            <span style="color: hsl(var(--text-3)); font-size: 0.8rem; line-height: 2.2; margin-right: 8px;">Presets:</span>
+            <button type="button" class="preset-btn" onclick="applyPreset('hvac')">🔥 HVAC Priority</button>
+            <button type="button" class="preset-btn" onclick="applyPreset('plumbing')">🚰 Plumbing Fallback</button>
+            <button type="button" class="preset-btn" onclick="applyPreset('landscaping')">🍃 Landscaping Emergency</button>
+          </div>
+          <textarea id="rules-textarea" name="rules" rows="6" placeholder="Write custom dispatcher rules here...">${escapeHtml(businessRules.rules)}</textarea>
         </div>
       </div>
-      <div class="form-group">
-        <label>Custom Natural Language Business Rules</label>
-        <textarea name="rules" rows="4" placeholder="E.g. 'John Connor is the primary tech for restoration. If Dave is on call, offer plumber tasks first.'">${escapeHtml(businessRules.rules)}</textarea>
+
+      <!-- STEP 3: Integrations & Sandbox -->
+      <div class="wizard-panel" id="step-panel-3">
+        <h2 class="section-title">🔌 Google Calendar & Sandbox Settings</h2>
+        <p class="section-subtitle">
+          Connect your Google Calendar link to record dispatched events. Choose between Simulation mode (interact with the dispatcher terminal on the board) or live Twilio mode.
+        </p>
+
+        <div class="form-group" style="margin-bottom: 24px;">
+          <label>Google Calendar Integration Link</label>
+          <input type="text" name="calendar_url" value="${escapeHtml(calendarConfig.calendar_url)}" placeholder="https://calendar.google.com/calendar/u/0/r...">
+        </div>
+
+        <div class="form-group">
+          <label>SMS Gateway Operations Mode</label>
+          <select name="sandbox_mode">
+            <option value="true" ${calendarConfig.sandbox_mode === 'true' ? 'selected' : ''}>Simulation Mode (Mock SMS inside supervision board)</option>
+            <option value="false" ${calendarConfig.sandbox_mode === 'false' ? 'selected' : ''}>Live Mode (Connect external Twilio SMS gateway)</option>
+          </select>
+        </div>
       </div>
 
-      <h3 class="section-title">3. Calendar & Integration</h3>
-      <div class="form-group">
-        <label>Google Calendar Integration Link</label>
-        <input type="text" name="calendar_url" value="${escapeHtml(calendarConfig.calendar_url)}" placeholder="https://calendar.google.com/calendar/...">
-      </div>
-      <div class="form-group">
-        <label>Sandbox / Twilio SMS Mode</label>
-        <select name="sandbox_mode">
-          <option value="true" ${calendarConfig.sandbox_mode === 'true' ? 'selected' : ''}>Simulation Mode (Mock SMS inside supervision board)</option>
-          <option value="false" ${calendarConfig.sandbox_mode === 'false' ? 'selected' : ''}>Live Mode (Will fetch Twilio configuration from env)</option>
-        </select>
+      <!-- Navigation Bar -->
+      <div class="button-bar">
+        <button type="button" class="cta-secondary" id="btn-back" onclick="navigateStep(-1)" style="visibility: hidden; font-weight: bold; border-radius: 10px; padding: 12px 24px; cursor: pointer;">
+          ← Back
+        </button>
+        <button type="button" class="cta-primary" id="btn-next" onclick="navigateStep(1)" style="border: none; border-radius: 10px; padding: 12px 28px; font-weight: bold; cursor: pointer;">
+          Next Step →
+        </button>
+        <button type="submit" class="btn-primary" id="btn-submit" style="display: none; border: none; border-radius: 10px; padding: 12px 28px; font-weight: bold; cursor: pointer;">
+          Save & Launch Board
+        </button>
       </div>
 
-      <div style="margin-top: 30px; display: flex; justify-content: space-between; align-items: center;">
-        <a href="/app?email=${escapeHtml(email)}" class="cta-secondary" style="font-weight: bold;">View Supervision Board</a>
-        <button type="submit" class="btn-primary">Save & Launch Feed</button>
-      </div>
     </form>
   </div>
 </main>
 
 <script>
+  let currentStep = 1;
   let rowIndex = ${Math.max(technicians.length, 1)};
+
+  function updateWizardUI() {
+    // Show active panel
+    document.querySelectorAll('.wizard-panel').forEach((el, index) => {
+      el.classList.toggle('active', index + 1 === currentStep);
+    });
+
+    // Update progress steps
+    for (let s = 1; s <= 3; s++) {
+      const dot = document.getElementById('step-dot-' + s);
+      dot.classList.toggle('active', s === currentStep);
+      dot.classList.toggle('completed', s < currentStep);
+    }
+
+    // Update progress bar width
+    const percentage = ((currentStep - 1) / 2) * 100;
+    document.getElementById('progress-bar').style.width = percentage + '%';
+
+    // Show/hide buttons
+    document.getElementById('btn-back').style.visibility = currentStep > 1 ? 'visible' : 'hidden';
+    if (currentStep === 3) {
+      document.getElementById('btn-next').style.display = 'none';
+      document.getElementById('btn-submit').style.display = 'block';
+    } else {
+      document.getElementById('btn-next').style.display = 'block';
+      document.getElementById('btn-submit').style.display = 'none';
+    }
+  }
+
+  function navigateStep(delta) {
+    if (delta === 1) {
+      // Validate active step inputs
+      if (currentStep === 1) {
+        const nameInputs = document.querySelectorAll('#tech-list input[type="text"][required]');
+        let valid = true;
+        nameInputs.forEach(i => {
+          if (!i.value.trim()) {
+            i.style.borderColor = '#ef4444';
+            valid = false;
+          } else {
+            i.style.borderColor = '';
+          }
+        });
+        if (!valid) {
+          alert('Please specify the technician details before moving forward.');
+          return;
+        }
+      }
+    }
+    currentStep += delta;
+    updateWizardUI();
+  }
+
+  function goToStep(step) {
+    if (step < currentStep || (step === 2 && currentStep === 1) || (step === 3 && currentStep === 2)) {
+      currentStep = step;
+      updateWizardUI();
+    }
+  }
+
   function addTechRow() {
     const list = document.getElementById('tech-list');
     const div = document.createElement('div');
-    div.className = 'tech-row';
+    div.className = 'tech-card';
     div.id = 'tech-row-' + rowIndex;
-    div.style = 'display: flex; gap: 10px; margin-bottom: 12px; align-items: center;';
     div.innerHTML = \`
-      <input type="text" name="tech_name_\${rowIndex}" placeholder="Name" required style="flex: 1; padding: 10px; background: #030712; border: 1px solid #374151; border-radius: 8px; color: #f3f4f6;">
-      <input type="tel" name="tech_phone_\${rowIndex}" placeholder="Phone" required style="flex: 1; padding: 10px; background: #030712; border: 1px solid #374151; border-radius: 8px; color: #f3f4f6;">
-      <select name="tech_trade_\${rowIndex}" style="padding: 10px; background: #030712; border: 1px solid #374151; border-radius: 8px; color: #f3f4f6;">
-        <option value="HVAC">HVAC</option>
-        <option value="Plumbing">Plumbing</option>
-        <option value="Electrical">Electrical</option>
-        <option value="Cleaning">Cleaning</option>
-        <option value="Landscaping">Landscaping</option>
-        <option value="Other">Other</option>
-      </select>
-      <input type="text" name="tech_skills_\${rowIndex}" placeholder="Skills" style="flex: 1; padding: 10px; background: #030712; border: 1px solid #374151; border-radius: 8px; color: #f3f4f6;">
-      <button type="button" class="btn-remove" onclick="this.parentElement.remove()" style="padding: 10px 14px; background: #ef4444; border: none; border-radius: 8px; color: white; cursor: pointer; font-weight: bold;">✕</button>
+      <div class="tech-card-grid">
+        <div>
+          <label>Name</label>
+          <input type="text" name="tech_name_\${rowIndex}" placeholder="John Doe" required>
+        </div>
+        <div>
+          <label>Phone Number</label>
+          <input type="tel" name="tech_phone_\${rowIndex}" placeholder="+1 (555) 0100" required>
+        </div>
+        <div>
+          <label>Trade Specialty</label>
+          <select name="tech_trade_\${rowIndex}">
+            <option value="HVAC">HVAC</option>
+            <option value="Plumbing">Plumbing</option>
+            <option value="Electrical">Electrical</option>
+            <option value="Cleaning">Cleaning</option>
+            <option value="Landscaping">Landscaping</option>
+            <option value="Other">Other / General</option>
+          </select>
+        </div>
+        <div>
+          <label>Skills & Certifications</label>
+          <input type="text" name="tech_skills_\${rowIndex}" placeholder="Emergency repair, wiring">
+        </div>
+      </div>
+      <button type="button" class="btn-remove-card" onclick="this.parentElement.remove()" title="Remove Technician">✕ Remove</button>
     \`;
     list.appendChild(div);
     rowIndex++;
   }
+
+  function applyPreset(presetType) {
+    const textarea = document.getElementById('rules-textarea');
+    if (presetType === 'hvac') {
+      textarea.value = 'Always route emergency AC calls to the primary technician Sarah Connor first. If Sarah does not accept the offer within 3 minutes, automatically route to David Miller. If no reply, raise an alert for the manager. Do not offer jobs after 9 PM unless they are classified as heating emergency in winter.';
+    } else if (presetType === 'plumbing') {
+      textarea.value = 'John Doe handles standard leak repairs. Emergency sewer backups must be offered to Sarah Connor. Fallback timeout is set to 3 minutes before dispatching to the next plumber on call.';
+    } else if (presetType === 'landscaping') {
+      textarea.value = 'David Miller handles lawn aeration and garden design. Tree removals require a minimum $250 call fee. If no matching tech is online, route tasks to fallback under Other trade.';
+    }
+  }
+
+  // Init Progress
+  updateWizardUI();
 </script>
 </body>
 </html>`;
@@ -760,18 +1096,18 @@ const renderAppPage = (email, context) => {
 
   let techListHtml = '';
   if (technicians.length === 0) {
-    techListHtml = '<p style="color: hsl(var(--text-3)); font-style: italic;">No technicians configured yet.</p>';
+    techListHtml = '<p style="color: hsl(var(--text-3)); font-style: italic; font-size: 0.85rem;">No technicians configured.</p>';
   } else {
     technicians.forEach(t => {
       techListHtml += `
-        <div style="padding: 12px; background: #030712; border: 1px solid hsl(var(--line)); border-radius: 8px; margin-bottom: 8px;">
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <strong style="color: #fff;">${escapeHtml(t.name)}</strong>
-            <span class="brand-chip" style="font-size: 0.72rem; padding: 2px 6px; background: hsl(var(--brand) / 0.15); color: hsl(var(--brand-2)); border: 1px solid hsl(var(--brand) / 0.3); border-radius: 4px;">${escapeHtml(t.trade)}</span>
+        <div style="padding: 14px; background: hsl(var(--surface-2) / 0.5); border: 1px solid hsl(var(--line)); border-radius: 12px; margin-bottom: 10px; transition: all 0.25s ease;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <strong style="color: #fff; font-size: 0.92rem;">${escapeHtml(t.name)}</strong>
+            <span class="brand-chip" style="font-size: 0.7rem; padding: 2px 6px; background: hsl(var(--brand) / 0.1); color: hsl(var(--brand-2)); border: 1px solid hsl(var(--brand) / 0.25); border-radius: 4px;">${escapeHtml(t.trade)}</span>
           </div>
-          <div style="font-size: 0.82rem; color: hsl(var(--text-3)); margin-top: 4px;">
+          <div style="font-size: 0.8rem; color: hsl(var(--text-3)); line-height: 1.4;">
             📞 ${escapeHtml(t.phone)} <br>
-            🛠️ Skills: ${escapeHtml(t.skills || 'None')}
+            🛠️ Skills: ${escapeHtml(t.skills || 'General maintenance')}
           </div>
         </div>
       `;
@@ -787,66 +1123,328 @@ const renderAppPage = (email, context) => {
 <meta name="robots" content="noindex,follow">
 <link rel="stylesheet" href="/styles.css?v=20260604-redesign">
 <style>
-  .app-layout {
-    display: grid;
-    grid-template-columns: 300px 1fr;
-    gap: 24px;
-    max-width: var(--container);
-    margin: 30px auto;
-    padding: 0 20px;
+  body {
+    background:
+      radial-gradient(1000px 500px at 50% -10%, hsl(var(--brand) / 0.08), transparent 50%),
+      linear-gradient(180deg, hsl(var(--bg)) 0%, hsl(var(--bg-2)) 100%);
   }
-  @media (max-width: 768px) {
-    .app-layout {
+  .app-grid {
+    display: grid;
+    grid-template-columns: 310px 1fr 340px;
+    gap: 24px;
+    max-width: 1450px;
+    margin: 24px auto;
+    padding: 0 24px;
+  }
+  @media (max-width: 1100px) {
+    .app-grid {
       grid-template-columns: 1fr;
     }
   }
   .panel {
-    background: hsl(var(--surface) / 0.95);
+    background: hsl(var(--surface) / 0.75);
+    backdrop-filter: blur(16px);
     border: 1px solid hsl(var(--line));
-    border-radius: 16px;
+    border-radius: 20px;
     padding: 24px;
     box-shadow: var(--shadow-md);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  /* Stats Cards */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+    max-width: 1450px;
+    margin: 24px auto 0 auto;
+    padding: 0 24px;
+  }
+  @media (max-width: 768px) {
+    .stats-row {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .stat-card {
+    background: hsl(var(--surface) / 0.75);
+    backdrop-filter: blur(16px);
+    border: 1px solid hsl(var(--line));
+    border-radius: 16px;
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    box-shadow: var(--shadow-sm);
+  }
+  .stat-value {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.1;
+  }
+  .stat-label {
+    font-size: 0.78rem;
+    color: hsl(var(--text-3));
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* Console Terminal */
+  .console-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid hsl(var(--line));
+    padding-bottom: 12px;
+  }
+  .console-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: monospace;
+    font-size: 0.8rem;
+    color: hsl(var(--brand-2));
+  }
+  .pulse-dot {
+    width: 8px;
+    height: 8px;
+    background: #10b981;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #10b981;
+    animation: blink 1.5s infinite ease-in-out;
+  }
+  @keyframes blink {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 1; }
+  }
+  .console-filters {
+    display: flex;
+    gap: 6px;
+  }
+  .filter-btn {
+    background: hsl(var(--surface-3));
+    border: 1px solid hsl(var(--line));
+    color: hsl(var(--text-3));
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .filter-btn.active {
+    background: hsl(var(--brand) / 0.15);
+    border-color: hsl(var(--brand));
+    color: hsl(var(--brand-2));
   }
   .feed-container {
-    height: 500px;
+    height: 380px;
     border: 1px solid hsl(var(--line));
     border-radius: 12px;
-    background: #030712;
+    background: #020617;
     padding: 16px;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    font-family: monospace;
-    font-size: 0.9rem;
+    gap: 10px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.85rem;
   }
   .feed-entry {
     padding: 8px 12px;
-    border-radius: 6px;
-    border-left: 3px solid #374151;
-    background: #0b0f19;
+    border-radius: 8px;
+    line-height: 1.45;
+    border-left: 3px solid #475569;
+    background: #0f172a;
     color: hsl(var(--text-2));
-    line-height: 1.4;
   }
   .feed-entry.info {
     border-left-color: #3b82f6;
+    background: rgba(59, 130, 246, 0.05);
   }
   .feed-entry.ai {
     border-left-color: hsl(var(--brand));
+    background: rgba(245, 158, 11, 0.05);
+    color: hsl(var(--brand-2));
   }
   .feed-entry.success {
     border-left-color: #10b981;
+    background: rgba(16, 185, 129, 0.05);
   }
   .feed-entry.warning {
-    border-left-color: #f59e0b;
-  }
-  .feed-entry.error {
     border-left-color: #ef4444;
+    background: rgba(239, 68, 68, 0.05);
   }
-  .time {
+  .log-time {
+    font-size: 0.72rem;
     color: hsl(var(--text-3));
-    font-size: 0.78rem;
     margin-bottom: 2px;
+  }
+
+  /* Interactive Phone Simulation */
+  .phone-frame {
+    width: 100%;
+    background: #000;
+    border: 10px solid #1e293b;
+    border-radius: 36px;
+    height: 520px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--shadow-lg);
+    position: relative;
+    overflow: hidden;
+  }
+  .phone-frame::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 20px;
+    background: #000;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+    z-index: 10;
+  }
+  .phone-screen {
+    flex: 1;
+    background: #0b0f19;
+    display: flex;
+    flex-direction: column;
+    padding: 24px 12px 12px 12px;
+  }
+  .phone-header {
+    border-bottom: 1px solid hsl(var(--line));
+    padding: 8px 0 10px 0;
+    text-align: center;
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.85rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .phone-chat-area {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px 4px;
+    scrollbar-width: none; /* Hide scrollbars */
+  }
+  .phone-chat-area::-webkit-scrollbar {
+    display: none;
+  }
+  .sms-bubble {
+    max-width: 80%;
+    padding: 8px 12px;
+    border-radius: 16px;
+    font-size: 0.82rem;
+    line-height: 1.35;
+  }
+  .sms-bubble.received {
+    align-self: flex-start;
+    background: #1e293b;
+    color: #f1f5f9;
+    border-bottom-left-radius: 4px;
+  }
+  .sms-bubble.sent {
+    align-self: flex-end;
+    background: hsl(var(--brand-2));
+    color: #030712;
+    font-weight: 600;
+    border-bottom-right-radius: 4px;
+  }
+  .phone-input-bar {
+    display: flex;
+    gap: 6px;
+    margin-top: 8px;
+  }
+  .phone-input-bar input {
+    flex: 1;
+    background: #020617;
+    border: 1px solid hsl(var(--line));
+    border-radius: 18px;
+    padding: 6px 12px;
+    color: #fff;
+    font-size: 0.8rem;
+  }
+  .phone-send-btn {
+    background: hsl(var(--brand));
+    color: #030712;
+    border: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-weight: 700;
+  }
+  .quick-reply-drawer {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    padding: 4px 0;
+    margin-top: 8px;
+    scrollbar-width: none;
+  }
+  .quick-reply-drawer::-webkit-scrollbar {
+    display: none;
+  }
+  .quick-pill {
+    background: hsl(var(--surface-3));
+    border: 1px solid hsl(var(--line));
+    color: hsl(var(--brand-2));
+    padding: 4px 10px;
+    border-radius: 14px;
+    font-size: 0.74rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+  }
+  .quick-pill:hover {
+    background: hsl(var(--brand) / 0.15);
+    border-color: hsl(var(--brand));
+  }
+
+  /* Calendar Notification banner */
+  .calendar-alert {
+    position: absolute;
+    top: -60px;
+    left: 10px;
+    right: 10px;
+    background: hsl(var(--surface-2));
+    border: 1px solid #10b981;
+    border-radius: 12px;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: var(--shadow-md);
+    transition: top 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 100;
+  }
+  .calendar-alert.show {
+    top: 30px;
+  }
+  .calendar-title {
+    color: #fff;
+    font-size: 0.8rem;
+    font-weight: 700;
+  }
+  .calendar-sub {
+    color: #10b981;
+    font-size: 0.72rem;
+    font-weight: 600;
   }
 </style>
 </head>
@@ -861,69 +1459,167 @@ const renderAppPage = (email, context) => {
   <div style="font-size: 0.9rem; color: hsl(var(--brand-2)); font-weight: 700;">Supervision Board</div>
 </header>
 <main>
-  <div class="app-layout">
-    <div class="panel" style="display: flex; flex-direction: column; gap: 20px;">
+  
+  <!-- Stats Row -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-value" id="dispatch-count">0</div>
+      <div class="stat-label">Dispatches Routed</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">${technicians.length}</div>
+      <div class="stat-label">Active Team</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" id="alert-count">0</div>
+      <div class="stat-label">Pending Alerts</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" id="match-rate">100%</div>
+      <div class="stat-label">Match Success Rate</div>
+    </div>
+  </div>
+
+  <div class="app-grid">
+    
+    <!-- LEFT PANEL: Context Detail -->
+    <div class="panel">
       <div>
-        <h3 style="color: #fff; margin-bottom: 12px; font-size: 1.15rem;">Dispatcher Context</h3>
-        <p style="font-size: 0.85rem; color: hsl(var(--text-3)); margin-bottom: 16px;">
-          The active business configuration running on early-access sandbox.
+        <h3 style="color: #fff; margin-bottom: 8px; font-size: 1.15rem; font-weight: 700;">Dispatcher Context</h3>
+        <p style="font-size: 0.82rem; color: hsl(var(--text-3)); line-height: 1.45;">
+          Active rule sets running on the ProfitHelm sandbox gateway.
         </p>
-        <div style="font-size: 0.88rem; margin-bottom: 6px;">
-          <span style="color: hsl(var(--text-3));">On behalf of:</span> <br>
-          <strong style="color: hsl(var(--brand-2));">${escapeHtml(email)}</strong>
+      </div>
+
+      <div style="background: hsl(var(--surface-2) / 0.5); border: 1px solid hsl(var(--line)); border-radius: 12px; padding: 12px 14px;">
+        <div style="font-size: 0.76rem; text-transform: uppercase; color: hsl(var(--text-3)); font-weight: 700; margin-bottom: 4px;">Subscribed Owner</div>
+        <strong style="color: hsl(var(--brand-2)); font-size: 0.88rem; overflow-wrap: break-word;">${escapeHtml(email)}</strong>
+      </div>
+
+      <div>
+        <h4 style="color: #fff; font-size: 0.88rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid hsl(var(--line)); padding-bottom: 6px; margin-bottom: 10px;">Dispatch Rules</h4>
+        <div style="font-size: 0.82rem; color: hsl(var(--text-2)); line-height: 1.5; display: flex; flex-direction: column; gap: 8px;">
+          <div>⏱️ Reply Timeout: <strong>${escapeHtml(businessRules.timeout)} minutes</strong></div>
+          <div>💰 Base Fee: <strong>$${escapeHtml(businessRules.pricing)}</strong></div>
+          <div>📜 Custom Guidelines: <br>
+               <span style="color: hsl(var(--text-3)); font-style: italic; font-size: 0.8rem; display: block; margin-top: 4px; border-left: 2px solid hsl(var(--brand)); padding-left: 8px;">
+                 "${escapeHtml(businessRules.rules || 'No custom rules specified.')}"
+               </span>
+          </div>
         </div>
       </div>
 
       <div>
-        <h4 style="color: #fff; font-size: 0.95rem; margin-bottom: 8px; border-bottom: 1px solid hsl(var(--line)); padding-bottom: 4px;">Active Technicians</h4>
+        <h4 style="color: #fff; font-size: 0.88rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid hsl(var(--line)); padding-bottom: 6px; margin-bottom: 12px;">Configured Team</h4>
         ${techListHtml}
       </div>
 
-      <div>
-        <h4 style="color: #fff; font-size: 0.95rem; margin-bottom: 8px; border-bottom: 1px solid hsl(var(--line)); padding-bottom: 4px;">Business Rules</h4>
-        <div style="font-size: 0.85rem; color: hsl(var(--text-2)); line-height: 1.4; display: flex; flex-direction: column; gap: 6px;">
-          <div>⏱️ Timeout: <strong>${escapeHtml(businessRules.timeout)} min</strong></div>
-          <div>💰 Call Fee: <strong>$${escapeHtml(businessRules.pricing)}</strong></div>
-          <div>📜 Custom instructions: <br>
-               <span style="color: hsl(var(--text-3)); font-style: italic;">"${escapeHtml(businessRules.rules || 'None set')}"</span></div>
-        </div>
-      </div>
-
-      <a href="/setup?email=${escapeHtml(email)}" class="cta-secondary" style="text-align: center; font-weight: bold; border-color: hsl(var(--line)); border-radius: 8px; padding: 10px;">Modify Context</a>
+      <a href="/setup?email=${escapeHtml(email)}" class="cta-secondary" style="text-align: center; font-weight: bold; border-color: hsl(var(--line)); border-radius: 10px; padding: 12px; font-size: 0.9rem;">
+        Modify AI Context
+      </a>
     </div>
 
-    <div class="panel" style="display: flex; flex-direction: column; gap: 20px;">
-      <div>
-        <h2 style="color: #fff; margin-bottom: 6px; font-size: 1.5rem;">AI Dispatch Supervision Board</h2>
-        <p style="font-size: 0.9rem; color: hsl(var(--text-3));">
-          Simulate work orders and monitor your AI agent's actions in real-time.
-        </p>
+    <!-- CENTER PANEL: AI Terminal Console -->
+    <div class="panel" style="gap: 16px;">
+      <div class="console-header">
+        <div>
+          <h2 style="color: #fff; font-size: 1.35rem; font-weight: 700; margin-bottom: 2px;">AI Dispatch Terminal</h2>
+          <div class="console-status">
+            <span class="pulse-dot"></span>
+            <span>SYSTEM ON: GATEWAY_SIMULATOR</span>
+          </div>
+        </div>
+        <div class="console-filters">
+          <button class="filter-btn active" id="btn-filter-all" onclick="filterLogs('all')">ALL</button>
+          <button class="filter-btn" id="btn-filter-ai" onclick="filterLogs('ai')">REASONING</button>
+          <button class="filter-btn" id="btn-filter-sms" onclick="filterLogs('sms')">SMS</button>
+        </div>
       </div>
-
-      <form id="simulate-form" onsubmit="triggerSimulation(event)" style="display: flex; gap: 12px; background: hsl(var(--surface-2)); padding: 14px; border-radius: 12px; border: 1px solid hsl(var(--line));">
-        <div style="flex: 2;">
-          <input type="text" id="job-desc" placeholder="E.g. Broken pipe at 789 Maple Rd or Emergency AC repair" required style="width: 100%; padding: 10px; background: #030712; border: 1px solid hsl(var(--line)); border-radius: 8px; color: #fff;">
-        </div>
-        <div style="flex: 1;">
-          <select id="job-trade" style="width: 100%; padding: 10px; background: #030712; border: 1px solid hsl(var(--line)); border-radius: 8px; color: #fff;">
-            <option value="HVAC">HVAC Required</option>
-            <option value="Plumbing">Plumbing Required</option>
-            <option value="Electrical">Electrical Required</option>
-            <option value="Cleaning">Cleaning Required</option>
-            <option value="Landscaping">Landscaping Required</option>
-            <option value="Other">General / Other</option>
-          </select>
-        </div>
-        <button type="submit" class="cta-primary" style="border: none; border-radius: 8px; padding: 10px 20px; font-weight: bold; cursor: pointer;">Dispatch Agent</button>
-      </form>
 
       <div class="feed-container" id="feed">
-        <div class="feed-entry info" style="border-left-color: hsl(var(--brand-2));">
-          <div class="time">${new Date().toLocaleTimeString()}</div>
-          Gainhelm AI Dispatcher is running in sandbox mode for <strong>${escapeHtml(email)}</strong>. Submit a job above to test dispatching.
+        <div class="feed-entry info">
+          <div class="log-time">${new Date().toLocaleTimeString()}</div>
+          Gainhelm AI Dispatcher is running in sandbox mode for <strong>${escapeHtml(email)}</strong>. Submit a job request below to trigger the simulation.
         </div>
       </div>
+
+      <!-- Simulator Form -->
+      <form id="simulate-form" onsubmit="triggerSimulation(event)" style="display: flex; flex-direction: column; gap: 12px; background: hsl(var(--surface-2) / 0.4); padding: 18px; border-radius: 14px; border: 1px solid hsl(var(--line));">
+        <div style="font-weight: 700; color: #fff; font-size: 0.85rem; text-transform: uppercase;">Simulate Dispatch Request</div>
+        <div style="display: flex; gap: 10px;">
+          <div style="flex: 2;">
+            <input type="text" id="job-desc" placeholder="E.g. Broken pipe at 789 Maple Rd or AC repair" required>
+          </div>
+          <div style="flex: 1;">
+            <select id="job-trade">
+              <option value="HVAC">HVAC</option>
+              <option value="Plumbing">Plumbing</option>
+              <option value="Electrical">Electrical</option>
+              <option value="Cleaning">Cleaning</option>
+              <option value="Landscaping">Landscaping</option>
+              <option value="Other">Other / General</option>
+            </select>
+          </div>
+        </div>
+        
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <span style="font-size: 0.78rem; color: hsl(var(--text-3)); align-self: center;">Quick Prompts:</span>
+          <button type="button" class="preset-btn" onclick="fillPrompt('AC making loud buzzing noise', 'HVAC')">AC Noise (HVAC)</button>
+          <button type="button" class="preset-btn" onclick="fillPrompt('Kitchen sink leaking under cabinet', 'Plumbing')">Leak (Plumbing)</button>
+          <button type="button" class="preset-btn" onclick="fillPrompt('Living room outlets lost power', 'Electrical')">Outlets (Electrical)</button>
+        </div>
+
+        <button type="submit" class="cta-primary" style="border: none; border-radius: 10px; padding: 12px; font-weight: bold; cursor: pointer; font-size: 0.95rem; margin-top: 6px;">
+          Dispatch Work Order
+        </button>
+      </form>
     </div>
+
+    <!-- RIGHT PANEL: Live Phone Emulator -->
+    <div class="panel" style="align-items: center; justify-content: center;">
+      <div class="phone-frame">
+        
+        <!-- Google Calendar Slide Notification -->
+        <div class="calendar-alert" id="calendar-alert">
+          <div style="background: #10b981; color: #000; width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; font-weight: bold;">📅</div>
+          <div style="flex: 1;">
+            <div class="calendar-title">Google Calendar Event</div>
+            <div class="calendar-sub" id="calendar-event-text">Job scheduled successfully!</div>
+          </div>
+        </div>
+
+        <div class="phone-screen">
+          
+          <div class="phone-header">
+            <span id="phone-title" style="color: hsl(var(--brand-2));">💬 Dispatch Simulation</span>
+            <span id="phone-subtitle" style="font-size: 0.72rem; color: hsl(var(--text-3)); font-weight: 500;">No active dispatches</span>
+          </div>
+
+          <div class="phone-chat-area" id="phone-chat">
+            <div style="text-align: center; color: hsl(var(--text-3)); font-size: 0.78rem; margin-top: 100px;">
+              📵 Waiting for incoming dispatch SMS.
+            </div>
+          </div>
+
+          <!-- Quick replies tray -->
+          <div class="quick-reply-drawer" id="quick-replies" style="display: none;">
+            <button type="button" class="quick-pill" onclick="sendMockSMS('YES')">YES</button>
+            <button type="button" class="quick-pill" onclick="sendMockSMS('DECLINE')">DECLINE</button>
+            <button type="button" class="quick-pill" onclick="sendMockSMS('I am busy right now')">I am busy</button>
+          </div>
+
+          <div class="phone-input-bar">
+            <input type="text" id="phone-input" placeholder="Type response..." onkeydown="if(event.key === 'Enter') submitPhoneSMS()">
+            <button class="phone-send-btn" onclick="submitPhoneSMS()">↑</button>
+          </div>
+
+        </div>
+      </div>
+      <p style="font-size: 0.78rem; color: hsl(var(--text-3)); text-align: center; max-width: 280px; margin-top: 6px; line-height: 1.45;">
+        Simulate the technician's phone! Use the keyboard or quick-replies to accept/decline job notifications.
+      </p>
+    </div>
+
   </div>
 </main>
 
@@ -932,37 +1628,63 @@ const renderAppPage = (email, context) => {
   const rules = ${JSON.stringify(businessRules)};
   const calendar = ${JSON.stringify(calendarConfig)};
   
-  let currentSim = null;
+  let dispatchCount = 0;
+  let activeAlerts = 0;
+  let activeTech = null;
+  let activeJob = '';
+  let activeTrade = '';
+  let currentStep = 0; // State machine step for conversation simulation
 
   function triggerSimulation(e) {
-    e.preventDefault();
+    if (e) e.preventDefault();
     const desc = document.getElementById('job-desc').value.trim();
     const trade = document.getElementById('job-trade').value;
     if (!desc) return;
     
     document.getElementById('job-desc').value = '';
+    activeJob = desc;
+    activeTrade = trade;
+    currentStep = 1;
+    dispatchCount++;
+    document.getElementById('dispatch-count').innerText = dispatchCount;
     
-    logEvent(\`📥 Job Request Received: "\${desc}" (Matches trade classification: \${trade})\`, 'info');
+    // Clear chat simulation
+    const chat = document.getElementById('phone-chat');
+    chat.innerHTML = '';
+    document.getElementById('quick-replies').style.display = 'flex';
+
+    logEvent(\`📥 Job Request Received: "\${desc}" (Trade Required: \${trade})\`, 'info');
     
     setTimeout(() => {
-      logEvent(\`🤖 Agent Reasoning: Loading business rules context (Call fee: $\${rules.pricing}, Timeout: \${rules.timeout} min).\`, 'ai');
+      logEvent(\`🤖 Agent Reasoning: Evaluated dispatch rules (Fee: $\${rules.pricing}, Timeout: \${rules.timeout} min).\`, 'ai');
     }, 800);
 
     setTimeout(() => {
+      // Find trade match or general fallback
       const match = technicians.find(t => t.trade.toUpperCase() === trade.toUpperCase()) 
                     || technicians.find(t => t.trade.toUpperCase() === 'OTHER' || t.trade.toUpperCase() === 'GENERAL')
                     || technicians[0];
       
       if (!match) {
-        logEvent(\`⚠️ Agent Alert: No technicians are configured to handle trade \${trade}. Manual intervention required.\`, 'error');
+        logEvent(\`⚠️ Agent Alert: No technicians match trade '\${trade}'. Dispatch escalation triggered.\`, 'warning');
+        activeAlerts++;
+        document.getElementById('alert-count').innerText = activeAlerts;
+        
+        chat.innerHTML = \`<div style="text-align: center; color: #ef4444; font-size: 0.78rem; margin-top: 80px;">⚠️ Dispatch Alert: No technician found for \${trade}</div>\`;
+        document.getElementById('phone-subtitle').innerText = 'System Alert';
         return;
       }
+      
+      activeTech = match;
+      document.getElementById('phone-title').innerText = '💬 ' + match.name;
+      document.getElementById('phone-subtitle').innerText = match.trade + ' • ' + match.phone;
       
       logEvent(\`🤖 Agent Reasoning: Matched technician \${match.name} (\${match.phone}) for trade '\${trade}'.\`, 'ai');
       
       setTimeout(() => {
-        logEvent(\`💬 Sent SMS to \${match.name} (\${match.phone}): "Gainhelm AI Offer: Emergency \${trade} job at \${desc}. Call Fee: $\${rules.pricing}. Reply YES to accept."\`, 'ai');
-        showMockInteraction(match, trade, desc);
+        const smsText = \`Gainhelm AI Offer: Emergency \${trade} job at \${desc}. Call Fee: $\${rules.pricing}. Reply YES to accept, or NO to decline.\`;
+        logEvent(\`💬 Sent SMS to \${match.name}: "\${smsText}"\`, 'sms');
+        addPhoneSMS(smsText, 'received');
       }, 1000);
 
     }, 1800);
@@ -973,59 +1695,110 @@ const renderAppPage = (email, context) => {
     const entry = document.createElement('div');
     entry.className = 'feed-entry ' + type;
     const timeStr = new Date().toLocaleTimeString();
-    entry.innerHTML = \`<div class="time">\${timeStr}</div><div>\${text}</div>\`;
+    entry.innerHTML = \`<div class="log-time">\${timeStr}</div><div>\${text}</div>\`;
     feed.appendChild(entry);
     feed.scrollTop = feed.scrollHeight;
   }
 
-  function showMockInteraction(tech, trade, desc) {
-    const feed = document.getElementById('feed');
-    const entry = document.createElement('div');
-    entry.className = 'feed-entry warning';
-    entry.id = 'pending-action';
-    entry.innerHTML = \`
-      <div class="time">\${new Date().toLocaleTimeString()}</div>
-      <div style="font-weight: bold; margin-bottom: 8px;">⏳ Awaiting Technician SMS response...</div>
-      <div style="display: flex; gap: 8px;">
-        <button onclick="simulateTechResponse(true, '\${tech.name}', '\${trade}', '\${desc}')" style="padding: 6px 12px; background: #10b981; border: none; border-radius: 4px; color: #fff; font-weight: bold; cursor: pointer; font-size: 0.8rem;">Simulate Accept (YES)</button>
-        <button onclick="simulateTechResponse(false, '\${tech.name}', '\${trade}', '\${desc}')" style="padding: 6px 12px; background: #ef4444; border: none; border-radius: 4px; color: #fff; font-weight: bold; cursor: pointer; font-size: 0.8rem;">Simulate Reject / Timeout</button>
-      </div>
-    \`;
-    feed.appendChild(entry);
-    feed.scrollTop = feed.scrollHeight;
+  function filterLogs(filterType) {
+    document.querySelectorAll('.console-filters button').forEach(b => b.classList.remove('active'));
+    document.getElementById('btn-filter-' + filterType).classList.add('active');
+
+    document.querySelectorAll('.feed-entry').forEach(el => {
+      if (filterType === 'all') {
+        el.style.display = 'block';
+      } else if (filterType === 'ai') {
+        el.style.display = el.classList.contains('ai') ? 'block' : 'none';
+      } else if (filterType === 'sms') {
+        el.style.display = el.classList.contains('sms') ? 'block' : 'none';
+      }
+    });
   }
 
-  function simulateTechResponse(accepted, techName, trade, desc) {
-    const pending = document.getElementById('pending-action');
-    if (pending) pending.remove();
+  function fillPrompt(desc, trade) {
+    document.getElementById('job-desc').value = desc;
+    document.getElementById('job-trade').value = trade;
+  }
 
-    if (accepted) {
-      logEvent(\`📱 Received SMS from \${techName}: "YES"\`, 'success');
-      setTimeout(() => {
-        logEvent(\`🤖 Agent Action: Booking job on Google Calendar (\${calendar.calendar_url || 'https://calendar.google.com'}).\`, 'ai');
-      }, 800);
-      setTimeout(() => {
-        logEvent(\`✅ Dispatch Complete: \${techName} is assigned to "\${desc}". Customer notified.\`, 'success');
-      }, 1600);
-    } else {
-      logEvent(\`📱 Received SMS from \${techName}: "DECLINE" or dispatch timeout of \${rules.timeout} minutes expired.\`, 'warning');
+  function addPhoneSMS(text, type) {
+    const chat = document.getElementById('phone-chat');
+    const bubble = document.createElement('div');
+    bubble.className = 'sms-bubble ' + type;
+    bubble.innerText = text;
+    chat.appendChild(bubble);
+    chat.scrollTop = chat.scrollHeight;
+  }
+
+  function sendMockSMS(text) {
+    if (!activeTech || currentStep !== 1) return;
+    addPhoneSMS(text, 'sent');
+    logEvent(\`📱 Received SMS from \${activeTech.name}: "\${text}"\`, 'sms');
+
+    // Process reply
+    const norm = text.trim().toUpperCase();
+    if (norm.includes('YES')) {
+      currentStep = 2; // Accept state
+      document.getElementById('quick-replies').style.display = 'none';
       
       setTimeout(() => {
-        const nextMatch = technicians.find(t => t.name !== techName && (t.trade.toUpperCase() === trade.toUpperCase() || t.trade.toUpperCase() === 'OTHER'));
-        if (nextMatch) {
-          logEvent(\`🤖 Agent Reasoning: Rerouting job to fallback technician \${nextMatch.name} (\${nextMatch.phone}).\`, 'ai');
-          setTimeout(() => {
-            logEvent(\`💬 Sent SMS to \${nextMatch.name} (\${nextMatch.phone}): "Gainhelm AI Offer: Emergency \${trade} job at \${desc}. Call Fee: $\${rules.pricing}. Reply YES to accept."\`, 'ai');
-            showMockInteraction(nextMatch, trade, desc);
-          }, 1000);
-        } else {
-          logEvent(\`⚠️ Agent Alert: No fallback technicians are available matching trade '\${trade}'. Alerting manager.\`, 'error');
-        }
+        logEvent(\`🤖 Agent Action: Booking event on Google Calendar (\${calendar.calendar_url || 'https://calendar.google.com'}).\`, 'ai');
       }, 800);
-    }
-  }
-</script>
-</body>
+
+      setTimeout(() => {
+        logEvent(\`✅ Dispatch Complete: \${activeTech.name} is scheduled for "\${activeJob}". Customer notified.\`, 'success');
+        
+        // Show success alert on phone
+        document.getElementById('calendar-event-text').innerText = \`\${activeTech.name} scheduled for \${activeJob.substring(0, 20)}...\`;
+        const alertBanner = document.getElementById('calendar-alert');
+        alertBanner.classList.add('show');
+        setTimeout(() => alertBanner.classList.remove('show'), 6000);
+      }, 1800);
+
+    } else if (norm.includes('NO') || norm.includes('DECLINE') || norm.includes('BUSY')) {
+      currentStep = 0;
+      document.getElementById('quick-replies').style.display = 'none';
+
+      setTimeout(() => {
+        logEvent(\`🤖 Agent Reasoning: \${activeTech.name} declined the offer. Commencing fallback routing.\`, 'ai');
+        
+        // Look for fallback
+        const fallback = technicians.find(t => t.name !== activeTech.name && (t.trade.toUpperCase() === activeTrade.toUpperCase() || t.trade.toUpperCase() === 'OTHER'));
+        if (fallback) {
+          setTimeout(() => {
+            activeTech = fallback;
+            document.getElementById('phone-title').innerText = '💬 ' + fallback.name;
+            document.getElementById('phone-subtitle').innerText = fallback.trade + ' • ' + fallback.phone;
+            
+            // Clear current screen and start fresh for fallback
+            const chat = document.getElementById('phone-chat');
+            chat.innerHTML = '';
+            document.getElementById('quick-replies').style.display = 'flex';
+            currentStep = 1;
+
+            logEvent(\`🤖 Agent Reasoning: Rerouting job to fallback technician \${fallback.name} (\${fallback.phone}).\`, 'ai');
+            
+            setTimeout(() => {
+              const smsText = \`Gainhelm AI Offer: Emergency \${activeTrade} job at \${activeJob}. Call Fee: $\${rules.pricing}. Reply YES to accept.\`;
+              logEvent(\`💬 Sent SMS to \${fallback.name}: "\${smsText}"\`, 'sms');
+              addPhoneSMS(smsText, 'received');
+            }, 1000);
+
+          }, 800);
+        } else {
+          logEvent(\`⚠️ Agent Alert: No fallback technicians are available matching trade '\${activeTrade}'. Owner alerted.\`, 'warning');
+          activeAlerts++;
+          document.getElementById('alert-count').innerText = activeAlerts;
+        }
+      }, 1000);
+    } else {
+      // Unrecognized reply
+      setTimeout(() => {
+        logEvent(\`🤖 Agent Reasoning: Unrecognized SMS format from \${activeTech.name}. Resending instructions.\`, 'ai');
+        setTimeout(() => {
+          const resendText = \`Gainhelm AI: Please reply YES to accept the dispatch task, or DECLINE to reject.\`;
+          logEvent(\`💬 Sent SMS to \${activeTech.name}: "\${resendText}"\`, 'sms');
+          addPhoneSMS(resendText, 'received');
+        }, 800);
 </html>`;
 };
 

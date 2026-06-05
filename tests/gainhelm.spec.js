@@ -224,3 +224,58 @@ test.describe('Waitlist Form Integration', () => {
     await expect(statusElement).toHaveText(/Server error. Please try again/);
   });
 });
+
+test.describe('Gainhelm Product Setup & App Board', () => {
+  test('/setup renders authentication gateway without email', async ({ page }) => {
+    await page.goto('/setup');
+    const headerTitle = page.locator('h2');
+    await expect(headerTitle).toHaveText('Access AI Configuration');
+  });
+
+  test('/setup?email=test@example.com renders wizard page', async ({ page }) => {
+    await page.goto('/setup?email=test%40example.com');
+    
+    // Check that the step-dot is visible instead of checking the 0-width progress bar
+    const stepDot = page.locator('#step-dot-1');
+    await expect(stepDot).toBeVisible();
+    
+    const wizardTitle = page.locator('.section-title').first();
+    await expect(wizardTitle).toContainText('Configure Your Dispatch Team');
+  });
+
+  test('Walks through setup wizard and redirects to /app', async ({ page }) => {
+    await page.goto('/setup?email=test%40example.com');
+    
+    // Step 1: Fill technician
+    await page.fill('input[name="tech_name_0"]', 'Sarah Connor');
+    await page.fill('input[name="tech_phone_0"]', '+1 (555) 0288');
+    
+    // Go to Step 2
+    await page.click('#btn-next');
+    const sectionTitle2 = page.locator('.section-title').nth(1);
+    await expect(sectionTitle2).toContainText('AI Dispatch Rules');
+    
+    // Go to Step 3
+    await page.click('#btn-next');
+    const sectionTitle3 = page.locator('.section-title').nth(2);
+    await expect(sectionTitle3).toContainText('Google Calendar');
+    
+    // Submit Wizard
+    await page.click('#btn-submit');
+    
+    // Should redirect to app supervision board
+    await expect(page).toHaveURL(/\/app/);
+    
+    // Verify context owner is listed
+    const ownerEmail = page.locator('strong:has-text("test@example.com")').first();
+    await expect(ownerEmail).toBeVisible();
+
+    // Verify AI dispatcher terminal header is visible
+    const terminalTitle = page.locator('h2:has-text("AI Dispatch Terminal")');
+    await expect(terminalTitle).toBeVisible();
+
+    // Verify visual phone mockup exists
+    const phoneFrame = page.locator('.phone-frame');
+    await expect(phoneFrame).toBeVisible();
+  });
+});
