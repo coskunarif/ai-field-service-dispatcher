@@ -586,12 +586,30 @@ const renderSetupPage = (email, context) => {
             <label>Skills & Certifications</label>
             <input type="text" name="tech_skills_0" placeholder="Emergency repair, wiring">
           </div>
+          <div>
+            <label>Shift / Working Hours</label>
+            <select name="tech_shift_0">
+              <option value="Always">Always Available (24/7)</option>
+              <option value="Standard">Standard Shift (Mon-Fri 8am-5pm)</option>
+              <option value="Night">Night Shift (Mon-Fri 5pm-8am)</option>
+              <option value="Weekend">Weekend Only (Sat-Sun)</option>
+            </select>
+          </div>
+          <div>
+            <label>Duty Status</label>
+            <select name="tech_status_0">
+              <option value="active">On Duty (Available)</option>
+              <option value="inactive">Off Duty (Unavailable)</option>
+            </select>
+          </div>
         </div>
         <button type="button" class="btn-remove-card" onclick="this.parentElement.remove()" title="Remove Technician">✕ Remove</button>
       </div>
     `;
   } else {
     technicians.forEach((t, i) => {
+      const shift = t.shift || 'Always';
+      const status = t.status || 'active';
       techRows += `
         <div class="tech-card" id="tech-row-${i}">
           <div class="tech-card-grid">
@@ -617,6 +635,22 @@ const renderSetupPage = (email, context) => {
             <div>
               <label>Skills & Certifications</label>
               <input type="text" name="tech_skills_${i}" value="${escapeHtml(t.skills || '')}" placeholder="Emergency repair, wiring">
+            </div>
+            <div>
+              <label>Shift / Working Hours</label>
+              <select name="tech_shift_${i}">
+                <option value="Always" ${shift === 'Always' ? 'selected' : ''}>Always Available (24/7)</option>
+                <option value="Standard" ${shift === 'Standard' ? 'selected' : ''}>Standard Shift (Mon-Fri 8am-5pm)</option>
+                <option value="Night" ${shift === 'Night' ? 'selected' : ''}>Night Shift (Mon-Fri 5pm-8am)</option>
+                <option value="Weekend" ${shift === 'Weekend' ? 'selected' : ''}>Weekend Only (Sat-Sun)</option>
+              </select>
+            </div>
+            <div>
+              <label>Duty Status</label>
+              <select name="tech_status_${i}">
+                <option value="active" ${status === 'active' ? 'selected' : ''}>On Duty (Available)</option>
+                <option value="inactive" ${status === 'inactive' ? 'selected' : ''}>Off Duty (Unavailable)</option>
+              </select>
             </div>
           </div>
           <button type="button" class="btn-remove-card" onclick="this.parentElement.remove()" title="Remove Technician">✕ Remove</button>
@@ -1064,6 +1098,22 @@ const renderSetupPage = (email, context) => {
           <label>Skills & Certifications</label>
           <input type="text" name="tech_skills_\${rowIndex}" placeholder="Emergency repair, wiring">
         </div>
+        <div>
+          <label>Shift / Working Hours</label>
+          <select name="tech_shift_\${rowIndex}">
+            <option value="Always">Always Available (24/7)</option>
+            <option value="Standard">Standard Shift (Mon-Fri 8am-5pm)</option>
+            <option value="Night">Night Shift (Mon-Fri 5pm-8am)</option>
+            <option value="Weekend">Weekend Only (Sat-Sun)</option>
+          </select>
+        </div>
+        <div>
+          <label>Duty Status</label>
+          <select name="tech_status_\${rowIndex}">
+            <option value="active">On Duty (Available)</option>
+            <option value="inactive">Off Duty (Unavailable)</option>
+          </select>
+        </div>
       </div>
       <button type="button" class="btn-remove-card" onclick="this.parentElement.remove()" title="Remove Technician">✕ Remove</button>
     \`;
@@ -1099,15 +1149,34 @@ const renderAppPage = (email, context) => {
     techListHtml = '<p style="color: hsl(var(--text-3)); font-style: italic; font-size: 0.85rem;">No technicians configured.</p>';
   } else {
     technicians.forEach(t => {
+      const shift = t.shift || 'Always';
+      const status = t.status || 'active';
+      const isOnline = status === 'active';
+      const shiftLabels = {
+        Always: '24/7 (Always Available)',
+        Standard: 'Standard Shift (Mon-Fri 8-5)',
+        Night: 'Night Shift (Mon-Fri 5pm-8am)',
+        Weekend: 'Weekend Shift (Sat-Sun)'
+      };
+      const shiftLabel = shiftLabels[shift] || shift;
+
+      const statusBadge = isOnline
+        ? `<span style="display: inline-flex; align-items: center; gap: 6px; color: #10b981; font-weight: 700; font-size: 0.75rem;"><span style="width: 6px; height: 6px; background: #10b981; border-radius: 50%; box-shadow: 0 0 6px #10b981;"></span> On Duty</span>`
+        : `<span style="display: inline-flex; align-items: center; gap: 6px; color: #94a3b8; font-weight: 700; font-size: 0.75rem;"><span style="width: 6px; height: 6px; background: #94a3b8; border-radius: 50%;"></span> Off Duty</span>`;
+
       techListHtml += `
         <div style="padding: 14px; background: hsl(var(--surface-2) / 0.5); border: 1px solid hsl(var(--line)); border-radius: 12px; margin-bottom: 10px; transition: all 0.25s ease;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
             <strong style="color: #fff; font-size: 0.92rem;">${escapeHtml(t.name)}</strong>
             <span class="brand-chip" style="font-size: 0.7rem; padding: 2px 6px; background: hsl(var(--brand) / 0.1); color: hsl(var(--brand-2)); border: 1px solid hsl(var(--brand) / 0.25); border-radius: 4px;">${escapeHtml(t.trade)}</span>
           </div>
-          <div style="font-size: 0.8rem; color: hsl(var(--text-3)); line-height: 1.4;">
+          <div style="font-size: 0.8rem; color: hsl(var(--text-3)); line-height: 1.4; margin-bottom: 8px;">
             📞 ${escapeHtml(t.phone)} <br>
             🛠️ Skills: ${escapeHtml(t.skills || 'General maintenance')}
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid hsl(var(--line) / 0.5); padding-top: 8px; font-size: 0.75rem; color: hsl(var(--text-3));">
+            <span>⏱️ ${escapeHtml(shiftLabel)}</span>
+            ${statusBadge}
           </div>
         </div>
       `;
@@ -1562,6 +1631,15 @@ const renderAppPage = (email, context) => {
           </div>
         </div>
         
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <label for="job-time" style="font-size: 0.72rem; color: hsl(var(--text-3)); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; display: block;">Simulated Job Time</label>
+          <select id="job-time" style="width: 100%;">
+            <option value="BusinessHours">Normal Business Hours (Mon-Fri 9am-5pm)</option>
+            <option value="AfterHours">After Hours / Late Night (Mon-Fri 11pm)</option>
+            <option value="Weekend">Weekend / Off-Shift Hours (Saturday 2pm)</option>
+          </select>
+        </div>
+        
         <div style="display: flex; gap: 8px; flex-wrap: wrap;">
           <span style="font-size: 0.78rem; color: hsl(var(--text-3)); align-self: center;">Quick Prompts:</span>
           <button type="button" class="preset-btn" onclick="fillPrompt('AC making loud buzzing noise', 'HVAC')">AC Noise (HVAC)</button>
@@ -1635,10 +1713,73 @@ const renderAppPage = (email, context) => {
   let activeTrade = '';
   let currentStep = 0; // State machine step for conversation simulation
 
+  function isTechOnShift(tech, simulatedTime) {
+    const shift = tech.shift || 'Always';
+    if (shift === 'Always') return true;
+    if (simulatedTime === 'BusinessHours' && shift === 'Standard') return true;
+    if (simulatedTime === 'AfterHours' && shift === 'Night') return true;
+    if (simulatedTime === 'Weekend' && shift === 'Weekend') return true;
+    return false;
+  }
+
+  function findEligibleTechnician(trade, simulatedTime, excludeTechName = null) {
+    logEvent(\`🤖 Agent Reasoning: Evaluating active roster matching trade '\${trade}' or General fallback.\`, 'ai');
+    
+    // First pass: look for exact trade match
+    const tradeTechs = technicians.filter(t => t.trade.toUpperCase() === trade.toUpperCase() && t.name !== excludeTechName);
+    
+    for (const t of tradeTechs) {
+      const status = t.status || 'active';
+      const shift = t.shift || 'Always';
+      const isOnShift = isTechOnShift(t, simulatedTime);
+      const isOnline = status === 'active';
+      
+      if (!isOnline) {
+        logEvent(\`🤖 Agent Reasoning: Checked \${t.name} (Trade: \${t.trade}). Skipped - status is Off Duty.\`, 'ai');
+        continue;
+      }
+      if (!isOnShift) {
+        logEvent(\`🤖 Agent Reasoning: Checked \${t.name} (Trade: \${t.trade}, Shift: \${shift}). Skipped - shift not active for \${simulatedTime}.\`, 'ai');
+        continue;
+      }
+      
+      logEvent(\`🤖 Agent Reasoning: Checked \${t.name}. Eligible and available (On Duty, shift active).\`, 'ai');
+      return t;
+    }
+    
+    // Second pass: look for General / Other fallback
+    logEvent(\`🤖 Agent Reasoning: No exact trade match available on shift. Checking 'Other/General' fallbacks.\`, 'ai');
+    const fallbackTechs = technicians.filter(t => 
+      (t.trade.toUpperCase() === 'OTHER' || t.trade.toUpperCase() === 'GENERAL') && t.name !== excludeTechName
+    );
+    
+    for (const t of fallbackTechs) {
+      const status = t.status || 'active';
+      const shift = t.shift || 'Always';
+      const isOnShift = isTechOnShift(t, simulatedTime);
+      const isOnline = status === 'active';
+      
+      if (!isOnline) {
+        logEvent(\`🤖 Agent Reasoning: Checked fallback \${t.name} (Trade: \${t.trade}). Skipped - status is Off Duty.\`, 'ai');
+        continue;
+      }
+      if (!isOnShift) {
+        logEvent(\`🤖 Agent Reasoning: Checked fallback \${t.name} (Trade: \${t.trade}, Shift: \${shift}). Skipped - shift not active for \${simulatedTime}.\`, 'ai');
+        continue;
+      }
+      
+      logEvent(\`🤖 Agent Reasoning: Checked fallback \${t.name}. Eligible and available (On Duty, shift active).\`, 'ai');
+      return t;
+    }
+
+    return null;
+  }
+
   function triggerSimulation(e) {
     if (e) e.preventDefault();
     const desc = document.getElementById('job-desc').value.trim();
     const trade = document.getElementById('job-trade').value;
+    const simTime = document.getElementById('job-time').value;
     if (!desc) return;
     
     document.getElementById('job-desc').value = '';
@@ -1653,24 +1794,21 @@ const renderAppPage = (email, context) => {
     chat.innerHTML = '';
     document.getElementById('quick-replies').style.display = 'flex';
 
-    logEvent(\`📥 Job Request Received: "\${desc}" (Trade Required: \${trade})\`, 'info');
+    logEvent(\`📥 Job Request Received: "\${desc}" (Trade Required: \${trade}, Time: \${simTime})\`, 'info');
     
     setTimeout(() => {
       logEvent(\`🤖 Agent Reasoning: Evaluated dispatch rules (Fee: $\${rules.pricing}, Timeout: \${rules.timeout} min).\`, 'ai');
     }, 800);
 
     setTimeout(() => {
-      // Find trade match or general fallback
-      const match = technicians.find(t => t.trade.toUpperCase() === trade.toUpperCase()) 
-                    || technicians.find(t => t.trade.toUpperCase() === 'OTHER' || t.trade.toUpperCase() === 'GENERAL')
-                    || technicians[0];
+      const match = findEligibleTechnician(trade, simTime);
       
       if (!match) {
-        logEvent(\`⚠️ Agent Alert: No technicians match trade '\${trade}'. Dispatch escalation triggered.\`, 'warning');
+        logEvent(\`⚠️ Agent Alert: No technicians are available for trade '\${trade}' during \${simTime}. Escalation triggered.\`, 'warning');
         activeAlerts++;
         document.getElementById('alert-count').innerText = activeAlerts;
         
-        chat.innerHTML = \`<div style="text-align: center; color: #ef4444; font-size: 0.78rem; margin-top: 80px;">⚠️ Dispatch Alert: No technician found for \${trade}</div>\`;
+        chat.innerHTML = \`<div style="text-align: center; color: #ef4444; font-size: 0.78rem; margin-top: 80px;">⚠️ Dispatch Alert: No active technician found for \${trade} during \${simTime}</div>\`;
         document.getElementById('phone-subtitle').innerText = 'System Alert';
         return;
       }
@@ -1679,7 +1817,7 @@ const renderAppPage = (email, context) => {
       document.getElementById('phone-title').innerText = '💬 ' + match.name;
       document.getElementById('phone-subtitle').innerText = match.trade + ' • ' + match.phone;
       
-      logEvent(\`🤖 Agent Reasoning: Matched technician \${match.name} (\${match.phone}) for trade '\${trade}'.\`, 'ai');
+      logEvent(\`🤖 Agent Reasoning: Dispatched job to technician \${match.name} (\${match.phone}) for trade '\${trade}'.\`, 'ai');
       
       setTimeout(() => {
         const smsText = \`Gainhelm AI Offer: Emergency \${trade} job at \${desc}. Call Fee: $\${rules.pricing}. Reply YES to accept, or NO to decline.\`;
@@ -1762,7 +1900,8 @@ const renderAppPage = (email, context) => {
         logEvent(\`🤖 Agent Reasoning: \${activeTech.name} declined the offer. Commencing fallback routing.\`, 'ai');
         
         // Look for fallback
-        const fallback = technicians.find(t => t.name !== activeTech.name && (t.trade.toUpperCase() === activeTrade.toUpperCase() || t.trade.toUpperCase() === 'OTHER'));
+        const simTime = document.getElementById('job-time').value;
+        const fallback = findEligibleTechnician(activeTrade, simTime, activeTech.name);
         if (fallback) {
           setTimeout(() => {
             activeTech = fallback;
@@ -1785,7 +1924,7 @@ const renderAppPage = (email, context) => {
 
           }, 800);
         } else {
-          logEvent(\`⚠️ Agent Alert: No fallback technicians are available matching trade '\${activeTrade}'. Owner alerted.\`, 'warning');
+          logEvent(\`⚠️ Agent Alert: No fallback technicians are available matching trade '\${activeTrade}' during \${simTime}. Owner alerted.\`, 'warning');
           activeAlerts++;
           document.getElementById('alert-count').innerText = activeAlerts;
         }
@@ -1799,6 +1938,19 @@ const renderAppPage = (email, context) => {
           logEvent(\`💬 Sent SMS to \${activeTech.name}: "\${resendText}"\`, 'sms');
           addPhoneSMS(resendText, 'received');
         }, 800);
+      }, 1000);
+    }
+  }
+
+  function submitPhoneSMS() {
+    const input = document.getElementById('phone-input');
+    const text = input.value.trim();
+    if (!text) return;
+    input.value = '';
+    sendMockSMS(text);
+  }
+</script>
+</body>
 </html>`;
 };
 
@@ -1908,7 +2060,9 @@ fastify.post('/setup', async (request, reply) => {
         name: name.trim(),
         phone: request.body[`tech_phone_${index}`] || '',
         trade: request.body[`tech_trade_${index}`] || 'Other',
-        skills: request.body[`tech_skills_${index}`] || ''
+        skills: request.body[`tech_skills_${index}`] || '',
+        shift: request.body[`tech_shift_${index}`] || 'Always',
+        status: request.body[`tech_status_${index}`] || 'active'
       });
     }
   }

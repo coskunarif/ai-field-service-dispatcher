@@ -244,7 +244,8 @@ test.describe('Gainhelm Product Setup & App Board', () => {
   });
 
   test('Walks through setup wizard and redirects to /app', async ({ page }) => {
-    await page.goto('/setup?email=test%40example.com');
+    const testEmail = `test-${Math.random().toString(36).substring(7)}@example.com`;
+    await page.goto(`/setup?email=${encodeURIComponent(testEmail)}`);
     
     // Step 1: Fill technician
     await page.fill('input[name="tech_name_0"]', 'Sarah Connor');
@@ -267,7 +268,7 @@ test.describe('Gainhelm Product Setup & App Board', () => {
     await expect(page).toHaveURL(/\/app/);
     
     // Verify context owner is listed
-    const ownerEmail = page.locator('strong:has-text("test@example.com")').first();
+    const ownerEmail = page.locator(`strong:has-text("${testEmail}")`).first();
     await expect(ownerEmail).toBeVisible();
 
     // Verify AI dispatcher terminal header is visible
@@ -277,5 +278,90 @@ test.describe('Gainhelm Product Setup & App Board', () => {
     // Verify visual phone mockup exists
     const phoneFrame = page.locator('.phone-frame');
     await expect(phoneFrame).toBeVisible();
+  });
+
+  test('Configures shifts and availability, and tests shift-based AI dispatch simulator routing', async ({ page }) => {
+    // Listen to console and dialog events for debugging
+    page.on('console', msg => console.log('BROWSER LOG:', msg.text()));
+    page.on('pageerror', exception => console.log('BROWSER EXCEPTION:', exception.stack || exception.message));
+    page.on('dialog', async dialog => {
+      console.log('DIALOG OPENED:', dialog.message());
+      await dialog.dismiss();
+    });
+
+    const testEmail = `shifts-test-${Math.random().toString(36).substring(7)}@example.com`;
+    // 1. Go to setup page
+    await page.goto(`/setup?email=${encodeURIComponent(testEmail)}`);
+    
+    // 2. Configure Technician 1 (On Duty, Standard Shift, HVAC)
+    await page.fill('input[name="tech_name_0"]', 'Sarah Connor');
+    await page.fill('input[name="tech_phone_0"]', '+1 (555) 0288');
+    await page.selectOption('select[name="tech_trade_0"]', 'HVAC');
+    await page.selectOption('select[name="tech_shift_0"]', 'Standard');
+    await page.selectOption('select[name="tech_status_0"]', 'active');
+    
+    // 3. Configure Technician 2 (On Duty, Night Shift, HVAC) — already pre-populated as row 1
+    await page.fill('input[name="tech_name_1"]', 'David Miller');
+    await page.fill('input[name="tech_phone_1"]', '+1 (555) 0999');
+    await page.selectOption('select[name="tech_trade_1"]', 'HVAC');
+    await page.selectOption('select[name="tech_shift_1"]', 'Night');
+    await page.selectOption('select[name="tech_status_1"]', 'active');
+    
+    // 4. Configure Technician 3 (Off Duty, Always Shift, HVAC) — already pre-populated as row 2
+    await page.fill('input[name="tech_name_2"]', 'John Doe');
+    await page.fill('input[name="tech_phone_2"]', '+1 (555) 0111');
+    await page.selectOption('select[name="tech_trade_2"]', 'HVAC');
+    await page.selectOption('select[name="tech_shift_2"]', 'Always');
+    await page.selectOption('select[name="tech_status_2"]', 'inactive');
+
+    // 5. Navigate through wizard
+    try {
+      await page.click('#btn-next', { timeout: 3000 }); // Step 2 rules
+      await page.click('#btn-next', { timeout: 3000 }); // Step 3 sandbox
+      await page.click('#btn-submit', { timeout: 3000 }); // Save & Launch
+    } catch (err) {
+      console.log('PAGE CONTENT ON FAILURE:', await page.content());
+      throw err;
+    }
+    
+    // 6. Should redirect to app supervision board
+    await expect(page).toHaveURL(/\/app/);
+    
+    // 7. Verify technician statuses and shifts are displayed
+    await expect(page.locator('text=Sarah Connor')).toBeVisible();
+    await expect(page.locator('text=Standard Shift (Mon-Fri 8-5)')).toBeVisible();
+    const sarahCard = page.locator('strong:has-text("Sarah Connor") >> xpath=../..');
+    await expect(sarahCard.locator('text=On Duty')).toBeVisible();
+    
+    await expect(page.locator('text=David Miller')).toBeVisible();
+    await expect(page.locator('text=Night Shift (Mon-Fri 5pm-8am)')).toBeVisible();
+    const davidCard = page.locator('strong:has-text("David Miller") >> xpath=../..');
+    await expect(davidCard.locator('text=On Duty')).toBeVisible();
+    
+    await expect(page.locator('text=John Doe')).toBeVisible();
+    await expect(page.locator('text=24/7 (Always Available)')).toBeVisible();
+    const johnCard = page.locator('strong:has-text("John Doe") >> xpath=../..');
+    await expect(johnCard.locator('text=Off Duty')).toBeVisible();
+
+    // 8. Test simulation routing under "Normal Business Hours"
+    await page.selectOption('select[id="job-time"]', 'BusinessHours');
+    await page.selectOption('select[id="job-trade"]', 'HVAC');
+    await page.fill('input[id="job-desc"]', 'AC fan broken in office');
+    await page.click('button[type="submit"]:has-text("Dispatch Work Order")');
+
+    // Standard Shift tech (Sarah Connor) is on-duty and standard shift matches BusinessHours.
+    await expect(page.locator('#phone-title')).toHaveText('💬 Sarah Connor');
+    const logs = page.locator('#feed');
+    await expect(logs).toContainText('Dispatched job to technician Sarah Connor');
+
+    // 9. Test decline fallback routing under "After Hours"
+    await page.selectOption('select[id="job-time"]', 'AfterHours');
+    await page.selectOption('select[id="job-trade"]', 'HVAC');
+    await page.fill('input[id="job-desc"]', 'AC blowing warm air at midnight');
+    await page.click('button[type="submit"]:has-text("Dispatch Work Order")');
+
+    // Under AfterHours, Sarah Connor is off-shift. David Miller (Night Shift) is active.
+    await expect(page.locator('#phone-title')).toHaveText('💬 David Miller');
+    await expect(logs).toContainText('Dispatched job to technician David Miller');
   });
 });
