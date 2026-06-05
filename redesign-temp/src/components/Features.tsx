@@ -11,13 +11,13 @@ const features = [
   {
     icon: Calendar,
     title: 'Smart Scheduling',
-    description: 'One shared calendar that keeps office and field aligned. See every job, every tech, every route in real time.',
+    description: 'Works with your existing Google Calendar. The AI dispatcher schedules and updates jobs in the calendar you already use—no new software silo.',
     color: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
   },
   {
     icon: Users,
-    title: 'Team Coordination',
-    description: 'Replace scattered text threads with structured handoffs. Everyone knows what\'s next without the back-and-forth.',
+    title: 'Headless Coordination',
+    description: 'Techs receive and accept dispatch offers via native SMS with zero app downloads or logging in. Simple text threads that work on any phone.',
     color: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
   },
   {

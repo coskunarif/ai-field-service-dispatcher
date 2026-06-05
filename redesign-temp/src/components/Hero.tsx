@@ -41,8 +41,8 @@ export default function Hero() {
               transition={{ duration: 0.5, delay: 0.2 }}
               className="text-lg sm:text-xl text-slate-400 leading-relaxed max-w-xl"
             >
-              Assign work faster, cut down on phone tag, and keep schedules clear 
-              without spreadsheets or messy handoffs. Built for HVAC, plumbing, and landscaping teams.
+              Assign work faster, cut phone tag, and keep schedules clear. 
+              Techs coordinate over SMS with zero app downloads, syncing directly to the calendar you already use—no new silos to manage.
             </motion.p>
 
             <motion.div
