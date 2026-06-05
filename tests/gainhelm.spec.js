@@ -364,4 +364,61 @@ test.describe('Gainhelm Product Setup & App Board', () => {
     await expect(page.locator('#phone-title')).toHaveText('💬 David Miller');
     await expect(logs).toContainText('Dispatched job to technician David Miller');
   });
+
+  test('Toggles technician duty status dynamically on Supervision Board and affects simulation routing', async ({ page }) => {
+    page.on('console', msg => console.log('BROWSER LOG:', msg.text()));
+    page.on('pageerror', exception => console.log('BROWSER EXCEPTION:', exception.stack || exception.message));
+    page.on('dialog', async dialog => {
+      console.log('DIALOG WINDOW:', dialog.message());
+      await dialog.dismiss();
+    });
+
+    const testEmail = `toggle-test-${Math.random().toString(36).substring(7)}@example.com`;
+    
+    // 1. Setup technicians
+    await page.goto(`/setup?email=${encodeURIComponent(testEmail)}`);
+    
+    // Sarah Connor (HVAC, Standard, active)
+    await page.fill('input[name="tech_name_0"]', 'Sarah Connor');
+    await page.fill('input[name="tech_phone_0"]', '+1 (555) 0288');
+    await page.selectOption('select[name="tech_trade_0"]', 'HVAC');
+    await page.selectOption('select[name="tech_shift_0"]', 'Standard');
+    await page.selectOption('select[name="tech_status_0"]', 'active');
+    
+    // David Miller (HVAC, Always, active)
+    await page.fill('input[name="tech_name_1"]', 'David Miller');
+    await page.fill('input[name="tech_phone_1"]', '+1 (555) 0999');
+    await page.selectOption('select[name="tech_trade_1"]', 'HVAC');
+    await page.selectOption('select[name="tech_shift_1"]', 'Always');
+    await page.selectOption('select[name="tech_status_1"]', 'active');
+
+    // Navigate wizard
+    await page.click('#btn-next');
+    await page.click('#btn-next');
+    await page.click('#btn-submit');
+
+    await expect(page).toHaveURL(/\/app/);
+
+    // Verify Sarah is initially On Duty
+    const sarahBadge = page.locator('#status-badge-Sarah-Connor');
+    await expect(sarahBadge).toContainText('On Duty');
+
+    // Toggle Sarah to Off Duty
+    const sarahCard = page.locator('strong:has-text("Sarah Connor") >> xpath=../..');
+    await sarahCard.locator('button:has-text("Toggle")').click();
+
+    // Verify badge changes to Off Duty
+    await expect(sarahBadge).toContainText('Off Duty');
+
+    // Try standard hours HVAC dispatch. Sarah should be skipped (Off Duty) and dispatched to David Miller.
+    await page.selectOption('select[id="job-time"]', 'BusinessHours');
+    await page.selectOption('select[id="job-trade"]', 'HVAC');
+    await page.fill('input[id="job-desc"]', 'AC fan broken in office');
+    await page.click('button[type="submit"]:has-text("Dispatch Work Order")');
+
+    await expect(page.locator('#phone-title')).toHaveText('💬 David Miller');
+    const logs = page.locator('#feed');
+    await expect(logs).toContainText('Dispatched job to technician David Miller');
+  });
 });
+

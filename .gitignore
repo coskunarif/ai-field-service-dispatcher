@@ -14,3 +14,7 @@ node_modules/
 artifacts/*
 !artifacts/gainhelm-seo/
 !artifacts/gainhelm-seo/**
+
+# Playwright reports and test results
+playwright-report/
+test-results/

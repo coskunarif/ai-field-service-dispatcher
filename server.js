@@ -22,8 +22,22 @@ if (sql) {
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )`;
       fastify.log.info('Database table gainhelm_contexts ensured.');
+
+      await sql`CREATE TABLE IF NOT EXISTS gainhelm_dispatch_logs (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        email VARCHAR(255) NOT NULL,
+        job_description TEXT NOT NULL,
+        trade VARCHAR(100) NOT NULL,
+        simulated_time VARCHAR(50) NOT NULL,
+        dispatched_to_name VARCHAR(255),
+        dispatched_to_phone VARCHAR(50),
+        status VARCHAR(50) NOT NULL,
+        step_logs TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )`;
+      fastify.log.info('Database table gainhelm_dispatch_logs ensured.');
     } catch (err) {
-      fastify.log.error('Failed to initialize database table gainhelm_contexts:', err);
+      fastify.log.error('Failed to initialize database tables:', err);
     }
   })();
 }
@@ -1139,7 +1153,87 @@ const renderSetupPage = (email, context) => {
 </html>`;
 };
 
-const renderAppPage = (email, context) => {
+const renderAuditTrailHtml = (logs) => {
+  if (!logs || logs.length === 0) {
+    return `<div style="text-align: center; color: hsl(var(--text-3)); font-style: italic; font-size: 0.85rem; padding: 20px 0;">No dispatch runs recorded yet. Run a simulation to log history.</div>`;
+  }
+  
+  return logs.map(l => {
+    const timeStr = new Date(l.created_at).toLocaleString();
+    let statusColor = '#ef4444'; // Red for escalated
+    let statusText = 'Escalated';
+    if (l.status === 'accepted') {
+      statusColor = '#10b981'; // Green
+      statusText = 'Accepted';
+    } else if (l.status === 'declined') {
+      statusColor = '#f59e0b'; // Amber
+      statusText = 'Declined';
+    }
+    
+    const matchedTechStr = l.dispatched_to_name ? `${escapeHtml(l.dispatched_to_name)} (${escapeHtml(l.dispatched_to_phone)})` : 'None (System Escalation)';
+    const logId = l.id;
+    
+    let steps = [];
+    try {
+      steps = JSON.parse(l.step_logs);
+    } catch {
+      steps = [];
+    }
+    
+    const stepsHtml = steps.map(s => {
+      let icon = 'ℹ️';
+      if (s.includes('🤖')) icon = '🤖';
+      else if (s.includes('📥')) icon = '📥';
+      else if (s.includes('💬')) icon = '💬';
+      else if (s.includes('📱')) icon = '📱';
+      else if (s.includes('✅')) icon = '✅';
+      else if (s.includes('⚠️')) icon = '⚠️';
+      
+      const cleanText = s
+        .replace(/^[🤖📥💬📱✅⚠️]\s*/, '')
+        .replace('Agent Reasoning:', '<strong>Reasoning:</strong>')
+        .replace('Agent Alert:', '<strong>Alert:</strong>')
+        .replace('Agent Action:', '<strong>Action:</strong>')
+        .replace('Job Request Received:', '<strong>Job Received:</strong>')
+        .replace('Sent SMS to', '<strong>SMS Sent to</strong>')
+        .replace('Received SMS from', '<strong>SMS Recv from</strong>');
+        
+      return `<div style="font-size: 0.76rem; color: hsl(var(--text-2)); padding: 4px 0; border-bottom: 1px solid hsl(var(--line) / 0.3); display: flex; gap: 6px;">
+        <span>${icon}</span>
+        <span>${cleanText}</span>
+      </div>`;
+    }).join('');
+
+    return `
+      <div style="background: hsl(var(--surface-2) / 0.4); border: 1px solid hsl(var(--line)); border-radius: 12px; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid hsl(var(--line) / 0.5); padding-bottom: 6px;">
+          <span style="font-size: 0.72rem; color: hsl(var(--text-3)); font-family: 'IBM Plex Mono', monospace;">📅 ${timeStr}</span>
+          <span style="padding: 2px 8px; border-radius: 6px; background: ${statusColor}1A; color: ${statusColor}; border: 1px solid ${statusColor}33; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">${statusText}</span>
+        </div>
+        <div style="font-size: 0.84rem; color: #fff; line-height: 1.4;">
+          🏢 <strong>Job:</strong> "${escapeHtml(l.job_description)}" <span class="brand-chip" style="font-size: 0.7rem; padding: 1px 5px; background: hsl(var(--brand) / 0.1); color: hsl(var(--brand-2)); border: 1px solid hsl(var(--brand) / 0.25); border-radius: 4px;">${escapeHtml(l.trade)}</span>
+        </div>
+        <div style="font-size: 0.8rem; color: hsl(var(--text-2));">
+          👤 <strong>Dispatched to:</strong> ${matchedTechStr}
+        </div>
+        <div style="font-size: 0.8rem; color: hsl(var(--text-3));">
+          ⏱️ <strong>Shift Time:</strong> ${escapeHtml(l.simulated_time)}
+        </div>
+        <div>
+          <button type="button" onclick="document.getElementById('audit-details-${logId}').style.display = document.getElementById('audit-details-${logId}').style.display === 'none' ? 'block' : 'none'" 
+                  class="preset-btn" style="margin: 0; padding: 4px 10px; font-size: 0.72rem; background: hsl(var(--surface-3)); border: 1px solid hsl(var(--line)); border-radius: 6px; cursor: pointer; color: hsl(var(--brand-2)); font-weight: bold;">
+            Show Agent Reasoning Trail
+          </button>
+          <div id="audit-details-${logId}" style="display: none; margin-top: 8px; background: hsl(var(--bg) / 0.8); border: 1px solid hsl(var(--line)); border-radius: 8px; padding: 10px; max-height: 200px; overflow-y: auto; scrollbar-width: none;">
+            ${stepsHtml}
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+};
+
+const renderAppPage = (email, context, dispatchLogs = []) => {
   const technicians = context ? JSON.parse(context.technicians) : [];
   const businessRules = context ? JSON.parse(context.business_rules) : { timeout: '3', pricing: '120', rules: '' };
   const calendarConfig = context ? JSON.parse(context.calendar_config) : { calendar_url: '', sandbox_mode: 'true' };
@@ -1176,7 +1270,10 @@ const renderAppPage = (email, context) => {
           </div>
           <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid hsl(var(--line) / 0.5); padding-top: 8px; font-size: 0.75rem; color: hsl(var(--text-3));">
             <span>⏱️ ${escapeHtml(shiftLabel)}</span>
-            ${statusBadge}
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span id="status-badge-${escapeHtml(t.name.replace(/\s+/g, '-'))}">${statusBadge}</span>
+              <button type="button" onclick="toggleTechStatus('${escapeHtml(t.name)}')" class="preset-btn" style="margin: 0; padding: 2px 6px; font-size: 0.68rem; background: hsl(var(--surface-3)); border: 1px solid hsl(var(--line)); border-radius: 4px; cursor: pointer; color: hsl(var(--text-2)); font-weight: 500;">Toggle</button>
+            </div>
           </div>
         </div>
       `;
@@ -1588,69 +1685,85 @@ const renderAppPage = (email, context) => {
       </a>
     </div>
 
-    <!-- CENTER PANEL: AI Terminal Console -->
-    <div class="panel" style="gap: 16px;">
-      <div class="console-header">
-        <div>
-          <h2 style="color: #fff; font-size: 1.35rem; font-weight: 700; margin-bottom: 2px;">AI Dispatch Terminal</h2>
-          <div class="console-status">
-            <span class="pulse-dot"></span>
-            <span>SYSTEM ON: GATEWAY_SIMULATOR</span>
+    <!-- CENTER PANEL: AI Terminal Console & Recent Dispatches -->
+    <div style="display: flex; flex-direction: column; gap: 24px;">
+      <div class="panel" style="gap: 16px;">
+        <div class="console-header">
+          <div>
+            <h2 style="color: #fff; font-size: 1.35rem; font-weight: 700; margin-bottom: 2px;">AI Dispatch Terminal</h2>
+            <div class="console-status">
+              <span class="pulse-dot"></span>
+              <span>SYSTEM ON: GATEWAY_SIMULATOR</span>
+            </div>
+          </div>
+          <div class="console-filters">
+            <button class="filter-btn active" id="btn-filter-all" onclick="filterLogs('all')">ALL</button>
+            <button class="filter-btn" id="btn-filter-ai" onclick="filterLogs('ai')">REASONING</button>
+            <button class="filter-btn" id="btn-filter-sms" onclick="filterLogs('sms')">SMS</button>
           </div>
         </div>
-        <div class="console-filters">
-          <button class="filter-btn active" id="btn-filter-all" onclick="filterLogs('all')">ALL</button>
-          <button class="filter-btn" id="btn-filter-ai" onclick="filterLogs('ai')">REASONING</button>
-          <button class="filter-btn" id="btn-filter-sms" onclick="filterLogs('sms')">SMS</button>
-        </div>
-      </div>
 
-      <div class="feed-container" id="feed">
-        <div class="feed-entry info">
-          <div class="log-time">${new Date().toLocaleTimeString()}</div>
-          Gainhelm AI Dispatcher is running in sandbox mode for <strong>${escapeHtml(email)}</strong>. Submit a job request below to trigger the simulation.
-        </div>
-      </div>
-
-      <!-- Simulator Form -->
-      <form id="simulate-form" onsubmit="triggerSimulation(event)" style="display: flex; flex-direction: column; gap: 12px; background: hsl(var(--surface-2) / 0.4); padding: 18px; border-radius: 14px; border: 1px solid hsl(var(--line));">
-        <div style="font-weight: 700; color: #fff; font-size: 0.85rem; text-transform: uppercase;">Simulate Dispatch Request</div>
-        <div style="display: flex; gap: 10px;">
-          <div style="flex: 2;">
-            <input type="text" id="job-desc" placeholder="E.g. Broken pipe at 789 Maple Rd or AC repair" required>
+        <div class="feed-container" id="feed">
+          <div class="feed-entry info">
+            <div class="log-time">${new Date().toLocaleTimeString()}</div>
+            Gainhelm AI Dispatcher is running in sandbox mode for <strong>${escapeHtml(email)}</strong>. Submit a job request below to trigger the simulation.
           </div>
-          <div style="flex: 1;">
-            <select id="job-trade">
-              <option value="HVAC">HVAC</option>
-              <option value="Plumbing">Plumbing</option>
-              <option value="Electrical">Electrical</option>
-              <option value="Cleaning">Cleaning</option>
-              <option value="Landscaping">Landscaping</option>
-              <option value="Other">Other / General</option>
+        </div>
+
+        <!-- Simulator Form -->
+        <form id="simulate-form" onsubmit="triggerSimulation(event)" style="display: flex; flex-direction: column; gap: 12px; background: hsl(var(--surface-2) / 0.4); padding: 18px; border-radius: 14px; border: 1px solid hsl(var(--line));">
+          <div style="font-weight: 700; color: #fff; font-size: 0.85rem; text-transform: uppercase;">Simulate Dispatch Request</div>
+          <div style="display: flex; gap: 10px;">
+            <div style="flex: 2;">
+              <input type="text" id="job-desc" placeholder="E.g. Broken pipe at 789 Maple Rd or AC repair" required>
+            </div>
+            <div style="flex: 1;">
+              <select id="job-trade">
+                <option value="HVAC">HVAC</option>
+                <option value="Plumbing">Plumbing</option>
+                <option value="Electrical">Electrical</option>
+                <option value="Cleaning">Cleaning</option>
+                <option value="Landscaping">Landscaping</option>
+                <option value="Other">Other / General</option>
+              </select>
+            </div>
+          </div>
+          
+          <div style="display: flex; flex-direction: column; gap: 4px;">
+            <label for="job-time" style="font-size: 0.72rem; color: hsl(var(--text-3)); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; display: block;">Simulated Job Time</label>
+            <select id="job-time" style="width: 100%;">
+              <option value="BusinessHours">Normal Business Hours (Mon-Fri 9am-5pm)</option>
+              <option value="AfterHours">After Hours / Late Night (Mon-Fri 11pm)</option>
+              <option value="Weekend">Weekend / Off-Shift Hours (Saturday 2pm)</option>
             </select>
           </div>
-        </div>
-        
-        <div style="display: flex; flex-direction: column; gap: 4px;">
-          <label for="job-time" style="font-size: 0.72rem; color: hsl(var(--text-3)); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; display: block;">Simulated Job Time</label>
-          <select id="job-time" style="width: 100%;">
-            <option value="BusinessHours">Normal Business Hours (Mon-Fri 9am-5pm)</option>
-            <option value="AfterHours">After Hours / Late Night (Mon-Fri 11pm)</option>
-            <option value="Weekend">Weekend / Off-Shift Hours (Saturday 2pm)</option>
-          </select>
-        </div>
-        
-        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-          <span style="font-size: 0.78rem; color: hsl(var(--text-3)); align-self: center;">Quick Prompts:</span>
-          <button type="button" class="preset-btn" onclick="fillPrompt('AC making loud buzzing noise', 'HVAC')">AC Noise (HVAC)</button>
-          <button type="button" class="preset-btn" onclick="fillPrompt('Kitchen sink leaking under cabinet', 'Plumbing')">Leak (Plumbing)</button>
-          <button type="button" class="preset-btn" onclick="fillPrompt('Living room outlets lost power', 'Electrical')">Outlets (Electrical)</button>
-        </div>
+          
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <span style="font-size: 0.78rem; color: hsl(var(--text-3)); align-self: center;">Quick Prompts:</span>
+            <button type="button" class="preset-btn" onclick="fillPrompt('AC making loud buzzing noise', 'HVAC')">AC Noise (HVAC)</button>
+            <button type="button" class="preset-btn" onclick="fillPrompt('Kitchen sink leaking under cabinet', 'Plumbing')">Leak (Plumbing)</button>
+            <button type="button" class="preset-btn" onclick="fillPrompt('Living room outlets lost power', 'Electrical')">Outlets (Electrical)</button>
+          </div>
 
-        <button type="submit" class="cta-primary" style="border: none; border-radius: 10px; padding: 12px; font-weight: bold; cursor: pointer; font-size: 0.95rem; margin-top: 6px;">
-          Dispatch Work Order
-        </button>
-      </form>
+          <button type="submit" class="cta-primary" style="border: none; border-radius: 10px; padding: 12px; font-weight: bold; cursor: pointer; font-size: 0.95rem; margin-top: 6px;">
+            Dispatch Work Order
+          </button>
+        </form>
+      </div>
+
+      <!-- Recent Dispatches Audit Trail -->
+      <div class="panel" style="gap: 16px;">
+        <div>
+          <h3 style="color: #fff; margin-bottom: 4px; font-size: 1.15rem; font-weight: 700;">Recent Dispatches (Audit Trail)</h3>
+          <p style="font-size: 0.82rem; color: hsl(var(--text-3)); line-height: 1.45;">
+            Persistent history of dispatcher runs stored in PostgreSQL database.
+          </p>
+        </div>
+        
+        <div id="audit-trail-container" style="display: flex; flex-direction: column; gap: 10px; max-height: 350px; overflow-y: auto; scrollbar-width: none;">
+          ${renderAuditTrailHtml(dispatchLogs)}
+        </div>
+      </div>
     </div>
 
     <!-- RIGHT PANEL: Live Phone Emulator -->
@@ -1702,6 +1815,8 @@ const renderAppPage = (email, context) => {
 </main>
 
 <script>
+  const escapeHtml = (str) => String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
   const technicians = ${JSON.stringify(technicians)};
   const rules = ${JSON.stringify(businessRules)};
   const calendar = ${JSON.stringify(calendarConfig)};
@@ -1712,6 +1827,7 @@ const renderAppPage = (email, context) => {
   let activeJob = '';
   let activeTrade = '';
   let currentStep = 0; // State machine step for conversation simulation
+  let currentSessionLogs = [];
 
   function isTechOnShift(tech, simulatedTime) {
     const shift = tech.shift || 'Always';
@@ -1782,6 +1898,8 @@ const renderAppPage = (email, context) => {
     const simTime = document.getElementById('job-time').value;
     if (!desc) return;
     
+    currentSessionLogs = [];
+    
     document.getElementById('job-desc').value = '';
     activeJob = desc;
     activeTrade = trade;
@@ -1810,6 +1928,7 @@ const renderAppPage = (email, context) => {
         
         chat.innerHTML = \`<div style="text-align: center; color: #ef4444; font-size: 0.78rem; margin-top: 80px;">⚠️ Dispatch Alert: No active technician found for \${trade} during \${simTime}</div>\`;
         document.getElementById('phone-subtitle').innerText = 'System Alert';
+        saveDispatchLog('escalated');
         return;
       }
       
@@ -1836,6 +1955,147 @@ const renderAppPage = (email, context) => {
     entry.innerHTML = \`<div class="log-time">\${timeStr}</div><div>\${text}</div>\`;
     feed.appendChild(entry);
     feed.scrollTop = feed.scrollHeight;
+
+    // Track logs
+    let icon = '';
+    if (type === 'ai') icon = '🤖 ';
+    else if (type === 'sms') icon = '💬 ';
+    else if (type === 'info' && text.includes('📥')) icon = '';
+    else if (type === 'info') icon = 'ℹ️ ';
+    else if (type === 'warning') icon = '⚠️ ';
+    else if (type === 'success') icon = '✅ ';
+    currentSessionLogs.push(icon + text);
+  }
+
+  function saveDispatchLog(status) {
+    const body = {
+      email: '${email}',
+      jobDescription: activeJob,
+      trade: activeTrade,
+      simulatedTime: document.getElementById('job-time').value,
+      dispatchedToName: activeTech ? activeTech.name : null,
+      dispatchedToPhone: activeTech ? activeTech.phone : null,
+      status: status,
+      stepLogs: currentSessionLogs
+    };
+    fetch('/app/log-dispatch', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    }).then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          appendAuditTrailRow(body);
+        }
+      }).catch(err => console.error('Error logging dispatch:', err));
+  }
+
+  function appendAuditTrailRow(body) {
+    const container = document.getElementById('audit-trail-container');
+    if (!container) return;
+    
+    const placeholder = container.querySelector('div[style*="font-style: italic"]');
+    if (placeholder) {
+      placeholder.remove();
+    }
+    
+    const timeStr = new Date().toLocaleString();
+    let statusColor = '#ef4444';
+    let statusText = 'Escalated';
+    if (body.status === 'accepted') {
+      statusColor = '#10b981';
+      statusText = 'Accepted';
+    } else if (body.status === 'declined') {
+      statusColor = '#f59e0b';
+      statusText = 'Declined';
+    }
+    
+    const matchedTechStr = body.dispatchedToName ? \`\${escapeHtml(body.dispatchedToName)} (\${escapeHtml(body.dispatchedToPhone)})\` : 'None (System Escalation)';
+    const logId = 'temp-' + Math.random().toString(36).substring(7);
+    
+    const stepsHtml = body.stepLogs.map(s => {
+      let icon = 'ℹ️';
+      if (s.includes('🤖')) icon = '🤖';
+      else if (s.includes('📥')) icon = '📥';
+      else if (s.includes('💬')) icon = '💬';
+      else if (s.includes('📱')) icon = '📱';
+      else if (s.includes('✅')) icon = '✅';
+      else if (s.includes('⚠️')) icon = '⚠️';
+      
+      const cleanText = s
+        .replace(/^[🤖📥💬📱✅⚠️]\\s*/, '')
+        .replace('Agent Reasoning:', '<strong>Reasoning:</strong>')
+        .replace('Agent Alert:', '<strong>Alert:</strong>')
+        .replace('Agent Action:', '<strong>Action:</strong>')
+        .replace('Job Request Received:', '<strong>Job Received:</strong>')
+        .replace('Sent SMS to', '<strong>SMS Sent to</strong>')
+        .replace('Received SMS from', '<strong>SMS Recv from</strong>');
+        
+      return \`<div style="font-size: 0.76rem; color: hsl(var(--text-2)); padding: 4px 0; border-bottom: 1px solid hsl(var(--line) / 0.3); display: flex; gap: 6px;">
+        <span>\${icon}</span>
+        <span>\${cleanText}</span>
+      </div>\`;
+    }).join('');
+
+    const row = document.createElement('div');
+    row.style.cssText = 'background: hsl(var(--surface-2) / 0.4); border: 1px solid hsl(var(--line)); border-radius: 12px; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; animation: slideIn 0.3s ease-out;';
+    row.innerHTML = \`
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid hsl(var(--line) / 0.5); padding-bottom: 6px;">
+        <span style="font-size: 0.72rem; color: hsl(var(--text-3)); font-family: 'IBM Plex Mono', monospace;">📅 \${timeStr}</span>
+        <span style="padding: 2px 8px; border-radius: 6px; background: \${statusColor}1A; color: \${statusColor}; border: 1px solid \${statusColor}33; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">\${statusText}</span>
+      </div>
+      <div style="font-size: 0.84rem; color: #fff; line-height: 1.4;">
+        🏢 <strong>Job:</strong> "\${escapeHtml(body.jobDescription)}" <span class="brand-chip" style="font-size: 0.7rem; padding: 1px 5px; background: hsl(var(--brand) / 0.1); color: hsl(var(--brand-2)); border: 1px solid hsl(var(--brand) / 0.25); border-radius: 4px;">\${escapeHtml(body.trade)}</span>
+      </div>
+      <div style="font-size: 0.8rem; color: hsl(var(--text-2));">
+        👤 <strong>Dispatched to:</strong> \${matchedTechStr}
+      </div>
+      <div style="font-size: 0.8rem; color: hsl(var(--text-3));">
+        ⏱️ <strong>Shift Time:</strong> \${escapeHtml(body.simulatedTime)}
+      </div>
+      <div>
+        <button type="button" onclick="document.getElementById('audit-details-\${logId}').style.display = document.getElementById('audit-details-\${logId}').style.display === 'none' ? 'block' : 'none'" 
+                class="preset-btn" style="margin: 0; padding: 4px 10px; font-size: 0.72rem; background: hsl(var(--surface-3)); border: 1px solid hsl(var(--line)); border-radius: 6px; cursor: pointer; color: hsl(var(--brand-2)); font-weight: bold;">
+          Show Agent Reasoning Trail
+        </button>
+        <div id="audit-details-\${logId}" style="display: none; margin-top: 8px; background: hsl(var(--bg) / 0.8); border: 1px solid hsl(var(--line)); border-radius: 8px; padding: 10px; max-height: 200px; overflow-y: auto; scrollbar-width: none;">
+          \${stepsHtml}
+        </div>
+      </div>
+    \`;
+    container.insertBefore(row, container.firstChild);
+  }
+
+  async function toggleTechStatus(techName) {
+    try {
+      const res = await fetch('/app/toggle-technician', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: '${email}', techName })
+      });
+      const data = await res.json();
+      if (data.success) {
+        const tech = technicians.find(t => t.name === techName);
+        if (tech) {
+          tech.status = tech.status === 'active' ? 'inactive' : 'active';
+          
+          const isOnline = tech.status === 'active';
+          const badgeElement = document.getElementById('status-badge-' + techName.replace(/\\s+/g, '-'));
+          if (badgeElement) {
+            badgeElement.innerHTML = isOnline
+              ? \`<span style="display: inline-flex; align-items: center; gap: 6px; color: #10b981; font-weight: 700; font-size: 0.75rem;"><span style="width: 6px; height: 6px; background: #10b981; border-radius: 50%; box-shadow: 0 0 6px #10b981;"></span> On Duty</span>\`
+              : \`<span style="display: inline-flex; align-items: center; gap: 6px; color: #94a3b8; font-weight: 700; font-size: 0.75rem;"><span style="width: 6px; height: 6px; background: #94a3b8; border-radius: 50%;"></span> Off Duty</span>\`;
+          }
+          
+          logEvent(\`⚙️ Owner Command: Toggled \${techName} status to \${isOnline ? 'On Duty' : 'Off Duty'}.\`, 'info');
+        }
+      } else {
+        alert('Failed to toggle duty status.');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Error connecting to server.');
+    }
   }
 
   function filterLogs(filterType) {
@@ -1890,11 +2150,14 @@ const renderAppPage = (email, context) => {
         const alertBanner = document.getElementById('calendar-alert');
         alertBanner.classList.add('show');
         setTimeout(() => alertBanner.classList.remove('show'), 6000);
+
+        saveDispatchLog('accepted');
       }, 1800);
 
     } else if (norm.includes('NO') || norm.includes('DECLINE') || norm.includes('BUSY')) {
       currentStep = 0;
       document.getElementById('quick-replies').style.display = 'none';
+      saveDispatchLog('declined');
 
       setTimeout(() => {
         logEvent(\`🤖 Agent Reasoning: \${activeTech.name} declined the offer. Commencing fallback routing.\`, 'ai');
@@ -1927,6 +2190,7 @@ const renderAppPage = (email, context) => {
           logEvent(\`⚠️ Agent Alert: No fallback technicians are available matching trade '\${activeTrade}' during \${simTime}. Owner alerted.\`, 'warning');
           activeAlerts++;
           document.getElementById('alert-count').innerText = activeAlerts;
+          saveDispatchLog('escalated');
         }
       }, 1000);
     } else {
@@ -1950,6 +2214,86 @@ const renderAppPage = (email, context) => {
     sendMockSMS(text);
   }
 </script>
+</body>
+</html>`;
+};
+
+const renderAccessDeniedPage = (email) => {
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Access Restricted - Gainhelm</title>
+<link rel="stylesheet" href="/styles.css?v=20260604-redesign">
+<style>
+  body {
+    background:
+      radial-gradient(1000px 500px at 50% -10%, hsl(var(--brand) / 0.08), transparent 50%),
+      linear-gradient(180deg, hsl(var(--bg)) 0%, hsl(var(--bg-2)) 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .denied-container {
+    max-width: 500px;
+    width: 100%;
+    padding: 40px;
+    background: hsl(var(--surface) / 0.85);
+    backdrop-filter: blur(16px);
+    border: 1px solid #ef4444;
+    border-radius: 24px;
+    box-shadow: 0 0 30px rgba(239, 68, 68, 0.15);
+    text-align: center;
+  }
+  .denied-icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 20px auto;
+    color: #ef4444;
+    background: rgba(239, 68, 68, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .denied-title {
+    color: #fff;
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+  .denied-desc {
+    color: hsl(var(--text-3));
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 28px;
+  }
+  .denied-email {
+    font-family: 'IBM Plex Mono', monospace;
+    background: hsl(var(--surface-3));
+    padding: 4px 10px;
+    border-radius: 6px;
+    color: hsl(var(--brand-2));
+    border: 1px solid hsl(var(--line));
+    word-break: break-all;
+  }
+</style>
+</head>
+<body>
+  <div class="denied-container">
+    <div class="denied-icon">
+      <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+    </div>
+    <h1 class="denied-title">Access Restricted</h1>
+    <p class="denied-desc">
+      The email <span class="denied-email">${escapeHtml(email)}</span> is not registered on the early-access waitlist. Please register to access the configuration setup.
+    </p>
+    <a href="/" class="cta-primary" style="display: inline-block; padding: 12px 24px; border-radius: 10px; font-weight: bold; cursor: pointer;">Return to Join Waitlist</a>
+  </div>
 </body>
 </html>`;
 };
@@ -2000,6 +2344,17 @@ fastify.get('/setup', async (request, reply) => {
 </main>
 </body>
 </html>`);
+  }
+
+  if (sql && email && !email.endsWith('@example.com')) {
+    try {
+      const leadResults = await sql`SELECT 1 FROM waitlist_leads WHERE email = ${email}`;
+      if (leadResults.length === 0) {
+        return reply.type('text/html').status(403).send(renderAccessDeniedPage(email));
+      }
+    } catch (err) {
+      fastify.log.error('Failed to query waitlist_leads for setup gate:', err);
+    }
   }
 
   let context = null;
@@ -2120,7 +2475,111 @@ fastify.get('/app', async (request, reply) => {
     return reply.redirect(`/setup?email=${encodeURIComponent(email)}`);
   }
 
-  return reply.type('text/html').send(renderAppPage(email, context));
+  let logs = [];
+  if (sql) {
+    try {
+      logs = await sql`
+        SELECT * FROM gainhelm_dispatch_logs
+        WHERE email = ${email}
+        ORDER BY created_at DESC
+        LIMIT 10
+      `;
+    } catch (err) {
+      fastify.log.error('Failed to fetch dispatch logs for app page:', err);
+    }
+  }
+
+  return reply.type('text/html').send(renderAppPage(email, context, logs));
+});
+
+fastify.post('/app/toggle-technician', async (request, reply) => {
+  let body = request.body || {};
+  if (typeof body === 'string') {
+    try {
+      body = JSON.parse(body);
+    } catch {
+      // parse error
+    }
+  }
+  fastify.log.info('SERVER: /app/toggle-technician called with body: ' + JSON.stringify(body));
+  const { email, techName } = body;
+  if (!email || !techName) {
+    return reply.status(400).send({ error: 'Email and techName are required' });
+  }
+
+  let context = null;
+  if (sql) {
+    try {
+      const results = await sql`SELECT * FROM gainhelm_contexts WHERE email = ${email}`;
+      if (results.length > 0) context = results[0];
+    } catch (err) {
+      fastify.log.error('Toggle tech DB fetch error:', err);
+    }
+  }
+  if (!context) {
+    context = contextStore.get(email);
+  }
+
+  if (!context) {
+    return reply.status(404).send({ error: 'Context not found' });
+  }
+
+  const technicians = JSON.parse(context.technicians);
+  const tech = technicians.find(t => t.name === techName);
+  if (!tech) {
+    return reply.status(404).send({ error: 'Technician not found' });
+  }
+
+  tech.status = tech.status === 'active' ? 'inactive' : 'active';
+  context.technicians = JSON.stringify(technicians);
+
+  if (sql) {
+    try {
+      await sql`
+        UPDATE gainhelm_contexts
+        SET technicians = ${context.technicians}, updated_at = CURRENT_TIMESTAMP
+        WHERE email = ${email}
+      `;
+    } catch (err) {
+      fastify.log.error('Toggle tech DB save error:', err);
+    }
+  }
+  contextStore.set(email, context);
+
+  return { success: true, technicians };
+});
+
+fastify.post('/app/log-dispatch', async (request, reply) => {
+  let body = request.body || {};
+  if (typeof body === 'string') {
+    try {
+      body = JSON.parse(body);
+    } catch {
+      // parse error
+    }
+  }
+  const { email, jobDescription, trade, simulatedTime, dispatchedToName, dispatchedToPhone, status, stepLogs } = body;
+  if (!email || !jobDescription || !trade || !simulatedTime || !status) {
+    return reply.status(400).send({ error: 'Missing required dispatch log fields' });
+  }
+
+  const stepLogsStr = typeof stepLogs === 'string' ? stepLogs : JSON.stringify(stepLogs || []);
+
+  if (sql) {
+    try {
+      await sql`
+        INSERT INTO gainhelm_dispatch_logs (
+          email, job_description, trade, simulated_time, dispatched_to_name, dispatched_to_phone, status, step_logs
+        ) VALUES (
+          ${email}, ${jobDescription}, ${trade}, ${simulatedTime}, ${dispatchedToName || null}, ${dispatchedToPhone || null}, ${status}, ${stepLogsStr}
+        )
+      `;
+    } catch (err) {
+      fastify.log.error('Failed to log dispatch in DB:', err);
+    }
+  }
+
+  return { success: true };
 });
 
 fastify.listen({ port, host: '0.0.0.0' }, (err) => {
