@@ -95,103 +95,79 @@ export default function Hero() {
               {/* Browser chrome */}
               <div className="flex items-center gap-2 px-4 py-3 bg-slate-950 border-b border-slate-800/60">
                 <div className="flex gap-1.5">
-                  <div className="w-3 h-3 rounded-full bg-red-500/70" />
-                  <div className="w-3 h-3 rounded-full bg-amber-500/70" />
-                  <div className="w-3 h-3 rounded-full bg-emerald-500/70" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-red-500/70" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-amber-500/70" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-emerald-500/70" />
                 </div>
                 <div className="flex-1 mx-4">
-                  <div className="bg-slate-900/50 rounded-md px-3 py-1 text-xs text-slate-500 border border-slate-800/40 text-center">
-                    gainhelm.com/dispatch
+                  <div className="bg-slate-900/50 rounded-md px-3 py-1 text-xs text-slate-400 border border-slate-800/40 text-center font-mono">
+                    gainhelm.com/supervision
                   </div>
                 </div>
               </div>
 
-              {/* Board content */}
-              <div className="p-5 space-y-4">
-                <div className="flex items-center justify-between">
+              {/* Dashboard Workspace */}
+              <div className="grid grid-cols-[150px_1fr] md:grid-cols-[160px_1fr] bg-[#030712]">
+                {/* Sidebar */}
+                <div className="p-4 border-r border-slate-800/80 flex flex-col gap-4">
                   <div>
-                    <h3 className="text-sm font-semibold text-white">Today's Dispatch</h3>
-                    <p className="text-xs text-slate-400 mt-0.5">Monday, June 16 — 8 jobs</p>
+                    <h4 className="text-[10px] font-bold text-white tracking-wider uppercase mb-3">Context</h4>
+                    <div className="flex flex-col gap-2">
+                      <h5 className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Technicians</h5>
+                      <div className="flex justify-between items-center text-[10px] sm:text-[11px] bg-slate-900/50 p-1.5 rounded border border-slate-800/30">
+                        <span className="text-slate-200 font-medium">Sarah Connor</span>
+                        <span className="bg-emerald-500/10 text-emerald-400 px-1.5 py-0.5 rounded text-[8px] font-bold uppercase shrink-0">Active</span>
+                      </div>
+                      <div className="flex justify-between items-center text-[10px] sm:text-[11px] bg-slate-900/50 p-1.5 rounded border border-slate-800/30">
+                        <span className="text-slate-200 font-medium">John Wick</span>
+                        <span className="bg-blue-500/10 text-blue-400 px-1.5 py-0.5 rounded text-[8px] font-bold uppercase shrink-0">Available</span>
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex gap-2">
-                    <span className="px-2.5 py-1 rounded-md bg-emerald-500/10 text-emerald-400 text-xs font-medium border border-emerald-500/20">3 Active</span>
-                    <span className="px-2.5 py-1 rounded-md bg-amber-500/10 text-brand-400 text-xs font-medium border border-brand-500/20">2 Pending</span>
+                  <div className="flex flex-col gap-2">
+                    <h5 className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Rules</h5>
+                    <div className="text-[10px] sm:text-[11px] text-slate-300 bg-slate-900/50 p-1.5 rounded border border-slate-800/30">
+                      ⏱️ Timeout: <strong className="text-white">3m</strong>
+                    </div>
+                    <div className="text-[10px] sm:text-[11px] text-slate-300 bg-slate-900/50 p-1.5 rounded border border-slate-800/30">
+                      💰 Call Fee: <strong className="text-white">$120</strong>
+                    </div>
                   </div>
                 </div>
 
-                {/* Job cards */}
-                <div className="space-y-3">
-                  {[
-                    {
-                      title: 'Emergency AC repair',
-                      location: 'Northside · 124 Oak St',
-                      tech: 'Unassigned',
-                      status: 'Needs assignment',
-                      statusColor: 'bg-amber-500/10 text-brand-400 border-brand-500/20',
-                      priority: true,
-                    },
-                    {
-                      title: 'Kitchen leak follow-up',
-                      location: 'Westside · 789 Pine Ave',
-                      tech: 'Maria R.',
-                      status: 'Scheduled',
-                      statusColor: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
-                      priority: false,
-                    },
-                    {
-                      title: 'HVAC maintenance',
-                      location: 'Downtown · 456 Elm Blvd',
-                      tech: 'James T.',
-                      status: 'In progress',
-                      statusColor: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
-                      priority: false,
-                    },
-                    {
-                      title: 'Landscaping maintenance',
-                      location: 'Eastside · 321 Maple Dr',
-                      tech: 'Crew B',
-                      status: 'Ready to go',
-                      statusColor: 'bg-slate-800 text-slate-300 border-slate-700',
-                      priority: false,
-                    },
-                  ].map((job, i) => (
-                    <motion.div
-                      key={job.title}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.6 + i * 0.1 }}
-                      className={`p-3.5 rounded-xl border transition-all hover:border-brand-500/40 cursor-pointer ${
-                        job.priority
-                          ? 'bg-amber-500/5 border-brand-500/30'
-                          : 'bg-slate-900/60 border-slate-800/80 hover:bg-slate-800/40'
-                      }`}
-                    >
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="min-w-0">
-                          <div className="flex items-center gap-2">
-                            <p className="text-sm font-semibold text-white truncate">{job.title}</p>
-                            {job.priority && (
-                              <span className="shrink-0 px-1.5 py-0.5 rounded text-[10px] font-bold bg-red-500/20 text-red-400 uppercase tracking-wider">
-                                Urgent
-                              </span>
-                            )}
-                          </div>
-                          <p className="text-xs text-slate-400 mt-1">{job.location}</p>
-                        </div>
-                        <span className={`shrink-0 px-2 py-1 rounded-md text-[11px] font-medium border ${job.statusColor}`}>
-                          {job.status}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-2 mt-2.5">
-                        <div className="w-5 h-5 rounded-full bg-slate-800 flex items-center justify-center border border-slate-700">
-                          <span className="text-[9px] font-bold text-slate-300">
-                            {job.tech.charAt(0)}
-                          </span>
-                        </div>
-                        <span className="text-xs text-slate-300">{job.tech}</span>
-                      </div>
-                    </motion.div>
-                  ))}
+                {/* Feed */}
+                <div className="p-4 flex flex-col gap-3">
+                  <div className="flex justify-between items-center text-[11px] text-slate-400 border-b border-slate-800/50 pb-2">
+                    <span className="font-semibold text-slate-300">AI Dispatcher Logs</span>
+                    <span className="font-mono text-[9px] text-slate-500">14:32:01</span>
+                  </div>
+                  
+                  <div className="flex flex-col gap-2 font-mono text-[10px] sm:text-[11px] leading-relaxed">
+                    <div className="flex gap-2 p-1.5 rounded border-l-2 border-blue-500 bg-blue-500/5">
+                      <span className="text-slate-500 flex-shrink-0">[14:31:10]</span>
+                      <span className="text-slate-300"><strong>Job:</strong> Emergency call.</span>
+                    </div>
+                    
+                    <div className="flex gap-2 p-1.5 rounded border-l-2 border-amber-500 bg-amber-500/5 text-amber-300">
+                      <span className="text-amber-500/50 flex-shrink-0">[14:31:12]</span>
+                      <span><strong>AI:</strong> Scanning technicians...</span>
+                    </div>
+
+                    <div className="flex gap-2 p-1.5 rounded border-l-2 border-amber-500 bg-amber-500/5 text-amber-300">
+                      <span className="text-amber-500/50 flex-shrink-0">[14:31:15]</span>
+                      <span>Sarah Connor matched.</span>
+                    </div>
+
+                    <div className="flex gap-2 p-1.5 rounded border-l-2 border-blue-500 bg-blue-500/5">
+                      <span className="text-slate-500 flex-shrink-0">[14:31:21]</span>
+                      <span className="text-slate-300"><strong>SMS Sent:</strong> "Job offer sent."</span>
+                    </div>
+
+                    <div className="flex gap-2 p-1.5 rounded border-l-2 border-emerald-500 bg-emerald-500/5 text-emerald-400">
+                      <span className="text-emerald-500/50 flex-shrink-0">[14:31:25]</span>
+                      <span><strong>SMS Recv:</strong> "YES" (Accepted)</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
