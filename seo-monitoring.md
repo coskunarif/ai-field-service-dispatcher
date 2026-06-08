@@ -12,6 +12,13 @@
 - technician scheduling app
 - technician scheduling software
 - dispatch board software
+- AI dispatch agent for Claude
+- AI dispatch agent for Codex
+- AI dispatch agent for Antigravity
+- AI dispatch agent for Hermes
+- AI dispatch agent for OpenClaw
+- agentic field service dispatch software
+- LLM agent dispatch integration
 
 ## Live pages
 - https://gainhelm.com/

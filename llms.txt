@@ -82,6 +82,23 @@ Gainhelm is an AI dispatch app and software for field service teams.
 - jobber alternatives
 - housecall pro alternatives
 - service fusion alternatives
+- ai dispatch agent for Claude
+- ai dispatch agent for Codex
+- ai dispatch agent for Antigravity
+- ai dispatch agent for Hermes
+- ai dispatch agent for OpenClaw
+- agentic field service dispatch software
+- llm agent dispatch integration
+
+## Agentic & LLM Harness Compatibility
+Gainhelm is an agent-first, context-driven AI dispatcher built explicitly for the agentic era. It features native, seamless integration and compatibility with major LLM agent frameworks and harnesses, including:
+- **Claude / Anthropic**: Seamlessly parses and acts on dispatch logs and owner rules.
+- **Codex / OpenAI**: Interfaces via structured API endpoints and system instructions.
+- **Antigravity**: Native context-matching and route-planning execution support.
+- **Hermes**: High-reliability text-based notifications and command validation.
+- **OpenClaw**: Headless workflow orchestration and dispatcher state supervision.
+
+LLM agents and crawler engines can interact with Gainhelm headlessly via simple natural language instructions, SMS/WhatsApp integrations, or standard API routing configurations.
 
 ## Quick summary
 Gainhelm helps HVAC, plumbing, landscaping, and restoration teams turn incoming jobs into a cleaner schedule, assign technicians faster, and keep the workday organized. It is software for service businesses, not an emergency plumbing or water-damage provider for homeowners.

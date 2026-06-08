@@ -1,0 +1,50 @@
+# Gainhelm Organic Distribution Database
+
+This database outlines the target platforms, directories, and trade-specific communities selected for Gainhelm's organic distribution and Generative Engine Optimization (GEO) campaigns. 
+
+Gainhelm is an agent-first, context-driven AI dispatcher for small field service teams (HVAC, plumbing, electrical, locksmith, restoration, landscaping, and cleaning crews running 1–20 technicians). Because Gainhelm is currently positioned as an early-access waitlist, directories are split between waitlist-friendly pre-launch directories and platforms that require registered vendor accounts or post-launch verification.
+
+---
+
+## 1. General & AI SaaS Directories (18 Platforms)
+
+These platforms target tech early adopters, AI enthusiasts, software searchers, and small business software researchers. 
+
+| Name | URL | Type | Estimated Audience Size | Posting/Submission Guidelines |
+| :--- | :--- | :--- | :--- | :--- |
+| **BetaList** | `https://betalist.com` | Pre-launch Startup Directory | ~150K–200K monthly | Free queue available (several weeks wait) or paid fast-track ($39–$299). Highly waitlist-friendly. Requires founder profile. |
+| **AlternativeTo** | `https://alternativeto.net` | Crowdsourced Directory | ~6.0M+ monthly | Free crowdsourced listing. Requires developer/maker account. Map alternative relationships to Jobber, Housecall Pro, and ServiceTitan. Waitlist friendly. |
+| **Uneed** | `https://uneed.best` | Curated Daily Leaderboard | ~100K+ monthly | Free queue or paid fast-track option. Focuses on daily curation of high-quality tools. Waitlist friendly. |
+| **Launching Next** | `https://launchingnext.com` | Startup Directory | ~50K–100K monthly | Free submission queue or paid immediate publication ($99). Waitlist friendly. |
+| **SaaSHunt AI** | `https://saashunt.ai` | AI Tool Directory | ~50K+ monthly | Free submission. Editorial review takes 3–5 business days. No login required. Waitlist friendly. |
+| **ShowMySites** | `https://showmysites.com` | Web Directory | ~30K+ monthly | Free via contact form. Direct website addition requires account. Waitlist friendly. |
+| **FirstUsers** | `https://firstusers.tech` | Early Adopter Platform | ~20K+ monthly | Free submission via Tally form. Dedicated to helping early-stage makers find initial beta testers. Waitlist friendly. |
+| **The Next AI** | `https://thenextai.com` | AI Tool Directory | ~120K+ monthly | Free basic submission via web form, or paid featured listing ($199). No login or account required. Waitlist friendly. |
+| **SmartBizTools** | `https://smartbiztools.io` | Business Tool Directory | ~50K+ monthly | Free editorial review. Queue is 2–6 weeks. No user registration required to submit. Waitlist friendly. |
+| **FreeAIO** | `https://freeaio.com` | AI Directory | ~40K+ monthly | Free submission using on-site contact/submission form. No login or CAPTCHA required. Waitlist friendly. |
+| **TopReviewed.ai** | `https://topreviewed.ai` | AI Review Directory | ~30K+ monthly | Free listing. Submission via main contact form (fallback as `/submit` is currently 404). Waitlist friendly. |
+| **Conversion Gems** | `https://conversiongems.com` | AI Productivity Directory | ~10K+ monthly | Free submission via Webflow API form. Fast and waitlist friendly. |
+| **FieldSalesTools** | `https://fieldsalestools.com` | Specialty Directory | ~5K+ monthly | Free submission using FormSubmit honeypot form. Specific to field sales and field operations. Waitlist friendly. |
+| **Product Hunt** | `https://producthunt.com` | Product Launch Platform | ~5M+ monthly | Free to launch. Requires active founder account. Highly structured media kit needed (logo, 16:9 screenshots, feature lists). Waitlist-unfriendly (better for beta launch). |
+| **SubmitHunt** | `https://submithunt.com` | AI & SaaS Directory | ~20K+ monthly | Free or paid featured options. Requires Google OAuth authentication before access to submission form fields. |
+| **PitchWall** | `https://pitchwall.co` | Startup Directory | ~30K+ monthly | Free submission. Requires logging in via Google, GitHub, Microsoft, or Discord OAuth before submitting startup details. |
+| **ConTechFinder** | `https://contechfinder.com` | Construction Specialty Directory | ~10K+ monthly | Free submission queue. Gated behind Cloudflare Turnstile token verification. Requires manual verification. |
+| **Business-Software** | `https://business-software.com` | Enterprise Software Directory | ~300K+ monthly | Free listing. Submission form is gated by an on-screen CAPTCHA verification code. Manual entry required. |
+
+---
+
+## 2. Trade-Specific & Small Business Communities (9 Entries)
+
+These communities represent direct channels to target users (HVAC, plumbing, electrical, locksmith, restoration, and small service contractors). Pitching directly in these forums is prohibited and will result in instant bans. Engagement must be value-first, answering questions regarding dispatching, back-office admin load, and tech management.
+
+| Name | URL | Type | Estimated Audience Size | Posting/Submission Guidelines |
+| :--- | :--- | :--- | :--- | :--- |
+| **r/HVAC** | `https://www.reddit.com/r/HVAC/` | Reddit Subreddit | ~245,000+ members | Strict "HVAC trade only" rule. Rule 3: No advertising or spam. Direct commercial links or self-promotional pitches are deleted immediately. Focus on scheduling and dispatch bottlenecks. |
+| **r/plumbing** | `https://www.reddit.com/r/plumbing/` | Reddit Subreddit | ~295,000+ members | Strictly professional plumbers. Rule 4: No spam or advertising. Direct commercial links are forbidden. Content must be advice- or trade-oriented. Ideal for highlighting the "headless SMS/WhatsApp" hands-free benefit. |
+| **r/electricians** | `https://www.reddit.com/r/electricians/` | Reddit Subreddit | ~280,000+ members | Professional electricians only. Rule 8: No advertising, spam, or self-promotion. Focus on back-office schedules, tech credentials, and safety dispatches. |
+| **r/locksmith** | `https://www.reddit.com/r/locksmith/` | Reddit Subreddit | ~25,000+ members | Moderated professional locksmiths. Rule 2: No spam or sales pitches. Rule 3: No customer DIY posts. Focus on emergency dispatches and hands-free texts while driving. |
+| **r/sweatystartup** | `https://www.reddit.com/r/sweatystartup/` | Reddit Subreddit | ~160,000+ members | Open to trade startup founders. Overt spam is deleted, but sharing case studies, systems, tech stacks, or seeking feedback is highly welcomed. Excellent for building-in-public. |
+| **r/smallbusiness** | `https://www.reddit.com/r/smallbusiness/` | Reddit Subreddit | ~2.5M+ members | Very strict rules on self-promotion. Periodic promotional threads are allowed, but main threads must be advice-first and non-promotional. Great for comparing Jobber/Housecall Pro to simpler alternatives. |
+| **Contractor Talk** | `https://www.contractortalk.com/` | Independent Web Forum | ~155,000+ members | Professional contractors only (no DIY). Strict no-spam policy. No self-promotion or links in threads. Signature links allowed for active members in "Business Management" and "Computers & Software" sections. |
+| **HVAC-Talk** | `https://hvac-talk.com/` | Independent Web Forum | ~200,000+ members | Highly moderated. No commercial advertising in threads. Signature links are permitted for active/pro members. Focus on the "HVAC Business and Marketing" section. |
+| **Plumbing Zone** | `https://www.plumbingzone.com/` | Independent Web Forum | ~15,000+ members | Strictly licensed plumbers. Requires trade intro thread. No DIY, no spam, no sales pitches. Signature links permitted. Highly defensive against shills; requires high-quality operational replies. |

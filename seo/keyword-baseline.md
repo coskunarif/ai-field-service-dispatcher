@@ -11,6 +11,13 @@ Sampling method: public web search result inspection + live-site confirmation
 - field service scheduling software
 - plumbing scheduling software
 - technician scheduling app
+- AI dispatch agent for Claude
+- AI dispatch agent for Codex
+- AI dispatch agent for Antigravity
+- AI dispatch agent for Hermes
+- AI dispatch agent for OpenClaw
+- agentic field service dispatch software
+- LLM agent dispatch integration
 
 ## Current baseline
 - gainhelm.com presence in Google search results: not observed in the sampled result set

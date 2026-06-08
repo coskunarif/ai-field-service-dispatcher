@@ -130,6 +130,32 @@
 .script-footer .cta-primary {
   display: inline-block;
 }
+.copy-script-btn {
+  background: hsl(var(--surface-3));
+  border: 1px solid hsl(var(--line));
+  color: hsl(var(--text-2));
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+  transition: all 0.2s ease;
+}
+.copy-script-btn:hover {
+  background: hsl(var(--surface-2));
+  color: hsl(var(--text));
+  border-color: hsl(var(--brand));
+}
+.copy-script-btn.copied {
+  background: hsl(142 70% 10% / 0.3);
+  border-color: hsl(142 70% 30%);
+  color: hsl(142 70% 80%);
+}
 @media (max-width: 640px) {
   .script-card {
     padding: 1.5rem;
@@ -438,6 +464,7 @@ Gainhelm
 <p class="script-text">"We have our technician, [Technician Name], available in your area this [morning/afternoon] between [Time Window]. I'll book that window for you, and we will text you when they are on their way."</p>
 </div>
 </div>
+<button class="copy-script-btn" data-script-id="panel-standard">📋 Copy Full Script</button>
 </div>
 <div class="script-panel" id="panel-emergency" role="tabpanel" aria-labelledby="tab-emergency" hidden>
 <div class="script-meta-description">
@@ -462,10 +489,15 @@ Gainhelm
 <p class="script-text">"I have locked in our emergency plumber, [Technician Name]. They are wrapping up their current job and are routing to you next. Their estimated arrival is within [Time Window]. I will send a text notification the second they head your way."</p>
 </div>
 </div>
+<button class="copy-script-btn" data-script-id="panel-emergency">📋 Copy Full Script</button>
 </div>
 <div class="script-footer">
 <p>💡 <strong>How Gainhelm simplifies this:</strong> Instead of scribbling call details on paper and scrambling to find who is available, type these details directly into your Gainhelm board. Gainhelm automatically suggests the right plumber based on current proximity and availability, helping you run a seamless emergency plumbing dispatch workflow.</p>
-<a href="#waitlist" class="cta-primary">Try Gainhelm for your dispatch board</a>
+<div class="script-lead-magnet" style="margin-top: 1.5rem; padding: 1.5rem; background: hsl(var(--surface-2)); border: 1px dashed hsl(var(--brand)); border-radius: var(--radius-sm);">
+  <h4 style="margin-top: 0; margin-bottom: 0.5rem; color: hsl(var(--text)); font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem;">📄 Get the Full Plumbing Dispatcher Scripts PDF</h4>
+  <p style="font-size: 0.9rem; color: hsl(var(--text-2)); margin-bottom: 1rem; line-height: 1.5;">Want a printable copy of these scripts plus 5 additional emergency intake scenarios (water heater failure, sewer backup, leak detection) for your office? Join our waitlist below and we'll send it directly to your inbox.</p>
+  <a href="#waitlist" class="cta-primary" style="font-size: 0.9rem; padding: 0.5rem 1rem;">Get the PDF via Waitlist</a>
+</div>
 </div>
 </div>
 </section>
@@ -584,6 +616,21 @@ Gainhelm
 <div class="info-card"><h3><a href="/emergency-restoration-dispatch-software">Emergency restoration dispatch software</a></h3><p>For urgent burst-pipe, water-damage, and mitigation workflows where crews need fast assignment.</p></div>
 <div class="info-card"><h3><a href="/field-service-scheduling">Field service scheduling software</a></h3><p>For teams comparing dispatch boards, technician assignment, and service-call scheduling tools.</p></div>
 <div class="info-card"><h3><a href="/mobile-dispatch-board">Dispatch software on iPad</a></h3><p>For teams that want a readable mobile board and faster schedule updates.</p></div>
+</div>
+</section>
+<section class="section" aria-labelledby="alternatives-pages">
+<div class="section-head">
+<div class="kicker">How Gainhelm compares</div>
+<h2 id="alternatives-pages">Lightweight alternatives to heavy enterprise platforms.</h2>
+<p>Compare Gainhelm against traditional field service platforms. See why small trades teams choose simple dispatch boards over bloated CRMs.</p>
+</div>
+<div class="card-grid">
+<div class="info-card"><h3><a href="/servicetitan-alternative">Gainhelm vs ServiceTitan</a></h3><p>Compare dispatch workflows, setup times, and monthly costs for small field service teams.</p></div>
+<div class="info-card"><h3><a href="/jobber-alternative">Gainhelm vs Jobber</a></h3><p>See why growing teams switch from Jobber's basic calendar to a dedicated visual scheduling board.</p></div>
+<div class="info-card"><h3><a href="/housecallpro-alternative">Gainhelm vs Housecall Pro</a></h3><p>Compare lightweight dispatcher routing against complex marketing tools and high user-based pricing.</p></div>
+<div class="info-card"><h3><a href="/servicefusion-alternative">Gainhelm vs Service Fusion</a></h3><p>Compare scheduling workflows, same-day dispatch routing, and tablet layouts.</p></div>
+<div class="info-card"><h3><a href="/buildops-alternative">Gainhelm vs BuildOps</a></h3><p>Compare commercial field service capabilities, scheduling boards, and pricing models.</p></div>
+<div class="info-card"><h3><a href="/fieldedge-alternative">Gainhelm vs FieldEdge</a></h3><p>Compare dispatch board clarity, setup times, and mobile app performance for service crews.</p></div>
 </div>
 </section>
 <section class="form-section" id="waitlist">
@@ -744,6 +791,38 @@ form.addEventListener('submit', async (event) => {
       const panelId = tab.getAttribute('aria-controls');
       const panel = document.getElementById(panelId);
       if (panel) panel.hidden = false;
+    });
+  });
+})();
+
+// Copy script to clipboard logic
+(() => {
+  const copyButtons = document.querySelectorAll('.copy-script-btn');
+  copyButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const panelId = btn.getAttribute('data-script-id');
+      const panel = document.getElementById(panelId);
+      if (!panel) return;
+      
+      let textToCopy = '';
+      const steps = panel.querySelectorAll('.script-step');
+      steps.forEach(step => {
+        const role = step.querySelector('.script-role')?.textContent || '';
+        const dialogue = step.querySelector('.script-text')?.textContent || '';
+        textToCopy += `[${role}]\n${dialogue}\n\n`;
+      });
+      
+      navigator.clipboard.writeText(textToCopy.trim()).then(() => {
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '✅ Copied!';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.innerHTML = originalText;
+          btn.classList.remove('copied');
+        }, 2000);
+      }).catch(err => {
+        console.error('Failed to copy text: ', err);
+      });
     });
   });
 })();

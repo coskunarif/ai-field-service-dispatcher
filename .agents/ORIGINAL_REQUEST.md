@@ -1,0 +1,79 @@
+# Original User Request
+
+## 2026-06-07T11:38:26Z
+
+Enhance the UI/UX design of all 30+ static SEO landing pages for Gainhelm by polishing the global stylesheet (`styles.css`) to be highly premium, responsive, and visually cohesive, without introducing new features.
+
+Working directory: /home/ubuntuadmin/projects/ai-field-service-dispatcher
+Integrity mode: benchmark
+
+## Requirements
+
+### R1. Refine Global CSS Styling & Aesthetics
+Polish the global stylesheet (`styles.css`) to implement premium web design aesthetics. This includes typography hierarchy, clean responsive grids/flex containers, smooth micro-animations/transitions for interactive elements (buttons, links, form inputs), subtle gradients, and glassmorphic headers, matching a modern SaaS standard.
+
+### R2. Ensure Fully Responsive Layout & Readability
+All landing pages must be perfectly responsive and readable across mobile, tablet, and desktop viewports. The layout must have zero horizontal overflow/scrolling, proper line heights for text readability, and consistent spacing between sections.
+
+### R3. Maintain Functional & Technical Integrity
+Do not alter the HTML structures or add new javascript features unless absolutely necessary for layout bugs. All existing routes, forms (especially waitlist submissions), and redirects must remain fully functional.
+
+## Verification Resources
+- **Playwright Test Suite**: The existing test suite located at `tests/gainhelm.spec.js` checks page response codes, SEO element presence, redirects, form actions, and wizard setups. These must all pass.
+
+## Acceptance Criteria
+
+### Visual & Layout Polish
+- [ ] No horizontal scrollbars or layout breakage occurs on mobile (320px), tablet (768px), or desktop (1440px) viewports.
+- [ ] Typography uses a consistent modular scale (Plus Jakarta Sans) with readable line-heights (1.5 - 1.7) and appropriate letter-spacing for headers.
+- [ ] Interactive elements (buttons, inputs, links, details blocks) feature smooth focus/hover transitions.
+
+### Technical & Functional Compliance
+- [ ] Running the test command `npx playwright test` completes successfully with all tests passing.
+- [ ] Waitlist form input fields (name, email, company) and status feedback containers (success/error states) remain functional and are styled cohesively.
+- [ ] SEO-critical HTML tags (H1, meta descriptions, canonical links) are untouched and remain valid.
+
+## Follow-up — 2026-06-07T11:43:04Z
+
+The user has requested: "please commit and push the changes when the mission is completed." Once your team successfully completes the task and passes all checks, please commit the changes and push them to the remote repository.
+
+## 2026-06-07T20:11:58Z
+
+Establish Gainhelm's initial organic distribution channels by implementing direct outreach systems, forum marketing campaigns (Reddit/communities), and listing the app in relevant software directories as outlined in the Distribution Playbook.
+
+Working directory: /home/ubuntuadmin/projects/ai-field-service-dispatcher/seo/distribution
+Integrity mode: benchmark
+
+## Requirements
+
+### R1. Target Directory & Community Database
+Identify and compile a structured database of at least 15 target platforms, general SaaS directories (e.g., AlternativeTo, ProductHunt alternatives), and trade-specific communities (specifically HVAC, plumbing, locksmith, and small business subreddits or forums). The database must include submission links, audience size metrics, rules, and guidelines for each entry.
+
+### R2. Tailored Outreach & Forum Templates
+Draft a set of customized templates (including cold emails, Reddit posts/comments, and DM templates) designed specifically for trade business owners, showcasing Gainhelm's core value proposition (agent-first SMS coordination, no app install required) in an authentic, value-first manner.
+
+### R3. Execution Playbook
+Produce a detailed execution guide outlining the step-by-step process for performing manual outreach, submitting to directories, tracking progress, and avoiding spam flags or compliance issues.
+
+## Reference Materials
+- [Distribution Playbook](file:///home/ubuntuadmin/projects/knowledge/distribution-playbook.md)
+- [App Description](file:///home/ubuntuadmin/projects/ai-field-service-dispatcher/APP_DESCRIPTION.md)
+
+## Acceptance Criteria
+
+### R1. Target Directory & Community Database Verification
+- [ ] Database contains at least 15 verified target listings in a structured markdown table.
+- [ ] At least 5 target entries are specific to home services, contractor trades, or small business owners.
+- [ ] Each entry has Name, URL, Type, Estimated Audience Size, and Posting/Submission Guidelines.
+
+### R2. Tailored Outreach & Forum Templates Verification
+- [ ] At least 3 distinct cold email outreach templates targeting trade business owners.
+- [ ] At least 3 distinct Reddit post/comment templates addressing scheduling pain points.
+- [ ] At least 2 DM templates for direct messaging on social/professional networks.
+- [ ] All templates highlight Gainhelm's app-less, agent-first value proposition without sounding like spam.
+
+### R3. Execution Playbook Verification
+- [ ] Includes a step-by-step submission checklist for directories.
+- [ ] Includes guidelines to avoid spam flags and comply with community rules (especially Reddit's self-promotion rules).
+- [ ] Contains a blank markdown tracking table for logging campaign progress (Platform, Status, Sent Date, Response).
+

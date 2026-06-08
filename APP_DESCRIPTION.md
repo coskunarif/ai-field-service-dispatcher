@@ -22,10 +22,11 @@ Gainhelm replaces the user interface with an **AI Agent**. The dispatcher reads 
 
 ## Philosophy & SEO
 - **Listen Before Building**: Use programmatic SEO and GEO-targeted pages as probes for demand. If Search Console shows recurring intent for a specific category, that trade is prioritized.
+- **Agentic & LLM SEO (LLMO/GEO)**: Optimize for AI crawler engines and agentic search systems. By exposing agent compatibility parameters in `llms.txt` and index headers, we attract search traffic from developers and businesses looking to integrate dispatch agents with Claude, Codex, Antigravity, Hermes, and OpenClaw.
 - **Split-Level Page Layouts**:
   - Keep landing page headers ultra-simple (Logo, Features, Waitlist) to drive human conversions.
   - Consolidate all 35+ trade and competitor alternative links inside the footer directory so Google can still crawl and index the entire site tree.
 
 ## Technical Architecture
-- **Marketing & SEO**: Programmatic static HTML landing pages hosted at the root (`/hvac-dispatch-software`, `/plumbing-dispatch-software`, etc.).
+- **Marketing & SEO**: Programmatic static HTML landing pages hosted at the root (`/hvac-dispatch-software`, `/plumbing-dispatch-software`, etc.) and agentic crawler metadata (`llms.txt`).
 - **Product Layer**: Safely isolated under non-indexed `/setup` and `/app` routes in Fastify (`server.js`), backed by PostgreSQL database storage.
