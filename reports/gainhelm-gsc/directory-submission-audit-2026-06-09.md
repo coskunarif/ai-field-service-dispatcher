@@ -66,3 +66,18 @@ These are the best remaining free SaaS, Startup, and AI directories that we shou
 | **Crunchbase** | `https://www.crunchbase.com` | Company Profiles | **SEO Foundation (DA: 90)**. Create a free profile for GainHelm. Gives high-authority corporate backlink signals. |
 | **Indie Hackers** | `https://www.indiehackers.com` | Tech Products | **Community Hub (DA: 74)**. Create a free product profile and share milestones (Build-in-Public). |
 | **Startup Buffer** | `https://startupbuffer.com` | Startup Directory | **Startup Directory (DA: 39)**. Submit tool details via free directory form. |
+
+---
+
+## 3. Web Search & Indexing Verification (As of June 9, 2026)
+
+We ran targeted web searches across all primary software and AI directories to verify if any submissions are already indexed by Google:
+* **Search targets**: `site:alternativeto.net`, `site:saashub.com`, `site:betalist.com`, `site:futurepedia.io`, `site:toolify.ai`, `site:theresanaiforthat.com`, `site:crunchbase.com`, `site:indiehackers.com`, `site:softwaresuggest.com`, `site:b2bsaasmarket.com`, `site:tools.so`, and `site:fieldtechtools.land`.
+* **Results**: **No indexed directory pages for the field-service version of GainHelm were found.**
+* **Interpretation**: Even though listings like SoftwareSuggest, B2B SaaS Market, and Tools.so have been successfully submitted/accepted:
+  1. Google has not yet crawled and indexed these directory profiles due to normal indexing lag.
+  2. The listings are currently inside private database queues or pending final moderation releases on their respective sites.
+* **Existing Brand Footprint**: The only live search index entries for "GainHelm" are:
+  - The primary marketing domain: `gainhelm.com`
+  - Discussions and updates on Reddit.
+  - The legacy Amazon Selling Partner Appstore listing for the ProfitHelm Amazon seller tool.
