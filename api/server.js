@@ -1,7 +1,7 @@
 import Fastify from 'fastify';
-import postgres from 'postgres';
+import { Firestore } from '@google-cloud/firestore';
 const fastify = Fastify({ logger: true });
-const sql = postgres(process.env.DATABASE_URL);
+const db = new Firestore();
 const allowedOrigins = new Set(['https://gainhelm.com', 'https://www.gainhelm.com']);
 fastify.addHook('onRequest', async (request, reply) => {
     const origin = request.headers.origin;
@@ -21,14 +21,21 @@ fastify.post('/waitlist', async (request, reply) => {
         return reply.status(400).send({ error: 'Email is required' });
     }
     try {
-        await sql `
-      INSERT INTO waitlist_leads (name, email, company)
-      VALUES (${name}, ${email}, ${company})
-    `;
+        const docRef = db.collection('waitlist_leads').doc(email.toLowerCase().trim());
+        await docRef.create({
+            email: email.toLowerCase().trim(),
+            name: name || null,
+            company: company || null,
+            created_at: new Date()
+        });
         return { success: true };
     }
     catch (err) {
         fastify.log.error(err);
+        // Firestore error code 6 is ALREADY_EXISTS
+        if (err.code === 6) {
+            return reply.status(400).send({ error: 'Email already registered' });
+        }
         return reply.status(500).send({ error: 'Failed to save lead' });
     }
 });
