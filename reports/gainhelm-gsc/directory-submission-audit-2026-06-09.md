@@ -9,16 +9,18 @@ This audit consolidates the submission status of all directories compiled from o
 
 ## 1. Submission Status Audit
 
-### 🟢 Active Listings & Onboarded (5 Platforms)
+### 🟢 Active Listings & Onboarded (6 Platforms)
 These directories have successfully accepted and listed/onboarded GainHelm:
+* **Indie Hackers** — Product page created and live under `https://www.indiehackers.com/product/gainhelm` (linked to `coskun.arf@gmail.com` profile).
 * **SoftwareSuggest** — Profile live and vendor account active.
 * **B2B SaaS Market** — Submitted and live.
 * **Tools.so** — Submitted via Tally form (listed).
 * **Field Tech Tools** — Submitted and accepted under Field Service Management.
 * **The Next AI** — Submission received and confirmed under review (dofollow backlink queue).
 
-### 🟡 Pending / Attempted Submissions (19 Platforms)
+### 🟡 Pending / Attempted Submissions (20 Platforms)
 These are free submissions that have been initiated via web forms or structured emails but are awaiting moderation or email response:
+* **AlternativeTo** — A hidden application with the name "GainHelm" already exists in their database (awaiting moderation/review or suggested via crawler). Duplicate submission was blocked by name uniqueness check.
 * **Toolvoro** — Contact form submitted.
 * **SaaS Lee** — Outreach sent to `growingpress@gmail.com`.
 * **LeadrPro** — Directory addition request sent.
