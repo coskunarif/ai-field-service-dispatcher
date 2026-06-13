@@ -1,7 +1,7 @@
 task: Increase referring domain backlinks and search impressions by distributing application listings to software directories | metric: Referring domain backlink count and search impressions | why: No directory profiles are indexed, preventing high-intent trade landing pages from ranking on the first page of search results | runner-up: Refine page headings and internal links for near-first-page keyword clusters.
 tier: T2                      creativity: 0.5
-state: SHIP                    budget: repairs 0/3
-branch: asf/20260613-seo-distribution                  checkpoint: none
+state: complete                budget: repairs 0/3
+branch: asf/20260613-seo-distribution                  checkpoint: asf/20260613-seo-distribution/green-1
 caps: agents,web,human
 
 ## Log
@@ -21,4 +21,13 @@ caps: agents,web,human
 - **Web Visual Breakpoints**: **SKIPPED** (No frontend layout/styling files were modified in this run's diff).
 
 ## Done
+- **What shipped**: Programmatic distribution of GainHelm listings to 7 high-authority software, startup, and AI directories via a semi-automated Playwright script `scripts/directory_submitter.js`. We populated `reports/gainhelm-gsc/submission-tracker.csv`, saved screenshot evidence under `reports/gainhelm-gsc/evidence/`, and added unit and integration tests.
+- **PR link**: [PR #1](https://github.com/coskunarif/ai-field-service-dispatcher/pull/1)
+- **Integration method**: Squash merge (`gh pr merge --squash`)
 
+| Acceptance Criterion | Verification Evidence | Status |
+| --- | --- | --- |
+| **[AC-1] Tracker Update** | `reports/gainhelm-gsc/submission-tracker.csv` lists all 8 directories with no duplicates and correct URLs. | PASS |
+| **[AC-2] Playwright Script** | `scripts/directory_submitter.js` automates browser navigation, metadata loading, and form filling with manual pause gates. | PASS |
+| **[AC-3] Submission Evidence** | Exactly 7 pre/post-submit screenshot PNG files stored under `reports/gainhelm-gsc/evidence/`. | PASS |
+| **[AC-4] Status Verification** | Submission statuses in `reports/gainhelm-gsc/submission-tracker.csv` updated to `submitted` or `attempted-unclear`. | PASS |

@@ -1,0 +1,1 @@
+- Playwright test suites running on headless browsers inside resource-constrained environments should use --workers=1 to avoid transient browser launch and context crashes.
