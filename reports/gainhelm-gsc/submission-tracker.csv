@@ -7,8 +7,8 @@ Crozdesk,https://crozdesk.com/claim-listing,directory,investigate,/vendors 404; 
 SoftwareSuggest,https://www.softwaresuggest.com/,directory,listed-confirmed-email,"Received SoftwareSuggest onboarding email from Ron Holmes congratulating ProfitHelm on listing; upsell/call offer only, no action needed unless paid demand-gen desired."
 AlternativeTo,https://alternativeto.net/,directory,needs-account,Submit via account/dashboard
 Product Hunt,https://www.producthunt.com/,launch,needs-account,"Need sign in, product new URL changed"
-BetaList,https://betalist.com/,launch,needs-account,Homepage accessible; Submit Startup present but no navigation without sign-in/JS; mark account-gated.
-SaaSHub,https://www.saashub.com/,directory,needs-account,Submit page accessible; product submission appears account-gated via Register/Login.
+BetaList,https://betalist.com/submit,launch,needs-account,Homepage accessible; Submit Startup present but no navigation without sign-in/JS; mark account-gated.
+SaaSHub,https://www.saashub.com/submit,directory,needs-account,Submit page accessible; product submission appears account-gated via Register/Login.
 Reddit r/HVAC,https://www.reddit.com/r/HVAC/comments/1f2hzmb/what_dispatchservice_software_does_your_company/,community,rejected,Archived; cannot comment
 Quora plumbers apps,https://www.quora.com/What-are-some-useful-mobile-software-apps-that-help-plumbers-to-do-their-work,community,needs-account,Accessible; sign-in required
 Spiceworks HVAC software,https://community.spiceworks.com/t/hvac-business-what-software-do-you-use/266391,community,needs-account,Live thread; Reply visible; Log In/Join required.
@@ -115,3 +115,9 @@ SaaS Mag,https://www.saasmag.com/submit/,saas-directory,broken-submit,Submit URL
 SaaS Review,https://saasreview.com/submit,saas-directory,broken-domain,Domain for sale via HugeDomains.
 SaaS Scout,https://saasscout.com/submit/,saas-directory,needs-account,Submit redirects to login.
 SaaS Venture,https://saasventure.com/submit/,saas-directory,broken-domain,Domain for sale via HugeDomains.
+Futurepedia,https://www.futurepedia.io/submit-a-tool,directory,needs-account,Initial status
+Toolify.ai,https://www.toolify.ai/submit,directory,needs-account,Initial status
+There’s An AI For That,https://theresanaiforthat.com/submit/,directory,needs-account,Initial status
+DevHunt,https://devhunt.org/,directory,needs-account,Initial status
+Indie Hackers,https://www.indiehackers.com/product/gainhelm,directory,needs-account,Initial status
+
