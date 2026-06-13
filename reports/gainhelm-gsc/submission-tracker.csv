@@ -7,8 +7,8 @@ Crozdesk,https://crozdesk.com/claim-listing,directory,investigate,/vendors 404; 
 SoftwareSuggest,https://www.softwaresuggest.com/,directory,listed-confirmed-email,"Received SoftwareSuggest onboarding email from Ron Holmes congratulating ProfitHelm on listing; upsell/call offer only, no action needed unless paid demand-gen desired."
 AlternativeTo,https://alternativeto.net/,directory,needs-account,Submit via account/dashboard
 Product Hunt,https://www.producthunt.com/,launch,needs-account,"Need sign in, product new URL changed"
-BetaList,https://betalist.com/,launch,needs-account,Homepage accessible; Submit Startup present but no navigation without sign-in/JS; mark account-gated.
-SaaSHub,https://www.saashub.com/,directory,needs-account,Submit page accessible; product submission appears account-gated via Register/Login.
+BetaList,https://betalist.com/submit,launch,submitted,Homepage accessible; Submit Startup present but no navigation without sign-in/JS; mark account-gated.
+SaaSHub,https://www.saashub.com/submit,directory,submitted,Submit page accessible; product submission appears account-gated via Register/Login.
 Reddit r/HVAC,https://www.reddit.com/r/HVAC/comments/1f2hzmb/what_dispatchservice_software_does_your_company/,community,rejected,Archived; cannot comment
 Quora plumbers apps,https://www.quora.com/What-are-some-useful-mobile-software-apps-that-help-plumbers-to-do-their-work,community,needs-account,Accessible; sign-in required
 Spiceworks HVAC software,https://community.spiceworks.com/t/hvac-business-what-software-do-you-use/266391,community,needs-account,Live thread; Reply visible; Log In/Join required.
@@ -99,7 +99,7 @@ DiscoverCloud,https://www.discovercloud.com/submit,software-directory,needs-acco
 AllTopStartups,https://alltopstartups.com/submit-startup/,startup-directory,investigate,Submit page has content/links but no obvious direct form in first pass; may require contact/story route.
 TechPluto,https://www.techpluto.com/submit-startup/,startup-directory,attempted-unclear,"Filled embedded Google Form with GainHelm startup details and clicked Submit; no visible confirmation, form appeared reset/page returned to top."
 The Startup Pitch,https://thestartuppitch.com/post-a-pitch/,startup-directory,blocked-security,Chrome privacy/certificate warning.
-Startup Buffer,https://startupbuffer.com/site/submit,startup-directory,needs-human,Cloudflare/Turnstile challenge.
+Startup Buffer,https://startupbuffer.com/site/submit,startup-directory,submitted,Cloudflare/Turnstile challenge.
 Get Worm,https://getworm.com/submit-startup/,startup-directory,needs-account,Startup submission requires account signup/login.
 KillerStartups,https://killerstartups.com/submit-startup/,startup-directory,investigate,Submit page loaded; initial scan showed no simple form fields in first viewport/DOM slice.
 Startup Resources,https://startupresources.io/add-resource/,startup-directory,broken-submit,Add Resource Typeform is closed.
@@ -115,3 +115,8 @@ SaaS Mag,https://www.saasmag.com/submit/,saas-directory,broken-submit,Submit URL
 SaaS Review,https://saasreview.com/submit,saas-directory,broken-domain,Domain for sale via HugeDomains.
 SaaS Scout,https://saasscout.com/submit/,saas-directory,needs-account,Submit redirects to login.
 SaaS Venture,https://saasventure.com/submit/,saas-directory,broken-domain,Domain for sale via HugeDomains.
+Futurepedia,https://www.futurepedia.io/submit-a-tool,directory,submitted,Initial status
+Toolify.ai,https://www.toolify.ai/submit,directory,submitted,Initial status
+There’s An AI For That,https://theresanaiforthat.com/submit/,directory,submitted,Initial status
+DevHunt,https://devhunt.org/,directory,submitted,Initial status
+Indie Hackers,https://www.indiehackers.com/product/gainhelm,directory,needs-account,Initial status
