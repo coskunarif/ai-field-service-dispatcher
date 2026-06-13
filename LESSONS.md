@@ -1,1 +1,2 @@
 - Playwright test suites running on headless browsers inside resource-constrained environments should use --workers=1 to avoid transient browser launch and context crashes.
+- Fastify servers connecting to external databases should fall back to in-memory storage when credentials are absent, enabling seamless offline test runs.
