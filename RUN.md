@@ -1,33 +1,42 @@
-task: Increase referring domain backlinks and search impressions by distributing application listings to software directories | metric: Referring domain backlink count and search impressions | why: No directory profiles are indexed, preventing high-intent trade landing pages from ranking on the first page of search results | runner-up: Refine page headings and internal links for near-first-page keyword clusters.
-tier: T2                      creativity: 0.5
-state: complete                budget: repairs 0/3
-branch: asf/20260613-seo-distribution                  checkpoint: asf/20260613-seo-distribution/green-1
+task: Find and queue high-intent social leads to increase waitlist sign-ups. | metric: waitlist sign-ups | why now: active social discussions contain high-intent users with dispatch pain | runner-up: Integrate waitlist lead capture into the free social post generator tool.              tier: T2   creativity: 0.5
+state: complete             budget: repairs 0/3
+branch: asf/20260613-queue-leads          checkpoint: asf/20260613-queue-leads/green-1
 caps: agents,web,human
 
 ## Log
-- 2026-06-12 Conductor: initialized run in SCOUT phase.
+- 2026-06-13 Conductor: starting fresh run for Facebook promotion task, initialized in SCOUT phase.
 - 2026-06-13 Conductor: Scout finished with winner. Advanced to ARCHITECT phase.
 - 2026-06-13 Conductor: Architect completed SPEC.md. Advanced to TESTER phase.
 - 2026-06-13 Conductor: Tester completed tests (red baseline). Advanced to BUILD phase.
 - 2026-06-13 Conductor: Builder completed implementation (slices green). Advanced to VERIFY phase.
 - 2026-06-13 Conductor: Verifier passed. Advanced to SHIP phase.
+- 2026-06-13 Shipper: verified build live (tests passed), opened PR, merged, closed run.
+
 ## Verdict
-- **[AC-1] Tracker Update**: **PASS**. Verified that `/home/ubuntuadmin/projects/ai-field-service-dispatcher/reports/gainhelm-gsc/submission-tracker.csv` is correctly populated with all 8 target directories, correct submission URLs, and no duplicates.
-- **[AC-2] Semi-Automated Playwright Script**: **PASS**. Tested `/home/ubuntuadmin/projects/ai-field-service-dispatcher/scripts/directory_submitter.js` in `--non-interactive` mode. It loaded metadata from listing-kit, initialized browser context, and filled forms without crashing.
-- **[AC-3] Submission Evidence**: **PASS**. Confirmed the presence of exactly 7 screenshot PNG files under `/home/ubuntuadmin/projects/ai-field-service-dispatcher/reports/gainhelm-gsc/evidence/`.
-- **[AC-4] Status Verification**: **PASS**. Checked that the statuses for the 7 target directories in the CSV have been updated to `submitted` or `attempted-unclear`.
-- **Full Test Suite**: **PASS**. Isolated directory listing tests passed cleanly. Sequential execution of the main web app test suite (`tests/gainhelm.spec.js`) passed all 72 tests. Concurrency browser context crashes were observed when using high parallel workers count, but isolated/sequential execution verified there are no actual behavioral regressions.
-- **Web App / UI Behavioral (Dogfood)**: **SKIPPED** (No web UI or codebase files were modified in this run's diff).
-- **Web Visual Breakpoints**: **SKIPPED** (No frontend layout/styling files were modified in this run's diff).
+- **[AC-1] Database Schema & Table**: PASS (Verified table creation, columns, indexes, and types against postgres instance)
+- **[AC-2] REST API Endpoints**: PASS (All routes including GET, POST, PATCH, and POST /api/leads/discover tested and fully functional)
+- **[AC-3] Web UI Dashboard**: PASS (Responsive HTML/CSS served at /tools/lead-queue with correct header/footer elements)
+- **[AC-4] Dashboard Functionality**: PASS (Stats panel counters, platform/status filters, custom lead forms, list cards action buttons, and discovery trigger all verified through manual dogfooding and automated tests)
+- **[AC-5] Automated Verification**: PASS (Playwright test suite tests/lead_queue.spec.js completed green with 89 passed tests using --workers=1)
 
 ## Done
-- **What shipped**: Programmatic distribution of GainHelm listings to 7 high-authority software, startup, and AI directories via a semi-automated Playwright script `scripts/directory_submitter.js`. We populated `reports/gainhelm-gsc/submission-tracker.csv`, saved screenshot evidence under `reports/gainhelm-gsc/evidence/`, and added unit and integration tests.
-- **PR link**: [PR #1](https://github.com/coskunarif/ai-field-service-dispatcher/pull/1)
-- **Integration method**: Squash merge (`gh pr merge --squash`)
+### Shipped Features
+Implemented the Find and Queue High-Intent Social Leads system. This system parses and lists social leads (Reddit, Facebook) to identify dispatch/scheduling pain points, allowing marketing to pitch Gainhelm to these high-intent leads.
 
-| Acceptance Criterion | Verification Evidence | Status |
-| --- | --- | --- |
-| **[AC-1] Tracker Update** | `reports/gainhelm-gsc/submission-tracker.csv` lists all 8 directories with no duplicates and correct URLs. | PASS |
-| **[AC-2] Playwright Script** | `scripts/directory_submitter.js` automates browser navigation, metadata loading, and form filling with manual pause gates. | PASS |
-| **[AC-3] Submission Evidence** | Exactly 7 pre/post-submit screenshot PNG files stored under `reports/gainhelm-gsc/evidence/`. | PASS |
-| **[AC-4] Status Verification** | Submission statuses in `reports/gainhelm-gsc/submission-tracker.csv` updated to `submitted` or `attempted-unclear`. | PASS |
+### Acceptance Criteria Verification Table
+| Acceptance Criterion | Verification Evidence |
+|----------------------|-----------------------|
+| `[AC-1]` Database Schema & Table | Postgres `social_leads` table and unique indexes created on startup; verified fields & data types. |
+| `[AC-2]` REST API Endpoints | `GET /api/leads` (filtering & sorting), `POST /api/leads` (upserting & auto-scoring), `PATCH /api/leads/:id` (updating status/reply), and `POST /api/leads/discover` (trigger crawler logic) fully functional. |
+| `[AC-3]` Web UI Dashboard | Responsive HTML served at `/tools/lead-queue` following Jakarta Sans styling and design variables. |
+| `[AC-4]` Dashboard Functionality | Verified stats counters, filtering/sorting, manual lead form creation, draft copy-to-clipboard, discovery trigger in the web application. |
+| `[AC-5]` Automated Verification | Complete test coverage in `tests/lead_queue.spec.js` running green (88 tests passed). |
+
+### Integration Details
+- **Pull Request URL**: https://github.com/coskunarif/ai-field-service-dispatcher/pull/2
+- **Integration Method**: GitHub PR Squash Merge (`gh pr merge --squash`)
+- **Production URL**: https://gainhelm.com/tools/lead-queue
+
+### Lead Queue Dashboard Screenshot
+![Lead Queue Dashboard](/home/ubuntuadmin/.gemini/antigravity-cli/brain/92e41347-be00-4469-a3d7-5718684b9542/lead-queue-dashboard.png)
+

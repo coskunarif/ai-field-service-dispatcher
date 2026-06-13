@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Social Lead Queue & Dispatch Tracker | Gainhelm</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="/styles.css">
+<style>
+  .lead-container {
+    max-width: var(--container);
+    margin: 0 auto;
+    padding: 40px 24px;
+  }
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: 350px 1fr;
+    gap: 32px;
+    margin-top: 32px;
+  }
+  @media (max-width: 968px) {
+    .dashboard-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  @media (max-width: 640px) {
+    .stats-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  .stat-card {
+    background: hsl(var(--surface));
+    border: 1px solid hsl(var(--line));
+    border-radius: var(--radius-md);
+    padding: 20px;
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+  }
+  .stat-card h3 {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: hsl(var(--text-3));
+    margin-bottom: 8px;
+  }
+  .stat-card .stat-val {
+    font-size: 2rem;
+    font-weight: 800;
+    color: hsl(var(--brand));
+  }
+  .sidebar-box {
+    background: hsl(var(--surface));
+    border: 1px solid hsl(var(--line));
+    border-radius: var(--radius-md);
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: var(--shadow-sm);
+  }
+  .sidebar-box h2 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+    border-bottom: 1px solid hsl(var(--line));
+    padding-bottom: 8px;
+  }
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 16px;
+  }
+  .form-group label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: hsl(var(--text-2));
+  }
+  .form-group input, .form-group select, .form-group textarea {
+    background: hsl(var(--bg-2));
+    border: 1px solid hsl(var(--line));
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+    color: hsl(var(--text));
+    font-family: inherit;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+  }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+    outline: none;
+    border-color: hsl(var(--brand));
+  }
+  .form-error-message {
+    color: #ef4444;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-top: 4px;
+    display: none;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 16px;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+    font-size: 0.9rem;
+  }
+  .btn-primary {
+    background: hsl(var(--brand));
+    color: #000;
+  }
+  .btn-primary:hover {
+    background: hsl(var(--brand-2));
+  }
+  .btn-secondary {
+    background: hsl(var(--bg-2));
+    border: 1px solid hsl(var(--line));
+    color: hsl(var(--text));
+  }
+  .btn-secondary:hover {
+    background: hsl(var(--surface-3));
+  }
+  .lead-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .lead-card {
+    background: hsl(var(--surface));
+    border: 1px solid hsl(var(--line));
+    border-radius: var(--radius-md);
+    padding: 24px;
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .lead-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .lead-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: hsl(var(--text));
+  }
+  .lead-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    font-size: 0.8rem;
+    color: hsl(var(--text-3));
+    align-items: center;
+  }
+  .badge {
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-weight: 700;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+  }
+  .badge-reddit {
+    background: rgba(255, 69, 0, 0.15);
+    color: #ff4500;
+    border: 1px solid rgba(255, 69, 0, 0.3);
+  }
+  .badge-facebook {
+    background: rgba(24, 119, 242, 0.15);
+    color: #1877f2;
+    border: 1px solid rgba(24, 119, 242, 0.3);
+  }
+  .badge-intent-high {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+  }
+  .badge-intent-med {
+    background: rgba(245, 158, 11, 0.15);
+    color: #f59e0b;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+  }
+  .badge-intent-low {
+    background: rgba(107, 114, 128, 0.15);
+    color: #9ca3af;
+    border: 1px solid rgba(107, 114, 128, 0.3);
+  }
+  .badge-status {
+    background: hsl(var(--bg-2));
+    color: hsl(var(--text-2));
+    border: 1px solid hsl(var(--line));
+  }
+  .lead-snippet {
+    font-size: 0.9rem;
+    color: hsl(var(--text-2));
+    background: hsl(var(--bg-2));
+    border-radius: var(--radius-sm);
+    padding: 12px;
+    border: 1px solid hsl(var(--line));
+  }
+  .draft-reply-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .draft-reply-textarea {
+    width: 100%;
+    min-height: 100px;
+    background: hsl(var(--bg-2));
+    border: 1px solid hsl(var(--line));
+    border-radius: var(--radius-sm);
+    padding: 12px;
+    color: hsl(var(--text));
+    font-size: 0.875rem;
+    font-family: inherit;
+    resize: vertical;
+  }
+  .lead-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 8px;
+    border-top: 1px solid hsl(var(--line));
+    padding-top: 16px;
+  }
+  .status-buttons {
+    display: flex;
+    gap: 8px;
+  }
+  .toast-notification {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: hsl(var(--brand));
+    color: #000;
+    padding: 12px 20px;
+    border-radius: var(--radius-sm);
+    font-weight: 700;
+    font-size: 0.9rem;
+    box-shadow: var(--shadow-md);
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 1000;
+  }
+  .toast-notification.show {
+    transform: translateY(0);
+    opacity: 1;
+  }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main-content">Skip to main content</a>
+<header>
+<a href="/" class="logo" aria-label="Gainhelm home">
+<div class="logo-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-logo"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg></div>
+Gainhelm
+</a>
+<nav class="nav" aria-label="Primary">
+<a href="/">Home</a>
+<a href="/field-service-scheduling">Features</a>
+<a href="#how-it-works">How it works</a>
+<a href="#waitlist" class="nav-cta">Join the waitlist</a>
+</nav>
+</header>
+
+<main id="main-content" class="lead-container" tabindex="-1">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
+    <div>
+      <h1 style="font-size: 2.25rem; font-weight: 800; margin-bottom: 4px;">Social Leads Queue</h1>
+      <p style="color: hsl(var(--text-2)); font-size: 1rem;">Find and track high-intent contractor leads from Reddit and Facebook groups.</p>
+    </div>
+    <button class="btn btn-primary" id="btn-discover-trigger">Trigger Discovery</button>
+  </div>
+
+  <!-- Stats Grid -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <h3>Discovered Leads</h3>
+      <div class="stat-val" id="discovered-count">0</div>
+    </div>
+    <div class="stat-card">
+      <h3>Queued Leads</h3>
+      <div class="stat-val" id="queued-count">0</div>
+    </div>
+    <div class="stat-card">
+      <h3>Replied Leads</h3>
+      <div class="stat-val" id="replied-count">0</div>
+    </div>
+    <div class="stat-card">
+      <h3>Ignored Leads</h3>
+      <div class="stat-val" id="ignored-count">0</div>
+    </div>
+  </div>
+
+  <!-- Dashboard Main Layout -->
+  <div class="dashboard-grid">
+    <!-- Sidebar Control Panel -->
+    <div class="sidebar">
+      <!-- Filters and Sort -->
+      <div class="sidebar-box">
+        <h2>Filters & Sorting</h2>
+        <div class="form-group">
+          <label for="filter-platform">Platform</label>
+          <select id="filter-platform">
+            <option value="all">All Platforms</option>
+            <option value="reddit">Reddit</option>
+            <option value="facebook">Facebook</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="filter-status">Status</label>
+          <select id="filter-status">
+            <option value="all">All Statuses</option>
+            <option value="discovered">Discovered</option>
+            <option value="queued">Queued</option>
+            <option value="replied">Replied</option>
+            <option value="ignored">Ignored</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="sort-leads">Sort By</label>
+          <select id="sort-leads">
+            <option value="date_desc">Newest First</option>
+            <option value="date_asc">Oldest First</option>
+            <option value="intent_desc">Highest Intent</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Add Lead Form -->
+      <div class="sidebar-box">
+        <h2>Add Custom Lead</h2>
+        <form id="add-lead-form" novalidate>
+          <div class="form-group">
+            <label for="lead-url">Post URL</label>
+            <input type="url" id="lead-url" required placeholder="https://reddit.com/r/...">
+            <div class="form-error-message" id="url-error">Invalid URL format. Must start with http:// or https://.</div>
+          </div>
+          <div class="form-group">
+            <label for="lead-title">Title</label>
+            <input type="text" id="lead-title" required placeholder="e.g. Need HVAC dispatch app">
+          </div>
+          <div class="form-group">
+            <label for="lead-snippet">Snippet / Post Content</label>
+            <textarea id="lead-snippet" required placeholder="Snippet of the problem or scheduling pain..."></textarea>
+          </div>
+          <div class="form-group">
+            <label for="lead-platform">Platform</label>
+            <select id="lead-platform">
+              <option value="reddit">Reddit</option>
+              <option value="facebook">Facebook</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: 100%;">Add Lead</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Lead Cards List -->
+    <div class="lead-list" id="lead-list-container">
+      <!-- Dynamic leads populated here -->
+    </div>
+  </div>
+</main>
+
+<footer><div>© 2026 Gainhelm. Built for field service dispatch.</div><div class="footer-links"><a href="#waitlist">Join the waitlist</a> · <a href="/hvac-dispatch-software">HVAC</a> · <a href="/plumbing-dispatch-software">Plumbing</a> · <a href="/electrical-dispatch-software">Electrical</a> · <a href="/appliance-repair-dispatch-software">Appliance Repair</a> · <a href="/pest-control-dispatch-software">Pest Control</a> · <a href="/garage-door-dispatch-software">Garage Door</a> · <a href="/cleaning-dispatch-software">Cleaning</a> · <a href="/landscaping-dispatch-software">Landscaping</a> · <a href="/roofing-dispatch-software">Roofing</a> · <a href="/locksmith-dispatch-software">Locksmith</a> · <a href="/pool-service-dispatch-software">Pool Service</a> · <a href="/commercial-facilities-dispatch-software">Facilities</a> · <a href="/septic-service-dispatch-software">Septic</a> · <a href="/emergency-restoration-dispatch-software">Emergency Restoration</a> · <a href="/restoration-job-management-software">Restoration Jobs</a> · <a href="/handyman-dispatch-software">Handyman</a> · <a href="/carpet-cleaning-dispatch-software">Carpet Cleaning</a> · <a href="/tree-service-dispatch-software">Tree Service</a> · <a href="/field-service-scheduling">Scheduling</a> · <a href="/mobile-dispatch-board">Mobile Board</a> · <a href="/servicetitan-alternative">ServiceTitan Alt</a> · <a href="/jobber-alternative">Jobber Alt</a> · <a href="/housecallpro-alternative">Housecall Pro Alt</a> · <a href="/servicefusion-alternative">Service Fusion Alt</a> · <a href="/buildops-alternative">BuildOps Alt</a> · <a href="/fieldedge-alternative">FieldEdge Alt</a> · <a href="/hvac-dispatch-app-vs-spreadsheets">Compare</a> · <a href="/how-to-choose-hvac-dispatch-app">Buying Guide</a> · <a href="/how-hvac-dispatch-apps-reduce-phone-tag">Phone Tag Guide</a> · <a href="/sitemap.xml">sitemap.xml</a> · <a href="/llms.txt">llms.txt</a></div></footer>
+
+<div class="toast-notification" id="toast">Copied to clipboard!</div>
+
+<script>
+  let leadsCache = [];
+
+  function showToast(msg) {
+    const toast = document.getElementById("toast");
+    toast.innerText = msg;
+    toast.classList.add("show");
+    setTimeout(() => {
+      toast.classList.remove("show");
+    }, 2500);
+  }
+
+  // Load and render leads
+  async function refreshDashboard() {
+    try {
+      const res = await fetch("/api/leads");
+      if (res.ok) {
+        leadsCache = await res.json();
+        updateStats();
+        applyFiltersAndRender();
+      }
+    } catch (err) {
+      console.error("Error refreshing dashboard:", err);
+    }
+  }
+
+  function updateStats() {
+    const counts = {
+      discovered: 0,
+      queued: 0,
+      replied: 0,
+      ignored: 0
+    };
+    leadsCache.forEach(l => {
+      if (counts[l.status] !== undefined) {
+        counts[l.status]++;
+      }
+    });
+
+    document.getElementById("discovered-count").innerText = counts.discovered;
+    document.getElementById("queued-count").innerText = counts.queued;
+    document.getElementById("replied-count").innerText = counts.replied;
+    document.getElementById("ignored-count").innerText = counts.ignored;
+  }
+
+  function applyFiltersAndRender() {
+    const platform = document.getElementById("filter-platform").value;
+    const status = document.getElementById("filter-status").value;
+    const sort = document.getElementById("sort-leads").value;
+
+    let filtered = [...leadsCache];
+
+    if (platform && platform !== "all") {
+      filtered = filtered.filter(l => l.platform === platform);
+    }
+    if (status && status !== "all") {
+      filtered = filtered.filter(l => l.status === status);
+    }
+
+    if (sort === 'intent_desc') {
+      filtered.sort((a, b) => b.intent_score - a.intent_score);
+    } else if (sort === 'date_asc') {
+      filtered.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+    } else {
+      filtered.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    }
+
+    renderLeads(filtered);
+  }
+
+  function renderLeads(leads) {
+    const container = document.getElementById("lead-list-container");
+    container.innerHTML = "";
+
+    if (leads.length === 0) {
+      container.innerHTML = `<div style="text-align: center; padding: 40px; color: hsl(var(--text-3));">No leads matching the criteria.</div>`;
+      return;
+    }
+
+    leads.forEach(lead => {
+      const card = document.createElement("div");
+      card.className = "lead-card";
+      card.dataset.id = lead.id;
+
+      // Platform badge
+      const platformBadge = lead.platform === "reddit" ? "badge-reddit" : "badge-facebook";
+      
+      // Intent score badge
+      let intentClass = "badge-intent-low";
+      if (lead.intent_score >= 80) intentClass = "badge-intent-high";
+      else if (lead.intent_score >= 50) intentClass = "badge-intent-med";
+
+      const formattedDate = new Date(lead.created_at).toLocaleDateString();
+
+      card.innerHTML = `
+        <div class="lead-header">
+          <div>
+            <h3 class="lead-title">${escapeHtml(lead.title)}</h3>
+            <div class="lead-meta">
+              <span class="badge ${platformBadge} lead-platform">${lead.platform}</span>
+              <span class="badge ${intentClass} lead-intent-score">Intent: ${lead.intent_score}</span>
+              <span class="badge badge-status lead-status-badge">${lead.status}</span>
+              <span>Discovered: ${formattedDate}</span>
+            </div>
+          </div>
+          <a href="${lead.source_url}" target="_blank" class="btn btn-secondary btn-sm" style="font-size: 0.8rem; padding: 6px 12px;">Go to Post</a>
+        </div>
+        
+        <p class="lead-snippet">${escapeHtml(lead.snippet)}</p>
+
+        <div class="draft-reply-section">
+          <label style="font-size: 0.8rem; font-weight: 600; color: hsl(var(--text-2));">Suggested Pitch Draft</label>
+          <textarea class="draft-reply-textarea">${lead.suggested_reply || ""}</textarea>
+        </div>
+
+        <div class="lead-actions">
+          <button class="btn btn-primary btn-copy-pitch">Copy Pitch</button>
+          <div class="status-buttons">
+            <button class="btn btn-secondary btn-status-queue">Queue</button>
+            <button class="btn btn-secondary btn-status-reply">Mark as Replied</button>
+            <button class="btn btn-secondary btn-status-ignore">Ignore</button>
+          </div>
+        </div>
+      `;
+
+      // Textarea auto-save / edit change
+      const textarea = card.querySelector(".draft-reply-textarea");
+      textarea.addEventListener("change", async () => {
+        await patchLead(lead.id, { suggested_reply: textarea.value });
+      });
+
+      // Copy button
+      card.querySelector(".btn-copy-pitch").addEventListener("click", () => {
+        navigator.clipboard.writeText(textarea.value).then(() => {
+          showToast("Copied pitch to clipboard!");
+        });
+      });
+
+      // Status buttons
+      card.querySelector(".btn-status-queue").addEventListener("click", () => updateLeadStatus(lead.id, "queued"));
+      card.querySelector(".btn-status-reply").addEventListener("click", () => updateLeadStatus(lead.id, "replied"));
+      card.querySelector(".btn-status-ignore").addEventListener("click", () => updateLeadStatus(lead.id, "ignored"));
+
+      container.appendChild(card);
+    });
+  }
+
+  async function patchLead(id, data) {
+    try {
+      const res = await fetch(`/api/leads/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+      if (res.ok) {
+        const idx = leadsCache.findIndex(l => l.id === id);
+        if (idx > -1) {
+          leadsCache[idx] = { ...leadsCache[idx], ...data };
+          updateStats();
+          applyFiltersAndRender();
+        }
+      }
+    } catch (err) {
+      console.error("Error updating lead:", err);
+    }
+  }
+
+  async function updateLeadStatus(id, status) {
+    await patchLead(id, { status });
+  }
+
+  function escapeHtml(str) {
+    if (!str) return "";
+    return str
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+  // Setup Event Listeners
+  document.getElementById("filter-platform").addEventListener("change", applyFiltersAndRender);
+  document.getElementById("filter-status").addEventListener("change", applyFiltersAndRender);
+  document.getElementById("sort-leads").addEventListener("change", applyFiltersAndRender);
+
+  // Trigger Discovery
+  document.getElementById("btn-discover-trigger").addEventListener("click", async () => {
+    try {
+      const res = await fetch("/api/leads/discover", { method: "POST" });
+      if (res.ok) {
+        const data = await res.json();
+        showToast(`Discovered ${data.count} new leads!`);
+        await refreshDashboard();
+      }
+    } catch (err) {
+      console.error("Error triggering discovery:", err);
+    }
+  });
+
+  // Custom Lead Form Submit
+  document.getElementById("add-lead-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const urlInput = document.getElementById("lead-url");
+    const titleInput = document.getElementById("lead-title");
+    const snippetInput = document.getElementById("lead-snippet");
+    const platformSelect = document.getElementById("lead-platform");
+    const urlError = document.getElementById("url-error");
+
+    const urlValue = urlInput.value.trim();
+    const titleValue = titleInput.value.trim();
+    const snippetValue = snippetInput.value.trim();
+    const platformValue = platformSelect.value;
+
+    // Validate URL format
+    if (!urlValue.startsWith("http://") && !urlValue.startsWith("https://")) {
+      urlError.style.display = "block";
+      return;
+    }
+    urlError.style.display = "none";
+
+    try {
+      const res = await fetch("/api/leads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          platform: platformValue,
+          source_url: urlValue,
+          title: titleValue,
+          snippet: snippetValue
+        })
+      });
+
+      if (res.ok) {
+        urlInput.value = "";
+        titleInput.value = "";
+        snippetInput.value = "";
+        showToast("Lead added successfully!");
+        await refreshDashboard();
+      }
+    } catch (err) {
+      console.error("Error adding custom lead:", err);
+    }
+  });
+
+  // Init
+  refreshDashboard();
+</script>
+</body>
+</html>
