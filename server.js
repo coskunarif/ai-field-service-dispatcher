@@ -2,6 +2,7 @@ import Fastify from 'fastify';
 import postgres from 'postgres';
 import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';
+import crypto from 'crypto';
 
 const fastify = Fastify({ logger: true });
 const sql = process.env.DATABASE_URL ? postgres(process.env.DATABASE_URL) : null;
@@ -10,6 +11,7 @@ const port = process.env.PORT ? parseInt(process.env.PORT) : 3000;
 const root = process.cwd();
 
 const contextStore = new Map();
+const inMemoryLeads = [];
 
 if (sql) {
   (async () => {
@@ -36,6 +38,21 @@ if (sql) {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )`;
       fastify.log.info('Database table gainhelm_dispatch_logs ensured.');
+
+      await sql`CREATE TABLE IF NOT EXISTS social_leads (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        platform VARCHAR(50) NOT NULL,
+        source_url TEXT UNIQUE NOT NULL,
+        title TEXT NOT NULL,
+        snippet TEXT NOT NULL,
+        intent_score INTEGER DEFAULT 50,
+        status VARCHAR(50) DEFAULT 'discovered',
+        suggested_reply TEXT,
+        created_at TIMESTAMPTZ DEFAULT NOW(),
+        updated_at TIMESTAMPTZ DEFAULT NOW()
+      )`;
+      await sql`CREATE UNIQUE INDEX IF NOT EXISTS social_leads_source_url_idx ON social_leads (source_url);`;
+      fastify.log.info('Database table social_leads ensured.');
     } catch (err) {
       fastify.log.error('Failed to initialize database tables:', err);
     }
@@ -142,6 +159,7 @@ const pages = {
   '/buildops-alternative': 'buildops-alternative.html',
   '/fieldedge-alternative': 'fieldedge-alternative.html',
   '/tools/facebook-post-generator': 'tools-facebook-post-generator.html',
+  '/tools/lead-queue': 'tools-lead-queue.html',
 };
 
 for (const [route, file] of Object.entries(pages)) {
@@ -2580,6 +2598,375 @@ fastify.post('/app/log-dispatch', async (request, reply) => {
   }
 
   return { success: true };
+});
+
+function computeIntentScore(title, snippet) {
+  const text = `${title || ''} ${snippet || ''}`.toLowerCase();
+  let score = 50;
+  
+  if (text.includes('scheduling') || text.includes('schedule')) {
+    score += 15;
+  }
+  if (text.includes('dispatch') || text.includes('dispatcher')) {
+    score += 15;
+  }
+  
+  const competitors = ["jobber", "servicetitan", "housecallpro", "fieldedge", "buildops"];
+  if (competitors.some(comp => text.includes(comp))) {
+    score += 20;
+  }
+  
+  const painWords = ["phone tag", "spreadsheet", "lost track", "mess", "calendar"];
+  if (painWords.some(pain => text.includes(pain))) {
+    score += 10;
+  }
+  
+  return Math.max(0, Math.min(100, score));
+}
+
+function draftSuggestedReply(title, snippet) {
+  const text = `${title || ''} ${snippet || ''}`.toLowerCase();
+  const isHvacPlumbingElectrical = [
+    'hvac', 'plumbing', 'plumber', 'electrical', 'electrician'
+  ].some(keyword => text.includes(keyword));
+  
+  if (isHvacPlumbingElectrical) {
+    return `Hey! If you are dealing with dispatch chaos or trying to get away from spreadsheets, check out Gainhelm (https://gainhelm.com). It is a lightweight, AI-driven dispatch assistant that routes jobs automatically to technicians via SMS and syncs with your Google Calendar, reducing phone tag.`;
+  } else {
+    return `We had similar scheduling headaches before trying Gainhelm (https://gainhelm.com). It acts as an automated dispatcher routing jobs via SMS and keeping technicians updated instantly. Really helps cut down on phone tag and manual spreadsheets.`;
+  }
+}
+
+async function performDiscovery(sql, inMemoryLeads) {
+  const leadsToInsert = [
+    {
+      platform: 'reddit',
+      source_url: 'https://reddit.com/r/hvac/comments/hvac-pain-scheduling',
+      title: 'Help with HVAC scheduling',
+      snippet: 'We currently use Jobber and a spreadsheet but the dispatcher is overwhelmed and there is a lot of phone tag.'
+    },
+    {
+      platform: 'facebook',
+      source_url: 'https://facebook.com/groups/contractors/posts/general-handyman-help',
+      title: 'Looking for recommendations',
+      snippet: 'Any advice for starting a general handyman business?'
+    },
+    {
+      platform: 'reddit',
+      source_url: 'https://reddit.com/r/plumbing/comments/plumbing-dispatcher-need',
+      title: 'Plumbing dispatcher help',
+      snippet: 'We need to dispatch plumber techs.'
+    },
+    {
+      platform: 'facebook',
+      source_url: 'https://facebook.com/groups/hvac-talk/posts/servicetitan-alternatives',
+      title: 'ServiceTitan alternatives for scheduling?',
+      snippet: 'ServiceTitan is too expensive and complex for our small team. We just need simple dispatching and scheduling.'
+    },
+    {
+      platform: 'reddit',
+      source_url: 'https://reddit.com/r/electrical/comments/electrician-dispatcher-chaos',
+      title: 'Electrician dispatcher chaos',
+      snippet: 'scheduling and dispatching electricians is a mess. Need an app.'
+    },
+    {
+      platform: 'facebook',
+      source_url: 'https://facebook.com/groups/contractors/posts/dispatch-phone-tag',
+      title: 'Need HVAC dispatcher app',
+      snippet: 'Our scheduling is a mess and we are playing phone tag all day.'
+    }
+  ];
+
+  try {
+    const SUBREDDITS = ['sweatystartup', 'smallbusiness', 'HVAC', 'plumbing', 'lawncare'];
+    const KEYWORDS = ['scheduling', 'dispatch', 'software', 'spreadsheet', 'jobber'];
+    for (const sub of SUBREDDITS) {
+      for (const kw of KEYWORDS) {
+        const url = `https://www.reddit.com/r/${sub}/search.json?q=${encodeURIComponent(kw)}&restrict_sr=on&sort=new&t=year`;
+        const res = await fetch(url, {
+          headers: { 'User-Agent': 'GainhelmLeadFinder/1.0' },
+          signal: AbortSignal.timeout(2000)
+        });
+        if (!res.ok) continue;
+        const data = await res.json();
+        const posts = data.data?.children || [];
+        for (const post of posts) {
+          const { title, permalink, selftext } = post.data;
+          const bodyLower = (title + ' ' + selftext).toLowerCase();
+          if (bodyLower.includes('schedule') || bodyLower.includes('dispatch') || bodyLower.includes('software')) {
+            leadsToInsert.push({
+              platform: 'reddit',
+              source_url: `https://reddit.com${permalink}`,
+              title: title || 'Reddit Post',
+              snippet: selftext ? selftext.slice(0, 300) : 'No content'
+            });
+          }
+        }
+      }
+    }
+  } catch (err) {
+    // Ignore fetch errors and proceed
+  }
+
+  const uniqueLeads = [];
+  const urls = new Set();
+  for (const lead of leadsToInsert) {
+    if (!urls.has(lead.source_url)) {
+      urls.add(lead.source_url);
+      uniqueLeads.push(lead);
+    }
+  }
+
+  let count = 0;
+  if (sql) {
+    for (const lead of uniqueLeads) {
+      const intent_score = computeIntentScore(lead.title, lead.snippet);
+      const suggested_reply = draftSuggestedReply(lead.title, lead.snippet);
+      try {
+        await sql`
+          INSERT INTO social_leads (platform, source_url, title, snippet, intent_score, status, suggested_reply)
+          VALUES (${lead.platform}, ${lead.source_url}, ${lead.title}, ${lead.snippet}, ${intent_score}, 'discovered', ${suggested_reply})
+          ON CONFLICT (source_url)
+          DO UPDATE SET
+            platform = EXCLUDED.platform,
+            title = EXCLUDED.title,
+            snippet = EXCLUDED.snippet,
+            intent_score = EXCLUDED.intent_score,
+            status = EXCLUDED.status,
+            suggested_reply = EXCLUDED.suggested_reply,
+            updated_at = NOW()
+        `;
+        count++;
+      } catch (err) {
+        // Ignore errors
+      }
+    }
+  } else {
+    for (const lead of uniqueLeads) {
+      const intent_score = computeIntentScore(lead.title, lead.snippet);
+      const suggested_reply = draftSuggestedReply(lead.title, lead.snippet);
+      const existingIndex = inMemoryLeads.findIndex(l => l.source_url === lead.source_url);
+      if (existingIndex > -1) {
+        inMemoryLeads[existingIndex] = {
+          ...inMemoryLeads[existingIndex],
+          platform: lead.platform,
+          title: lead.title,
+          snippet: lead.snippet,
+          intent_score,
+          suggested_reply,
+          updated_at: new Date().toISOString()
+        };
+      } else {
+        inMemoryLeads.push({
+          id: crypto.randomUUID(),
+          platform: lead.platform,
+          source_url: lead.source_url,
+          title: lead.title,
+          snippet: lead.snippet,
+          intent_score,
+          status: 'discovered',
+          suggested_reply,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        });
+      }
+      count++;
+    }
+  }
+
+  return count;
+}
+
+fastify.post('/api/leads', async (request, reply) => {
+  const { platform, source_url, title, snippet, status, intent_score, suggested_reply } = request.body || {};
+
+  if (!platform || !source_url || !title || !snippet) {
+    return reply.status(400).send({ error: 'Missing required fields' });
+  }
+
+  if (sql) {
+    try {
+      const existing = await sql`SELECT * FROM social_leads WHERE source_url = ${source_url}`;
+      if (existing.length > 0) {
+        const lead = existing[0];
+        const newTitle = title || lead.title;
+        const newSnippet = snippet || lead.snippet;
+        const newPlatform = platform || lead.platform;
+        const newStatus = status || lead.status;
+        const newIntentScore = (intent_score !== undefined && intent_score !== null) ? intent_score : computeIntentScore(newTitle, newSnippet);
+        const newSuggestedReply = (suggested_reply !== undefined && suggested_reply !== null) ? suggested_reply : draftSuggestedReply(newTitle, newSnippet);
+
+        const updated = await sql`
+          UPDATE social_leads
+          SET title = ${newTitle},
+              snippet = ${newSnippet},
+              platform = ${newPlatform},
+              status = ${newStatus},
+              intent_score = ${newIntentScore},
+              suggested_reply = ${newSuggestedReply},
+              updated_at = NOW()
+          WHERE id = ${lead.id}
+          RETURNING *
+        `;
+        return updated[0];
+      } else {
+        const id = crypto.randomUUID();
+        const finalIntentScore = (intent_score !== undefined && intent_score !== null) ? intent_score : computeIntentScore(title, snippet);
+        const finalSuggestedReply = (suggested_reply !== undefined && suggested_reply !== null) ? suggested_reply : draftSuggestedReply(title, snippet);
+        const finalStatus = status || 'discovered';
+        const inserted = await sql`
+          INSERT INTO social_leads (id, platform, source_url, title, snippet, intent_score, status, suggested_reply, created_at, updated_at)
+          VALUES (${id}, ${platform}, ${source_url}, ${title}, ${snippet}, ${finalIntentScore}, ${finalStatus}, ${finalSuggestedReply}, NOW(), NOW())
+          RETURNING *
+        `;
+        return inserted[0];
+      }
+    } catch (err) {
+      fastify.log.error('DB POST /api/leads error:', err);
+      return reply.status(500).send({ error: 'Database error' });
+    }
+  } else {
+    const existingIndex = inMemoryLeads.findIndex(l => l.source_url === source_url);
+    if (existingIndex > -1) {
+      const lead = inMemoryLeads[existingIndex];
+      const newTitle = title || lead.title;
+      const newSnippet = snippet || lead.snippet;
+      const newPlatform = platform || lead.platform;
+      const newStatus = status || lead.status;
+      const newIntentScore = (intent_score !== undefined && intent_score !== null) ? intent_score : computeIntentScore(newTitle, newSnippet);
+      const newSuggestedReply = (suggested_reply !== undefined && suggested_reply !== null) ? suggested_reply : draftSuggestedReply(newTitle, newSnippet);
+
+      const updatedLead = {
+        ...lead,
+        title: newTitle,
+        snippet: newSnippet,
+        platform: newPlatform,
+        status: newStatus,
+        intent_score: newIntentScore,
+        suggested_reply: newSuggestedReply,
+        updated_at: new Date().toISOString()
+      };
+      inMemoryLeads[existingIndex] = updatedLead;
+      return updatedLead;
+    } else {
+      const id = crypto.randomUUID();
+      const finalIntentScore = (intent_score !== undefined && intent_score !== null) ? intent_score : computeIntentScore(title, snippet);
+      const finalSuggestedReply = (suggested_reply !== undefined && suggested_reply !== null) ? suggested_reply : draftSuggestedReply(title, snippet);
+      const finalStatus = status || 'discovered';
+
+      const newLead = {
+        id,
+        platform,
+        source_url,
+        title,
+        snippet,
+        intent_score: finalIntentScore,
+        status: finalStatus,
+        suggested_reply: finalSuggestedReply,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+      inMemoryLeads.push(newLead);
+      return newLead;
+    }
+  }
+});
+
+fastify.get('/api/leads', async (request, reply) => {
+  let leads = [];
+  if (sql) {
+    try {
+      leads = await sql`SELECT * FROM social_leads`;
+    } catch (err) {
+      fastify.log.error('DB GET /api/leads error:', err);
+      return reply.status(500).send({ error: 'Database error' });
+    }
+  } else {
+    leads = [...inMemoryLeads];
+  }
+
+  const { platform, status, sort } = request.query || {};
+
+  if (platform && platform !== 'all') {
+    leads = leads.filter(l => l.platform === platform);
+  }
+  if (status && status !== 'all') {
+    leads = leads.filter(l => l.status === status);
+  }
+
+  if (sort === 'intent_desc') {
+    leads.sort((a, b) => b.intent_score - a.intent_score);
+  } else if (sort === 'date_asc') {
+    leads.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+  } else {
+    leads.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  }
+
+  return leads;
+});
+
+fastify.patch('/api/leads/:id', async (request, reply) => {
+  const { id } = request.params;
+  const { status, suggested_reply } = request.body || {};
+
+  if (status !== undefined) {
+    const validStatuses = ['discovered', 'queued', 'replied', 'ignored'];
+    if (!validStatuses.includes(status)) {
+      return reply.status(400).send({ error: 'Invalid status value' });
+    }
+  }
+
+  if (sql) {
+    try {
+      const existing = await sql`SELECT * FROM social_leads WHERE id = ${id}`;
+      if (existing.length === 0) {
+        return reply.status(404).send({ error: 'Lead not found' });
+      }
+
+      const newStatus = status !== undefined ? status : existing[0].status;
+      const newReply = suggested_reply !== undefined ? suggested_reply : existing[0].suggested_reply;
+
+      const updated = await sql`
+        UPDATE social_leads
+        SET status = ${newStatus},
+            suggested_reply = ${newReply},
+            updated_at = NOW()
+        WHERE id = ${id}
+        RETURNING *
+      `;
+      return updated[0];
+    } catch (err) {
+      fastify.log.error('DB PATCH /api/leads error:', err);
+      return reply.status(500).send({ error: 'Database error' });
+    }
+  } else {
+    const leadIndex = inMemoryLeads.findIndex(l => l.id === id);
+    if (leadIndex === -1) {
+      return reply.status(404).send({ error: 'Lead not found' });
+    }
+    const lead = inMemoryLeads[leadIndex];
+    const newStatus = status !== undefined ? status : lead.status;
+    const newReply = suggested_reply !== undefined ? suggested_reply : lead.suggested_reply;
+
+    const updatedLead = {
+      ...lead,
+      status: newStatus,
+      suggested_reply: newReply,
+      updated_at: new Date().toISOString()
+    };
+    inMemoryLeads[leadIndex] = updatedLead;
+    return updatedLead;
+  }
+});
+
+fastify.post('/api/leads/discover', async (request, reply) => {
+  try {
+    const count = await performDiscovery(sql, inMemoryLeads);
+    return { count };
+  } catch (err) {
+    fastify.log.error('/api/leads/discover error:', err);
+    return reply.status(500).send({ error: 'Discovery failed' });
+  }
 });
 
 fastify.listen({ port, host: '0.0.0.0' }, (err) => {
