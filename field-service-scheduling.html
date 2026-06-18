@@ -378,9 +378,9 @@ Gainhelm
 <label for="company">Company</label>
 <input type="text" id="company" name="company" autocomplete="organization" placeholder="Your Company Name">
 </div>
-<button type="submit" class="form-submit">Join the waitlist</button>
+<button type="submit" class="form-submit">Join Waitlist & Try Simulator</button>
 </form>
-<div id="waitlist-help" class="waitlist-help">We’ll only use this to follow up about early access.</div>
+<div id="waitlist-help" class="waitlist-help">Instant access to the interactive SMS simulator. We’ll only use this to follow up about early access.</div>
 <div id="waitlist-status" class="waitlist-status" role="status" aria-live="polite" hidden></div>
 <script>
 const form = document.getElementById('waitlist-form');
@@ -391,7 +391,7 @@ const nameInput = document.getElementById('name');
 const showStatus = (message, type) => {
   status.hidden = false;
   status.className = `waitlist-status ${type}`;
-  status.textContent = message;
+  status.innerHTML = message;
 };
 const markInvalid = (input, invalid = true) => {
   input.setAttribute('aria-invalid', invalid ? 'true' : 'false');
@@ -449,13 +449,15 @@ form.addEventListener('submit', async (event) => {
       return;
     }
 
+    const emailValue = emailInput.value.trim();
     form.reset();
-    showStatus("Thanks! You're on the waitlist. We'll be in touch soon.", 'success');
+    const encodedEmail = encodeURIComponent(emailValue);
+    showStatus(`Thanks! You're on the waitlist. We'll be in touch soon. <a href="/setup?email=${encodedEmail}" class="waitlist-setup-link">Try the Simulator Now</a>`, 'success');
   } catch (error) {
     showStatus('We had trouble submitting your request. Please try again.', 'error');
   } finally {
     submitButton.disabled = false;
-    submitButton.textContent = 'Join the waitlist';
+    submitButton.textContent = 'Join Waitlist & Try Simulator';
   }
 });
 </script>
