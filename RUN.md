@@ -9,4 +9,5 @@ caps: agents,web,human
 - 2026-06-18 Conductor: Architect completed SPEC.md. Advanced to TESTER phase.
 - 2026-06-18 Conductor: Tester completed tests (red baseline). Advanced to BUILD phase.
 ## Verdict
+Disputed: seo_conversion.spec.js [AC-1] / [AC-2] (Audit Script) - Target descriptions specified in SPEC.md are under 120 characters (90-109 chars) but tests assert they must be >= 120 characters, causing contradictory failures.
 ## Done
