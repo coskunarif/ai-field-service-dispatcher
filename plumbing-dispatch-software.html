@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Dispatch Software for Plumbing & Plumber Scheduling App | Gainhelm</title>
-<meta name="description" content="Gainhelm is the premier dispatch software for plumbing shops and plumber scheduling app. Streamline service calls, plumber scheduling, and emergency dispatch.">
+<title>Plumbing Dispatch Software for Service Calls | Gainhelm</title>
+<meta name="description" content="Gainhelm helps plumbing teams schedule service calls, assign plumbers, and keep the day organized.">
 <link rel="canonical" href="https://gainhelm.com/plumbing-dispatch-software">
 <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
 <meta property="og:type" content="website">
@@ -184,8 +184,8 @@
       "@type": "WebPage",
       "@id": "https://gainhelm.com/plumbing-dispatch-software#webpage",
       "url": "https://gainhelm.com/plumbing-dispatch-software",
-      "name": "Dispatch Software for Plumbing & Plumber Scheduling App | Gainhelm",
-      "description": "Gainhelm is an AI plumbing dispatch software and plumber scheduling app option for service calls, plumber scheduling, work orders, integration planning, and a readable dispatch board.",
+      "name": "Plumbing Dispatch Software for Service Calls | Gainhelm",
+      "description": "Gainhelm helps plumbing teams schedule service calls, assign plumbers, and keep the day organized.",
       "isPartOf": {
         "@id": "https://gainhelm.com/#website"
       },
@@ -651,9 +651,9 @@ Gainhelm
 <label for="company">Company <span class="sr-only">optional</span></label>
 <input type="text" id="company" name="company" autocomplete="organization" placeholder="Your Company Name">
 </div>
-<button type="submit" class="form-submit">Join the waitlist</button>
+<button type="submit" class="form-submit">Join Waitlist & Try Simulator</button>
 </form>
-<div id="waitlist-help" class="waitlist-help">We’ll only use this to follow up about early access.</div>
+<div id="waitlist-help" class="waitlist-help">Instant access to the interactive SMS simulator. We’ll only use this to follow up about early access.</div>
 <script>
 const form = document.getElementById('waitlist-form');
 const status = document.getElementById('waitlist-status');
@@ -663,7 +663,7 @@ const nameInput = document.getElementById('name');
 const showStatus = (message, type) => {
   status.hidden = false;
   status.className = `waitlist-status ${type}`;
-  status.textContent = message;
+  status.innerHTML = message;
 };
 const markInvalid = (input, invalid = true) => {
   input.setAttribute('aria-invalid', invalid ? 'true' : 'false');
@@ -727,13 +727,15 @@ form.addEventListener('submit', async (event) => {
       return;
     }
 
+    const emailValue = emailInput.value.trim();
     form.reset();
-    showStatus("Thanks! You're on the waitlist. We'll be in touch soon.", 'success');
+    const encodedEmail = encodeURIComponent(emailValue);
+    showStatus(`Thanks! You're on the waitlist. We'll be in touch soon. <a href="/setup?email=${encodedEmail}" class="waitlist-setup-link">Try the Simulator Now</a>`, 'success');
   } catch (error) {
     showStatus('We had trouble submitting your request. Please try again.', 'error');
   } finally {
     submitButton.disabled = false;
-    submitButton.textContent = 'Join the waitlist';
+    submitButton.textContent = 'Join Waitlist & Try Simulator';
   }
 });
 </script>

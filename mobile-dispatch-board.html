@@ -211,9 +211,9 @@ Gainhelm
 <label for="company">Company <span class="sr-only">optional</span></label>
 <input type="text" id="company" name="company" autocomplete="organization" placeholder="Your Company Name">
 </div>
-<button type="submit" class="form-submit">Join the waitlist</button>
+<button type="submit" class="form-submit">Join Waitlist & Try Simulator</button>
 </form>
-<div id="waitlist-help" class="waitlist-help">We’ll only use this to follow up about early access.</div>
+<div id="waitlist-help" class="waitlist-help">Instant access to the interactive SMS simulator. We’ll only use this to follow up about early access.</div>
 <div id="waitlist-status" class="waitlist-status" role="status" aria-live="polite" hidden></div>
 <script>
 const form = document.getElementById('waitlist-form');
@@ -224,7 +224,7 @@ const emailInput = document.getElementById('email');
 const showStatus = (message, type) => {
   status.hidden = false;
   status.className = `waitlist-status ${type}`;
-  status.textContent = message;
+  status.innerHTML = message;
 };
 const markInvalid = (input, invalid = true) => { input.setAttribute('aria-invalid', invalid ? 'true' : 'false'); };
 [nameInput, emailInput].forEach((input) => { input.addEventListener('input', () => markInvalid(input, false)); });
@@ -264,7 +264,7 @@ form.addEventListener('submit', async (event) => {
   }
 
   submitButton.disabled = true;
-  submitButton.textContent = 'Submitting waitlist request...';
+  submitButton.textContent = 'Submitting...';
 
   try {
     const response = await fetch(form.dataset.apiUrl, {
@@ -285,7 +285,7 @@ form.addEventListener('submit', async (event) => {
     showStatus(error.message || 'Something went wrong. Please try again.', 'error');
   } finally {
     submitButton.disabled = false;
-    submitButton.textContent = 'Join the waitlist';
+    submitButton.textContent = 'Join Waitlist & Try Simulator';
   }
 });
 </script>

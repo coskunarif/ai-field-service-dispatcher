@@ -131,7 +131,7 @@ Gainhelm
 </div></div></section>
 <section class="section" id="workflow" aria-labelledby="workflow-heading"><div class="section-head"><div class="kicker">Workflow</div><h2 id="workflow-heading">Keep restoration jobs from disappearing between intake and follow-up.</h2><p>Restoration job management often spans urgent calls, crew availability, documentation handoffs, equipment checks, estimates, and return visits. Gainhelm focuses on the dispatch and scheduling layer so small teams can keep the next step clear.</p></div><div class="info-grid"><div class="info-card"><h3>Centralize job intake</h3><p>Capture the address, loss type, priority, access notes, customer updates, and who needs to be assigned before the job turns into a text-thread scramble.</p></div><div class="info-card"><h3>Schedule crews and follow-up</h3><p>Keep crew scheduling, drying checks, equipment pickup, estimate handoffs, and return visits visible on a readable board.</p></div><div class="info-card"><h3>Connect field and office updates</h3><p>Give office staff a simple place to see field notes, photos-to-review reminders, job status, and what needs action next.</p></div><div class="info-card"><h3>Stay software-only</h3><p>Gainhelm helps restoration operators manage work. It does not perform water extraction, mitigation, mold remediation, or emergency repair services.</p></div></div></section>
 <section class="section" aria-labelledby="related-heading"><div class="section-head"><div class="kicker">Related restoration workflows</div><h2 id="related-heading">Compare nearby dispatch and scheduling surfaces.</h2></div><div class="info-grid"><div class="info-card"><h3><a href="/emergency-restoration-dispatch-software">Emergency restoration dispatch software</a></h3><p>For urgent burst-pipe, water-damage, and same-day crew-routing workflows.</p></div><div class="info-card"><h3><a href="/field-service-scheduling">Field service scheduling software</a></h3><p>For teams comparing technician scheduling, dispatch boards, and daily work coordination.</p></div><div class="info-card"><h3><a href="/plumbing-dispatch-software">Plumbing dispatch software</a></h3><p>For plumbing shops coordinating service calls, plumber assignment, and daily scheduling.</p></div></div></section>
-<section class="form-section compact-waitlist" id="waitlist" aria-labelledby="waitlist-heading"><div class="form-card"><div class="kicker">Early access</div><h2 id="waitlist-heading">Tell us what restoration job workflow you need.</h2><p>Join the waitlist if you run restoration, mitigation, plumbing, or field service teams and want cleaner job visibility before adding heavy enterprise software.</p><div id="waitlist-status" class="waitlist-status" role="status" aria-live="polite" hidden></div><form id="waitlist-form" action="/waitlist" method="post" data-api-url="/waitlist" novalidate><div class="form-group"><label for="name">Full Name <span class="sr-only">optional</span></label><input type="text" id="name" name="name" autocomplete="name" placeholder="John Smith" aria-describedby="waitlist-status"></div><div class="form-group"><label for="email">Work Email <span class="field-required" aria-hidden="true">*</span><span class="sr-only"> required</span></label><input type="email" id="email" name="email" autocomplete="email" inputmode="email" placeholder="john@company.com" required aria-describedby="waitlist-help waitlist-status"></div><div class="form-group"><label for="company">Company <span class="sr-only">optional</span></label><input type="text" id="company" name="company" autocomplete="organization" placeholder="Your Company Name"></div><button type="submit" class="form-submit">Join the waitlist</button></form><div id="waitlist-help" class="waitlist-help">We’ll only use this to follow up about early access.</div><script>
+<section class="form-section compact-waitlist" id="waitlist" aria-labelledby="waitlist-heading"><div class="form-card"><div class="kicker">Early access</div><h2 id="waitlist-heading">Tell us what restoration job workflow you need.</h2><p>Join the waitlist if you run restoration, mitigation, plumbing, or field service teams and want cleaner job visibility before adding heavy enterprise software.</p><div id="waitlist-status" class="waitlist-status" role="status" aria-live="polite" hidden></div><form id="waitlist-form" action="/waitlist" method="post" data-api-url="/waitlist" novalidate><div class="form-group"><label for="name">Full Name <span class="sr-only">optional</span></label><input type="text" id="name" name="name" autocomplete="name" placeholder="John Smith" aria-describedby="waitlist-status"></div><div class="form-group"><label for="email">Work Email <span class="field-required" aria-hidden="true">*</span><span class="sr-only"> required</span></label><input type="email" id="email" name="email" autocomplete="email" inputmode="email" placeholder="john@company.com" required aria-describedby="waitlist-help waitlist-status"></div><div class="form-group"><label for="company">Company <span class="sr-only">optional</span></label><input type="text" id="company" name="company" autocomplete="organization" placeholder="Your Company Name"></div><button type="submit" class="form-submit">Join Waitlist & Try Simulator</button></form><div id="waitlist-help" class="waitlist-help">Instant access to the interactive SMS simulator. We’ll only use this to follow up about early access.</div><script>
 const form = document.getElementById('waitlist-form');
 const status = document.getElementById('waitlist-status');
 const submitButton = form.querySelector('.form-submit');
@@ -140,7 +140,7 @@ const nameInput = document.getElementById('name');
 const showStatus = (message, type) => {
   status.hidden = false;
   status.className = `waitlist-status ${type}`;
-  status.textContent = message;
+  status.innerHTML = message;
 };
 const markInvalid = (input, invalid = true) => {
   input.setAttribute('aria-invalid', invalid ? 'true' : 'false');
@@ -197,13 +197,15 @@ form.addEventListener('submit', async (event) => {
       return;
     }
 
+    const emailValue = emailInput.value.trim();
     form.reset();
-    showStatus("Thanks! You're on the waitlist. We'll be in touch soon.", 'success');
+    const encodedEmail = encodeURIComponent(emailValue);
+    showStatus(`Thanks! You're on the waitlist. We'll be in touch soon. <a href="/setup?email=${encodedEmail}" class="waitlist-setup-link">Try the Simulator Now</a>`, 'success');
   } catch (error) {
     showStatus('We had trouble submitting your request. Please try again.', 'error');
   } finally {
     submitButton.disabled = false;
-    submitButton.textContent = 'Join the waitlist';
+    submitButton.textContent = 'Join Waitlist & Try Simulator';
   }
 });
 </script></div></section>

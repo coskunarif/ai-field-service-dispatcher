@@ -1,141 +1,98 @@
-# Specification: Find and Queue High-Intent Social Leads
+# Specification: SEO/GEO Optimization & Lead Conversion Boost
 
-This document outlines the requirements, architecture, acceptance criteria, and vertical slices for implementing the social lead queue system for Gainhelm.
-
-## Context & Purpose
-To increase waitlist sign-ups, we will build a system that automatically discovers and queues high-intent discussions from social media platforms (Reddit, and simulated Facebook contractor groups) where users describe field service dispatch and scheduling pain points. The dashboard will allow manual lead addition, intent scoring, automated draft pitches, and status tracking (discovered, queued, replied, ignored).
+## Background & Rationale
+Analysis of the Google Search Console (GSC) query performance reveals high impressions for target niche trade categories (such as HVAC, plumbing, electrical, locksmith, septic) but low/zero click-through rates. To move organic search clicks, the title tags and meta descriptions must be optimized to target exact high-intent query phrases. Furthermore, to move waitlist signups and lead conversion rates, waitlist form submissions on the landing pages should immediately link users to the fully functional interactive SMS dispatch simulator page (`/setup?email=...`) rather than showing a generic success message, providing instant product value.
 
 ---
 
 ## Acceptance Criteria
 
-### `[AC-1]` Database Schema & Table
-- A database table named `social_leads` must be created in Postgres and initialized on startup.
-- The schema must include the following fields:
-  - `id` (UUID, primary key, auto-generated)
-  - `platform` (VARCHAR(50), e.g., `'reddit'`, `'facebook'`)
-  - `source_url` (TEXT, unique, indexed)
-  - `title` (TEXT, not null)
-  - `snippet` (TEXT, not null)
-  - `intent_score` (INTEGER, default 50, value range: 0-100)
-  - `status` (VARCHAR(50), default `'discovered'`, values: `'discovered'`, `'queued'`, `'replied'`, `'ignored'`)
-  - `suggested_reply` (TEXT, nullable)
-  - `created_at` (TIMESTAMP with time zone, default `NOW()`)
-  - `updated_at` (TIMESTAMP with time zone, default `NOW()`)
+### [AC-1]: Metadata Optimization for Target Landing Pages
+The HTML `<title>` and `<meta name="description">` tags on key trade landing pages must be updated to target high-intent search terms based on Search Console CLI data.
+- **Title requirements:** Must be <= 70 characters and contain the exact high-intent target query phrase.
+- **Description requirements:** Must be between 120 and 180 characters.
+- **Specific targets:**
+  1. `/hvac-dispatch-software`
+     - Title: `Best HVAC Dispatch Software | Gainhelm`
+     - Description: `Gainhelm helps HVAC teams schedule calls, assign technicians, and keep the board readable on iPad or mobile.`
+  2. `/plumbing-dispatch-software`
+     - Title: `Plumbing Dispatch Software for Service Calls | Gainhelm`
+     - Description: `Gainhelm helps plumbing teams schedule service calls, assign plumbers, and keep the day organized.`
+  3. `/field-service-scheduling`
+     - Title: `Field Service Scheduling Software | Gainhelm`
+     - Description: `Gainhelm helps field service teams book jobs, dispatch technicians, and keep work organized.`
+  4. `/tree-service-dispatch-software`
+     - Title: `Tree Service Dispatch Software | Gainhelm`
+     - Description: `Gainhelm helps tree service crews schedule jobs, assign arborists, and manage work orders.`
+  5. `/septic-service-dispatch-software`
+     - Title: `Septic Service Dispatch & Scheduling Software | Gainhelm`
+     - Description: `Gainhelm helps septic teams schedule pumpings, dispatch technicians, and coordinate tank cleanings.`
+  6. `/carpet-cleaning-dispatch-software`
+     - Title: `Carpet Cleaning Dispatch & Scheduling Software | Gainhelm`
+     - Description: `Gainhelm helps carpet cleaning teams schedule service calls, coordinate crews, and dispatch technicians.`
+  7. `/emergency-restoration-dispatch-software`
+     - Title: `Emergency Restoration Dispatch & Job Software | Gainhelm`
+     - Description: `Gainhelm helps disaster restoration teams schedule emergency calls, dispatch technicians, and manage jobs.`
+  8. `/locksmith-dispatch-software`
+     - Title: `Locksmith Dispatch & Scheduling Software | Gainhelm`
+     - Description: `Gainhelm helps locksmith teams dispatch locksmiths, schedule jobs, and track work orders.`
+  9. `/electrical-dispatch-software`
+     - Title: `Electrical Contractor Scheduling & Dispatch Software | Gainhelm`
+     - Description: `Gainhelm helps electrical contractors schedule jobs, dispatch technicians, and coordinate service calls.`
 
-### `[AC-2]` REST API Endpoints
-- **`GET /api/leads`**: 
-  - Retrieves all leads from `social_leads`.
-  - Supports filtering via query parameters: `platform` and `status`.
-  - Supports sorting via query parameter: `sort` (values: `date_desc`, `date_asc`, `intent_desc`).
-- **`POST /api/leads`**:
-  - Manually inserts a new lead.
-  - Validates that `platform`, `source_url`, `title`, and `snippet` are provided and not empty.
-  - Computes an `intent_score` and `suggested_reply` if not provided in the payload.
-  - Supports upsert behavior (updates status, snippet, and reply draft if the `source_url` already exists).
-- **`PATCH /api/leads/:id`**:
-  - Updates the status (must be one of: `discovered`, `queued`, `replied`, `ignored`) or `suggested_reply` of a lead by ID.
-- **`POST /api/leads/discover`**:
-  - Triggers the lead crawler logic.
-  - Fetches fresh discussions from Reddit search APIs and generates high-intent simulated Facebook discussion posts.
-  - Computes intent scores and drafts custom marketing pitch responses.
-  - Saves new leads to the database.
-  - Returns JSON containing the count of newly discovered leads.
+### [AC-2]: Structured Data & Schema Consistency
+- H1 headers, canonical links, and JSON-LD application schema schemas on optimized landing pages must be consistent with the updated metadata.
+- Running `npm run audit:seo-geo` must pass with zero failures and warnings (excluding any acceptable warning for `/` homepage).
 
-### `[AC-3]` Web UI Dashboard (`/tools/lead-queue`)
-- A new page served at `/tools/lead-queue` displaying the lead dashboard.
-- Responsive design styled using the project's existing theme and CSS variables from `styles.css`.
-- Displays the Gainhelm header, main content section, and footer.
+### [AC-3]: Interactive Onboarding Playground Integration
+- When the waitlist form (`#waitlist-form`) on any landing page is successfully submitted via fetch, the status element (`#waitlist-status`) must display a success message containing the string `"Thanks! You're on the waitlist. We'll be in touch soon."` AND a prominent link pointing to the interactive simulator setup page at `/setup?email=[USER_EMAIL]`.
+- The user's input email must be URL-encoded in the query parameter (e.g. `/setup?email=john%40company.com`).
+- The link must be highly visible and clearly styled.
 
-### `[AC-4]` Dashboard Functionality
-- **Stats Panel**: Renders counters showing:
-  - Total Discovered Leads
-  - Total Queued Leads
-  - Total Replied Leads
-  - Total Ignored Leads
-- **Filters & Sorting**:
-  - Dropdown/button filters for Platform (All, Reddit, Facebook) and Status (Discovered, Queued, Replied, Ignored).
-  - Sort selection: Date (Newest / Oldest) and Intent Score (Highest first).
-- **Custom Lead Form**:
-  - Allows pasting a URL (validates format), title, snippet, and platform selection to manually queue a lead.
-- **Lead List Cards**:
-  - Shows platform icon/badge, title, date, post snippet, and an intent score indicator (e.g. colored badge).
-  - Shows an editable "Draft Pitch" text area containing a custom pitch promoting Gainhelm.
-  - Includes a "Copy Pitch" button that copies the text to the clipboard and triggers a visual toast message.
-  - Includes a "Go to Post" link opening `source_url` in a new tab.
-  - Includes buttons to change status: "Mark as Replied", "Ignore", "Queue".
-- **Trigger Discovery**:
-  - A button to trigger the `POST /api/leads/discover` endpoint, reloading the lead list on completion.
+### [AC-4]: Waitlist Form UX Enhancement
+- The waitlist submit button on landing pages must have an action-oriented call-to-action text: `"Join Waitlist & Try Simulator"`.
+- A small helper text or sublabel must indicate that signing up provides instant access to the interactive SMS simulator.
 
-### `[AC-5]` Automated Verification
-- A Playwright test suite `tests/lead_queue.spec.js` must verify all API routes and UI behaviors.
-- The test suite must run with `--workers=1` to guarantee environment stability.
+### [AC-5]: Offline Test Resilience (Fastify Server DB Fallback)
+- In `/server.js`, if the Postgres `sql` client is null or unconnected, the `/waitlist` POST route must store the lead in the `inMemoryLeads` array and return `{ success: true }`, rather than failing or trying to call the external `WAITLIST_API_URL` which fails in offline/headless test runs.
+
+---
+
+## Interface Contract
+
+The following identifiers must be strictly adhered to:
+- **Files to modify:**
+  - Niche HTML trade pages: `hvac-dispatch-software.html`, `plumbing-dispatch-software.html`, `electrical-dispatch-software.html`, etc.
+  - Core web server: `server.js`
+- **Waitlist Form Selectors:**
+  - Form: `#waitlist-form`
+  - Status Container: `#waitlist-status`
+  - Inputs: `#name`, `#email`, `#company`
+  - Submit Button: `.form-submit` or `#waitlist-form button[type="submit"]`
+- **Onboarding/Setup Route:**
+  - Path: `/setup?email=[encoded-email]`
 
 ---
 
 ## Out of Scope
-- Integration with official Facebook/Meta Write APIs (no automated posting to Facebook groups).
-- Managing or saving social platform user account credentials.
-- Multi-user authentication or login gates for the `/tools/lead-queue` page.
+- Modifying or rebuilding the compiled React code inside `/index.html`.
+- Adding any new backend endpoints or physical database tables.
 
 ---
 
-## Intent Scoring & Response Drafting Logic
+## Slices
 
-### Intent Score Algorithm
-Start with a base score of 50. Adjust based on the following text matching on title/snippet:
-1. `+15` points: contains `"scheduling"` or `"schedule"`.
-2. `+15` points: contains `"dispatch"` or `"dispatcher"`.
-3. `+20` points: contains competitor names (`"jobber"`, `"servicetitan"`, `"housecallpro"`, `"fieldedge"`, `"buildops"`).
-4. `+10` points: contains pain words (`"phone tag"`, `"spreadsheet"`, `"lost track"`, `"mess"`, `"calendar"`).
-- Max score is capped at `100`, minimum is `0`.
+### [S-1]: Metadata and Structured Data Optimization
+- **Files:** `hvac-dispatch-software.html`, `plumbing-dispatch-software.html`, `field-service-scheduling.html`, `tree-service-dispatch-software.html`, `locksmith-dispatch-software.html`, `septic-service-dispatch-software.html`, `carpet-cleaning-dispatch-software.html`, `emergency-restoration-dispatch-software.html`, `electrical-dispatch-software.html`
+- **AC Mappings:** `[AC-1]`, `[AC-2]`
+- **Strategy:** Additive. Update titles, descriptions, canonical links, and JSON-LD schema blocks in place. Run `npm run audit:seo-geo` to verify compliance.
 
-### Response Drafting Templates
-Based on keywords or the primary trade detected:
-- **HVAC/Plumbing/Electrical**:
-  *"Hey! If you are dealing with dispatch chaos or trying to get away from spreadsheets, check out Gainhelm (https://gainhelm.com). It is a lightweight, AI-driven dispatch assistant that routes jobs automatically to technicians via SMS and syncs with your Google Calendar, reducing phone tag."*
-- **General/Other**:
-  *"We had similar scheduling headaches before trying Gainhelm (https://gainhelm.com). It acts as an automated dispatcher routing jobs via SMS and keeping technicians updated instantly. Really helps cut down on phone tag and manual spreadsheets."*
+### [S-2]: Waitlist Form UI & Interactive Link Integration
+- **Files:** All trade-specific and alternative landing pages containing waitlist forms (e.g., `hvac-dispatch-software.html`, etc.).
+- **AC Mappings:** `[AC-3]`, `[AC-4]`
+- **Strategy:** Refinement. Update waitlist scripts in each page to extract the submitted email value and insert a prominent CTA link to `/setup?email=[encoded_email]` into the success message of `#waitlist-status`. Update the button text to `"Join Waitlist & Try Simulator"`.
 
----
-
-## Technical Slices
-
-```mermaid
-graph TD
-  S1[S-1: Database Schema Migration] --> S2[S-2: Lead Queue REST API]
-  S1 --> S3[S-3: Lead Discovery Script Update]
-  S2 --> S4[S-4: Dashboard Front-end Page]
-  S3 --> S4
-```
-
-### `[S-1]` Database Schema Migration
-- **Target Files**: `api/migrate.js`, `server.js`
-- **Description**: Add `social_leads` table schema to `api/migrate.js`. Add the startup auto-initialization queries to `server.js` to ensure the table is created on server boot.
-- **Verification**: Run migrations and verify database schema via query.
-- **AC Mapped**: `[AC-1]`
-
-### `[S-2]` Lead Queue REST API
-- **Target Files**: `server.js`
-- **Description**: Create Fastify routes for `GET /api/leads`, `POST /api/leads`, and `PATCH /api/leads/:id`. Write parameter validation and query logic. Include intent scoring and pitch draft helpers.
-- **Verification**: Execute cURL requests to verify correct JSON responses and database upsert behaviors.
-- **AC Mapped**: `[AC-2]`
-
-### `[S-3]` Lead Discovery Script Update
-- **Target Files**: `scripts/find-social-leads.mjs`, `server.js`
-- **Description**: Enhance `scripts/find-social-leads.mjs` to fetch Reddit search results, generate high-intent simulated Facebook posts (from local groups), score them, draft replies, and upsert them to the database. Register the `/api/leads/discover` endpoint to execute this process.
-- **Verification**: Run `npm run find-leads` and confirm entries are added to the database.
-- **AC Mapped**: `[AC-2]`, `[AC-3]`
-
-### `[S-4]` Dashboard Front-end Page
-- **Target Files**: `tools-lead-queue.html`, `server.js`
-- **Description**: Create the dashboard HTML/JS application, style it with existing CSS classes, and mount the route `GET /tools/lead-queue` in `server.js`.
-- **Verification**: Navigate to the route using browser tests to check stats updates, form submissions, filter selection, and status patching.
-- **AC Mapped**: `[AC-3]`, `[AC-4]`
-
----
-
-## Test Strategy (Additive Tasks)
-- **Task Type**: Additive.
-- **Strategy**: **Tests First**. The Tester agent must implement `tests/lead_queue.spec.js` asserting all API endpoints and UI functionality before the Builder agent starts implementing code changes.
-- **Crucial Rule**: Run Playwright with `--workers=1` to prevent browser launch crashes inside the test environment.
+### [S-3]: Offline Server Resilience Fallback
+- **Files:** `server.js`
+- **AC Mappings:** `[AC-5]`
+- **Strategy:** Refinement. In the `/waitlist` route handler, check if `sql` is null. If it is null, append the lead to `inMemoryLeads` and return `{ success: true }` immediately, bypassing the external API fetch.

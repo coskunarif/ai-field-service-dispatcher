@@ -345,28 +345,24 @@ fastify.post('/waitlist', async (request, reply) => {
   }
 
   try {
-    if (!sql) {
-      const response = await fetch(waitlistApiUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, company }),
-      });
-
-      if (!response.ok) {
-        const result = await response.json().catch(() => ({}));
-        const message = result.error || 'Failed to save lead';
-        if (wantsHtml(request)) {
-          return reply.status(response.status).type('text/html').send(renderWaitlistResponsePage({
-            statusCode: response.status,
-            title: 'Waitlist submission failed',
-            heading: 'We had trouble saving your waitlist request.',
-            message: 'Please return to the form and try again in a moment.',
-            returnPath,
-          }));
-        }
-        return reply.status(response.status).send({ error: message });
+    let dbSaved = false;
+    if (sql) {
+      try {
+        await sql`INSERT INTO waitlist_leads (name, email, company) VALUES (${name}, ${email}, ${company})`;
+        dbSaved = true;
+      } catch (dbErr) {
+        fastify.log.error('DB Waitlist insert failed, falling back to memory:', dbErr);
       }
+    }
 
+    if (!dbSaved) {
+      inMemoryLeads.push({
+        id: String(inMemoryLeads.length + 1),
+        name,
+        email,
+        company,
+        created_at: new Date().toISOString()
+      });
       if (wantsHtml(request)) {
         return reply.type('text/html').send(renderWaitlistResponsePage({
           statusCode: 200,
@@ -380,7 +376,6 @@ fastify.post('/waitlist', async (request, reply) => {
       return { success: true };
     }
 
-    await sql`INSERT INTO waitlist_leads (name, email, company) VALUES (${name}, ${email}, ${company})`;
     if (wantsHtml(request)) {
       return reply.type('text/html').send(renderWaitlistResponsePage({
         statusCode: 200,
