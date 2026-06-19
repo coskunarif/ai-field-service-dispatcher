@@ -1,3 +1,0 @@
-[services.mindful-imagination]
-root = "."
-start_command = "node server.js"

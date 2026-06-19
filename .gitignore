@@ -1,7 +1,5 @@
-# Railway configuration
-.railway/
-
 # Dependencies
+
 node_modules/
 
 # TillDone/runtime state

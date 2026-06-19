@@ -1,9 +1,0 @@
-{
-  "services": {
-    "mindful-imagination": {
-      "root": ".",
-      "buildCommand": "npm install",
-      "startCommand": "node server.js"
-    }
-  }
-}
