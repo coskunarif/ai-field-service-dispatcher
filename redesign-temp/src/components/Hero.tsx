@@ -1,9 +1,79 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight, Zap, Clock, Shield } from 'lucide-react';
+import { Zap, Clock, Shield } from 'lucide-react';
 
 export default function Hero() {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [company, setCompany] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState<{ type: 'success' | 'error' | null; message: string }>({ type: null, message: '' });
+  const [submittedEmail, setSubmittedEmail] = useState('');
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const trimmedName = name.trim();
+    const trimmedEmail = email.trim();
+    const trimmedCompany = company.trim();
+
+    if (!trimmedName) {
+      setStatus({ type: 'error', message: 'Name is required' });
+      return;
+    }
+    if (!trimmedEmail) {
+      setStatus({ type: 'error', message: 'Email is required' });
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(trimmedEmail)) {
+      setStatus({ type: 'error', message: 'Please enter a valid email address' });
+      return;
+    }
+
+    setLoading(true);
+    setStatus({ type: null, message: '' });
+
+    try {
+      const response = await fetch('/waitlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: trimmedName, email: trimmedEmail, company: trimmedCompany }),
+      });
+
+      const result = await response.json().catch(() => ({}));
+
+      if (!response.ok || result.success === false) {
+        throw new Error(result.error || 'Failed to submit. Please try again.');
+      }
+
+      setSubmittedEmail(trimmedEmail);
+      setStatus({
+        type: 'success',
+        message: "Thanks! You're on the waitlist. We'll be in touch soon."
+      });
+    } catch (err: any) {
+      setStatus({
+        type: 'error',
+        message: err.message || 'We had trouble saving your waitlist request. Please try again.'
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const setupUrl = (() => {
+    try {
+      const url = new URL('/setup', window.location.origin);
+      url.searchParams.set('email', submittedEmail);
+      return url.pathname + url.search;
+    } catch {
+      return `/setup?email=${encodeURIComponent(submittedEmail)}`;
+    }
+  })();
+
   return (
-    <section className="relative min-h-screen flex items-center pt-20 overflow-hidden bg-slate-950">
+    <section id="top" className="relative min-h-screen flex items-center pt-20 overflow-hidden bg-slate-950">
       {/* Background grid */}
       <div className="absolute inset-0 hero-grid opacity-30" />
       
@@ -49,21 +119,86 @@ export default function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.3 }}
-              className="flex flex-col sm:flex-row gap-4"
+              className="w-full max-w-xl space-y-4"
             >
-              <a
-                href="#waitlist"
-                className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-brand-500 hover:bg-brand-400 text-slate-950 font-bold rounded-xl shadow-xl shadow-brand-500/10 transition-all hover:shadow-brand-500/20 hover:-translate-y-0.5"
+              <form id="waitlist-form" onSubmit={handleSubmit} className="space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label htmlFor="name" className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                      Full Name <span className="text-brand-400">*</span>
+                    </label>
+                    <input
+                      id="name"
+                      type="text"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      placeholder="John Doe"
+                      className="w-full px-4 py-3 rounded-xl bg-slate-900/60 border border-slate-800 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="email" className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                      Work Email <span className="text-brand-400">*</span>
+                    </label>
+                    <input
+                      id="email"
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="john@company.com"
+                      className="w-full px-4 py-3 rounded-xl bg-slate-900/60 border border-slate-800 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all text-sm"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label htmlFor="company" className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                    Company
+                  </label>
+                  <input
+                    id="company"
+                    type="text"
+                    value={company}
+                    onChange={(e) => setCompany(e.target.value)}
+                    placeholder="JD HVAC Services"
+                    className="w-full px-4 py-3 rounded-xl bg-slate-900/60 border border-slate-800 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all text-sm"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="form-submit w-full inline-flex items-center justify-center gap-2 px-8 py-4 bg-brand-500 hover:bg-brand-400 text-slate-950 font-bold rounded-xl shadow-lg shadow-brand-500/10 transition-all hover:shadow-brand-500/20 disabled:opacity-70 mt-2 cursor-pointer"
+                >
+                  Join Waitlist & Try Simulator
+                </button>
+              </form>
+
+              <div
+                id="waitlist-status"
+                className={
+                  status.type
+                    ? `waitlist-status ${status.type} p-4 rounded-xl border text-sm font-semibold transition-all ${
+                        status.type === 'success'
+                          ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
+                          : 'bg-red-500/10 border-red-500/20 text-red-400'
+                      }`
+                    : 'waitlist-status hidden'
+                }
               >
-                Join the waitlist
-                <ArrowRight className="w-5 h-5" />
-              </a>
-              <a
-                href="#how-it-works"
-                className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-slate-900/80 hover:bg-slate-800 text-white font-semibold rounded-xl border border-slate-800/80 transition-all hover:-translate-y-0.5"
-              >
-                See how it works
-              </a>
+                {status.type === 'success' ? (
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <span>Thanks! You're on the waitlist. We'll be in touch soon.</span>
+                    <a className="waitlist-setup-link inline-flex items-center gap-1.5 px-4 py-2 bg-brand-500 hover:bg-brand-400 text-slate-950 text-xs font-bold rounded-lg transition-colors shrink-0" href={setupUrl}>
+                      Try the Simulator Now
+                    </a>
+                  </div>
+                ) : (
+                  <span>{status.message}</span>
+                )}
+              </div>
+
+              <div id="waitlist-help" className="text-xs text-slate-500">
+                We'll only use this to follow up about early access. No spam, ever.
+              </div>
             </motion.div>
 
             <motion.div

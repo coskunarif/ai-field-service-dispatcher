@@ -1,4 +1,5 @@
-- Playwright test suites running on headless browsers inside resource-constrained environments should use --workers=1 to avoid transient browser launch and context crashes.
-- Fastify servers connecting to external databases should fall back to in-memory storage when credentials are absent, enabling seamless offline test runs.
-- Local SEO/GEO audit scripts should support configurable overrides or ignore rules to accommodate specific marketing constraints that intentionally deviate from generic length standards.
-- Interactive dashboards with state transitions can be E2E verified reliably by combining Playwright API routing mocks with offline in-memory backend fallbacks.
+- **[Trigger]** Running Playwright test suites on headless browsers in resource-constrained environments **[Symptom]** transient browser launch and context crashes occur **[Remediation]** use --workers=1 to run tests sequentially.
+- **[Trigger]** Fastify server connecting to external databases with absent credentials during offline tests **[Symptom]** startup or query crashes **[Remediation]** fall back to in-memory storage.
+- **[Trigger]** Local SEO/GEO audit scripts checking pages with intentional marketing deviations **[Symptom]** false-positive audit failures for length standards **[Remediation]** support configurable overrides or ignore rules.
+- **[Trigger]** Verifying E2E interactive dashboards with state transitions **[Symptom]** flaky tests due to live database dependencies or complex setup **[Remediation]** combine Playwright API routing mocks with offline in-memory backend fallbacks.
+- **[Trigger]** Compiling React single-file bundle using Vite with lucide-react icon imports **[Symptom]** bundle sizes bloat and exceed KPI limits due to lack of tree-shaking **[Remediation]** explicitly import individual icons from the ESM path (e.g. lucide-react/dist/esm/icons/...) to enable tree-shaking.
