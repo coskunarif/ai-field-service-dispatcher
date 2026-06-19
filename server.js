@@ -12,6 +12,7 @@ const root = process.cwd();
 
 const contextStore = new Map();
 const inMemoryLeads = [];
+const inMemoryContractorLeads = [];
 
 if (sql) {
   (async () => {
@@ -53,6 +54,24 @@ if (sql) {
       )`;
       await sql`CREATE UNIQUE INDEX IF NOT EXISTS social_leads_source_url_idx ON social_leads (source_url);`;
       fastify.log.info('Database table social_leads ensured.');
+
+      await sql`CREATE TABLE IF NOT EXISTS local_contractor_leads (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        company_name TEXT NOT NULL,
+        owner_name TEXT,
+        email TEXT UNIQUE,
+        phone TEXT,
+        website TEXT,
+        city TEXT,
+        state TEXT,
+        trade TEXT NOT NULL,
+        status VARCHAR(50) DEFAULT 'discovered',
+        cold_email TEXT,
+        created_at TIMESTAMPTZ DEFAULT NOW(),
+        updated_at TIMESTAMPTZ DEFAULT NOW()
+      )`;
+      await sql`CREATE UNIQUE INDEX IF NOT EXISTS local_contractor_leads_email_idx ON local_contractor_leads (email);`;
+      fastify.log.info('Database table local_contractor_leads ensured.');
     } catch (err) {
       fastify.log.error('Failed to initialize database tables:', err);
     }
@@ -160,6 +179,7 @@ const pages = {
   '/fieldedge-alternative': 'fieldedge-alternative.html',
   '/tools/facebook-post-generator': 'tools-facebook-post-generator.html',
   '/tools/lead-queue': 'tools-lead-queue.html',
+  '/tools/contractor-leads': 'tools-contractor-leads.html',
 };
 
 for (const [route, file] of Object.entries(pages)) {
@@ -2960,6 +2980,248 @@ fastify.post('/api/leads/discover', async (request, reply) => {
     return { count };
   } catch (err) {
     fastify.log.error('/api/leads/discover error:', err);
+    return reply.status(500).send({ error: 'Discovery failed' });
+  }
+});
+
+fastify.post('/api/contractors', async (request, reply) => {
+  const { company_name, owner_name, email, phone, website, city, state, trade, status, cold_email } = request.body || {};
+
+  if (!company_name || !company_name.trim() || !trade || !trade.trim()) {
+    return reply.status(400).send({ error: 'Missing required fields' });
+  }
+
+  if (email && email.trim()) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return reply.status(400).send({ error: 'Invalid email format' });
+    }
+  }
+
+  let finalColdEmail = cold_email;
+  if (!finalColdEmail) {
+    let generator = (companyName, tradeVal, cityVal, ownerVal) => {
+      const greeting = ownerVal ? `Hi ${ownerVal}` : 'Hi';
+      return `${greeting},\n\nI saw your business, ${companyName}, in ${cityVal || 'your area'}. We have a simple SMS-based dispatching platform for ${tradeVal || 'contractor'} businesses called Gainhelm. No app download needed for techs.\n\nCheck us out at https://gainhelm.com to join the waitlist.\n`;
+    };
+    try {
+      const mod = await import('./scripts/find-local-contractors.mjs');
+      if (mod.generateColdEmail) {
+        generator = mod.generateColdEmail;
+      }
+    } catch (e) {
+      // ignore
+    }
+    finalColdEmail = generator(company_name, trade, city || '', owner_name || null);
+  }
+
+  if (sql) {
+    try {
+      if (email) {
+        const existing = await sql`SELECT * FROM local_contractor_leads WHERE email = ${email}`;
+        if (existing.length > 0) {
+          const lead = existing[0];
+          const newCompanyName = company_name || lead.company_name;
+          const newOwnerName = owner_name !== undefined ? owner_name : lead.owner_name;
+          const newPhone = phone !== undefined ? phone : lead.phone;
+          const newWebsite = website !== undefined ? website : lead.website;
+          const newCity = city !== undefined ? city : lead.city;
+          const newState = state !== undefined ? state : lead.state;
+          const newTrade = trade || lead.trade;
+          const newStatus = status || lead.status;
+          const newColdEmail = finalColdEmail || lead.cold_email;
+
+          const updated = await sql`
+            UPDATE local_contractor_leads
+            SET company_name = ${newCompanyName},
+                owner_name = ${newOwnerName},
+                phone = ${newPhone},
+                website = ${newWebsite},
+                city = ${newCity},
+                state = ${newState},
+                trade = ${newTrade},
+                status = ${newStatus},
+                cold_email = ${newColdEmail},
+                updated_at = NOW()
+            WHERE id = ${lead.id}
+            RETURNING *
+          `;
+          return updated[0];
+        }
+      }
+
+      const id = crypto.randomUUID();
+      const inserted = await sql`
+        INSERT INTO local_contractor_leads (
+          id, company_name, owner_name, email, phone, website, city, state, trade, status, cold_email, created_at, updated_at
+        ) VALUES (
+          ${id}, ${company_name}, ${owner_name || null}, ${email || null}, ${phone || null}, ${website || null}, ${city || null}, ${state || null}, ${trade}, ${status || 'discovered'}, ${finalColdEmail}, NOW(), NOW()
+        ) RETURNING *
+      `;
+      return inserted[0];
+    } catch (err) {
+      fastify.log.error('DB POST /api/contractors error:', err);
+      return reply.status(500).send({ error: 'Database error' });
+    }
+  } else {
+    if (email) {
+      const existingIndex = inMemoryContractorLeads.findIndex(l => l.email === email);
+      if (existingIndex > -1) {
+        const lead = inMemoryContractorLeads[existingIndex];
+        const newCompanyName = company_name || lead.company_name;
+        const newOwnerName = owner_name !== undefined ? owner_name : lead.owner_name;
+        const newPhone = phone !== undefined ? phone : lead.phone;
+        const newWebsite = website !== undefined ? website : lead.website;
+        const newCity = city !== undefined ? city : lead.city;
+        const newState = state !== undefined ? state : lead.state;
+        const newTrade = trade || lead.trade;
+        const newStatus = status || lead.status;
+        const newColdEmail = finalColdEmail || lead.cold_email;
+
+        const updatedLead = {
+          ...lead,
+          company_name: newCompanyName,
+          owner_name: newOwnerName,
+          phone: newPhone,
+          website: newWebsite,
+          city: newCity,
+          state: newState,
+          trade: newTrade,
+          status: newStatus,
+          cold_email: newColdEmail,
+          updated_at: new Date().toISOString()
+        };
+        inMemoryContractorLeads[existingIndex] = updatedLead;
+        return updatedLead;
+      }
+    }
+
+    const id = crypto.randomUUID();
+    const newLead = {
+      id,
+      company_name,
+      owner_name: owner_name || null,
+      email: email || null,
+      phone: phone || null,
+      website: website || null,
+      city: city || null,
+      state: state || null,
+      trade,
+      status: status || 'discovered',
+      cold_email: finalColdEmail,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
+    inMemoryContractorLeads.push(newLead);
+    return newLead;
+  }
+});
+
+fastify.get('/api/contractors', async (request, reply) => {
+  let leads = [];
+  if (sql) {
+    try {
+      leads = await sql`SELECT * FROM local_contractor_leads`;
+    } catch (err) {
+      fastify.log.error('DB GET /api/contractors error:', err);
+      return reply.status(500).send({ error: 'Database error' });
+    }
+  } else {
+    leads = [...inMemoryContractorLeads];
+  }
+
+  const { trade, status, city, sort } = request.query || {};
+
+  if (trade && trade !== 'all') {
+    leads = leads.filter(l => l.trade === trade);
+  }
+  if (status && status !== 'all') {
+    leads = leads.filter(l => l.status === status);
+  }
+  if (city && city !== 'all') {
+    leads = leads.filter(l => l.city === city);
+  }
+
+  if (sort === 'date_asc') {
+    leads.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+  } else if (sort === 'company_name_asc') {
+    leads.sort((a, b) => a.company_name.localeCompare(b.company_name));
+  } else {
+    leads.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  }
+
+  return leads;
+});
+
+fastify.patch('/api/contractors/:id', async (request, reply) => {
+  const { id } = request.params;
+  const { status, cold_email } = request.body || {};
+
+  if (status !== undefined) {
+    const validStatuses = ['discovered', 'queued', 'email_sent', 'replied', 'ignored'];
+    if (!validStatuses.includes(status)) {
+      return reply.status(400).send({ error: 'Invalid status value' });
+    }
+  }
+
+  if (sql) {
+    try {
+      const existing = await sql`SELECT * FROM local_contractor_leads WHERE id = ${id}`;
+      if (existing.length === 0) {
+        return reply.status(404).send({ error: 'Lead not found' });
+      }
+
+      const newStatus = status !== undefined ? status : existing[0].status;
+      const newColdEmail = cold_email !== undefined ? cold_email : existing[0].cold_email;
+
+      const updated = await sql`
+        UPDATE local_contractor_leads
+        SET status = ${newStatus},
+            cold_email = ${newColdEmail},
+            updated_at = NOW()
+        WHERE id = ${id}
+        RETURNING *
+      `;
+      return updated[0];
+    } catch (err) {
+      fastify.log.error('DB PATCH /api/contractors error:', err);
+      return reply.status(500).send({ error: 'Database error' });
+    }
+  } else {
+    const leadIndex = inMemoryContractorLeads.findIndex(l => l.id === id);
+    if (leadIndex === -1) {
+      return reply.status(404).send({ error: 'Lead not found' });
+    }
+    const lead = inMemoryContractorLeads[leadIndex];
+    const newStatus = status !== undefined ? status : lead.status;
+    const newColdEmail = cold_email !== undefined ? cold_email : lead.cold_email;
+
+    const updatedLead = {
+      ...lead,
+      status: newStatus,
+      cold_email: newColdEmail,
+      updated_at: new Date().toISOString()
+    };
+    inMemoryContractorLeads[leadIndex] = updatedLead;
+    return updatedLead;
+  }
+});
+
+fastify.post('/api/contractors/discover', async (request, reply) => {
+  try {
+    let count = 0;
+    try {
+      const mod = await import('./scripts/find-local-contractors.mjs');
+      if (mod.performContractorDiscovery) {
+        count = await mod.performContractorDiscovery(sql, inMemoryContractorLeads);
+      }
+    } catch (e) {
+      // fallback
+      count = 0;
+    }
+    return { count };
+  } catch (err) {
+    fastify.log.error('/api/contractors/discover error:', err);
     return reply.status(500).send({ error: 'Discovery failed' });
   }
 });
