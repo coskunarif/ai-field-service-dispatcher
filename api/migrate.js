@@ -27,6 +27,24 @@ async function createTable() {
     );`;
     await sql`CREATE UNIQUE INDEX IF NOT EXISTS social_leads_source_url_idx ON social_leads (source_url);`;
     console.log('Table social_leads created successfully.');
+
+    await sql`CREATE TABLE IF NOT EXISTS local_contractor_leads (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      company_name TEXT NOT NULL,
+      owner_name TEXT,
+      email TEXT UNIQUE,
+      phone TEXT,
+      website TEXT,
+      city TEXT,
+      state TEXT,
+      trade TEXT NOT NULL,
+      status VARCHAR(50) DEFAULT 'discovered',
+      cold_email TEXT,
+      created_at TIMESTAMPTZ DEFAULT NOW(),
+      updated_at TIMESTAMPTZ DEFAULT NOW()
+    );`;
+    await sql`CREATE UNIQUE INDEX IF NOT EXISTS local_contractor_leads_email_idx ON local_contractor_leads (email);`;
+    console.log('Table local_contractor_leads created successfully.');
   } catch (err) {
     console.error('Error creating table:', err);
     process.exit(1);

@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contractor Leads Dashboard | Gainhelm</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="/styles.css">
+<style>
+  .lead-container {
+    max-width: var(--container);
+    margin: 0 auto;
+    padding: 40px 24px;
+  }
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: 350px 1fr;
+    gap: 32px;
+    margin-top: 32px;
+  }
+  @media (max-width: 968px) {
+    .dashboard-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  @media (max-width: 968px) {
+    .stats-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  @media (max-width: 640px) {
+    .stats-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  .stat-card {
+    background: hsl(var(--surface));
+    border: 1px solid hsl(var(--line));
+    border-radius: var(--radius-md);
+    padding: 20px;
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+  }
+  .stat-card h3 {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: hsl(var(--text-3));
+    margin-bottom: 8px;
+  }
+  .stat-card .stat-val {
+    font-size: 2rem;
+    font-weight: 800;
+    color: hsl(var(--brand));
+  }
+  .sidebar-box {
+    background: hsl(var(--surface));
+    border: 1px solid hsl(var(--line));
+    border-radius: var(--radius-md);
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: var(--shadow-sm);
+  }
+  .sidebar-box h2 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+    border-bottom: 1px solid hsl(var(--line));
+    padding-bottom: 8px;
+  }
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 16px;
+  }
+  .form-group label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: hsl(var(--text-2));
+  }
+  .form-group input, .form-group select, .form-group textarea {
+    background: hsl(var(--bg-2));
+    border: 1px solid hsl(var(--line));
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+    color: hsl(var(--text));
+    font-family: inherit;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+  }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+    outline: none;
+    border-color: hsl(var(--brand));
+  }
+  .form-error-message {
+    color: #ef4444;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-top: 4px;
+    display: none;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 16px;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+    font-size: 0.9rem;
+  }
+  .btn-primary {
+    background: hsl(var(--brand));
+    color: #000;
+  }
+  .btn-primary:hover {
+    background: hsl(var(--brand-2));
+  }
+  .btn-secondary {
+    background: hsl(var(--bg-2));
+    border: 1px solid hsl(var(--line));
+    color: hsl(var(--text));
+  }
+  .btn-secondary:hover {
+    background: hsl(var(--surface-3));
+  }
+  .lead-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .contractor-card {
+    background: hsl(var(--surface));
+    border: 1px solid hsl(var(--line));
+    border-radius: var(--radius-md);
+    padding: 24px;
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .contractor-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .contractor-company-name {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: hsl(var(--text));
+  }
+  .contractor-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    font-size: 0.8rem;
+    color: hsl(var(--text-3));
+    align-items: center;
+    margin-top: 4px;
+  }
+  .badge {
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-weight: 700;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+  }
+  .badge-trade {
+    background: rgba(38, 92, 52, 0.15);
+    color: hsl(var(--brand));
+    border: 1px solid rgba(245, 158, 11, 0.3);
+  }
+  .badge-status {
+    background: hsl(var(--bg-2));
+    color: hsl(var(--text-2));
+    border: 1px solid hsl(var(--line));
+  }
+  .contractor-contact-info {
+    font-size: 0.9rem;
+    color: hsl(var(--text-2));
+    background: hsl(var(--bg-2));
+    border-radius: var(--radius-sm);
+    padding: 12px;
+    border: 1px solid hsl(var(--line));
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 8px 16px;
+  }
+  .cold-email-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .cold-email-textarea {
+    width: 100%;
+    min-height: 120px;
+    background: hsl(var(--bg-2));
+    border: 1px solid hsl(var(--line));
+    border-radius: var(--radius-sm);
+    padding: 12px;
+    color: hsl(var(--text));
+    font-size: 0.875rem;
+    font-family: inherit;
+    resize: vertical;
+  }
+  .card-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 8px;
+    border-top: 1px solid hsl(var(--line));
+    padding-top: 16px;
+  }
+  .status-buttons {
+    display: flex;
+    gap: 8px;
+  }
+  .toast-notification {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: hsl(var(--brand));
+    color: #000;
+    padding: 12px 20px;
+    border-radius: var(--radius-sm);
+    font-weight: 700;
+    font-size: 0.9rem;
+    box-shadow: var(--shadow-md);
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 1000;
+  }
+  .toast-notification.show {
+    transform: translateY(0);
+    opacity: 1;
+  }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main-content">Skip to main content</a>
+<header>
+<a href="/" class="logo" aria-label="Gainhelm home">
+<div class="logo-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-logo"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg></div>
+Gainhelm
+</a>
+<nav class="nav" aria-label="Primary">
+<a href="/">Home</a>
+<a href="/field-service-scheduling">Features</a>
+<a href="#how-it-works">How it works</a>
+<a href="#waitlist" class="nav-cta">Join the waitlist</a>
+</nav>
+</header>
+
+<main id="main-content" class="lead-container" tabindex="-1">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
+    <div>
+      <h1 style="font-size: 2.25rem; font-weight: 800; margin-bottom: 4px;">Contractor Leads</h1>
+      <p style="color: hsl(var(--text-2)); font-size: 1rem;">Acquire and outreach local contractor businesses with high conversion drafts.</p>
+    </div>
+    <button class="btn btn-primary" id="btn-discover-trigger">Trigger Discovery</button>
+  </div>
+
+  <!-- Stats Grid -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <h3>Discovered</h3>
+      <div class="stat-val" id="discovered-count">0</div>
+    </div>
+    <div class="stat-card">
+      <h3>Queued</h3>
+      <div class="stat-val" id="queued-count">0</div>
+    </div>
+    <div class="stat-card">
+      <h3>Email Sent</h3>
+      <div class="stat-val" id="email-sent-count">0</div>
+    </div>
+    <div class="stat-card">
+      <h3>Replied</h3>
+      <div class="stat-val" id="replied-count">0</div>
+    </div>
+    <div class="stat-card">
+      <h3>Ignored</h3>
+      <div class="stat-val" id="ignored-count">0</div>
+    </div>
+  </div>
+
+  <!-- Dashboard Main Layout -->
+  <div class="dashboard-grid">
+    <!-- Sidebar Control Panel -->
+    <div class="sidebar">
+      <!-- Filters and Sort -->
+      <div class="sidebar-box">
+        <h2>Filters & Sorting</h2>
+        <div class="form-group">
+          <label for="filter-trade">Trade</label>
+          <select id="filter-trade">
+            <option value="all">All Trades</option>
+            <option value="hvac">HVAC</option>
+            <option value="plumbing">Plumbing</option>
+            <option value="electrical">Electrical</option>
+            <option value="landscaping">Landscaping</option>
+            <option value="cleaning">Cleaning</option>
+            <option value="pest-control">Pest Control</option>
+            <option value="garage-door">Garage Door</option>
+            <option value="roofing">Roofing</option>
+            <option value="locksmith">Locksmith</option>
+            <option value="pool-service">Pool Service</option>
+            <option value="septic-service">Septic Service</option>
+            <option value="appliance-repair">Appliance Repair</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="sort-contractors">Sort By</label>
+          <select id="sort-contractors">
+            <option value="date_desc">Newest First</option>
+            <option value="date_asc">Oldest First</option>
+            <option value="company_name_asc">Company Name (A-Z)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Add Lead Form -->
+      <div class="sidebar-box">
+        <h2>Add Custom Lead</h2>
+        <form id="add-lead-form" novalidate>
+          <div class="form-group">
+            <label for="contractor-name">Contractor Name *</label>
+            <input type="text" id="contractor-name" required placeholder="e.g. Seattle Plumbing Co">
+          </div>
+          <div class="form-group">
+            <label for="contractor-trade">Trade *</label>
+            <select id="contractor-trade" required>
+              <option value="" disabled selected>Select Trade</option>
+              <option value="hvac">HVAC</option>
+              <option value="plumbing">Plumbing</option>
+              <option value="electrical">Electrical</option>
+              <option value="landscaping">Landscaping</option>
+              <option value="cleaning">Cleaning</option>
+              <option value="pest-control">Pest Control</option>
+              <option value="garage-door">Garage Door</option>
+              <option value="roofing">Roofing</option>
+              <option value="locksmith">Locksmith</option>
+              <option value="pool-service">Pool Service</option>
+              <option value="septic-service">Septic Service</option>
+              <option value="appliance-repair">Appliance Repair</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="contractor-email">Email Address</label>
+            <input type="email" id="contractor-email" placeholder="e.g. contact@domain.com">
+          </div>
+          <div class="form-group">
+            <label for="contractor-owner-name">Owner Name</label>
+            <input type="text" id="contractor-owner-name" placeholder="e.g. John Doe">
+          </div>
+          <div class="form-group">
+            <label for="contractor-phone">Phone Number</label>
+            <input type="text" id="contractor-phone" placeholder="e.g. 206-555-0199">
+          </div>
+          <div class="form-group">
+            <label for="contractor-website">Website URL</label>
+            <input type="url" id="contractor-website" placeholder="e.g. https://domain.com">
+          </div>
+          <div class="form-group">
+            <label for="contractor-city">City</label>
+            <input type="text" id="contractor-city" placeholder="e.g. Seattle">
+          </div>
+          <div class="form-group">
+            <label for="contractor-state">State</label>
+            <input type="text" id="contractor-state" placeholder="e.g. WA">
+          </div>
+          <div class="form-error-message" style="margin-bottom: 12px;"></div>
+          <button type="submit" class="btn btn-primary" style="width: 100%;">Add Lead</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Contractor Cards List -->
+    <div class="lead-list" id="contractor-list-container">
+      <!-- Dynamic cards populated here -->
+    </div>
+  </div>
+</main>
+
+<footer><div>© 2026 Gainhelm. Built for field service dispatch.</div><div class="footer-links"><a href="#waitlist">Join the waitlist</a> · <a href="/hvac-dispatch-software">HVAC</a> · <a href="/plumbing-dispatch-software">Plumbing</a> · <a href="/electrical-dispatch-software">Electrical</a> · <a href="/appliance-repair-dispatch-software">Appliance Repair</a> · <a href="/pest-control-dispatch-software">Pest Control</a> · <a href="/garage-door-dispatch-software">Garage Door</a> · <a href="/cleaning-dispatch-software">Cleaning</a> · <a href="/landscaping-dispatch-software">Landscaping</a> · <a href="/roofing-dispatch-software">Roofing</a> · <a href="/locksmith-dispatch-software">Locksmith</a> · <a href="/pool-service-dispatch-software">Pool Service</a> · <a href="/commercial-facilities-dispatch-software">Facilities</a> · <a href="/septic-service-dispatch-software">Septic</a> · <a href="/emergency-restoration-dispatch-software">Emergency Restoration</a> · <a href="/restoration-job-management-software">Restoration Jobs</a> · <a href="/handyman-dispatch-software">Handyman</a> · <a href="/carpet-cleaning-dispatch-software">Carpet Cleaning</a> · <a href="/tree-service-dispatch-software">Tree Service</a> · <a href="/field-service-scheduling">Scheduling</a> · <a href="/mobile-dispatch-board">Mobile Board</a> · <a href="/servicetitan-alternative">ServiceTitan Alt</a> · <a href="/jobber-alternative">Jobber Alt</a> · <a href="/housecallpro-alternative">Housecall Pro Alt</a> · <a href="/servicefusion-alternative">Service Fusion Alt</a> · <a href="/buildops-alternative">BuildOps Alt</a> · <a href="/fieldedge-alternative">FieldEdge Alt</a> · <a href="/hvac-dispatch-app-vs-spreadsheets">Compare</a> · <a href="/how-to-choose-hvac-dispatch-app">Buying Guide</a> · <a href="/how-hvac-dispatch-apps-reduce-phone-tag">Phone Tag Guide</a> · <a href="/sitemap.xml">sitemap.xml</a> · <a href="/llms.txt">llms.txt</a></div></footer>
+
+<div class="toast-notification" id="toast">Copied email to clipboard!</div>
+
+<script>
+  let leadsCache = [];
+
+  function showToast(msg) {
+    const toast = document.getElementById("toast");
+    toast.innerText = msg;
+    toast.classList.add("show");
+    setTimeout(() => {
+      toast.classList.remove("show");
+    }, 2500);
+  }
+
+  async function refreshDashboard() {
+    try {
+      const res = await fetch("/api/contractors");
+      if (res.ok) {
+        leadsCache = await res.json();
+        updateStats();
+        applyFiltersAndRender();
+      }
+    } catch (err) {
+      console.error("Error refreshing dashboard:", err);
+    }
+  }
+
+  function updateStats() {
+    const counts = {
+      discovered: 0,
+      queued: 0,
+      email_sent: 0,
+      replied: 0,
+      ignored: 0
+    };
+    leadsCache.forEach(l => {
+      if (counts[l.status] !== undefined) {
+        counts[l.status]++;
+      }
+    });
+
+    document.getElementById("discovered-count").innerText = counts.discovered;
+    document.getElementById("queued-count").innerText = counts.queued;
+    document.getElementById("email-sent-count").innerText = counts.email_sent;
+    document.getElementById("replied-count").innerText = counts.replied;
+    document.getElementById("ignored-count").innerText = counts.ignored;
+  }
+
+  function applyFiltersAndRender() {
+    const trade = document.getElementById("filter-trade").value;
+    const sort = document.getElementById("sort-contractors").value;
+
+    let filtered = [...leadsCache];
+
+    if (trade && trade !== "all") {
+      filtered = filtered.filter(l => l.trade === trade);
+    }
+
+    if (sort === 'company_name_asc') {
+      filtered.sort((a, b) => a.company_name.localeCompare(b.company_name));
+    } else if (sort === 'date_asc') {
+      filtered.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+    } else {
+      filtered.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    }
+
+    renderContractors(filtered);
+  }
+
+  function renderContractors(contractors) {
+    const container = document.getElementById("contractor-list-container");
+    container.innerHTML = "";
+
+    if (contractors.length === 0) {
+      container.innerHTML = `<div style="text-align: center; padding: 40px; color: hsl(var(--text-3));">No contractors matching the criteria.</div>`;
+      return;
+    }
+
+    contractors.forEach(lead => {
+      const card = document.createElement("div");
+      card.className = "contractor-card";
+      card.dataset.id = lead.id;
+
+      const formattedDate = new Date(lead.created_at).toLocaleDateString();
+
+      card.innerHTML = `
+        <div class="contractor-header">
+          <div>
+            <h3 class="contractor-company-name">${escapeHtml(lead.company_name)}</h3>
+            <div class="contractor-meta">
+              <span class="badge badge-trade contractor-trade">${escapeHtml(lead.trade)}</span>
+              <span class="badge badge-status contractor-status-badge">${escapeHtml(lead.status)}</span>
+              <span>Discovered: ${formattedDate}</span>
+            </div>
+          </div>
+          ${lead.website ? `<a href="${escapeHtml(lead.website)}" target="_blank" class="btn btn-secondary btn-sm" style="font-size: 0.8rem; padding: 6px 12px;">Visit Site</a>` : ''}
+        </div>
+        
+        <div class="contractor-contact-info">
+          <div><strong>Owner:</strong> ${escapeHtml(lead.owner_name || 'N/A')}</div>
+          <div><strong>Email:</strong> ${escapeHtml(lead.email || 'N/A')}</div>
+          <div><strong>Phone:</strong> ${escapeHtml(lead.phone || 'N/A')}</div>
+          <div><strong>Location:</strong> ${escapeHtml(lead.city || 'N/A')}${lead.state ? `, ${escapeHtml(lead.state)}` : ''}</div>
+        </div>
+
+        <div class="cold-email-section">
+          <label style="font-size: 0.8rem; font-weight: 600; color: hsl(var(--text-2));">Outreach Pitch Draft</label>
+          <textarea class="cold-email-textarea">${lead.cold_email || ""}</textarea>
+        </div>
+
+        <div class="card-actions">
+          <button class="btn btn-primary btn-copy-email">Copy Pitch</button>
+          <div class="status-buttons">
+            <button class="btn btn-secondary btn-status-queue">Queue</button>
+            <button class="btn btn-secondary btn-status-sent">Mark as Sent</button>
+            <button class="btn btn-secondary btn-status-replied">Mark as Replied</button>
+            <button class="btn btn-secondary btn-status-ignore">Ignore</button>
+          </div>
+        </div>
+      `;
+
+      // Textarea autosave on blur & change
+      const textarea = card.querySelector(".cold-email-textarea");
+      const saveDraft = async () => {
+        await patchContractor(lead.id, { cold_email: textarea.value });
+      };
+      textarea.addEventListener("blur", saveDraft);
+      textarea.addEventListener("change", saveDraft);
+
+      // Copy button
+      card.querySelector(".btn-copy-email").addEventListener("click", () => {
+        navigator.clipboard.writeText(textarea.value).then(() => {
+          showToast("Copied email to clipboard!");
+        });
+      });
+
+      // Action buttons
+      card.querySelector(".btn-status-queue").addEventListener("click", () => updateContractorStatus(lead.id, "queued"));
+      card.querySelector(".btn-status-sent").addEventListener("click", () => updateContractorStatus(lead.id, "email_sent"));
+      card.querySelector(".btn-status-replied").addEventListener("click", () => updateContractorStatus(lead.id, "replied"));
+      card.querySelector(".btn-status-ignore").addEventListener("click", () => updateContractorStatus(lead.id, "ignored"));
+
+      container.appendChild(card);
+    });
+  }
+
+  async function patchContractor(id, data) {
+    try {
+      const res = await fetch(`/api/contractors/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+      if (res.ok) {
+        const updated = await res.json();
+        const idx = leadsCache.findIndex(l => l.id === id);
+        if (idx > -1) {
+          leadsCache[idx] = { ...leadsCache[idx], ...updated };
+          updateStats();
+          applyFiltersAndRender();
+        }
+      }
+    } catch (err) {
+      console.error("Error updating contractor lead:", err);
+    }
+  }
+
+  async function updateContractorStatus(id, status) {
+    await patchContractor(id, { status });
+  }
+
+  function escapeHtml(str) {
+    if (!str) return "";
+    return str
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+  // Event Listeners for Filters
+  document.getElementById("filter-trade").addEventListener("change", applyFiltersAndRender);
+  document.getElementById("sort-contractors").addEventListener("change", applyFiltersAndRender);
+
+  // Trigger Discovery Action
+  document.getElementById("btn-discover-trigger").addEventListener("click", async () => {
+    try {
+      const res = await fetch("/api/contractors/discover", { method: "POST" });
+      if (res.ok) {
+        const data = await res.json();
+        showToast(`discovered ${data.count} new leads`);
+        await refreshDashboard();
+      }
+    } catch (err) {
+      console.error("Error triggering discovery:", err);
+    }
+  });
+
+  // Custom Lead Form Submit Handler
+  document.getElementById("add-lead-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const errorMsg = document.querySelector(".form-error-message");
+    errorMsg.style.display = "none";
+    errorMsg.innerText = "";
+
+    const nameInput = document.getElementById("contractor-name");
+    const tradeSelect = document.getElementById("contractor-trade");
+    const emailInput = document.getElementById("contractor-email");
+    const ownerInput = document.getElementById("contractor-owner-name");
+    const phoneInput = document.getElementById("contractor-phone");
+    const websiteInput = document.getElementById("contractor-website");
+    const cityInput = document.getElementById("contractor-city");
+    const stateInput = document.getElementById("contractor-state");
+
+    const name = nameInput.value.trim();
+    const trade = tradeSelect.value;
+    const email = emailInput.value.trim();
+    const owner = ownerInput.value.trim();
+    const phone = phoneInput.value.trim();
+    const website = websiteInput.value.trim();
+    const city = cityInput.value.trim();
+    const state = stateInput.value.trim();
+
+    // Validation
+    if (!name) {
+      errorMsg.innerText = "Contractor Name is required.";
+      errorMsg.style.display = "block";
+      return;
+    }
+    if (!trade) {
+      errorMsg.innerText = "Trade selection is required.";
+      errorMsg.style.display = "block";
+      return;
+    }
+    if (email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        errorMsg.innerText = "Invalid email format.";
+        errorMsg.style.display = "block";
+        return;
+      }
+    }
+
+    try {
+      const res = await fetch("/api/contractors", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          company_name: name,
+          trade: trade,
+          email: email || null,
+          owner_name: owner || null,
+          phone: phone || null,
+          website: website || null,
+          city: city || null,
+          state: state || null
+        })
+      });
+
+      if (res.ok) {
+        const newLead = await res.json();
+        leadsCache.unshift(newLead);
+
+        // Clear inputs
+        nameInput.value = "";
+        tradeSelect.selectedIndex = 0;
+        emailInput.value = "";
+        ownerInput.value = "";
+        phoneInput.value = "";
+        websiteInput.value = "";
+        cityInput.value = "";
+        stateInput.value = "";
+
+        showToast("Lead added successfully!");
+        updateStats();
+        applyFiltersAndRender();
+      } else {
+        const data = await res.json();
+        errorMsg.innerText = data.error || "Error adding lead.";
+        errorMsg.style.display = "block";
+      }
+    } catch (err) {
+      console.error("Error submitting custom lead:", err);
+      errorMsg.innerText = "Server connection error.";
+      errorMsg.style.display = "block";
+    }
+  });
+
+  // Initial Load
+  refreshDashboard();
+</script>
+</body>
+</html>

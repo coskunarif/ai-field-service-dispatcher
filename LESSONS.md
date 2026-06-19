@@ -1,3 +1,4 @@
 - Playwright test suites running on headless browsers inside resource-constrained environments should use --workers=1 to avoid transient browser launch and context crashes.
 - Fastify servers connecting to external databases should fall back to in-memory storage when credentials are absent, enabling seamless offline test runs.
 - Local SEO/GEO audit scripts should support configurable overrides or ignore rules to accommodate specific marketing constraints that intentionally deviate from generic length standards.
+- Interactive dashboards with state transitions can be E2E verified reliably by combining Playwright API routing mocks with offline in-memory backend fallbacks.
