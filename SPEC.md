@@ -1,98 +1,159 @@
-# Specification: SEO/GEO Optimization & Lead Conversion Boost
+# SPEC: Local Contractor Leads Acquisition & Cold Outreach Generator
 
-## Background & Rationale
-Analysis of the Google Search Console (GSC) query performance reveals high impressions for target niche trade categories (such as HVAC, plumbing, electrical, locksmith, septic) but low/zero click-through rates. To move organic search clicks, the title tags and meta descriptions must be optimized to target exact high-intent query phrases. Furthermore, to move waitlist signups and lead conversion rates, waitlist form submissions on the landing pages should immediately link users to the fully functional interactive SMS dispatch simulator page (`/setup?email=...`) rather than showing a generic success message, providing instant product value.
+This specification outlines the requirements and implementation plan for the **Local Contractor Leads Acquisition and Cold Outreach Email Generator** feature. The goal is to acquire local trade contractor leads (HVAC, plumbing, electrical, locksmith, cleaning, landscaping, etc.) and generate personalized, high-conversion cold outreach email drafts ("nice human words, zero AI fluff") to increase waitlist registrations.
 
 ---
 
 ## Acceptance Criteria
 
-### [AC-1]: Metadata Optimization for Target Landing Pages
-The HTML `<title>` and `<meta name="description">` tags on key trade landing pages must be updated to target high-intent search terms based on Search Console CLI data.
-- **Title requirements:** Must be <= 70 characters and contain the exact high-intent target query phrase.
-- **Description requirements:** Must be between 120 and 180 characters.
-- **Specific targets:**
-  1. `/hvac-dispatch-software`
-     - Title: `Best HVAC Dispatch Software | Gainhelm`
-     - Description: `Gainhelm helps HVAC teams schedule calls, assign technicians, and keep the board readable on iPad or mobile.`
-  2. `/plumbing-dispatch-software`
-     - Title: `Plumbing Dispatch Software for Service Calls | Gainhelm`
-     - Description: `Gainhelm helps plumbing teams schedule service calls, assign plumbers, and keep the day organized.`
-  3. `/field-service-scheduling`
-     - Title: `Field Service Scheduling Software | Gainhelm`
-     - Description: `Gainhelm helps field service teams book jobs, dispatch technicians, and keep work organized.`
-  4. `/tree-service-dispatch-software`
-     - Title: `Tree Service Dispatch Software | Gainhelm`
-     - Description: `Gainhelm helps tree service crews schedule jobs, assign arborists, and manage work orders.`
-  5. `/septic-service-dispatch-software`
-     - Title: `Septic Service Dispatch & Scheduling Software | Gainhelm`
-     - Description: `Gainhelm helps septic teams schedule pumpings, dispatch technicians, and coordinate tank cleanings.`
-  6. `/carpet-cleaning-dispatch-software`
-     - Title: `Carpet Cleaning Dispatch & Scheduling Software | Gainhelm`
-     - Description: `Gainhelm helps carpet cleaning teams schedule service calls, coordinate crews, and dispatch technicians.`
-  7. `/emergency-restoration-dispatch-software`
-     - Title: `Emergency Restoration Dispatch & Job Software | Gainhelm`
-     - Description: `Gainhelm helps disaster restoration teams schedule emergency calls, dispatch technicians, and manage jobs.`
-  8. `/locksmith-dispatch-software`
-     - Title: `Locksmith Dispatch & Scheduling Software | Gainhelm`
-     - Description: `Gainhelm helps locksmith teams dispatch locksmiths, schedule jobs, and track work orders.`
-  9. `/electrical-dispatch-software`
-     - Title: `Electrical Contractor Scheduling & Dispatch Software | Gainhelm`
-     - Description: `Gainhelm helps electrical contractors schedule jobs, dispatch technicians, and coordinate service calls.`
+### `[AC-1]` Database Schema & Table (`local_contractor_leads`)
+- A database table named `local_contractor_leads` must exist in the PostgreSQL database.
+- Column specifications:
+  - `id`: `UUID`, primary key, defaults to `gen_random_uuid()`.
+  - `company_name`: `TEXT`, not null.
+  - `owner_name`: `TEXT`, nullable (owner's name for personalized greeting).
+  - `email`: `TEXT`, unique, nullable.
+  - `phone`: `TEXT`, nullable.
+  - `website`: `TEXT`, nullable.
+  - `city`: `TEXT`, nullable.
+  - `state`: `TEXT`, nullable.
+  - `trade`: `TEXT`, not null (e.g. `hvac`, `plumbing`, `electrical`, `locksmith`, `cleaning`, `landscaping`, `roofing`, `pest_control`, `restoration`, `handyman`, `tree_service`).
+  - `status`: `VARCHAR(50)`, defaults to `'discovered'`. Permitted statuses: `'discovered'`, `'queued'`, `'email_sent'`, `'replied'`, `'ignored'`.
+  - `cold_email`: `TEXT`, nullable (holds the generated email draft).
+  - `created_at`: `TIMESTAMPTZ`, defaults to `NOW()`.
+  - `updated_at`: `TIMESTAMPTZ`, defaults to `NOW()`.
+- An index must exist on `email` to guarantee fast uniqueness checks.
 
-### [AC-2]: Structured Data & Schema Consistency
-- H1 headers, canonical links, and JSON-LD application schema schemas on optimized landing pages must be consistent with the updated metadata.
-- Running `npm run audit:seo-geo` must pass with zero failures and warnings (excluding any acceptable warning for `/` homepage).
+### `[AC-2]` REST API Endpoints
+- The backend server must support the following routes under the `/api/` prefix:
+  1. `GET /api/contractors`:
+     - Returns a JSON array of contractor leads.
+     - Supports query parameters:
+       - `trade`: filter by trade value.
+       - `status`: filter by status value.
+       - `city`: filter by city.
+       - `sort`: options include `date_desc` (default), `date_asc`, and `company_name_asc`.
+  2. `POST /api/contractors`:
+     - Creates a new contractor lead or upserts on `email` conflict.
+     - Performs backend validations:
+       - `company_name` and `trade` are required and must be non-empty (returns `400 Bad Request` if missing).
+       - If `email` is provided, it must validate against a standard email regex format (returns `400 Bad Request` if invalid).
+     - Computes the initial `cold_email` if not explicitly supplied.
+  3. `PATCH /api/contractors/:id`:
+     - Updates a lead's `status` or `cold_email` content.
+     - Validates that `status` is one of the valid statuses (`discovered`, `queued`, `email_sent`, `replied`, `ignored`), returning `400 Bad Request` on mismatch.
+  4. `POST /api/contractors/discover`:
+     - Runs the local contractor discovery algorithm.
+     - Returns a JSON response with the count of newly discovered leads: `{ count: <number> }`.
+- When PostgreSQL credentials/connection is absent, the endpoints must transparently fall back to an in-memory array (`inMemoryContractorLeads`) to enable offline testing.
 
-### [AC-3]: Interactive Onboarding Playground Integration
-- When the waitlist form (`#waitlist-form`) on any landing page is successfully submitted via fetch, the status element (`#waitlist-status`) must display a success message containing the string `"Thanks! You're on the waitlist. We'll be in touch soon."` AND a prominent link pointing to the interactive simulator setup page at `/setup?email=[USER_EMAIL]`.
-- The user's input email must be URL-encoded in the query parameter (e.g. `/setup?email=john%40company.com`).
-- The link must be highly visible and clearly styled.
+### `[AC-3]` Contractor Discovery Script (`scripts/find-local-contractors.mjs`)
+- Executed via `node scripts/find-local-contractors.mjs`.
+- Queries a predefined list of local contractor business contacts (representing realistic contractors in target cities like Chicago, Seattle, Austin, etc.) or searches directories to pull high-intent lead details.
+- For each lead, generates a personalized cold outreach email using a trade-specific pitch template:
+  - **Tone**: Direct, conversational, warm, and professional. **Zero AI fluff** (no "hope this email finds you well", "our paradigm-shifting platform", etc.).
+  - **Pain Points**: Directly references trade-specific headaches (e.g. phone tag, manual dispatching, technician friction with scheduling apps).
+  - **Value**: Highlights Gainhelm's agent-first SMS-based workflow (no technician app download required).
+  - **Call to Action**: A link to `https://gainhelm.com` encouraging them to join the waitlist.
+- Commits findings to the database (or in-memory store) and generates a markdown report summary at `reports/local-contractors.md`.
 
-### [AC-4]: Waitlist Form UX Enhancement
-- The waitlist submit button on landing pages must have an action-oriented call-to-action text: `"Join Waitlist & Try Simulator"`.
-- A small helper text or sublabel must indicate that signing up provides instant access to the interactive SMS simulator.
+### `[AC-4]` Contractor Leads UI Dashboard Page
+- Served at `GET /tools/contractor-leads` rendering `tools-contractor-leads.html`.
+- Styled according to the Gainhelm dark design system (Plus Jakarta Sans font, curated HSL color palette, smooth transitions).
+- Features:
+  - **Metrics Cards**: Displays total counts of leads in each status category (`discovered`, `queued`, `email_sent`, `replied`, `ignored`).
+  - **Control Sidebar**:
+    - Filter controls (by platform/trade, status) and sorting dropdowns.
+    - An "Add Custom Lead" form with client-side form validations (validating required inputs and email formatting, displaying clear inline errors).
+  - **List Container**:
+    - Dynamically renders lead cards.
+    - Card displays: Company Name, Trade, City/State, contact info (Email, Phone, Website), status badge.
+    - Card actions:
+      - Textarea showing the generated `cold_email` draft, allowing manual edits and autosaving on change.
+      - "Copy Email" button copying email text to clipboard and displaying a temporary toast notification.
+      - Status transition buttons: "Queue", "Mark as Sent", "Mark as Replied", "Ignore".
+  - **Trigger Discovery**: A button in the header calling `POST /api/contractors/discover` and showing a toast notification with the number of discovered leads.
 
-### [AC-5]: Offline Test Resilience (Fastify Server DB Fallback)
-- In `/server.js`, if the Postgres `sql` client is null or unconnected, the `/waitlist` POST route must store the lead in the `inMemoryLeads` array and return `{ success: true }`, rather than failing or trying to call the external `WAITLIST_API_URL` which fails in offline/headless test runs.
+### `[AC-5]` Automated Verification (Playwright Tests)
+- Located at `tests/contractor_leads.spec.js`.
+- Must test:
+  - Database schema integrity (skipping if DATABASE_URL is undefined).
+  - REST API validation checks (missing fields, invalid email format, invalid status updates) and upsert operations.
+  - Discovery script execution outputs.
+  - E2E UI operations (filtering, sorting, status transitions, manual submission error handling, toast notifications).
+- Plays nicely in headless/CI contexts (uses `workers: 1` as per `LESSONS.md`).
 
 ---
 
 ## Interface Contract
 
-The following identifiers must be strictly adhered to:
-- **Files to modify:**
-  - Niche HTML trade pages: `hvac-dispatch-software.html`, `plumbing-dispatch-software.html`, `electrical-dispatch-software.html`, etc.
-  - Core web server: `server.js`
-- **Waitlist Form Selectors:**
-  - Form: `#waitlist-form`
-  - Status Container: `#waitlist-status`
-  - Inputs: `#name`, `#email`, `#company`
-  - Submit Button: `.form-submit` or `#waitlist-form button[type="submit"]`
-- **Onboarding/Setup Route:**
-  - Path: `/setup?email=[encoded-email]`
+The Tester and Builder must adhere to these names, exports, and signatures:
+
+### 1. Database Table
+- Table name: `local_contractor_leads`
+- Schema constraints: `email` is `UNIQUE`. `status` is default `'discovered'`.
+
+### 2. Lead Object Type (JSON Signature)
+```typescript
+interface ContractorLead {
+  id: string; // UUID
+  company_name: string;
+  owner_name: string | null;
+  email: string | null;
+  phone: string | null;
+  website: string | null;
+  city: string | null;
+  state: string | null;
+  trade: string; // "hvac" | "plumbing" | "electrical" | etc.
+  status: 'discovered' | 'queued' | 'email_sent' | 'replied' | 'ignored';
+  cold_email: string | null;
+  created_at: string; // ISO Datetime
+  updated_at: string; // ISO Datetime
+}
+```
+
+### 3. Discovery Script Exports (`scripts/find-local-contractors.mjs`)
+- `performContractorDiscovery(sql: any, inMemoryLeads: Array<any>): Promise<number>`
+- `generateColdEmail(companyName: string, trade: string, city: string, ownerName: string | null): string`
+
+### 4. API Endpoints
+- `GET /api/contractors` -> returns `ContractorLead[]`
+- `POST /api/contractors` -> accepts partial `ContractorLead` payload -> returns `ContractorLead`
+- `PATCH /api/contractors/:id` -> accepts `{ status?: string, cold_email?: string }` -> returns `ContractorLead`
+- `POST /api/contractors/discover` -> returns `{ count: number }`
 
 ---
 
 ## Out of Scope
-- Modifying or rebuilding the compiled React code inside `/index.html`.
-- Adding any new backend endpoints or physical database tables.
+- Integration with live email sending services (SMTP, SendGrid, Amazon SES). The status `email_sent` is set manually via the UI.
+- Direct Google Maps / Places API integration (relies on curated mock dataset and search scraper fallback instead).
 
 ---
 
-## Slices
+## Vertical Implementation Slices
 
-### [S-1]: Metadata and Structured Data Optimization
-- **Files:** `hvac-dispatch-software.html`, `plumbing-dispatch-software.html`, `field-service-scheduling.html`, `tree-service-dispatch-software.html`, `locksmith-dispatch-software.html`, `septic-service-dispatch-software.html`, `carpet-cleaning-dispatch-software.html`, `emergency-restoration-dispatch-software.html`, `electrical-dispatch-software.html`
-- **AC Mappings:** `[AC-1]`, `[AC-2]`
-- **Strategy:** Additive. Update titles, descriptions, canonical links, and JSON-LD schema blocks in place. Run `npm run audit:seo-geo` to verify compliance.
+### `[S-1]` Database Table & REST API Endpoints
+- **Scope**:
+  - Add schema definition of `local_contractor_leads` to `api/migrate.js` and server initialization.
+  - Implement standard HTTP handlers in `server.js` matching Interface Contract endpoints.
+  - Add `inMemoryContractorLeads` array fallback for database-less testing.
+- **Files**: `server.js`, `api/migrate.js`
+- **ACs**: `[AC-1]`, `[AC-2]`
+- **Independent**: No (Core backend infrastructure)
 
-### [S-2]: Waitlist Form UI & Interactive Link Integration
-- **Files:** All trade-specific and alternative landing pages containing waitlist forms (e.g., `hvac-dispatch-software.html`, etc.).
-- **AC Mappings:** `[AC-3]`, `[AC-4]`
-- **Strategy:** Refinement. Update waitlist scripts in each page to extract the submitted email value and insert a prominent CTA link to `/setup?email=[encoded_email]` into the success message of `#waitlist-status`. Update the button text to `"Join Waitlist & Try Simulator"`.
+### `[S-2]` Contractor Discovery & Pitch Email Script
+- **Scope**:
+  - Create `scripts/find-local-contractors.mjs` containing lead matching datasets and the zero-AI-fluff template generator.
+  - Hook discovery execution into `POST /api/contractors/discover` in `server.js`.
+  - Output results markdown at `reports/local-contractors.md`.
+- **Files**: `scripts/find-local-contractors.mjs`
+- **ACs**: `[AC-3]`
+- **Independent**: Yes (Relies on S-1 endpoint structures)
 
-### [S-3]: Offline Server Resilience Fallback
-- **Files:** `server.js`
-- **AC Mappings:** `[AC-5]`
-- **Strategy:** Refinement. In the `/waitlist` route handler, check if `sql` is null. If it is null, append the lead to `inMemoryLeads` and return `{ success: true }` immediately, bypassing the external API fetch.
+### `[S-3]` Contractor Leads UI Dashboard
+- **Scope**:
+  - Implement `tools-contractor-leads.html` with metrics, custom adding form, lists, dynamic updates, and editing/copying controls.
+  - Serve dashboard at `GET /tools/contractor-leads` in `server.js`.
+- **Files**: `tools-contractor-leads.html`, `server.js`
+- **ACs**: `[AC-4]`
+- **Independent**: Yes (Relies on S-1 REST API)
