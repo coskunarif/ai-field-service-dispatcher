@@ -118,8 +118,130 @@ test.describe('SEO/GEO Conversion and Waitlist Enhancements', () => {
     }
   });
 
-  // [AC-3] & [AC-4]: Interactive Onboarding Playground & Waitlist Form UX
-  test('[AC-3] & [AC-4] Waitlist Integration: Submit form and verify button text, helper text, and onboarding link', async ({ page }) => {
+  // [AC-1]: Above-Fold Landing Page Forms (Unique ID)
+  for (const path of Object.keys(targets)) {
+    test(`[AC-1] Above-Fold Landing Page Form: Page ${path} has exactly one waitlist form located above-the-fold inside the hero section and duplicate footer forms removed`, async ({ page }) => {
+      await page.goto(path);
+
+      // Verify exactly one form is present on the page
+      const waitlistForms = page.locator('#waitlist-form');
+      await expect(waitlistForms).toHaveCount(1);
+
+      // Verify the form is within the hero/above-the-fold layout
+      const heroForm = page.locator('.hero-layout #waitlist-form, .hero-copy #waitlist-form, .hero #waitlist-form');
+      await expect(heroForm).toBeVisible();
+
+      // Verify that the old footer/bottom form section does NOT contain the form
+      const footerForm = page.locator('section.form-section #waitlist-form, footer #waitlist-form, #waitlist #waitlist-form');
+      await expect(footerForm).toHaveCount(0);
+
+      // Verify there is a standard call-out card and a button linking back to #top in the lower part of the page
+      const backToTopLink = page.locator('section.form-section a[href="#top"], footer a[href="#top"], a[href="#top"]');
+      await expect(backToTopLink.first()).toBeVisible();
+    });
+  }
+
+  // [AC-2]: Above-Fold Homepage Form (Single Instance)
+  test('[AC-2] Above-Fold Homepage Form: Homepage has exactly one waitlist form in the hero section and duplicate in CTA is replaced with scroll-to-top button', async ({ page }) => {
+    await page.goto('/');
+
+    // Verify exactly one form is present on the page
+    const waitlistForms = page.locator('#waitlist-form');
+    await expect(waitlistForms).toHaveCount(1);
+
+    // Verify the form is in the hero section above the fold
+    const heroForm = page.locator('section.relative.bg-slate-950 #waitlist-form, .hero #waitlist-form');
+    await expect(heroForm).toBeVisible();
+
+    // Verify that the form is not in the CTA section at the bottom (id="waitlist" inside CTA)
+    const ctaForm = page.locator('section#waitlist #waitlist-form');
+    await expect(ctaForm).toHaveCount(0);
+
+    // Verify the scroll button back to the top/hero exists inside the CTA section
+    const scrollButton = page.locator('section#waitlist a[href="#top"], section#waitlist button');
+    await expect(scrollButton.first()).toBeVisible();
+  });
+
+  // [AC-3]: Form Input Fields, Validation & Sanitization
+  for (const path of ['/', '/hvac-dispatch-software']) {
+    test(`[AC-3] Input Fields, Validation & Sanitization: Strict client-side regex check and input presence on ${path}`, async ({ page }) => {
+      await page.goto(path);
+
+      const form = page.locator('#waitlist-form');
+      const nameInput = form.locator('#name');
+      const emailInput = form.locator('#email');
+      const companyInput = form.locator('#company');
+
+      // Verify input fields exist
+      await expect(nameInput).toBeVisible();
+      await expect(emailInput).toBeVisible();
+      await expect(companyInput).toBeVisible();
+
+      // Setup page route to capture submissions
+      let apiCalled = false;
+      await page.route('**/waitlist', async (route) => {
+        apiCalled = true;
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({ success: true }),
+        });
+      });
+
+      // 1. Submit with empty name (should not trigger API and show error if custom, or fail browser HTML5 validity check)
+      await nameInput.fill('');
+      await emailInput.fill('valid@example.com');
+      await companyInput.fill('Valid Company');
+      await form.locator('button[type="submit"], .form-submit').click();
+      await page.waitForTimeout(100);
+      expect(apiCalled).toBe(false);
+
+      // 2. Submit with invalid emails (testing strict validation regex: ^[^\s@]+@[^\s@]+\.[^\s@]+$)
+      const invalidEmails = [
+        'plainaddress',
+        '#@%^%#$@#$@#.com',
+        '@example.com',
+        'Joe Smith <email@example.com>',
+        'email.example.com',
+        'email@example@example.com',
+        'email@example',
+        'email@example.',
+        'email@.com'
+      ];
+
+      await nameInput.fill('John Doe');
+      await companyInput.fill('JD HVAC Services');
+
+      for (const invalidEmail of invalidEmails) {
+        apiCalled = false;
+        await emailInput.fill(invalidEmail);
+        await form.locator('button[type="submit"], .form-submit').click();
+        await page.waitForTimeout(100);
+        
+        // Assert API was not called
+        expect(apiCalled).toBe(false);
+      }
+
+      // 3. Test valid email formats matching the regex
+      const validEmails = [
+        'email@example.com',
+        'firstname.lastname@example.com',
+        'email@subdomain.example.com',
+        'first.last+sub@example.co.uk'
+      ];
+
+      for (const validEmail of validEmails) {
+        apiCalled = false;
+        await emailInput.fill(validEmail);
+        await form.locator('button[type="submit"], .form-submit').click();
+        await page.waitForTimeout(200); // Allow browser client fetch to start
+        expect(apiCalled).toBe(true);
+      }
+    });
+  }
+
+  // [AC-4]: Action-Oriented CTA & Sanitized Simulator Link
+  test('[AC-4] Action-Oriented CTA & Safe Simulator Redirection URL Construction', async ({ page }) => {
     // Intercept client-side fetch to /waitlist to simulate success
     await page.route('**/waitlist', async (route) => {
       await route.fulfill({
@@ -131,40 +253,37 @@ test.describe('SEO/GEO Conversion and Waitlist Enhancements', () => {
 
     await page.goto('/hvac-dispatch-software');
 
-    // [AC-4] Submit button has action-oriented text
-    const submitButton = page.locator('#waitlist-form button[type="submit"], #waitlist-form .form-submit');
+    const form = page.locator('#waitlist-form');
+    const submitButton = form.locator('button[type="submit"], .form-submit');
+    
+    // Button must have action-oriented text
     await expect(submitButton).toHaveText('Join Waitlist & Try Simulator');
 
-    // [AC-4] A small helper text or sublabel indicates instant access to interactive SMS simulator
-    const helperTextElement = page.locator('#waitlist-help, .waitlist-help');
-    await expect(helperTextElement).toBeVisible();
-    const helperText = await helperTextElement.innerText();
-    expect(helperText).toMatch(/instant access|SMS simulator|simulator/i);
-
-    // [AC-3] Fill in waitlist details
-    const testEmail = 'john.doe@company.com';
-    await page.fill('#name', 'John Doe');
-    await page.fill('#email', testEmail);
-    await page.fill('#company', 'JD AC Services');
+    // Enter special characters inside email to test safe URL reconstruction
+    const specialEmail = 'test+user&admin=true@example.com';
+    await form.locator('#name').fill('John Doe');
+    await form.locator('#email').fill(specialEmail);
+    await form.locator('#company').fill('JD HVAC Services');
 
     // Submit form
     await submitButton.click();
 
-    // [AC-3] Success message shows standard waitlist success string
+    // Verify success message container
     const statusElement = page.locator('#waitlist-status');
     await expect(statusElement).toBeVisible();
     await expect(statusElement).toHaveClass(/success/);
     await expect(statusElement).toContainText("Thanks! You're on the waitlist. We'll be in touch soon.");
 
-    // [AC-3] Check for prominent, visible link pointing to /setup?email=[USER_EMAIL] (URL-encoded)
-    const ctaLink = statusElement.locator('a');
+    // Check for prominent, visible simulator link built using URL API to avoid injection
+    const ctaLink = statusElement.locator('a.waitlist-setup-link');
     await expect(ctaLink).toBeVisible();
-    const expectedHref = `/setup?email=${encodeURIComponent(testEmail)}`;
+
+    const expectedHref = `/setup?email=${encodeURIComponent(specialEmail)}`;
     await expect(ctaLink).toHaveAttribute('href', expectedHref);
   });
 
   // [AC-5]: Offline Test Resilience (Fastify Server DB Fallback)
-  test('[AC-5] Offline Resilience: server fallback saves lead to in-memory array when database is offline', async ({ request }) => {
+  test('[AC-5] Offline Resilience: Fastify server fallback stores lead in-memory when DB is unreachable', async ({ request }) => {
     if (process.env.DATABASE_URL) {
       test.skip('DATABASE_URL is set, skipping offline database fallback test');
       return;
