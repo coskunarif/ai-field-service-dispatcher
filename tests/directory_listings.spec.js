@@ -6,6 +6,10 @@
 import { test, expect } from '@playwright/test';
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Helper to parse CSV simply but correctly
 function parseCsv(filePath) {
@@ -57,9 +61,9 @@ function parseCsv(filePath) {
 
 test.describe('GainHelm Directory Distribution validation', () => {
 
-  const csvPath = path.resolve('/home/ubuntuadmin/projects/ai-field-service-dispatcher/reports/gainhelm-gsc/submission-tracker.csv');
-  const scriptPath = path.resolve('/home/ubuntuadmin/projects/ai-field-service-dispatcher/scripts/directory_submitter.js');
-  const evidenceDir = path.resolve('/home/ubuntuadmin/projects/ai-field-service-dispatcher/reports/gainhelm-gsc/evidence');
+  const csvPath = path.resolve(__dirname, '../reports/gainhelm-gsc/submission-tracker.csv');
+  const scriptPath = path.resolve(__dirname, '../scripts/directory_submitter.js');
+  const evidenceDir = path.resolve(__dirname, '../reports/gainhelm-gsc/evidence');
 
   /**
    * [AC-1] Tracker Update
