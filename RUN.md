@@ -1,6 +1,6 @@
 task: we still dont have enough CTA in google search console, and no one is waitlist. we have to get more traction.              tier: T2   creativity: 0.5
-state: SHIP                 budget: repairs 0/3
-branch: asf/20260619-waitlist-conversion          checkpoint: none
+state: complete                 budget: repairs 0/3
+branch: asf/20260619-waitlist-conversion          checkpoint: asf/20260619-waitlist-conversion/green-1
 caps: agents,ui,web,human
 
 ## Task
@@ -19,6 +19,8 @@ caps: agents,ui,web,human
 - 2026-06-19 Conductor: Builder completed all slices. Advanced to VERIFY phase. Output path: asf/20260619-waitlist-conversion branch, elapsed time: 24m
 - 2026-06-19 Verifier: spawned background dev server on port 3005 (task-147).
 - 2026-06-19 Conductor: Verifier passed. Advanced to SHIP phase. Output path: dogfood-output/20260619-waitlist-conversion/, elapsed time: 8m
+- 2026-06-19 Shipper: Tagged verified state `asf/20260619-waitlist-conversion/green-1`. Opened PR, closed ledger, merged branch, and verified deployment success and health check.
+
 ## Verdict
 
 ### Deterministic Tests & Builds
@@ -38,3 +40,25 @@ caps: agents,ui,web,human
 **Summary**: PASS. All checks successfully verified against SPEC.md. Detailed dogfood report and screenshot evidence recorded under `dogfood-output/20260619-waitlist-conversion/`.
 
 ## Done
+### Shipped Features
+The waitlist forms on the homepage and all trade-specific landing pages have been migrated above the fold, replacing weak action buttons. Footer duplicate forms are deprecated and replaced with links that scroll back to `#top`, ensuring only a single form exists per page and resolving duplicate DOM ID warnings. Forms implement strict input validation and sanitization, and the server includes transient database fallback capabilities to prevent lead loss.
+
+### Acceptance Criteria & Verification Evidence
+
+| Acceptance Criteria (AC) | Verification Method | Status / Result |
+| :--- | :--- | :--- |
+| **[AC-1] Above-Fold Landing Pages** | Inspection & E2E tests checking HVAC page structure | PASS / Hero form active; footer deprecated |
+| **[AC-2] Above-Fold Homepage Form** | Inspection of Hero/CTA components & SEO/GEO audit script | PASS / Single hero form; CTA button scrolls up |
+| **[AC-3] Input Fields & Validation** | Submitting with empty and invalid emails | PASS / Frontend regex validation blocks invalid data |
+| **[AC-4] Action-Oriented CTA & URL** | Submitting lead and checking redirect parameter | PASS / CTA text correct, URL safely constructed |
+| **[AC-5] Transient DB Resilience** | Post requests to `/waitlist` while database is stopped | PASS / In-memory backup records the lead successfully |
+
+### Integration details
+- **PR Link**: [PR #5](https://github.com/coskunarif/ai-field-service-dispatcher/pull/5)
+- **Integration Method**: `gh pr merge --squash`
+- **Verified green tag**: `asf/20260619-waitlist-conversion/green-1`
+- **Deployment target**: Google Cloud Run (`gainhelm-web`)
+- **Deployment check status**: PASS
+
+### UI Screenshot Evidence
+![Homepage Hero Above-Fold Form](dogfood-output/20260619-waitlist-conversion/screenshots/desktop-homepage-hero.png)
