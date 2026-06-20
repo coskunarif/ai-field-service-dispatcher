@@ -1,5 +1,5 @@
 task: Increase landing page waitlist submissions by optimizing CTA visibility above the fold. moves: waitlist conversion rate. why: 25+ landing pages lack above-the-fold CTA forms. runner-up: Increase homepage CTA clicks with an interactive simulator.              tier: T2   creativity: 0.5
-state: VERIFY                 budget: repairs 0/3
+state: SHIP                   budget: repairs 0/3
 branch: asf/20260620-cta-visibility          checkpoint: none
 caps: agents,ui,web,human
 
@@ -9,6 +9,7 @@ caps: agents,ui,web,human
 - 2026-06-20 Conductor: Architect completed SPEC.md and addressed objections. Advanced to TESTER phase. Output path: SPEC.md, elapsed time: 4m
 - 2026-06-20 Conductor: Tester completed tests (tests updated, observed red baseline). Advanced to BUILD phase. Output path: tests/seo_conversion.spec.js, elapsed time: 14m
 - 2026-06-20 Conductor: Builder completed all slices. Advanced to VERIFY phase. Output path: asf/20260620-cta-visibility branch, elapsed time: 25m
+- 2026-06-20 Conductor: Verifier passed. Advanced to SHIP phase. Output path: dogfood-output/scout-2026-06-20/, elapsed time: 8m
 ## Verdict
 - **Check: Deterministic Tests (Pass)**: Full test suite ran sequentially (`npx playwright test --workers=1`) and all 200 tests passed (specifically all 127 conversion/waitlist tests in `tests/seo_conversion.spec.js`).
 - **Check: Above-the-Fold Form Layout [AC-1] (Pass)**: Verified that each optimized page contains exactly one form inside the hero section, and duplicate footer forms have been removed.
