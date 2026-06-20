@@ -3,39 +3,39 @@ import { test, expect } from '@playwright/test';
 const targets = {
   '/hvac-dispatch-software': {
     title: 'Best HVAC Dispatch Software | Gainhelm',
-    description: 'Gainhelm helps HVAC teams schedule calls, assign technicians, and keep the board readable on iPad or mobile.'
+    description: 'Gainhelm helps HVAC teams schedule service calls, assign technicians, cut phone tag, and keep the dispatch board readable on iPad or mobile. Join the waitlist today.'
   },
   '/plumbing-dispatch-software': {
     title: 'Plumbing Dispatch Software for Service Calls | Gainhelm',
-    description: 'Gainhelm helps plumbing teams schedule service calls, assign plumbers, and keep the day organized.'
+    description: 'Gainhelm helps plumbing teams schedule service calls, assign plumbers, streamline dispatching, and keep the scheduling board organized on mobile. Join our waitlist.'
   },
   '/field-service-scheduling': {
     title: 'Field Service Scheduling Software | Gainhelm',
-    description: 'Gainhelm helps field service teams book jobs, dispatch technicians, and keep work organized.'
+    description: 'Gainhelm helps field service teams book jobs, dispatch technicians, streamline scheduling workflows, and keep customer updates organized in one dashboard.'
   },
   '/tree-service-dispatch-software': {
     title: 'Tree Service Dispatch Software | Gainhelm',
-    description: 'Gainhelm helps tree service crews schedule jobs, assign arborists, and manage work orders.'
+    description: 'Gainhelm helps tree service crews schedule jobs, assign arborists, manage work orders, and coordinate dispatch schedules on iPad or mobile devices. Join now.'
   },
   '/septic-service-dispatch-software': {
     title: 'Septic Service Dispatch & Scheduling Software | Gainhelm',
-    description: 'Gainhelm helps septic teams schedule pumpings, dispatch technicians, and coordinate tank cleanings.'
+    description: 'Gainhelm helps septic teams schedule pumpings, dispatch technicians, coordinate tank cleanings, and keep customer service histories organized in one place.'
   },
   '/carpet-cleaning-dispatch-software': {
     title: 'Carpet Cleaning Dispatch & Scheduling Software | Gainhelm',
-    description: 'Gainhelm helps carpet cleaning teams schedule service calls, coordinate crews, and dispatch technicians.'
+    description: 'Gainhelm helps carpet cleaning teams schedule service calls, coordinate crews, dispatch technicians, and manage booking calendars in one simple interface.'
   },
   '/emergency-restoration-dispatch-software': {
     title: 'Emergency Restoration Dispatch & Job Software | Gainhelm',
-    description: 'Gainhelm helps disaster restoration teams schedule emergency calls, dispatch technicians, and manage jobs.'
+    description: 'Gainhelm helps disaster restoration teams schedule emergency calls, dispatch technicians, manage jobs, and coordinate field crews during high-stress projects.'
   },
   '/locksmith-dispatch-software': {
     title: 'Locksmith Dispatch & Scheduling Software | Gainhelm',
-    description: 'Gainhelm helps locksmith teams dispatch locksmiths, schedule jobs, and track work orders.'
+    description: 'Gainhelm helps locksmith teams dispatch locksmiths, schedule emergency jobs, track work orders, and coordinate field technicians in real-time. Join the waitlist.'
   },
   '/electrical-dispatch-software': {
     title: 'Electrical Contractor Scheduling & Dispatch Software | Gainhelm',
-    description: 'Gainhelm helps electrical contractors schedule jobs, dispatch technicians, and coordinate service calls.'
+    description: 'Gainhelm helps electrical contractors schedule jobs, dispatch technicians, coordinate service calls, and eliminate office-to-field phone tag. Try the dispatch simulator.'
   },
   '/appliance-repair-dispatch-software': {
     title: 'Appliance Repair Dispatch Software | Gainhelm',

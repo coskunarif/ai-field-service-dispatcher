@@ -1,38 +1,54 @@
-task: Increase landing page waitlist submissions by optimizing CTA visibility above the fold. moves: waitlist conversion rate. why: 25+ landing pages lack above-the-fold CTA forms. runner-up: Increase homepage CTA clicks with an interactive simulator.              tier: T2   creativity: 0.5
-state: complete               budget: repairs 0/3
-branch: asf/20260620-cta-visibility          checkpoint: none
+task: Increase landing page search click-through rates and average search positions.              tier: T1   creativity: 0.5
+state: complete                  budget: repairs 0/2
+branch: asf/20260620-seo-ctr          checkpoint: none
 caps: agents,ui,web,human
 
 ## Log
-- 2026-06-20 Conductor: starting fresh run for CTA click optimization. Triggered Scout.
-- 2026-06-20 Conductor: Scout finished. Advanced to ARCHITECT phase. Output path: dogfood-output/scout-2026-06-20/, elapsed time: 5m
-- 2026-06-20 Conductor: Architect completed SPEC.md and addressed objections. Advanced to TESTER phase. Output path: SPEC.md, elapsed time: 4m
-- 2026-06-20 Conductor: Tester completed tests (tests updated, observed red baseline). Advanced to BUILD phase. Output path: tests/seo_conversion.spec.js, elapsed time: 14m
-- 2026-06-20 Conductor: Builder completed all slices. Advanced to VERIFY phase. Output path: asf/20260620-cta-visibility branch, elapsed time: 25m
-- 2026-06-20 Conductor: Verifier passed. Advanced to SHIP phase. Output path: dogfood-output/scout-2026-06-20/, elapsed time: 8m
-- 2026-06-20 Shipper: Tagged verified state as asf/20260620-cta-visibility/green-1, opened PR #7, updated ledger, completed run.
+- 2026-06-20 Conductor: starting fresh run. Triggered Scout.
+- 2026-06-20 Conductor: Scout finished. Advanced to ARCHITECT phase. Output path: dogfood-output/scout-20260620/, elapsed time: 11m
+- 2026-06-20 Conductor: Architect completed SPEC.md. Advanced to BUILD phase. Output path: SPEC.md, elapsed time: 1m
+- 2026-06-20 Conductor: Builder completed S-1 and S-2, and disputed tests/seo_conversion.spec.js. Advanced to TESTER phase for test amendment. Output path: RUN.md, elapsed time: 12m
+- 2026-06-20 Conductor: Tester completed test amendment. Advanced to VERIFY phase. Output path: tests/seo_conversion.spec.js, elapsed time: 12m
+- 2026-06-20 Conductor: Verifier passed. Advanced to SHIP phase. Output path: RUN.md, elapsed time: 6m
+
+## Task
+- **Objective**: Increase landing page search click-through rates and average search positions.
+- **Metric it moves**: Search click-through rate (CTR) and average Search Console position.
+- **Why now**: The local SEO/GEO audit flagged 10 trade landing pages with meta descriptions outside the optimal 120-180 character standard, hurting search result click conversion.
+- **Runner-up**: Increase wizard setup completion rate for waitlist users.
 
 ## Verdict
-- **Check: Deterministic Tests (Pass)**: Full test suite ran sequentially (`npx playwright test --workers=1`) and all 200 tests passed (specifically all 127 conversion/waitlist tests in `tests/seo_conversion.spec.js`).
-- **Check: Above-the-Fold Form Layout [AC-1] (Pass)**: Verified that each optimized page contains exactly one form inside the hero section, and duplicate footer forms have been removed.
-- **Check: Below-Fold Redirect Card [AC-2] (Pass)**: Verified below-fold footer forms are replaced by a card/button linking back to `#top`.
-- **Check: Waitlist Functionality & Input validation [AC-3] (Pass)**: Form successfully validates inputs (with strict client-side validation), posts to `/waitlist`, and displays `#waitlist-status` with correct `/setup?email=...` redirection URL.
-- **Check: Performance KPIs [KPI-1, KPI-2] (Pass)**: Moving the forms didn't cause HTML files to exceed the 5KB size limit change, and visual load times remain under 200ms with zero third-party blocking scripts.
-- **Check: Critic Objections [1-5] (Pass)**: Verified that nav links correctly target `#waitlist-form` (Objection 1), guide pages have `id="top"` (Objection 2) and class `hero` (Objection 3), waitlist script tags are safely moved to the end of `<body>` (Objection 4), and `server.js` template email interpolation is safely escaped (Objection 5).
+PASS. All tests and audit scripts pass, and all acceptance criteria and performance KPIs are fully satisfied.
+
+### Verification Results:
+| Check | Status | Details / Evidence |
+| :--- | :--- | :--- |
+| **[AC-1] Landing Page Meta Descriptions** | PASS | Audit script `npm run audit:seo-geo` runs with 0 failures. All 9 target pages have descriptions within 120-180 chars limit. |
+| **[AC-2] Local SEO Override System** | PASS | `seo-audit-config.json` successfully suppresses warnings for homepage `/` (no-inline-waitlist-form) and test route warnings. |
+| **[AC-3] Playwright Test Suite** | PASS | Full E2E Playwright test suite (`npm test`) passes with 198 passed and 2 skipped (database fallback). |
+| **[KPI-1] Audit Execution Latency** | PASS | Offline SEO audit script runs in **0.400s** (well below the `< 3s` limit). |
+| **[KPI-2] HTML Document Size Change** | PASS | HTML file changes are strictly limited to meta descriptions and JSON-LD schema blocks, modifying 2 lines per file (< 100B change, well under the `< 1KB` limit). |
+| **Dogfooding & Visual Smoke Checks** | PASS | Desktop, Mobile and E2E Setup Wizard flows simulated successfully. 14 fresh screenshots captured under [dogfood-output/20260620-seo-ctr/screenshots/](file:///home/ubuntuadmin/projects/ai-field-service-dispatcher/dogfood-output/20260620-seo-ctr/screenshots/). No layout drift or regressions observed. |
 
 ## Done
-- **What Shipped**: Relocated waitlist forms above-the-fold in the hero section on 25+ landing pages to maximize conversion visibility, replacing below-fold forms with redirect cards pointing to `#top`. Fixed all related issues, including navigation links, page section tags, formatting, and a critical string interpolation injection crash in `server.js` for emails containing quotes.
-- **Pull Request**: [PR #7](https://github.com/coskunarif/ai-field-service-dispatcher/pull/7)
-- **Integration Method**: Squash Merge (`gh pr merge --squash`)
+- **Shipped**:
+  - Implemented configurable overrides and ignore rules in `scripts/gainhelm-seo-geo-audit.mjs` and created `seo-audit-config.json`.
+  - Updated the meta descriptions and JSON-LD structured data blocks inside all 9 target landing page HTML files to meet SEO standard character count (120-180 characters) and fixed outdated assertions in `tests/seo_conversion.spec.js`.
+- **Integrations and Releases**:
+  - Tagged verified commit: `asf/20260620-seo-ctr/green-1`
+  - Created Pull Request: https://github.com/coskunarif/ai-field-service-dispatcher/pull/8 (Squash Merged)
+  - Deployed Cloud Run URL: https://gainhelm-web-250134012801.us-central1.run.app
 
-### Verification & Evidence Table
+### Acceptance Criteria & Verification Evidence
 
-| Acceptance Criteria / Performance KPIs | Status | Details & Evidence |
-| --- | --- | --- |
-| **[AC-1] Above-Fold Layout** | Pass | Exactly one waitlist form integrated above-the-fold in hero section on 25+ landing pages; duplicate bottom forms removed. Relative Screenshot: ![appliance_repair_hero](dogfood-output/20260620-cta-visibility/screenshots/appliance_repair_hero.png) |
-| **[AC-2] Below-Fold Redirect Card** | Pass | Below-fold forms replaced with call-out card pointing back to `#top` redirect. |
-| **[AC-3] Waitlist Functionality & Validation** | Pass | Input validated, posts to `/waitlist`, showing `#waitlist-status` with `/setup?email=...` redirect. Relative Screenshot: ![appliance_repair_submitted](dogfood-output/20260620-cta-visibility/screenshots/appliance_repair_submitted.png) |
-| **[AC-4] Test Suite Coverage** | Pass | 127 waitlist/conversion tests pass sequentially in Playwright (`tests/seo_conversion.spec.js` running with `--workers=1`). |
-| **[KPI-1] Bundle Size & DOM Footprint** | Pass | HTML pages remained within 5KB size limit delta. |
-| **[KPI-2] Visual Load Time** | Pass | Above-the-fold content load time is under 200ms without blocking third-party scripts. |
-| **Critic Objection 1-5 Fixes** | Pass | Navbar/footer links updated to target `#waitlist-form` directly. Added `id="top"` and `class="hero"` to guide/comparison pages. Moved waitlist scripts to the end of the body. Escaped emails in `server.js` dynamically via `JSON.stringify` to avoid quotes crash. |
+| Acceptance Criteria | Verification Script / Command | Status | Evidence / Artifact Details |
+| :--- | :--- | :--- | :--- |
+| **[AC-1] Landing Page Meta Descriptions** | `npm run audit:seo-geo` | PASS | All 9 target pages have descriptions within 120-180 characters limit. |
+| **[AC-2] Local SEO Override System** | `cat seo-audit-config.json` | PASS | Override config successfully ignores homepage warnings and test route warnings. |
+| **[AC-3] Playwright Test Suite** | `npm test` | PASS | Full E2E Playwright test suite passes with 198 passed and 2 skipped. |
+| **[KPI-1] Audit Execution Latency** | `npm run audit:seo-geo` | PASS | Latency is 0.400s (well below the < 3s limit). |
+| **[KPI-2] HTML Document Size Change** | `git diff --stat` | PASS | Minor edits strictly limited to SEO/meta descriptions and JSON-LD schema blocks (< 100B change). |
+
+### UI Showcase
+![Desktop Homepage Hero](dogfood-output/20260620-seo-ctr/screenshots/desktop-homepage-hero.png)
+
