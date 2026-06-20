@@ -15,5 +15,8 @@ caps: agents,ui,web,human
 - **Runner-up**: Increase wizard setup completion rate for waitlist users.
 
 ## Verdict
+- tests/seo_conversion.spec.js: targets mapping uses outdated meta descriptions; contradicts the optimized Interface Contract in SPEC.md.
 
 ## Done
+- S-1: Implement configurable overrides and ignore rules support in scripts/gainhelm-seo-geo-audit.mjs and create seo-audit-config.json.
+- S-2: Update the meta descriptions and JSON-LD structured data blocks inside all 9 target landing page HTML files. (DISPUTED tests/seo_conversion.spec.js as it uses outdated meta descriptions).
