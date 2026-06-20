@@ -1,138 +1,126 @@
-# Specification: Waitlist Conversion & GSC Traction Optimization
+# SPEC: Optimize CTA Visibility on Landing Pages
 
-Objective: Increase landing page waitlist conversion rate and Google Search Console click volume by replacing passive above-fold CTAs with inline forms, resolving missing homepage waitlist forms, and mitigating late-stage waitlist forms.
-
-## 🖼️ Design Mockup
-Below is the modern, premium glassmorphic hero design with an inline, above-the-fold waitlist form:
-
-![Hero Waitlist Form Mockup](/home/ubuntuadmin/gemini/antigravity-cli/brain/98eb23ef-90de-4dd2-b8b8-571104e3d579/hero_waitlist_form_1781885683246.jpg)
+## Objective
+Increase waitlist conversion rates by moving waitlist forms above-the-fold inside the hero section on all remaining 25+ landing pages, aligning them with the patterns of the 9 already optimized landing pages.
 
 ---
 
-## 🎯 Acceptance Criteria
+## Acceptance Criteria
 
-- **[AC-1] Above-Fold Landing Page Forms (Unique ID)**: Every target trade-specific landing page (listed in `tests/seo_conversion.spec.js`) must feature an inline waitlist form (`<form id="waitlist-form">`) located in the above-the-fold hero copy column, replacing the old `hero-actions` links. The old duplicate footer forms must be replaced with a standard call-out card and a button linking back to `#top`, ensuring only a single `#waitlist-form` exists on the page.
-- **[AC-2] Above-Fold Homepage Form (Single Instance)**: The homepage (`index.html`, source component `redesign-temp/src/components/Hero.tsx`) must feature an inline waitlist form (`<form id="waitlist-form">`) in the hero section above the fold. The duplicate form inside the `<CTA />` component must be deprecated and replaced with a button that scrolls back to the top/hero form, resolving the SEO audit warnings for `/` and preventing DOM ID duplication.
-- **[AC-3] Form Input Fields, Validation & Sanitization**: Every waitlist form must contain the following fields with matching IDs:
-  - Full Name (`<input id="name">`)
-  - Work Email (`<input id="email">`)
-  - Company Name (`<input id="company">`)
-  Forms must enforce strict client-side validation (regex check `^[^\s@]+@[^\s@]+\.[^\s@]+$`) and input sanitization before processing.
-- **[AC-4] Action-Oriented CTA & Sanitized Simulator Link**: The submit button must use the text `Join Waitlist & Try Simulator`. On successful submission, the form must display a success status (`#waitlist-status`). The simulator link inside the success block must be constructed safely using the browser's `URL` API and `searchParams.set()` to prevent protocol injection: `/setup?email=[USER_EMAIL]`.
-- **[AC-5] Transient DB Resilience & Test Passes**:
-  - The Fastify `/waitlist` POST handler must handle postgres queries gracefully, catching any connection errors and falling back automatically to the in-memory store so that transient database restarts or drops do not cause 500 server errors or lead loss.
-  - The local SEO audit script (`npm run audit:seo-geo`) and Playwright test suite (`npm test`) must pass with zero failures.
+### [AC-1] Above-the-Fold Waitlist Form Layout
+Every HTML landing page in the repository must feature exactly one waitlist form located above-the-fold inside the hero section (`.hero-layout`, `.hero-copy`, or `.hero`). Any duplicate or secondary forms in the lower/footer sections of the page must be removed.
 
----
+### [AC-2] Below-Fold Redirect Card
+The lower part of every landing page (where the form was originally located) must now feature a standard call-out card and a button/link pointing back to `#top` (e.g., `<a href="#top" class="cta-primary">Back to Sign-Up Form</a>` or similar) to guide users back to the sign-up form.
 
-## 📊 Performance KPIs
+### [AC-3] Waitlist Form Functionality & Input Contracts
+The waitlist forms must support standard input validation and successfully post to the `/waitlist` endpoint. After submission, a successful status block (`#waitlist-status`) must be displayed containing a link directing the user to `/setup?email=...`.
 
-- **[KPI-1] DomContentLoaded Latency**: Under 150ms on all landing pages and the homepage under simulated Fast 3G throttling.
-- **[KPI-2] HTML Bundle Size**: The compiled homepage single-file bundle (`index.html`) must remain under 450 KB.
+### [AC-4] Test Suite Coverage
+The Playwright test suites (specifically `tests/seo_conversion.spec.js`) must be expanded to include all optimized landing pages in the above-the-fold forms test targets, and all tests must pass sequentially with a single worker (`--workers=1`).
 
 ---
 
-## 🔌 Interface Contract
+## Performance KPIs
 
-The Builder and Tester must adhere to the following shared selectors, files, and variables:
+### [KPI-1] Bundle Size & DOM footprint
+Moving the forms above the fold must not increase individual HTML page size by more than 5KB.
 
-### Target Files to Modify
-- **Styles**: [styles.css](file:///home/ubuntuadmin/projects/ai-field-service-dispatcher/styles.css)
-- **Homepage Components**:
-  - [Hero.tsx](file:///home/ubuntuadmin/projects/ai-field-service-dispatcher/redesign-temp/src/components/Hero.tsx)
-  - [CTA.tsx](file:///home/ubuntuadmin/projects/ai-field-service-dispatcher/redesign-temp/src/components/CTA.tsx)
-- **Backend Routing**: [server.js](file:///home/ubuntuadmin/projects/ai-field-service-dispatcher/server.js)
-- **Target Landing Pages**: All static HTML files in the root folder, including:
-  - [hvac-dispatch-software.html](file:///home/ubuntuadmin/projects/ai-field-service-dispatcher/hvac-dispatch-software.html)
-  - [plumbing-dispatch-software.html](file:///home/ubuntuadmin/projects/ai-field-service-dispatcher/plumbing-dispatch-software.html)
-  - [electrical-dispatch-software.html](file:///home/ubuntuadmin/projects/ai-field-service-dispatcher/electrical-dispatch-software.html)
-  - [septic-service-dispatch-software.html](file:///home/ubuntuadmin/projects/ai-field-service-dispatcher/septic-service-dispatch-software.html)
-  - [tree-service-dispatch-software.html](file:///home/ubuntuadmin/projects/ai-field-service-dispatcher/tree-service-dispatch-software.html)
-  - [carpet-cleaning-dispatch-software.html](file:///home/ubuntuadmin/projects/ai-field-service-dispatcher/carpet-cleaning-dispatch-software.html)
-  - [locksmith-dispatch-software.html](file:///home/ubuntuadmin/projects/ai-field-service-dispatcher/locksmith-dispatch-software.html)
-  - [emergency-restoration-dispatch-software.html](file:///home/ubuntuadmin/projects/ai-field-service-dispatcher/emergency-restoration-dispatch-software.html)
-  - [field-service-scheduling.html](file:///home/ubuntuadmin/projects/ai-field-service-dispatcher/field-service-scheduling.html)
-
-### HTML/DOM Selector Contracts
-- Form Element ID: `waitlist-form` (strictly one per page)
-- Name Input ID: `name`
-- Email Input ID: `email`
-- Company Input ID: `company`
-- Submit Button Class: `form-submit`
-- Success Message ID: `waitlist-status`
-- Success/Simulator Anchor Link class: `waitlist-setup-link`
-
-### Playwright Locator Isolation Rule
-To ensure robust, non-flaky test assertions:
-- All input interactions (`#name`, `#email`, `#company`) and click events must be scoped explicitly under the `#waitlist-form` locator (e.g. `page.locator('#waitlist-form').locator('#email')`).
+### [KPI-2] Visual Load Time
+Above-the-fold content load time must remain under 200ms with zero blocking third-party scripts.
 
 ---
 
-## 🚫 Out of Scope
+## Interface Contract
 
-- Modifying database schemas or writing sync scripts to migrate memory leads to postgres outside of simple runtime exception fallbacks.
-
----
-
-## 🙋 Critic Objections & Resolutions
-
-- **OBJ-1: DOM ID Duplication on Homepage (Hero vs. CTA)**
-  * *Resolution*: Deprecate the form fields and submission state inside [CTA.tsx](file:///home/ubuntuadmin/projects/ai-field-service-dispatcher/redesign-temp/src/components/CTA.tsx). Replace them with a simple text layout and an amber CTA button/link that scrolls the user back up to the hero waitlist form (`#top` or focus on email input), guaranteeing a single `#waitlist-form` instance on the page.
-- **OBJ-2: Unsanitized Redirection Parameter (`/setup?email=[USER_EMAIL]`)**
-  * *Resolution*: Enforce email validity via frontend regex. Construct redirect links using the browser's `URL` API (`new URL('/setup', window.location.origin)`) and set query params via `searchParams.set()`, guaranteeing safe output formats and preventing protocol injection.
-- **OBJ-3: Flaky/Ambiguous Playwright Test Locators**
-  * *Resolution*: Standardized contextual element isolation in the Interface Contract. The test suite will locate inputs inside `page.locator('#waitlist-form')` specifically.
-- **OBJ-4: Transient Database Disconnects during Waitlist Submission**
-  * *Resolution*: Update the `/waitlist` POST route in `server.js` with a robust try/catch around SQL insertions. If SQL execution fails due to network issues or database downtime, catch the error, log a warning, fall back to in-memory tracking `inMemoryLeads.push(...)`, and return a successful `200` response to the client.
-- **OBJ-5: Single-File Compilation Size Limits and Vite Asset Bundling**
-  * *Resolution*: Explicitly import individual `lucide-react` icons (e.g. `import ArrowRight from 'lucide-react/dist/esm/icons/arrow-right'`) to enable Vite's tree-shaking mechanism, ensuring the final compiled bundle remains well under the 450 KB ceiling.
+- **Form Element ID**: `#waitlist-form`
+- **Input Fields**:
+  - `#name` (text, required/optional as per existing page pattern)
+  - `#email` (email, required, strict client-side validation check)
+  - `#company` (text, optional)
+- **Status Container**: `#waitlist-status` (with standard styling classes like `success`, `error`, `pending`)
+- **Backend API Endpoint**: `POST /waitlist`
+- **Setup Redirection Link Target**: `/setup?email=...`
 
 ---
 
-## 🍰 Vertical Slices
+## Out of Scope
+- Redesigning the home page (`/`) layout or style rules inside `styles.css`.
+- Backend database modifications or new database tables.
+- Adding third-party tracking pixels or script tags.
 
-Slices represent implementation code only. Verification tests are handled by the Tester.
+---
 
-### `[S-1]` CSS & Stylesheet Rules for Above-Fold Forms
-- **Description**: Add CSS rules in `styles.css` to accommodate inline waitlist forms in the hero columns. Ensure form elements stack on mobile and span dual columns neatly on desktop.
-- **Type**: Refinement
-- **Independent**: Yes
-- **Files**: [styles.css](file:///home/ubuntuadmin/projects/ai-field-service-dispatcher/styles.css)
-- **AC Coverage**: `[AC-1]`, `[AC-3]`
+## Objections
 
-### `[S-2]` HVAC Landing Page Above-Fold Migration (Spike Slice)
-- **Description**: Migrate the waitlist form from the footer section to the above-the-fold hero section in `hvac-dispatch-software.html`. Replace the footer form with a card containing a button/link scrolling back to the top of the page. Integrate strict client-side regex check and safe URL parameter building.
-- **Type**: Refinement
-- **Independent**: No
-- **Files**: [hvac-dispatch-software.html](file:///home/ubuntuadmin/projects/ai-field-service-dispatcher/hvac-dispatch-software.html)
-- **AC Coverage**: `[AC-1]`, `[AC-3]`, `[AC-4]`
+- **Critic Objection 1: Usability Loop for Navbar and Footer Links**
+  - *Detail:* Header nav, footer, and hero-action buttons ("Join the waitlist") originally point to `#waitlist`. If the bottom `#waitlist` section is replaced with a card pointing to `#top`, users clicking these links will scroll to the bottom only to be told to click another link to go back to the top.
+  - *Resolution:* Update all navigation links (header nav, footer links, hero-action CTA buttons) that link to `#waitlist` to point directly to `#waitlist-form` instead. Focus/smooth-scroll should target `#waitlist-form`.
+  
+- **Critic Objection 2: Dead Anchor Links on Guide/Comparison Pages**
+  - *Detail:* Guide/comparison pages (`how-hvac-dispatch-apps-reduce-phone-tag.html`, `how-to-choose-hvac-dispatch-app.html`, `hvac-dispatch-app-vs-spreadsheets.html`, and `mobile-dispatch-board.html`) don't contain an element with `id="top"`. Clicking "Join the Waitlist (Go to Top)" pointing to `#top` will do nothing/fail to scroll.
+  - *Resolution:* Explicitly add `id="top"` to the top-level `<section>` or `<main>` elements in all 4 guide and comparison pages, matching the structure of the other landing pages.
+  
+- **Critic Objection 3: CSS Selection and Styling Failure in `how-to-choose-hvac-dispatch-app.html`**
+  - *Detail:* The top hero block is an unclassed `<section>` instead of `<section class="hero">` or `<section class="hero-layout">`. Nesting `#waitlist-form` there will fail to match global CSS styling.
+  - *Resolution:* Add `class="hero"` to the top-level `<section>` of `how-to-choose-hvac-dispatch-app.html`.
 
-### `[S-3]` Above-Fold Forms on Remaining Landing Pages
-- **Description**: Replicate the above-fold form migration across the remaining target industry landing pages, replacing duplicate footer forms with scroll-to-top links.
-- **Type**: Refinement
-- **Independent**: Yes
-- **Files**: Remaining landing page HTML files in the project root.
-- **AC Coverage**: `[AC-1]`, `[AC-3]`, `[AC-4]`
+- **Critic Objection 4: Client-Side JS Script Block Removal Hazard**
+  - *Detail:* Waitlist submission `<script>` tag is defined inside `<section id="waitlist">`. Replacing it with a simplified CTA card risks deleting the script.
+  - *Resolution:* Move the `<script>` tag out of the `#waitlist` section and place it directly before the closing `</body>` tag on all landing pages.
 
-### `[S-4]` Homepage Hero & CTA Components Waitlist Form
-- **Description**: Implement the above-fold waitlist form state, rendering, and API submission flow in `redesign-temp/src/components/Hero.tsx`. Deprecate the form fields inside `redesign-temp/src/components/CTA.tsx`, replacing them with a scroll-to-top button.
-- **Type**: Refinement
-- **Independent**: Yes
+- **Critic Objection 5: Syntax Errors/Code Injection from Unescaped E-mail Values**
+  - *Detail:* User email string interpolation (`email: '${email}'`) in dynamic JS responses on lines 2005 and 2107 in `server.js` will crash JS runtime for emails containing single quotes (e.g. `o'connor@company.com`).
+  - *Resolution:* Escape the single quotes or use `JSON.stringify(email)` to safely interpolate variables without causing client-side syntax errors.
+
+---
+
+## Slices
+
+### [S-1] Optimize Trade-Specific Landing Pages
+- **Description**: Move waitlist forms to the hero section (inside `.hero-copy` or `.hero-layout`), replace footer forms with back-to-top links pointing to `#top`, update header/footer links to point to `#waitlist-form` instead of `#waitlist`, move script block safely to the bottom of the body (outside the `#waitlist` section), and update script bindings on all remaining trade-specific pages.
 - **Files**:
-  - [Hero.tsx](file:///home/ubuntuadmin/projects/ai-field-service-dispatcher/redesign-temp/src/components/Hero.tsx)
-  - [CTA.tsx](file:///home/ubuntuadmin/projects/ai-field-service-dispatcher/redesign-temp/src/components/CTA.tsx)
-- **AC Coverage**: `[AC-2]`, `[AC-3]`, `[AC-4]`
-
-### `[S-5]` Transient Database Fallback in server.js
-- **Description**: Update the Fastify `/waitlist` POST route in `server.js` to catch database runtime connection exceptions and fall back to in-memory lead logging.
-- **Type**: Refinement
+  - [appliance-repair-dispatch-software.html](file:///home/ubuntuadmin/projects/ai-field-service-dispatcher/appliance-repair-dispatch-software.html)
+  - [pest-control-dispatch-software.html](file:///home/ubuntuadmin/projects/ai-field-service-dispatcher/pest-control-dispatch-software.html)
+  - [garage-door-dispatch-software.html](file:///home/ubuntuadmin/projects/ai-field-service-dispatcher/garage-door-dispatch-software.html)
+  - [cleaning-dispatch-software.html](file:///home/ubuntuadmin/projects/ai-field-service-dispatcher/cleaning-dispatch-software.html)
+  - [landscaping-dispatch-software.html](file:///home/ubuntuadmin/projects/ai-field-service-dispatcher/landscaping-dispatch-software.html)
+  - [roofing-dispatch-software.html](file:///home/ubuntuadmin/projects/ai-field-service-dispatcher/roofing-dispatch-software.html)
+  - [pool-service-dispatch-software.html](file:///home/ubuntuadmin/projects/ai-field-service-dispatcher/pool-service-dispatch-software.html)
+  - [commercial-facilities-dispatch-software.html](file:///home/ubuntuadmin/projects/ai-field-service-dispatcher/commercial-facilities-dispatch-software.html)
+  - [restoration-job-management-software.html](file:///home/ubuntuadmin/projects/ai-field-service-dispatcher/restoration-job-management-software.html)
+  - [handyman-dispatch-software.html](file:///home/ubuntuadmin/projects/ai-field-service-dispatcher/handyman-dispatch-software.html)
+- **ACs Mapped**: `[AC-1]`, `[AC-2]`, `[AC-3]`
 - **Independent**: Yes
-- **Files**: [server.js](file:///home/ubuntuadmin/projects/ai-field-service-dispatcher/server.js)
-- **AC Coverage**: `[AC-5]`
 
-### `[S-6]` Vite Compilation & Single-File Synchronization
-- **Description**: Execute Vite build in `redesign-temp`, copy `redesign-temp/dist/index.html` to root `index.html`, and confirm sitemap-wide audit pass.
-- **Type**: Refinement
-- **Independent**: No
-- **Files**: [index.html](file:///home/ubuntuadmin/projects/ai-field-service-dispatcher/index.html)
-- **AC Coverage**: `[AC-5]`
+### [S-2] Optimize Competitor Alternative Pages
+- **Description**: Move waitlist forms to the hero section, replace footer forms with back-to-top links pointing to `#top`, update header/footer links to point to `#waitlist-form` instead of `#waitlist`, move script block safely to the bottom of the body, and update script bindings on all competitor alternative pages.
+- **Files**:
+  - [servicetitan-alternative.html](file:///home/ubuntuadmin/projects/ai-field-service-dispatcher/servicetitan-alternative.html)
+  - [jobber-alternative.html](file:///home/ubuntuadmin/projects/ai-field-service-dispatcher/jobber-alternative.html)
+  - [housecallpro-alternative.html](file:///home/ubuntuadmin/projects/ai-field-service-dispatcher/housecallpro-alternative.html)
+  - [servicefusion-alternative.html](file:///home/ubuntuadmin/projects/ai-field-service-dispatcher/servicefusion-alternative.html)
+  - [buildops-alternative.html](file:///home/ubuntuadmin/projects/ai-field-service-dispatcher/buildops-alternative.html)
+  - [fieldedge-alternative.html](file:///home/ubuntuadmin/projects/ai-field-service-dispatcher/fieldedge-alternative.html)
+- **ACs Mapped**: `[AC-1]`, `[AC-2]`, `[AC-3]`
+- **Independent**: Yes
+
+### [S-3] Optimize Guides and Informational Pages
+- **Description**: Standardize `how-to-choose-hvac-dispatch-app.html` top section with `class="hero"`. Add `id="top"` to top-level section/main wrappers in all four guide/comparison files. Move waitlist forms to the hero section, replace footer forms with back-to-top links, update header/footer links to point to `#waitlist-form` instead of `#waitlist`, move script blocks to the bottom of the body, and update script bindings on guides and other sub-pages.
+- **Files**:
+  - [hvac-dispatch-app-vs-spreadsheets.html](file:///home/ubuntuadmin/projects/ai-field-service-dispatcher/hvac-dispatch-app-vs-spreadsheets.html)
+  - [how-to-choose-hvac-dispatch-app.html](file:///home/ubuntuadmin/projects/ai-field-service-dispatcher/how-to-choose-hvac-dispatch-app.html)
+  - [how-hvac-dispatch-apps-reduce-phone-tag.html](file:///home/ubuntuadmin/projects/ai-field-service-dispatcher/how-hvac-dispatch-apps-reduce-phone-tag.html)
+  - [mobile-dispatch-board.html](file:///home/ubuntuadmin/projects/ai-field-service-dispatcher/mobile-dispatch-board.html)
+  - [tools-facebook-post-generator.html](file:///home/ubuntuadmin/projects/ai-field-service-dispatcher/tools-facebook-post-generator.html)
+  - [tools-contractor-leads.html](file:///home/ubuntuadmin/projects/ai-field-service-dispatcher/tools-contractor-leads.html)
+  - [tools-lead-queue.html](file:///home/ubuntuadmin/projects/ai-field-service-dispatcher/tools-lead-queue.html)
+- **ACs Mapped**: `[AC-1]`, `[AC-2]`, `[AC-3]`
+- **Independent**: Yes
+
+### [S-4] Escaping E-mail inside server.js dynamically generated templates
+- **Description**: Replace single-quoted server-side template literals `'${email}'` on lines 2005 and 2107 in `server.js` with dynamic JSON stringification/escaping to prevent valid emails containing single quotes from throwing syntax errors on the client side.
+- **Files**:
+  - [server.js](file:///home/ubuntuadmin/projects/ai-field-service-dispatcher/server.js)
+- **ACs Mapped**: `[AC-3]`
+- **Independent**: Yes

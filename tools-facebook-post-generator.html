@@ -382,16 +382,39 @@ Gainhelm
 <a href="/">Home</a>
 <a href="/field-service-scheduling">Features</a>
 <a href="#how-it-works">How it works</a>
-<a href="#waitlist" class="nav-cta">Join the waitlist</a>
+<a href="#waitlist-form" class="nav-cta">Join the waitlist</a>
 </nav>
 </header>
 
 <main id="main-content" tabindex="-1" style="max-width: var(--container); margin: 0 auto; padding: 40px 24px;">
-  <div style="text-align: center; max-width: 700px; margin: 0 auto 30px;">
-    <div class="brand-chip" style="display: inline-block; margin-bottom: 16px;">Free Lead Magnet Tool</div>
-    <h1 style="font-size: 2.75rem; margin-bottom: 12px; font-weight: 900;">Facebook Post Generator for Local Trades</h1>
-    <p style="color: hsl(var(--text-2)); font-size: 1.15rem;">Create high-converting social media posts to grow your plumbing, HVAC, electrical, or home service business. Generate variations instantly.</p>
-  </div>
+    <section class="hero" id="top">
+    <div class="hero-layout">
+      <div class="hero-copy" style="max-width: 700px; margin: 0 auto 30px; text-align: center;">
+        <div class="brand-chip" style="display: inline-block; margin-bottom: 16px;">Free Lead Magnet Tool</div>
+        <h1 style="font-size: 2.75rem; margin-bottom: 12px; font-weight: 900;">Facebook Post Generator for Local Trades</h1>
+        <p style="color: hsl(var(--text-2)); font-size: 1.15rem; margin-bottom: 24px;">Create high-converting social media posts to grow your plumbing, HVAC, electrical, or home service business. Generate variations instantly.</p>
+        
+<form id="waitlist-form" action="/waitlist" method="post" data-api-url="/waitlist" novalidate>
+<div class="form-group">
+<label for="name">Full Name <span class="field-required" aria-hidden="true">*</span><span class="sr-only"> required</span></label>
+<input type="text" id="name" name="name" autocomplete="name" placeholder="John Smith" required aria-describedby="waitlist-status">
+</div>
+<div class="form-group">
+<label for="email">Work Email <span class="field-required" aria-hidden="true">*</span><span class="sr-only"> required</span></label>
+<input type="email" id="email" name="email" autocomplete="email" inputmode="email" placeholder="john@company.com" required aria-describedby="waitlist-help waitlist-status">
+</div>
+<div class="form-group">
+<label for="company">Company <span class="field-required" aria-hidden="true">*</span><span class="sr-only"> required</span></label>
+<input type="text" id="company" name="company" autocomplete="organization" placeholder="Your Company Name" required aria-describedby="waitlist-status">
+</div>
+<button type="submit" class="form-submit">Join Waitlist & Try Simulator</button>
+</form>
+<div id="waitlist-status" class="waitlist-status" role="status" aria-live="polite" hidden></div>
+<div id="waitlist-help" class="waitlist-help">Instant access to the interactive SMS simulator. We’ll only use this to follow up about early access.</div>
+
+      </div>
+    </div>
+  </section>
 
   <div class="tool-grid">
     <!-- INPUT FORM -->
@@ -517,20 +540,16 @@ Gainhelm
       <div class="brand-chip" style="display: inline-block; margin-bottom: 12px; background: hsl(var(--brand) / 0.15); color: hsl(var(--brand-2)); border: 1px solid hsl(var(--brand) / 0.3);">Gainhelm Dispatch Planner</div>
       <h2 class="lead-title">Turn Leads into Scheduled Work Orders Instantly</h2>
       <p class="lead-desc">Now that you've got leads coming in, stop wasting 3+ hours daily shuffling schedules. Let Gainhelm automate technician dispatching, cut phone tag, and keep your workday structured.</p>
-      
-      <form id="waitlist-form" class="lead-form-inline" action="/waitlist" method="POST">
-        <input type="text" name="name" placeholder="Your Name" required>
-        <input type="text" name="company" placeholder="Business Name" required>
-        <input type="email" name="email" placeholder="Work Email" required>
-        <button type="submit">Get Early Access</button>
-      </form>
+      <div class="cta-actions" style="margin-top: 24px; text-align: center;">
+        <a href="#top" class="form-submit" style="display: inline-flex; align-items: center; justify-content: center; text-decoration: none; max-width: 320px; margin: 0 auto;">Join the Waitlist (Go to Top)</a>
+      </div>
     </div>
   </div>
 </main>
 
 <div class="toast" id="toast">📋 Copied successfully!</div>
 
-<footer><div>© 2026 Gainhelm. Built for field service dispatch.</div><div class="footer-links"><a href="#waitlist">Join the waitlist</a> · <a href="/hvac-dispatch-software">HVAC</a> · <a href="/plumbing-dispatch-software">Plumbing</a> · <a href="/electrical-dispatch-software">Electrical</a> · <a href="/appliance-repair-dispatch-software">Appliance Repair</a> · <a href="/pest-control-dispatch-software">Pest Control</a> · <a href="/garage-door-dispatch-software">Garage Door</a> · <a href="/cleaning-dispatch-software">Cleaning</a> · <a href="/landscaping-dispatch-software">Landscaping</a> · <a href="/roofing-dispatch-software">Roofing</a> · <a href="/locksmith-dispatch-software">Locksmith</a> · <a href="/pool-service-dispatch-software">Pool Service</a> · <a href="/commercial-facilities-dispatch-software">Facilities</a> · <a href="/septic-service-dispatch-software">Septic</a> · <a href="/emergency-restoration-dispatch-software">Emergency Restoration</a> · <a href="/restoration-job-management-software">Restoration Jobs</a> · <a href="/handyman-dispatch-software">Handyman</a> · <a href="/carpet-cleaning-dispatch-software">Carpet Cleaning</a> · <a href="/tree-service-dispatch-software">Tree Service</a> · <a href="/field-service-scheduling">Scheduling</a> · <a href="/mobile-dispatch-board">Mobile Board</a> · <a href="/servicetitan-alternative">ServiceTitan Alt</a> · <a href="/jobber-alternative">Jobber Alt</a> · <a href="/housecallpro-alternative">Housecall Pro Alt</a> · <a href="/servicefusion-alternative">Service Fusion Alt</a> · <a href="/buildops-alternative">BuildOps Alt</a> · <a href="/fieldedge-alternative">FieldEdge Alt</a> · <a href="/hvac-dispatch-app-vs-spreadsheets">Compare</a> · <a href="/how-to-choose-hvac-dispatch-app">Buying Guide</a> · <a href="/how-hvac-dispatch-apps-reduce-phone-tag">Phone Tag Guide</a> · <a href="/sitemap.xml">sitemap.xml</a> · <a href="/llms.txt">llms.txt</a></div></footer>
+<footer><div>© 2026 Gainhelm. Built for field service dispatch.</div><div class="footer-links"><a href="#waitlist-form">Join the waitlist</a> · <a href="/hvac-dispatch-software">HVAC</a> · <a href="/plumbing-dispatch-software">Plumbing</a> · <a href="/electrical-dispatch-software">Electrical</a> · <a href="/appliance-repair-dispatch-software">Appliance Repair</a> · <a href="/pest-control-dispatch-software">Pest Control</a> · <a href="/garage-door-dispatch-software">Garage Door</a> · <a href="/cleaning-dispatch-software">Cleaning</a> · <a href="/landscaping-dispatch-software">Landscaping</a> · <a href="/roofing-dispatch-software">Roofing</a> · <a href="/locksmith-dispatch-software">Locksmith</a> · <a href="/pool-service-dispatch-software">Pool Service</a> · <a href="/commercial-facilities-dispatch-software">Facilities</a> · <a href="/septic-service-dispatch-software">Septic</a> · <a href="/emergency-restoration-dispatch-software">Emergency Restoration</a> · <a href="/restoration-job-management-software">Restoration Jobs</a> · <a href="/handyman-dispatch-software">Handyman</a> · <a href="/carpet-cleaning-dispatch-software">Carpet Cleaning</a> · <a href="/tree-service-dispatch-software">Tree Service</a> · <a href="/field-service-scheduling">Scheduling</a> · <a href="/mobile-dispatch-board">Mobile Board</a> · <a href="/servicetitan-alternative">ServiceTitan Alt</a> · <a href="/jobber-alternative">Jobber Alt</a> · <a href="/housecallpro-alternative">Housecall Pro Alt</a> · <a href="/servicefusion-alternative">Service Fusion Alt</a> · <a href="/buildops-alternative">BuildOps Alt</a> · <a href="/fieldedge-alternative">FieldEdge Alt</a> · <a href="/hvac-dispatch-app-vs-spreadsheets">Compare</a> · <a href="/how-to-choose-hvac-dispatch-app">Buying Guide</a> · <a href="/how-hvac-dispatch-apps-reduce-phone-tag">Phone Tag Guide</a> · <a href="/sitemap.xml">sitemap.xml</a> · <a href="/llms.txt">llms.txt</a></div></footer>
 
 <script>
   let currentTab = 0;
@@ -903,5 +922,106 @@ ${data.hashtags.join(" ")}`;
   // Run on load
   updatePosts();
 </script>
+
+<script>
+(function() {
+  const form = document.getElementById('waitlist-form');
+  const status = document.getElementById('waitlist-status');
+  const submitButton = form.querySelector('.form-submit');
+  const emailInput = document.getElementById('email');
+  const nameInput = document.getElementById('name');
+  const companyInput = document.getElementById('company');
+  const showStatus = (message, type) => {
+    status.hidden = false;
+    status.className = `waitlist-status ${type}`;
+    status.innerHTML = message;
+  };
+  const markInvalid = (input, invalid = true) => {
+    input.setAttribute('aria-invalid', invalid ? 'true' : 'false');
+  };
+  [nameInput, emailInput, companyInput].forEach((input) => {
+    if (input) {
+      input.addEventListener('input', () => markInvalid(input, false));
+    }
+  });
+
+  if (form) {
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      status.hidden = true;
+      if (nameInput) markInvalid(nameInput, false);
+      if (emailInput) markInvalid(emailInput, false);
+      if (companyInput) markInvalid(companyInput, false);
+
+      const nameVal = nameInput ? nameInput.value.trim().replace(/</g, '&lt;').replace(/>/g, '&gt;') : '';
+      const emailVal = emailInput ? emailInput.value.trim().replace(/</g, '&lt;').replace(/>/g, '&gt;') : '';
+      const companyVal = companyInput ? companyInput.value.trim().replace(/</g, '&lt;').replace(/>/g, '&gt;') : '';
+
+      if (nameInput && !nameVal) {
+        markInvalid(nameInput);
+        showStatus('Please add your name so we know who to contact.', 'error');
+        nameInput.focus();
+        return;
+      }
+
+      if (emailInput && !emailVal) {
+        markInvalid(emailInput);
+        showStatus('Please add a work email so we can send your early access update.', 'error');
+        emailInput.focus();
+        return;
+      }
+
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (emailInput && !emailRegex.test(emailVal)) {
+        markInvalid(emailInput);
+        showStatus('Please enter a valid work email address, like name@company.com.', 'error');
+        emailInput.focus();
+        return;
+      }
+
+      submitButton.disabled = true;
+      submitButton.textContent = 'Submitting...';
+      showStatus('Submitting your waitlist request...', 'pending');
+
+      try {
+        const payload = {
+          name: nameVal,
+          email: emailVal,
+          company: companyVal,
+        };
+
+        const response = await fetch(form.dataset.apiUrl || '/waitlist', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+
+        const result = await response.json().catch(() => ({}));
+
+        if (!response.ok || result.success === false) {
+          const message = result.error
+            ? `${result.error}. Please try again in a moment.`
+            : "We couldn't submit your request right now. Please try again in a moment.";
+          showStatus(message, 'error');
+          return;
+        }
+
+        form.reset();
+        if (nameInput) nameInput.value = nameVal;
+        if (companyInput) companyInput.value = companyVal;
+        const setupUrl = new URL('/setup', window.location.origin);
+        setupUrl.searchParams.set('email', emailVal);
+        showStatus(`Thanks! You're on the waitlist. We'll be in touch soon. <a href="${setupUrl.pathname}${setupUrl.search}" class="waitlist-setup-link">Try the Simulator Now</a>`, 'success');
+      } catch (error) {
+        showStatus('We had trouble submitting your request. Please try again.', 'error');
+      } finally {
+        submitButton.disabled = false;
+        submitButton.textContent = 'Join Waitlist & Try Simulator';
+      }
+    });
+  }
+})();
+</script>
+
 </body>
 </html>

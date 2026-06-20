@@ -2002,7 +2002,7 @@ const renderAppPage = (email, context, dispatchLogs = []) => {
 
   function saveDispatchLog(status) {
     const body = {
-      email: '${email}',
+      email: ${JSON.stringify(email)},
       jobDescription: activeJob,
       trade: activeTrade,
       simulatedTime: document.getElementById('job-time').value,
@@ -2104,7 +2104,7 @@ const renderAppPage = (email, context, dispatchLogs = []) => {
       const res = await fetch('/app/toggle-technician', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: '${email}', techName })
+        body: JSON.stringify({ email: ${JSON.stringify(email)}, techName })
       });
       const data = await res.json();
       if (data.success) {
