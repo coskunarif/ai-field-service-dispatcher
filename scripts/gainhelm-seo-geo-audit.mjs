@@ -1,6 +1,37 @@
 #!/usr/bin/env node
 import { readFileSync, existsSync } from 'node:fs';
 import { basename } from 'node:path';
+
+let config = {};
+if (existsSync('seo-audit-config.json')) {
+  try {
+    config = JSON.parse(readFileSync('seo-audit-config.json', 'utf8'));
+  } catch (err) {
+    // Ignore config parsing errors
+  }
+}
+
+function shouldIgnore(p, message, type) {
+  if (!p) return false;
+  const routeConfig = config?.overrides?.[p];
+  if (!routeConfig) return false;
+  const list = type === 'warning' ? routeConfig.ignoreWarnings : routeConfig.ignoreErrors;
+  if (!list || !Array.isArray(list)) return false;
+
+  const cleanMsg = message.startsWith(`${p}: `) ? message.slice(`${p}: `.length) : message;
+
+  return list.some(rule => {
+    if (cleanMsg.toLowerCase().trim() === rule.toLowerCase().trim()) return true;
+    if (cleanMsg.toLowerCase().includes(rule.toLowerCase())) return true;
+    const ruleSlug = rule.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    const msgSlug = cleanMsg.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    if (msgSlug.includes(ruleSlug)) return true;
+    const ruleSpace = rule.replace(/-/g, ' ');
+    if (cleanMsg.toLowerCase().includes(ruleSpace.toLowerCase())) return true;
+    return false;
+  });
+}
+
 const base = process.env.BASE_URL || '';
 const live = /^https?:\/\//.test(base);
 const origin = (base || 'https://gainhelm.com').replace(/\/$/, '');
@@ -90,9 +121,25 @@ async function main() {
     if (!live && !existsSync(localFile)) errors.push(`${p}: sitemap route has no local ${localFile}`);
   }
 
-  if (warnings.length) console.log('\nWarnings:\n' + warnings.map(w => `- ${w}`).join('\n'));
-  if (errors.length) {
-    console.error('\nFailures:\n' + errors.map(e => `- ${e}`).join('\n'));
+  const filteredWarnings = warnings.filter(w => {
+    const match = w.match(/^(\/[^:]*): (.*)$/);
+    if (match) {
+      return !shouldIgnore(match[1], w, 'warning');
+    }
+    return true;
+  });
+
+  const filteredErrors = errors.filter(e => {
+    const match = e.match(/^(\/[^:]*): (.*)$/);
+    if (match) {
+      return !shouldIgnore(match[1], e, 'error');
+    }
+    return true;
+  });
+
+  if (filteredWarnings.length) console.log('\nWarnings:\n' + filteredWarnings.map(w => `- ${w}`).join('\n'));
+  if (filteredErrors.length) {
+    console.error('\nFailures:\n' + filteredErrors.map(e => `- ${e}`).join('\n'));
     process.exit(1);
   }
   console.log('\nPASS: Gainhelm SEO/GEO route audit passed');

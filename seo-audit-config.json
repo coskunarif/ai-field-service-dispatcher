@@ -1,0 +1,17 @@
+{
+  "overrides": {
+    "/": {
+      "ignoreWarnings": [
+        "no-inline-waitlist-form"
+      ]
+    },
+    "/test-route": {
+      "ignoreWarnings": [
+        "test-warning"
+      ],
+      "ignoreErrors": [
+        "test-error"
+      ]
+    }
+  }
+}
