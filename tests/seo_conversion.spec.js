@@ -36,6 +36,90 @@ const targets = {
   '/electrical-dispatch-software': {
     title: 'Electrical Contractor Scheduling & Dispatch Software | Gainhelm',
     description: 'Gainhelm helps electrical contractors schedule jobs, dispatch technicians, and coordinate service calls.'
+  },
+  '/appliance-repair-dispatch-software': {
+    title: 'Appliance Repair Dispatch Software | Gainhelm',
+    description: 'Gainhelm helps appliance repair teams organize repair requests, technician assignment, schedule changes, job notes, and office-to-field handoffs in one dispatch workflow.'
+  },
+  '/pest-control-dispatch-software': {
+    title: 'Pest Control Dispatch Software | Gainhelm',
+    description: 'Gainhelm helps pest control teams organize service requests, technician assignment, schedule changes, route handoffs, and office-to-field updates in a dispatch workflow.'
+  },
+  '/garage-door-dispatch-software': {
+    title: 'Garage Door Dispatch Software | Gainhelm',
+    description: 'Gainhelm helps garage door teams organize service requests, technician assignment, schedule changes, and office-to-field updates in one readable dispatch workflow.'
+  },
+  '/cleaning-dispatch-software': {
+    title: 'Cleaning Dispatch Software | Gainhelm',
+    description: 'Gainhelm helps cleaning service teams organize service requests, technician assignment, schedule changes, and office-to-field updates in one readable dispatch workflow.'
+  },
+  '/landscaping-dispatch-software': {
+    title: 'Landscaping Dispatch Software | Gainhelm',
+    description: 'Gainhelm helps landscaping and lawn care teams organize service requests, crew assignment, schedule changes, and office-to-field updates in one dispatch workflow.'
+  },
+  '/roofing-dispatch-software': {
+    title: 'Roofing Dispatch Software | Gainhelm',
+    description: 'Gainhelm helps roofing contractor teams organize service requests, crew assignment, schedule changes, and office-to-field updates in one readable dispatch workflow.'
+  },
+  '/pool-service-dispatch-software': {
+    title: 'Pool Service Dispatch Software | Gainhelm',
+    description: 'Gainhelm helps pool service teams organize service requests, technician assignment, schedule changes, and office-to-field updates in one readable dispatch workflow.'
+  },
+  '/commercial-facilities-dispatch-software': {
+    title: 'Commercial Facilities Dispatch Software | Gainhelm',
+    description: 'Gainhelm helps facilities maintenance teams organize service requests, technician assignment, schedule changes, and office-to-field updates in one dispatch workflow.'
+  },
+  '/restoration-job-management-software': {
+    title: 'Restoration Job Management Software | Gainhelm',
+    description: 'Gainhelm helps restoration teams manage job intake, crew scheduling, field updates, equipment follow-up, and office-to-field handoffs without phone-tag chaos.'
+  },
+  '/handyman-dispatch-software': {
+    title: 'Handyman Dispatch Software | Gainhelm',
+    description: 'Gainhelm helps handyman teams organize job requests, technician assignment, schedule changes, job notes, and office-to-field handoffs in one dispatch workflow.'
+  },
+  '/servicetitan-alternative': {
+    title: 'ServiceTitan Alternative: Gainhelm vs ServiceTitan Comparison',
+    description: 'Looking for a ServiceTitan alternative? Gainhelm gives small trades teams clear scheduling and dispatch board routing without complex enterprise pricing.'
+  },
+  '/jobber-alternative': {
+    title: 'Jobber Alternative: Gainhelm vs Jobber Comparison',
+    description: 'Looking for a lightweight Jobber alternative? Gainhelm gives small contractor teams simple dispatch scheduling without expensive user-based licensing.'
+  },
+  '/housecallpro-alternative': {
+    title: 'Housecall Pro Alternative: Gainhelm vs Housecall Pro Comparison',
+    description: 'Looking for a Housecall Pro alternative? Gainhelm is a lightweight dispatch scheduling board and routing app for HVAC, plumbing, and trades teams.'
+  },
+  '/servicefusion-alternative': {
+    title: 'Service Fusion Alternative: Simple Dispatch Board | Gainhelm',
+    description: 'Looking for a Service Fusion alternative? Gainhelm offers a simple, lightweight dispatch scheduling board for trades teams without complex setups.'
+  },
+  '/buildops-alternative': {
+    title: 'BuildOps Alternative: Lightweight Dispatch | Gainhelm',
+    description: 'Looking for a BuildOps alternative? Gainhelm gives small trades teams clear scheduling and dispatch board routing without complex enterprise pricing.'
+  },
+  '/fieldedge-alternative': {
+    title: 'FieldEdge Alternative: Lightweight Dispatch | Gainhelm',
+    description: 'Looking for a FieldEdge alternative? Gainhelm gives small trades teams clear scheduling and dispatch board routing without complex enterprise pricing.'
+  },
+  '/hvac-dispatch-app-vs-spreadsheets': {
+    title: 'HVAC Dispatch App vs Spreadsheets for Service Teams | Gainhelm',
+    description: 'Compare an HVAC dispatch app vs spreadsheets for service-call scheduling, technician assignment, mobile updates, and phone-tag reduction when manual boards get busy.'
+  },
+  '/how-to-choose-hvac-dispatch-app': {
+    title: 'How to Choose an HVAC Dispatch App | Gainhelm',
+    description: 'A practical guide to choosing an HVAC dispatch app: what matters, what to avoid, and which features help small service teams stay organized.'
+  },
+  '/how-hvac-dispatch-apps-reduce-phone-tag': {
+    title: 'How HVAC Dispatch Apps Reduce Phone Tag | Gainhelm',
+    description: 'Learn how an HVAC dispatch app reduces phone tag, speeds up assignments, and keeps the schedule clear for small service teams.'
+  },
+  '/mobile-dispatch-board': {
+    title: 'HVAC Dispatch Software for iPad & Mobile Boards | Gainhelm',
+    description: 'See what HVAC dispatch software for iPad should show: a readable mobile board, clear technician assignment, same-day schedule changes, and fewer phone calls.'
+  },
+  '/tools/facebook-post-generator': {
+    title: 'Free Facebook Post Generator for Trades & Field Services | Gainhelm',
+    description: 'Use our free Facebook post generator to create high-converting social media posts for your HVAC, plumbing, electrical, or landscaping business in seconds.'
   }
 };
 
