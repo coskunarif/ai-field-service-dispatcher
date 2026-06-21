@@ -8,4 +8,6 @@ caps: agents,ui,web,human
 - 2026-06-21 Conductor: Architect completed SPEC.md. Advanced to BUILD phase. Output path: SPEC.md, elapsed time: 2m
 
 ## Verdict
+- DISPUTED: [tests/seo_conversion.spec.js](file:///home/ubuntuadmin/projects/ai-field-service-dispatcher/tests/seo_conversion.spec.js) asserts old metadata titles and descriptions, which contradicts the new Interface Contract in [SPEC.md](file:///home/ubuntuadmin/projects/ai-field-service-dispatcher/SPEC.md).
+
 ## Done
