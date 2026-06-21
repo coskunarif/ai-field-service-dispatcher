@@ -2,40 +2,58 @@ import { test, expect } from '@playwright/test';
 
 const targets = {
   '/hvac-dispatch-software': {
-    title: 'Best HVAC Dispatch Software | Gainhelm',
-    description: 'Gainhelm helps HVAC teams schedule service calls, assign technicians, cut phone tag, and keep the dispatch board readable on iPad or mobile. Join the waitlist today.'
+    title: 'AI-First HVAC Dispatch Software & SMS Scheduling | Gainhelm',
+    description: 'Stop playing phone tag. Gainhelm automates HVAC dispatching and scheduling via headless SMS. Coordinates techs, syncs calendars, and runs on autopilot. Try simulator.',
+    h1: 'Automate HVAC Dispatching & Keep Techs on the Road Without App Bloat',
+    heroCopy: 'Tired of chasing technicians? Gainhelm schedules HVAC service calls, dispatches jobs via text message, and updates your Google Calendar automatically—no apps to download.'
   },
   '/plumbing-dispatch-software': {
-    title: 'Plumbing Dispatch Software for Service Calls | Gainhelm',
-    description: 'Gainhelm helps plumbing teams schedule service calls, assign plumbers, streamline dispatching, and keep the scheduling board organized on mobile. Join our waitlist.'
+    title: 'AI-First Plumbing Dispatch Software & SMS Scheduling | Gainhelm',
+    description: 'Stop wasting time on manual plumber scheduling. Gainhelm dispatches plumbing calls via automated SMS, tracks technician acceptance, and syncs Google Calendar.',
+    h1: 'Automate Plumber Scheduling & Stop Playing Telephone with Your Crew',
+    heroCopy: 'Stop chasing plumbers for job updates. Gainhelm schedules plumbing calls, dispatches technicians via simple text messages, and updates your office calendar on autopilot.'
   },
   '/field-service-scheduling': {
-    title: 'Field Service Scheduling Software | Gainhelm',
-    description: 'Gainhelm helps field service teams book jobs, dispatch technicians, streamline scheduling workflows, and keep customer updates organized in one dashboard.'
+    title: 'AI-First Field Service Scheduling & SMS Dispatching | Gainhelm',
+    description: 'Ditch complex field service dashboards. Gainhelm dispatches jobs to field technicians via 100% headless SMS and keeps your Google Calendar updated on autopilot.',
+    h1: 'Streamline Field Service Scheduling with Headless SMS Dispatching',
+    heroCopy: 'Tired of screen-tapping bulky field service apps? Gainhelm coordinates scheduling and technician dispatching entirely in natural language via text. 100% app-free for techs.'
   },
   '/tree-service-dispatch-software': {
-    title: 'Tree Service Dispatch Software | Gainhelm',
-    description: 'Gainhelm helps tree service crews schedule jobs, assign arborists, manage work orders, and coordinate dispatch schedules on iPad or mobile devices. Join now.'
+    title: 'AI-First Tree Service Dispatch Software & SMS Scheduling | Gainhelm',
+    description: 'Coordinate tree service crews on autopilot. Gainhelm dispatches arborist crews via automated text messages, handles schedule changes, and syncs Google Calendar.',
+    h1: 'Dispatch Tree Crews & Coordinate Arborists Without Complex App Logins',
+    heroCopy: 'Stop playing phone tag with crews in the field. Gainhelm dispatches tree service work orders via SMS, tracks arborist confirmations, and syncs your calendar automatically.'
   },
   '/septic-service-dispatch-software': {
-    title: 'Septic Service Dispatch & Scheduling Software | Gainhelm',
-    description: 'Gainhelm helps septic teams schedule pumpings, dispatch technicians, coordinate tank cleanings, and keep customer service histories organized in one place.'
+    title: 'AI-First Septic Service Dispatch & SMS Scheduling | Gainhelm',
+    description: 'Automate septic pumping dispatching. Gainhelm schedules tank cleanings, dispatches septic crews via headless SMS, and keeps customer job details organized.',
+    h1: 'Automate Septic Dispatching & Pumping Schedules with Headless SMS',
+    heroCopy: 'Tired of manually coordinating pumping routes? Gainhelm dispatches septic technicians via simple text messages, tracks job acceptance, and updates your calendar instantly.'
   },
   '/carpet-cleaning-dispatch-software': {
-    title: 'Carpet Cleaning Dispatch & Scheduling Software | Gainhelm',
-    description: 'Gainhelm helps carpet cleaning teams schedule service calls, coordinate crews, dispatch technicians, and manage booking calendars in one simple interface.'
+    title: 'AI-First Carpet Cleaning Dispatch & SMS Scheduling | Gainhelm',
+    description: 'Stop wasting hours scheduling carpet cleaning crews. Gainhelm dispatches booking requests via automated SMS and syncs cleanings directly with Google Calendar.',
+    h1: 'Automate Carpet Cleaning Dispatching & Keep Booking Calendars Full',
+    heroCopy: 'Ditch manual calendars and endless texting. Gainhelm coordinates carpet cleaning jobs via headless SMS, dispatches crews instantly, and syncs calendar updates automatically.'
   },
   '/emergency-restoration-dispatch-software': {
-    title: 'Emergency Restoration Dispatch & Job Software | Gainhelm',
-    description: 'Gainhelm helps disaster restoration teams schedule emergency calls, dispatch technicians, manage jobs, and coordinate field crews during high-stress projects.'
+    title: 'AI-First Emergency Restoration Dispatch & SMS Job App | Gainhelm',
+    description: 'Fast-track emergency dispatching. Gainhelm dispatches disaster restoration crews via automated SMS, handles urgent job confirmations, and syncs Google Calendar.',
+    h1: 'Automate Emergency Restoration Dispatching for Rapid Job Responses',
+    heroCopy: 'Restoration calls are high-stakes. Gainhelm dispatches disaster restoration technicians via headless SMS instantly, handles rapid confirmation, and coordinates crews 24/7.'
   },
   '/locksmith-dispatch-software': {
-    title: 'Locksmith Dispatch & Scheduling Software | Gainhelm',
-    description: 'Gainhelm helps locksmith teams dispatch locksmiths, schedule emergency jobs, track work orders, and coordinate field technicians in real-time. Join the waitlist.'
+    title: 'AI-First Locksmith Dispatch Software & SMS Scheduling | Gainhelm',
+    description: 'Automate emergency locksmith dispatching. Gainhelm schedules locksmiths, dispatches urgent jobs via headless text messages, and updates calendars in real-time.',
+    h1: 'Dispatch Emergency Locksmiths and Coordinate Crews on Autopilot',
+    heroCopy: 'Stop playing phone tag during emergency lockouts. Gainhelm dispatches locksmith technicians via automated SMS, tracks technician acceptance, and syncs Google Calendar.'
   },
   '/electrical-dispatch-software': {
-    title: 'Electrical Contractor Scheduling & Dispatch Software | Gainhelm',
-    description: 'Gainhelm helps electrical contractors schedule jobs, dispatch technicians, coordinate service calls, and eliminate office-to-field phone tag. Try the dispatch simulator.'
+    title: 'AI-First Electrical Dispatch Software & SMS Scheduling | Gainhelm',
+    description: 'Ditch the phone tag. Gainhelm dispatches electrician service calls and updates contractor schedules via automated text messages. Syncs with Google Calendar.',
+    h1: 'Automate Electrician Dispatching & Coordinate Service Calls via SMS',
+    heroCopy: 'No more manual scheduling or text tag. Gainhelm coordinates electrical service calls, dispatches electrician teams via headless text, and updates Google Calendar automatically.'
   },
   '/appliance-repair-dispatch-software': {
     title: 'Appliance Repair Dispatch Software | Gainhelm',
@@ -177,6 +195,21 @@ test.describe('SEO/GEO Conversion and Waitlist Enhancements', () => {
       }
       expect(foundWebPage, `Expected to find WebPage entity in JSON-LD graph matching metadata for ${path}`).toBe(true);
     });
+  }
+
+  // [AC-2]: Persuasive H1 & Hero Copy content matching the Interface Contract
+  for (const [path, expected] of Object.entries(targets)) {
+    if (expected.h1 && expected.heroCopy) {
+      test(`[AC-2] H1 and Hero Copy content: Page ${path} matches the Interface Contract exactly`, async ({ page }) => {
+        await page.goto(path);
+        
+        const h1 = page.locator('h1');
+        await expect(h1).toHaveText(expected.h1);
+
+        const heroLede = page.locator('p.hero-lede');
+        await expect(heroLede).toHaveText(expected.heroCopy);
+      });
+    }
   }
 
   // [AC-2]: Structured Data & Schema Consistency (Audit Script Run)
