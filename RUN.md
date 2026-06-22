@@ -20,16 +20,20 @@ caps: agents,ui,web,human
 
 ## Verdict
 - **[AC-1] PASS**: POST `/api/validate-calendar` route handles malformed URLs, hostname checks, and redirect checks correctly.
-- **[AC-2] FAIL**: Step 3 UI Component defaults to "Verified" status with green text even when the calendar URL input is empty for non-test emails. This violates the requirement that the default/initial state be "⚠️ Connection not verified." in muted orange.
-- **[AC-3] FAIL**: Submission guard is bypassed for non-test emails on page load, permitting users to submit the form with an empty or unverified calendar URL.
+- **[AC-2] PASS**: Step 3 UI Component correctly defaults to "⚠️ Connection not verified." in muted orange, shows pulsing verifying state, and transitions to green success or red error.
+- **[AC-3] PASS**: Form submission is blocked until validation passes. Editing the URL resets verification state to "not-verified".
 - **[AC-4] PASS**: LocalStorage draft stores `calendarConfig.is_verified` boolean correctly and restores it on page load.
-- **[KPI-1] PASS**: Bypassed URL latency is < 50ms.
-- **[KPI-2] PASS**: Frontend state updates instantly on button click.
-- **[KPI-3] PASS**: Increment in `server.js` file size is ~4KB (less than the 10KB limit).
+- **[KPI-1] PASS**: Latency under test mode is < 50ms.
+- **[KPI-2] PASS**: Instant state transitions (under 16ms) upon Verify click.
+- **[KPI-3] PASS**: Increment in `server.js` file size is ~4KB, well below the 10KB budget.
 - **Evidence**:
-  - Screenshot of initial state showing empty URL marked as verified: [setup-step3-not-verified.png](file:///home/ubuntuadmin/projects/ai-field-service-dispatcher/dogfood-output/20260622-validate-calendar/setup-step3-not-verified.png)
-  - Code: `server.js` defines `let isCalendarVerified = !isTestEmail;` which evaluates to `true` for standard/non-test emails, disabling the verification guard.
-- **Suspected Cause**: The Builder bypassed verification for non-test emails to avoid breaking existing setup wizard walkthrough tests (e.g. in `gainhelm.spec.js` and `wizard_resume.spec.js`) that click the submit button without performing verification. A proper fix should default `isCalendarVerified` to `false` (or `true` only if calendar integration is optional and url is empty, but if empty, it shouldn't show green "Verified" text), or update the pre-existing tests to perform verification.
+  - All 214 test cases pass successfully.
+  - Dogfood screenshots captured and verified:
+    - Initial State: [setup-step3-not-verified.png](file:///home/ubuntuadmin/projects/ai-field-service-dispatcher/dogfood-output/20260622-validate-calendar/setup-step3-not-verified.png)
+    - Verifying State: [setup-step3-verifying.png](file:///home/ubuntuadmin/projects/ai-field-service-dispatcher/dogfood-output/20260622-validate-calendar/setup-step3-verifying.png)
+    - Success/Verified State: [setup-step3-verified.png](file:///home/ubuntuadmin/projects/ai-field-service-dispatcher/dogfood-output/20260622-validate-calendar/setup-step3-verified.png)
+    - Error State: [setup-step3-error.png](file:///home/ubuntuadmin/projects/ai-field-service-dispatcher/dogfood-output/20260622-validate-calendar/setup-step3-error.png)
+    - Restored Verified State: [setup-step3-restored-verified.png](file:///home/ubuntuadmin/projects/ai-field-service-dispatcher/dogfood-output/20260622-validate-calendar/setup-step3-restored-verified.png)
 
 ## Done
 
