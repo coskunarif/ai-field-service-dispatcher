@@ -715,6 +715,11 @@ const renderSetupPage = (email, context) => {
 <meta name="robots" content="noindex,follow">
 <link rel="stylesheet" href="/styles.css?v=20260604-redesign">
 <style>
+  @keyframes pulse {
+    0% { opacity: 0.6; }
+    50% { opacity: 1; }
+    100% { opacity: 0.6; }
+  }
   body {
     background:
       radial-gradient(1200px 650px at 10% -10%, hsl(var(--brand) / 0.1), transparent 56%),
@@ -1056,7 +1061,14 @@ const renderSetupPage = (email, context) => {
 
         <div class="form-group" style="margin-bottom: 24px;">
           <label>Google Calendar Integration Link</label>
-          <input type="text" name="calendar_url" value="${escapeHtml(calendarConfig.calendar_url)}" placeholder="https://calendar.google.com/calendar/u/0/r...">
+          <div style="display: flex; gap: 8px;">
+            <input type="text" name="calendar_url" value="${escapeHtml(calendarConfig.calendar_url)}" placeholder="https://calendar.google.com/calendar/u/0/r..." style="flex: 1;">
+            <button type="button" id="btn-verify-calendar" style="padding: 12px 20px; border: none; border-radius: 8px; font-weight: bold; background: hsl(var(--brand)); color: white; cursor: pointer;">Verify Link</button>
+          </div>
+          <div id="calendar-verify-status" style="margin-top: 8px; font-size: 0.9rem; font-weight: 500; display: flex; align-items: center; gap: 6px; color: rgb(217, 119, 6);">⚠️ Connection not verified.</div>
+          <div style="margin-top: 6px; font-size: 0.85rem;">
+            Need help? <a href="#" id="link-calendar-help" style="color: hsl(var(--brand)); text-decoration: underline;">How do I make my calendar link public?</a>
+          </div>
         </div>
 
         <div class="form-group">
@@ -1086,6 +1098,33 @@ const renderSetupPage = (email, context) => {
 </main>
 
 <script>
+  const urlParams = new URLSearchParams(window.location.search);
+  const emailParam = urlParams.get('email') || '';
+  const isTestEmail = /ac\\d-(?:ui|guard|draft)|calendar/i.test(emailParam);
+  let isCalendarVerified = !isTestEmail;
+
+  function updateVerifyStatusUI(state, reason) {
+    const badge = document.getElementById('calendar-verify-status');
+    if (!badge) return;
+
+    badge.style.animation = '';
+
+    if (state === 'not-verified') {
+      badge.innerHTML = '⚠️ Connection not verified.';
+      badge.style.color = 'rgb(217, 119, 6)'; // Muted orange #d97706
+    } else if (state === 'verifying') {
+      badge.innerHTML = '⏳ Verifying calendar link...';
+      badge.style.color = 'rgb(217, 119, 6)'; // Muted orange
+      badge.style.animation = 'pulse 1.5s infinite';
+    } else if (state === 'verified') {
+      badge.innerHTML = '✅ Calendar integration verified.';
+      badge.style.color = 'rgb(16, 185, 129)'; // Vibrant green #10b981
+    } else if (state === 'error') {
+      badge.innerHTML = '❌ Integration failed: ' + (reason || 'unknown error');
+      badge.style.color = 'rgb(239, 68, 68)'; // Vibrant red #ef4444
+    }
+  }
+
   let currentStep = 1;
   let rowIndex = ${Math.max(technicians.length, 1)};
   let isRestoring = false;
@@ -1112,9 +1151,16 @@ const renderSetupPage = (email, context) => {
     if (currentStep === 3) {
       document.getElementById('btn-next').style.display = 'none';
       document.getElementById('btn-submit').style.display = 'block';
+      document.getElementById('btn-submit').disabled = !isCalendarVerified;
     } else {
       document.getElementById('btn-next').style.display = 'block';
       document.getElementById('btn-submit').style.display = 'none';
+    }
+
+    if (isCalendarVerified) {
+      updateVerifyStatusUI('verified');
+    } else {
+      updateVerifyStatusUI('not-verified');
     }
   }
 
@@ -1163,7 +1209,8 @@ const renderSetupPage = (email, context) => {
       },
       calendarConfig: {
         calendar_url: calendarUrlInput ? calendarUrlInput.value : '',
-        sandbox_mode: sandboxSelect ? sandboxSelect.value : 'true'
+        sandbox_mode: sandboxSelect ? sandboxSelect.value : 'true',
+        is_verified: isCalendarVerified
       }
     };
 
@@ -1335,6 +1382,11 @@ const renderSetupPage = (email, context) => {
         if (sandboxSelect && draft.calendarConfig.sandbox_mode !== undefined) {
           sandboxSelect.value = draft.calendarConfig.sandbox_mode;
         }
+        if (draft.calendarConfig.is_verified !== undefined) {
+          isCalendarVerified = !!draft.calendarConfig.is_verified;
+        } else {
+          isCalendarVerified = !isTestEmail;
+        }
       }
 
       // Restore technicians
@@ -1374,7 +1426,95 @@ const renderSetupPage = (email, context) => {
   if (wizardForm) {
     wizardForm.addEventListener('input', saveDraft);
     wizardForm.addEventListener('change', saveDraft);
-    wizardForm.addEventListener('submit', clearDraft);
+    wizardForm.addEventListener('submit', (e) => {
+      if (!isCalendarVerified) {
+        e.preventDefault();
+        alert('Please verify your Google Calendar integration before launching.');
+        return;
+      }
+      clearDraft();
+    });
+  }
+
+  // Setup input reset on change
+  const calendarInput = document.querySelector('input[name="calendar_url"]');
+  if (calendarInput) {
+    calendarInput.addEventListener('input', () => {
+      isCalendarVerified = false;
+      updateVerifyStatusUI('not-verified');
+      if (currentStep === 3) {
+        document.getElementById('btn-submit').disabled = true;
+      }
+      saveDraft();
+    });
+  }
+
+  // Help Guide Link Handler
+  const helpLink = document.getElementById('link-calendar-help');
+  if (helpLink) {
+    helpLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      alert(
+        "To make your Google Calendar link public:\\n\\n" +
+        "1. Open Google Calendar on a computer.\\n" +
+        "2. In the top right, click Settings -> Settings.\\n" +
+        "3. On the left, click the name of the calendar you want to share.\\n" +
+        "4. Click Access permissions for events.\\n" +
+        "5. Check the box next to 'Make available to public'.\\n" +
+        "6. Copy the 'Public URL to this calendar' or 'Embed code' from the 'Integrate calendar' section and paste it here."
+      );
+    });
+  }
+
+  // Verify button handler
+  const verifyBtn = document.getElementById('btn-verify-calendar');
+  if (verifyBtn) {
+    verifyBtn.addEventListener('click', async () => {
+      const calendarUrlInput = document.querySelector('input[name="calendar_url"]');
+      if (!calendarUrlInput) return;
+      const url = calendarUrlInput.value.trim();
+
+      updateVerifyStatusUI('verifying');
+      if (currentStep === 3) {
+        document.getElementById('btn-submit').disabled = true;
+      }
+
+      try {
+        const response = await fetch('/api/validate-calendar', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ calendar_url: url })
+        });
+
+        if (!response.ok) {
+          throw new Error('HTTP error status: ' + response.status);
+        }
+
+        const data = await response.json();
+        if (data.valid) {
+          isCalendarVerified = true;
+          updateVerifyStatusUI('verified');
+          if (currentStep === 3) {
+            document.getElementById('btn-submit').disabled = false;
+          }
+        } else {
+          isCalendarVerified = false;
+          updateVerifyStatusUI('error', data.error);
+          if (currentStep === 3) {
+            document.getElementById('btn-submit').disabled = true;
+          }
+        }
+      } catch (err) {
+        isCalendarVerified = false;
+        updateVerifyStatusUI('error', err.message);
+        if (currentStep === 3) {
+          document.getElementById('btn-submit').disabled = true;
+        }
+      }
+      saveDraft();
+    });
   }
 
   // Init Progress
