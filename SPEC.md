@@ -1,172 +1,117 @@
-# SPEC.md - Wizard Setup Session Resume Specification
+# SPEC.md: Google Calendar Integration Link Validation
 
-## 1. Objective
-Enable users to resume incomplete configuration wizard sessions to increase Setup Wizard Completion Rate (SWCR) and minimize drop-offs caused by accidental page refreshes, back-and-forth navigation, or transient session loss.
-
-## 2. Acceptance Criteria (AC)
-
-- **[AC-1] Auto-Save Wizard Draft**
-  - When the user inputs, selects, or changes any field in the `/setup?email=...` form, or adds/removes technician rows, or navigates between steps, the page must automatically serialize the entire current wizard state and write it to browser `localStorage` keyed under the user's email: `gainhelm_wizard_draft_${email}`.
-  - **Verification**: 
-    1. Navigate to `/setup?email=test@example.com`.
-    2. Add a dynamic technician, modify a phone number, select Standard shift, change the guidelines textarea, and click "Next Step" to proceed to Step 2.
-    3. Open browser console and execute `localStorage.getItem('gainhelm_wizard_draft_test@example.com')`.
-    4. Assert that the returned JSON string contains all updated values and `currentStep` is set to `2`.
-
-- **[AC-2] Restore Wizard Draft**
-  - On page load, if a serialized draft exists in `localStorage` for the current user's email, the client script must parse and restore all inputs:
-    - Re-populate static fields: `timeout`, `pricing`, `rules` textarea, `calendar_url`, and `sandbox_mode`.
-    - Clear and dynamically re-create all dynamic technician cards inside `#tech-list` using the saved array of technicians.
-    - Set the active step to the saved `currentStep` and trigger `updateWizardUI()`.
-  - **Verification**:
-    1. Visit `/setup?email=persist-test@example.com`.
-    2. Add technician named "Alice Cooper" with phone "+1 (555) 9999", trade "Electrical".
-    3. Navigate to Step 2, change Timeout to "10", go to Step 3.
-    4. Reload the page.
-    5. Assert that the wizard immediately displays Step 3, the Timeout field is set to "10", and returning to Step 1 shows "Alice Cooper" intact.
-
-- **[AC-3] Visual Resume Notification**
-  - When a draft is successfully restored from `localStorage`, a styled resume banner (`#restore-banner`) must appear at the top of the wizard container (above the progress dots).
-  - The banner must read: `"🔄 Resumed incomplete setup wizard session."` and contain a clear `[Start Fresh]` button/link.
-  - **Verification**:
-    1. Fill out any input on `/setup?email=banner-test@example.com` and refresh the page.
-    2. Assert that the banner is visible and matches the theme of the page (Plus Jakarta Sans, brand colors, proper contrast).
-
-- **[AC-4] Discard / Clear Draft**
-  - Clicking "[Start Fresh]" inside the `#restore-banner` must remove the draft key from `localStorage` and reload the page, reverting the wizard to its default server-rendered context.
-  - Submitting the wizard successfully (POST to `/setup` which redirects to `/app`) must clear the draft key from `localStorage` to prevent restoring stale drafts on future setup visits.
-  - **Verification**:
-    1. Restore a draft and verify the banner is shown.
-    2. Click "[Start Fresh]" and assert that the page reloads, the banner is gone, and fields are reset to default database/server-rendered values.
-    3. Fill out the wizard, submit the form to proceed to the Board (`/app`), then navigate back to `/setup?email=...`. Assert that no banner is shown and no draft is restored.
-
-- **[AC-5] E2E Integration Verification**
-  - The Playwright integration test suite must contain an end-to-end test confirming that a partially filled form survives page reloads, successfully restores steps, and clears state upon successful submission.
-  - *Note*: Test writing is done by the Tester and must not be in implementation slices.
+## Overview
+Small trade contractors frequently enter restricted, personal, or invalid Google Calendar URLs in Step 3 of the context configuration setup wizard. This leads to silent dispatch booking failures.
+This specification details the frontend and backend changes required to validate calendar URLs during onboarding, preventing users from submitting the wizard with non-functional integration links.
 
 ---
 
-## 3. Performance KPIs
-
-- **[KPI-1] Restore Initialization Latency**
-  - Restoring form fields and dynamically re-creating technician rows from `localStorage` must complete in `< 15ms` from the `DOMContentLoaded` event to avoid visual flashing or layout shifting (CLS).
-- **[KPI-2] Auto-Save Execution Overhead**
-  - Serializing state and updating `localStorage` on form input/change events must execute in `< 5ms` to avoid input lag.
-- **[KPI-3] Zero Server/Network Overhead**
-  - Draft management must be client-side only; no autosave network calls or backend updates are permitted during editing (0ms server latency impact).
+## Test Strategy
+- **Type**: Additive (new feature)
+- **Approach**: Tests first (TDD). The Tester will write/update Playwright tests to cover the ACs before implementation.
 
 ---
 
-## 4. Interface Contract
+## Acceptance Criteria
 
-### Target File
-- `/home/ubuntuadmin/projects/ai-field-service-dispatcher/server.js`
+### `[AC-1]`: Backend validation endpoint `POST /api/validate-calendar`
+- **Path**: `/api/validate-calendar`
+- **Method**: `POST`
+- **Request Body**:
+  ```json
+  { "calendar_url": "https://..." }
+  ```
+- **Response Format (Valid)**:
+  ```json
+  { "valid": true }
+  ```
+- **Response Format (Invalid/Restricted)**:
+  ```json
+  { "valid": false, "error": "Reason description" }
+  ```
+- **Validation Logic**:
+  1. Parse input as a valid URL. If parsing fails, return `valid: false` with appropriate error.
+  2. The hostname must resolve to `calendar.google.com`. Otherwise, return `valid: false`.
+  3. Send an HTTP request (fetch) to the calendar URL:
+     - Follow redirects automatically.
+     - If the request fails (network error, DNS resolution error), return `valid: false`.
+     - If the response status code is not in the `2xx` range (e.g., `404`, `403`), return `valid: false`.
+     - If the response URL redirects to `accounts.google.com` or contains login parameters (e.g. login prompt indicating a private/restricted URL), return `valid: false` with error message `"Restricted calendar URL. Please check calendar public sharing settings."`
+  4. **Testing Bypass**: If `calendar_url` includes `/test` (e.g., `https://calendar.google.com/test`), or if `process.env.NODE_ENV === 'test'`, bypass external fetch and return `{ valid: true }`.
 
-### Client-Side Functions to Add/Modify (Inside the inline `<script>` block in `renderSetupPage`)
-```javascript
-/**
- * Serializes the current form values, tech list array, and current step,
- * and saves to localStorage.
- */
-function saveDraft();
-
-/**
- * Checks for a saved draft for the current email query param.
- * If found, restores form values, recreates tech cards, updates currentStep,
- * displays the #restore-banner, and updates the wizard UI.
- */
-function loadDraft();
-
-/**
- * Removes the draft from localStorage for the current email.
- */
-function clearDraft();
-
-/**
- * Renders a new technician card in the DOM.
- * @param {Object} [data] - Optional technician details to prepopulate the card fields.
- */
-function addTechRow(data);
-
-/**
- * Removes a technician row card from the DOM and triggers saveDraft().
- * @param {HTMLElement} btn - The button element triggered.
- */
-function removeTechRow(btn);
-```
-
-### Visual Layout Schema
+### `[AC-2]`: Wizard Step 3 UI Validation Component
+- Add a "Verify Link" button next to the Google Calendar URL input field.
+- Add a status badge/message element below the input to display connection state.
+- **Visual Design & Micro-interactions**:
+  - The status message should support four distinct states:
+    - **Not Verified**: `⚠️ Connection not verified.` (Muted orange, default/initial state)
+    - **Verifying**: `⏳ Verifying calendar link...` (Pulsing animation)
+    - **Verified**: `✅ Calendar integration verified.` (Vibrant green `#10b981`, success state)
+    - **Error**: `❌ Integration failed: <reason>` (Vibrant red `#ef4444`, error state with dynamic detail)
+  - Provide a helper link below the verification badge: `[How do I make my calendar link public?]` pointing to a help guide or modal detailing Google Calendar public sharing options.
 
 ```
-+-----------------------------------------------------------------------------+
-|                                  GAINHELM                                   |
-+-----------------------------------------------------------------------------+
-|                                                                             |
-|   +---------------------------------------------------------------------+   |
-|   | 🔄 Resumed incomplete setup wizard session.            [Start Fresh] |   |  <-- #restore-banner
-|   +---------------------------------------------------------------------+   |
-|                                                                             |
-|      (1) Team                 (2) Rules                (3) Launch           |
-|      o------------------------o------------------------o                    |
-|                                                                             |
-|      ... Step Panel Content ...                                             |
-|                                                                             |
-+-----------------------------------------------------------------------------+
++-------------------------------------------------------------+
+| Google Calendar Integration Link                            |
+| [ https://calendar.google.com/calendar/embed?src=... ] [Verify Link] |
+|                                                             |
+| ⚠️ Connection not verified.                                 |
+| Need help? How do I make my calendar link public?           |
++-------------------------------------------------------------+
 ```
 
-### CSS Style Additions (To be placed inside the `<style>` block in `renderSetupPage`)
-```css
-#restore-banner {
-  display: none; /* Controlled by loadDraft */
-  align-items: center;
-  justify-content: space-between;
-  background: hsl(var(--brand) / 0.1);
-  border: 1px dashed hsl(var(--brand) / 0.4);
-  border-radius: 12px;
-  padding: 12px 20px;
-  margin-bottom: 24px;
-  font-size: 0.88rem;
-  color: #fff;
-  font-family: inherit;
-}
-.btn-start-fresh {
-  background: hsl(var(--surface-3));
-  border: 1px solid hsl(var(--line));
-  color: hsl(var(--text-2));
-  padding: 6px 12px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 700;
-  font-size: 0.8rem;
-  transition: all 0.2s ease;
-}
-.btn-start-fresh:hover {
-  background: hsl(0 72% 51% / 0.1);
-  color: hsl(0 100% 70%);
-  border-color: hsl(0 72% 51% / 0.4);
-}
-```
+### `[AC-3]`: Verification Form Submission Guard
+- The wizard submit button (`#btn-submit` - "Save & Launch Board") is disabled or form submission is intercepted and blocked until verification succeeds (`isCalendarVerified` state is true).
+- If the user edits the calendar URL input field, reset verification status to "Not Verified", requiring a fresh verify call.
+- Playwright tests must assert:
+  - Submitting wizard blocks if URL is not verified.
+  - Verification with an invalid URL shows error.
+  - Verification with a valid URL enables submission.
+
+### `[AC-4]`: Persistence of Verification State in Drafts
+- The `localStorage` draft schema (`gainhelm_wizard_draft_${email}`) must store the `calendarConfig.is_verified` boolean flag.
+- When restoring a draft on page load, if `is_verified` is true, display the verified badge and enable `#btn-submit` if the current step is 3.
 
 ---
 
-## 5. Out of Scope
-
-- Backend-side database draft synchronization, REST endpoints, or auto-save cron jobs (YAGNI).
-- Multi-device or cross-browser draft syncing.
-- Validation checks for technician phone/email formats during the draft save process (validation remains on step navigation).
+## Performance KPIs
+- **`[KPI-1]` Backend response latency**: Response time for mocked/bypassed URLs must be < 50ms, and external fetches must be < 1500ms under standard network conditions.
+- **`[KPI-2]` Frontend micro-interaction**: Transition from "Verify Link" click to "Verifying" loading state must occur in < 16ms.
+- **`[KPI-3]` Bundle/file size growth**: Incremental file size increase in `server.js` must be < 10KB.
 
 ---
 
-## 6. Slices
+## Interface Contract
+- **File to Modify**: [server.js](file:///home/ubuntuadmin/projects/ai-field-service-dispatcher/server.js)
+- **New API Route**:
+  - URL: `/api/validate-calendar`
+  - Method: `POST`
+  - Content-Type: `application/json`
+  - Payload: `{ calendar_url: String }`
+  - Response: `{ valid: Boolean, error?: String }`
+- **Draft Schema Updates**:
+  - `draft.calendarConfig.calendar_url` (existing)
+  - `draft.calendarConfig.sandbox_mode` (existing)
+  - `draft.calendarConfig.is_verified`: Boolean (new field to preserve verification status in `localStorage`)
 
-### **[S-1] Setup Wizard State Serialization and Input Extender**
-- **Description**: Add the `saveDraft()`, `clearDraft()`, and `removeTechRow(btn)` helper functions. Update `addTechRow(data)` to accept data arguments. Modify HTML rendering to bind technician card removal to `removeTechRow(this)` instead of `this.parentElement.remove()`. Attach input/change event listeners to the `#wizard-form` to invoke `saveDraft()`. Attach submit listener to clear the draft.
+---
+
+## Out of Scope
+- No external OAuth or Google Calendar API authentication/login flows. Validation is purely URL-reachability and public-access verification.
+- No editing of dispatching engine logic or Twilio SMS gateway configurations.
+
+---
+
+## Slices
+
+### `[S-1]`: Backend Calendar Verification Endpoint
+- **Description**: Add `/api/validate-calendar` POST route in `server.js` with hostname validation, HTTP request dispatching, redirect checks, and test-bypass overrides.
 - **Independent**: Yes
-- **Mapped ACs**: `[AC-1]`, `[AC-4]`
-- **Files**: `/home/ubuntuadmin/projects/ai-field-service-dispatcher/server.js`
+- **ACs**: `[AC-1]`
+- **Files**: [server.js](file:///home/ubuntuadmin/projects/ai-field-service-dispatcher/server.js)
 
-### **[S-2] Setup Wizard Restorer and Resume Banner UI**
-- **Description**: Add the `#restore-banner` element and styles. Implement `loadDraft()` to fetch state from `localStorage` on page load, reconstruct technician cards using `addTechRow(data)`, restore other inputs/steps, and handle the "[Start Fresh]" button event.
-- **Independent**: No (depends on `[S-1]`)
-- **Mapped ACs**: `[AC-2]`, `[AC-3]`, `[AC-4]`
-- **Files**: `/home/ubuntuadmin/projects/ai-field-service-dispatcher/server.js`
+### `[S-2]`: Setup Wizard Frontend Verification UI & Guard
+- **Description**: Implement "Verify Link" button, verification status badge with states/styles, client-side input reset logic, submission guard blocking `#btn-submit` until verified, and localStorage draft serialization/restoration.
+- **Independent**: No
+- **ACs**: `[AC-2]`, `[AC-3]`, `[AC-4]`
+- **Files**: [server.js](file:///home/ubuntuadmin/projects/ai-field-service-dispatcher/server.js)
