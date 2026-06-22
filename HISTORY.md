@@ -11,3 +11,4 @@ This ledger provides a persistent, timestamped audit trail of all factory runs, 
 | 2026-06-20T17:10:00Z | asf/20260620-seo-ctr | Optimize search meta descriptions & lints | Search CTR & Position (CTR-POS) | SHIPPED | 0/2 | Commit lessons before merge |
 | 2026-06-21T21:21:05Z | asf/20260621-landing-copy | Optimize trade landing pages' titles, meta descriptions, H1 headings, and hero copy | Search CTR & Position (CTR-POS) | SHIPPED | 0/2 | Align E2E assertions with Interface Contract |
 | 2026-06-22T18:01:00Z | asf/20260622-resume-wizard | Enable users to resume incomplete configuration wizard sessions to increase Setup Wizard Completion Rate | Setup Wizard Completion (SWCR) | SHIPPED | 0/3 | N/A |
+| 2026-06-22T21:46:04Z | asf/20260622-validate-calendar | Validate calendar integration links during configuration to increase Setup Wizard Completion Rate | Setup Wizard Completion (SWCR) | SHIPPED | 1/3 | Default validation verification & legacy tests |
