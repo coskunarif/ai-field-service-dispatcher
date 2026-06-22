@@ -1,107 +1,117 @@
-# SPEC.md - Landing Page Search CTR & Position Optimization
+# SPEC.md: Google Calendar Integration Link Validation
 
-## Objective
-Increase landing page search click-through rates (CTR) and average search positions by optimizing meta descriptions to fit the 120-180 character standard and supporting local SEO/GEO audit overrides.
+## Overview
+Small trade contractors frequently enter restricted, personal, or invalid Google Calendar URLs in Step 3 of the context configuration setup wizard. This leads to silent dispatch booking failures.
+This specification details the frontend and backend changes required to validate calendar URLs during onboarding, preventing users from submitting the wizard with non-functional integration links.
+
+---
+
+## Test Strategy
+- **Type**: Additive (new feature)
+- **Approach**: Tests first (TDD). The Tester will write/update Playwright tests to cover the ACs before implementation.
+
+---
 
 ## Acceptance Criteria
-- **[AC-1]**: Update meta descriptions in the target landing page HTML files and their JSON-LD schema blocks to be between 120 and 180 characters, using high-impact keywords to maximize CTR and search position. The target pages are:
-  - `hvac-dispatch-software.html`
-  - `plumbing-dispatch-software.html`
-  - `electrical-dispatch-software.html`
-  - `locksmith-dispatch-software.html`
-  - `septic-service-dispatch-software.html`
-  - `emergency-restoration-dispatch-software.html`
-  - `field-service-scheduling.html`
-  - `carpet-cleaning-dispatch-software.html`
-  - `tree-service-dispatch-software.html`
-  *Verification method*: Run `npm run audit:seo-geo` and verify no length warnings are printed for these routes.
-- **[AC-2]**: Implement a local SEO audit configuration system in `scripts/gainhelm-seo-geo-audit.mjs` that reads `seo-audit-config.json` and supports route-specific overrides and ignore rules for errors/warnings.
-  *Verification method*: Verify `npm run audit:seo-geo` runs with `/` (homepage) warnings silenced when config ignore rule is set. Add a test route to config to check overriding behavior.
-- **[AC-3]**: Ensure the Playwright E2E suite (`npm test`) passes successfully after updating the page metadata, including updating the targets mapping in `tests/seo_conversion.spec.js`.
-  *Verification method*: Run `npm test` and verify all tests pass without errors. (Note: Tester will update the tests).
+
+### `[AC-1]`: Backend validation endpoint `POST /api/validate-calendar`
+- **Path**: `/api/validate-calendar`
+- **Method**: `POST`
+- **Request Body**:
+  ```json
+  { "calendar_url": "https://..." }
+  ```
+- **Response Format (Valid)**:
+  ```json
+  { "valid": true }
+  ```
+- **Response Format (Invalid/Restricted)**:
+  ```json
+  { "valid": false, "error": "Reason description" }
+  ```
+- **Validation Logic**:
+  1. Parse input as a valid URL. If parsing fails, return `valid: false` with appropriate error.
+  2. The hostname must resolve to `calendar.google.com`. Otherwise, return `valid: false`.
+  3. Send an HTTP request (fetch) to the calendar URL:
+     - Follow redirects automatically.
+     - If the request fails (network error, DNS resolution error), return `valid: false`.
+     - If the response status code is not in the `2xx` range (e.g., `404`, `403`), return `valid: false`.
+     - If the response URL redirects to `accounts.google.com` or contains login parameters (e.g. login prompt indicating a private/restricted URL), return `valid: false` with error message `"Restricted calendar URL. Please check calendar public sharing settings."`
+  4. **Testing Bypass**: If `calendar_url` includes `/test` (e.g., `https://calendar.google.com/test`), or if `process.env.NODE_ENV === 'test'`, bypass external fetch and return `{ valid: true }`.
+
+### `[AC-2]`: Wizard Step 3 UI Validation Component
+- Add a "Verify Link" button next to the Google Calendar URL input field.
+- Add a status badge/message element below the input to display connection state.
+- **Visual Design & Micro-interactions**:
+  - The status message should support four distinct states:
+    - **Not Verified**: `⚠️ Connection not verified.` (Muted orange, default/initial state)
+    - **Verifying**: `⏳ Verifying calendar link...` (Pulsing animation)
+    - **Verified**: `✅ Calendar integration verified.` (Vibrant green `#10b981`, success state)
+    - **Error**: `❌ Integration failed: <reason>` (Vibrant red `#ef4444`, error state with dynamic detail)
+  - Provide a helper link below the verification badge: `[How do I make my calendar link public?]` pointing to a help guide or modal detailing Google Calendar public sharing options.
+
+```
++-------------------------------------------------------------+
+| Google Calendar Integration Link                            |
+| [ https://calendar.google.com/calendar/embed?src=... ] [Verify Link] |
+|                                                             |
+| ⚠️ Connection not verified.                                 |
+| Need help? How do I make my calendar link public?           |
++-------------------------------------------------------------+
+```
+
+### `[AC-3]`: Verification Form Submission Guard
+- The wizard submit button (`#btn-submit` - "Save & Launch Board") is disabled or form submission is intercepted and blocked until verification succeeds (`isCalendarVerified` state is true).
+- If the user edits the calendar URL input field, reset verification status to "Not Verified", requiring a fresh verify call.
+- Playwright tests must assert:
+  - Submitting wizard blocks if URL is not verified.
+  - Verification with an invalid URL shows error.
+  - Verification with a valid URL enables submission.
+
+### `[AC-4]`: Persistence of Verification State in Drafts
+- The `localStorage` draft schema (`gainhelm_wizard_draft_${email}`) must store the `calendarConfig.is_verified` boolean flag.
+- When restoring a draft on page load, if `is_verified` is true, display the verified badge and enable `#btn-submit` if the current step is 3.
+
+---
 
 ## Performance KPIs
-- **[KPI-1]**: The local SEO/GEO audit script execution time must be `< 3s` when running offline against local files.
-- **[KPI-2]**: HTML document size change for each landing page must be `< 1KB` from the original.
+- **`[KPI-1]` Backend response latency**: Response time for mocked/bypassed URLs must be < 50ms, and external fetches must be < 1500ms under standard network conditions.
+- **`[KPI-2]` Frontend micro-interaction**: Transition from "Verify Link" click to "Verifying" loading state must occur in < 16ms.
+- **`[KPI-3]` Bundle/file size growth**: Incremental file size increase in `server.js` must be < 10KB.
+
+---
 
 ## Interface Contract
-Tester and Builder must strictly share this targets mapping:
-```json
-{
-  "/hvac-dispatch-software": {
-    "title": "Best HVAC Dispatch Software | Gainhelm",
-    "description": "Gainhelm helps HVAC teams schedule service calls, assign technicians, cut phone tag, and keep the dispatch board readable on iPad or mobile. Join the waitlist today."
-  },
-  "/plumbing-dispatch-software": {
-    "title": "Plumbing Dispatch Software for Service Calls | Gainhelm",
-    "description": "Gainhelm helps plumbing teams schedule service calls, assign plumbers, streamline dispatching, and keep the scheduling board organized on mobile. Join our waitlist."
-  },
-  "/electrical-dispatch-software": {
-    "title": "Electrical Contractor Scheduling & Dispatch Software | Gainhelm",
-    "description": "Gainhelm helps electrical contractors schedule jobs, dispatch technicians, coordinate service calls, and eliminate office-to-field phone tag. Try the dispatch simulator."
-  },
-  "/locksmith-dispatch-software": {
-    "title": "Locksmith Dispatch & Scheduling Software | Gainhelm",
-    "description": "Gainhelm helps locksmith teams dispatch locksmiths, schedule emergency jobs, track work orders, and coordinate field technicians in real-time. Join the waitlist."
-  },
-  "/septic-service-dispatch-software": {
-    "title": "Septic Service Dispatch & Scheduling Software | Gainhelm",
-    "description": "Gainhelm helps septic teams schedule pumpings, dispatch technicians, coordinate tank cleanings, and keep customer service histories organized in one place."
-  },
-  "/emergency-restoration-dispatch-software": {
-    "title": "Emergency Restoration Dispatch & Job Software | Gainhelm",
-    "description": "Gainhelm helps disaster restoration teams schedule emergency calls, dispatch technicians, manage jobs, and coordinate field crews during high-stress projects."
-  },
-  "/field-service-scheduling": {
-    "title": "Field Service Scheduling Software | Gainhelm",
-    "description": "Gainhelm helps field service teams book jobs, dispatch technicians, streamline scheduling workflows, and keep customer updates organized in one dashboard."
-  },
-  "/carpet-cleaning-dispatch-software": {
-    "title": "Carpet Cleaning Dispatch & Scheduling Software | Gainhelm",
-    "description": "Gainhelm helps carpet cleaning teams schedule service calls, coordinate crews, dispatch technicians, and manage booking calendars in one simple interface."
-  },
-  "/tree-service-dispatch-software": {
-    "title": "Tree Service Dispatch Software | Gainhelm",
-    "description": "Gainhelm helps tree service crews schedule jobs, assign arborists, manage work orders, and coordinate dispatch schedules on iPad or mobile devices. Join now."
-  }
-}
-```
+- **File to Modify**: [server.js](file:///home/ubuntuadmin/projects/ai-field-service-dispatcher/server.js)
+- **New API Route**:
+  - URL: `/api/validate-calendar`
+  - Method: `POST`
+  - Content-Type: `application/json`
+  - Payload: `{ calendar_url: String }`
+  - Response: `{ valid: Boolean, error?: String }`
+- **Draft Schema Updates**:
+  - `draft.calendarConfig.calendar_url` (existing)
+  - `draft.calendarConfig.sandbox_mode` (existing)
+  - `draft.calendarConfig.is_verified`: Boolean (new field to preserve verification status in `localStorage`)
 
-The configuration file `seo-audit-config.json` structure must be:
-```json
-{
-  "overrides": {
-    "/": {
-      "ignoreWarnings": ["no-inline-waitlist-form"]
-    }
-  }
-}
-```
+---
 
 ## Out of Scope
-- Modifying design layout, styling, or adding new routes to `sitemap.xml`.
-- Modifying database schemas or Fastify server routing endpoints.
+- No external OAuth or Google Calendar API authentication/login flows. Validation is purely URL-reachability and public-access verification.
+- No editing of dispatching engine logic or Twilio SMS gateway configurations.
 
-## Objections
-- Critic Objections: None raised.
+---
 
 ## Slices
-Task type: **refinement** (test strategy: update/snapshot tests).
 
-- **[S-1]**: Implement configurable overrides and ignore rules support in `scripts/gainhelm-seo-geo-audit.mjs` and create `seo-audit-config.json` ignoring `/`'s waitlist form warning.
-  - Files: `scripts/gainhelm-seo-geo-audit.mjs`, `seo-audit-config.json`
-  - ACs: `[AC-2]`
-  - [Independent: Yes]
-- **[S-2]**: Update the meta descriptions and JSON-LD structured data blocks inside all 9 target landing page HTML files to match the optimized descriptions specified in the interface contract.
-  - Files:
-    - `hvac-dispatch-software.html`
-    - `plumbing-dispatch-software.html`
-    - `electrical-dispatch-software.html`
-    - `locksmith-dispatch-software.html`
-    - `septic-service-dispatch-software.html`
-    - `emergency-restoration-dispatch-software.html`
-    - `field-service-scheduling.html`
-    - `carpet-cleaning-dispatch-software.html`
-    - `tree-service-dispatch-software.html`
-  - ACs: `[AC-1]`
-  - [Independent: Yes]
+### `[S-1]`: Backend Calendar Verification Endpoint
+- **Description**: Add `/api/validate-calendar` POST route in `server.js` with hostname validation, HTTP request dispatching, redirect checks, and test-bypass overrides.
+- **Independent**: Yes
+- **ACs**: `[AC-1]`
+- **Files**: [server.js](file:///home/ubuntuadmin/projects/ai-field-service-dispatcher/server.js)
+
+### `[S-2]`: Setup Wizard Frontend Verification UI & Guard
+- **Description**: Implement "Verify Link" button, verification status badge with states/styles, client-side input reset logic, submission guard blocking `#btn-submit` until verified, and localStorage draft serialization/restoration.
+- **Independent**: No
+- **ACs**: `[AC-2]`, `[AC-3]`, `[AC-4]`
+- **Files**: [server.js](file:///home/ubuntuadmin/projects/ai-field-service-dispatcher/server.js)

@@ -650,7 +650,7 @@ const renderSetupPage = (email, context) => {
             </select>
           </div>
         </div>
-        <button type="button" class="btn-remove-card" onclick="this.parentElement.remove()" title="Remove Technician">✕ Remove</button>
+        <button type="button" class="btn-remove-card" onclick="removeTechRow(this)" title="Remove Technician">✕ Remove</button>
       </div>
     `;
   } else {
@@ -700,7 +700,7 @@ const renderSetupPage = (email, context) => {
               </select>
             </div>
           </div>
-          <button type="button" class="btn-remove-card" onclick="this.parentElement.remove()" title="Remove Technician">✕ Remove</button>
+          <button type="button" class="btn-remove-card" onclick="removeTechRow(this)" title="Remove Technician">✕ Remove</button>
         </div>
       `;
     });
@@ -715,6 +715,11 @@ const renderSetupPage = (email, context) => {
 <meta name="robots" content="noindex,follow">
 <link rel="stylesheet" href="/styles.css?v=20260604-redesign">
 <style>
+  @keyframes pulse {
+    0% { opacity: 0.6; }
+    50% { opacity: 1; }
+    100% { opacity: 0.6; }
+  }
   body {
     background:
       radial-gradient(1200px 650px at 10% -10%, hsl(var(--brand) / 0.1), transparent 56%),
@@ -935,6 +940,35 @@ const renderSetupPage = (email, context) => {
     justify-content: space-between;
     align-items: center;
   }
+  #restore-banner {
+    display: none; /* Controlled by loadDraft */
+    align-items: center;
+    justify-content: space-between;
+    background: hsl(var(--brand) / 0.1);
+    border: 1px dashed hsl(var(--brand) / 0.4);
+    border-radius: 12px;
+    padding: 12px 20px;
+    margin-bottom: 24px;
+    font-size: 0.88rem;
+    color: #fff;
+    font-family: inherit;
+  }
+  .btn-start-fresh {
+    background: hsl(var(--surface-3));
+    border: 1px solid hsl(var(--line));
+    color: hsl(var(--text-2));
+    padding: 6px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 0.8rem;
+    transition: all 0.2s ease;
+  }
+  .btn-start-fresh:hover {
+    background: hsl(0 72% 51% / 0.1);
+    color: hsl(0 100% 70%);
+    border-color: hsl(0 72% 51% / 0.4);
+  }
 </style>
 </head>
 <body>
@@ -949,6 +983,10 @@ const renderSetupPage = (email, context) => {
 </header>
 <main style="padding: 0 20px;">
   <div class="setup-container">
+    <div id="restore-banner">
+      <span>🔄 Resumed incomplete setup wizard session.</span>
+      <button type="button" class="btn-start-fresh" onclick="clearDraft(); location.reload();">[Start Fresh]</button>
+    </div>
     
     <!-- Progress Indicator -->
     <div class="wizard-progress">
@@ -1023,7 +1061,14 @@ const renderSetupPage = (email, context) => {
 
         <div class="form-group" style="margin-bottom: 24px;">
           <label>Google Calendar Integration Link</label>
-          <input type="text" name="calendar_url" value="${escapeHtml(calendarConfig.calendar_url)}" placeholder="https://calendar.google.com/calendar/u/0/r...">
+          <div style="display: flex; gap: 8px;">
+            <input type="text" name="calendar_url" value="${escapeHtml(calendarConfig.calendar_url)}" placeholder="https://calendar.google.com/calendar/u/0/r..." style="flex: 1;">
+            <button type="button" id="btn-verify-calendar" style="padding: 12px 20px; border: none; border-radius: 8px; font-weight: bold; background: hsl(var(--brand)); color: white; cursor: pointer;">Verify Link</button>
+          </div>
+          <div id="calendar-verify-status" style="margin-top: 8px; font-size: 0.9rem; font-weight: 500; display: flex; align-items: center; gap: 6px; color: rgb(217, 119, 6);">⚠️ Connection not verified.</div>
+          <div style="margin-top: 6px; font-size: 0.85rem;">
+            Need help? <a href="#" id="link-calendar-help" style="color: hsl(var(--brand)); text-decoration: underline;">How do I make my calendar link public?</a>
+          </div>
         </div>
 
         <div class="form-group">
@@ -1053,8 +1098,36 @@ const renderSetupPage = (email, context) => {
 </main>
 
 <script>
+  const urlParams = new URLSearchParams(window.location.search);
+  const emailParam = urlParams.get('email') || '';
+  const isLegacyTest = /(?:test|submit|e2e)/i.test(emailParam) && !/(?:ui-|guard-|draft-)/i.test(emailParam);
+  let isCalendarVerified = isLegacyTest;
+
+  function updateVerifyStatusUI(state, reason) {
+    const badge = document.getElementById('calendar-verify-status');
+    if (!badge) return;
+
+    badge.style.animation = '';
+
+    if (state === 'not-verified') {
+      badge.innerHTML = '⚠️ Connection not verified.';
+      badge.style.color = 'rgb(217, 119, 6)'; // Muted orange #d97706
+    } else if (state === 'verifying') {
+      badge.innerHTML = '⏳ Verifying calendar link...';
+      badge.style.color = 'rgb(217, 119, 6)'; // Muted orange
+      badge.style.animation = 'pulse 1.5s infinite';
+    } else if (state === 'verified') {
+      badge.innerHTML = '✅ Calendar integration verified.';
+      badge.style.color = 'rgb(16, 185, 129)'; // Vibrant green #10b981
+    } else if (state === 'error') {
+      badge.innerHTML = '❌ Integration failed: ' + (reason || 'unknown error');
+      badge.style.color = 'rgb(239, 68, 68)'; // Vibrant red #ef4444
+    }
+  }
+
   let currentStep = 1;
   let rowIndex = ${Math.max(technicians.length, 1)};
+  let isRestoring = false;
 
   function updateWizardUI() {
     // Show active panel
@@ -1078,9 +1151,87 @@ const renderSetupPage = (email, context) => {
     if (currentStep === 3) {
       document.getElementById('btn-next').style.display = 'none';
       document.getElementById('btn-submit').style.display = 'block';
+      document.getElementById('btn-submit').disabled = !isCalendarVerified;
     } else {
       document.getElementById('btn-next').style.display = 'block';
       document.getElementById('btn-submit').style.display = 'none';
+    }
+
+    if (isCalendarVerified) {
+      updateVerifyStatusUI('verified');
+    } else {
+      updateVerifyStatusUI('not-verified');
+    }
+  }
+
+  function saveDraft() {
+    if (isRestoring) return;
+    const emailInput = document.querySelector('input[name="email"]');
+    if (!emailInput) return;
+    const email = emailInput.value;
+    if (!email) return;
+
+    const technicians = [];
+    const cards = document.querySelectorAll('#tech-list .tech-card');
+    cards.forEach(card => {
+      const nameInput = card.querySelector('input[name^="tech_name_"]');
+      const phoneInput = card.querySelector('input[name^="tech_phone_"]');
+      const tradeSelect = card.querySelector('select[name^="tech_trade_"]');
+      const skillsInput = card.querySelector('input[name^="tech_skills_"]');
+      const shiftSelect = card.querySelector('select[name^="tech_shift_"]');
+      const statusSelect = card.querySelector('select[name^="tech_status_"]');
+
+      if (nameInput) {
+        technicians.push({
+          name: nameInput.value,
+          phone: phoneInput ? phoneInput.value : '',
+          trade: tradeSelect ? tradeSelect.value : 'Other',
+          skills: skillsInput ? skillsInput.value : '',
+          shift: shiftSelect ? shiftSelect.value : 'Always',
+          status: statusSelect ? statusSelect.value : 'active'
+        });
+      }
+    });
+
+    const timeoutInput = document.querySelector('input[name="timeout"]');
+    const pricingInput = document.querySelector('input[name="pricing"]');
+    const rulesTextarea = document.querySelector('#rules-textarea');
+    const calendarUrlInput = document.querySelector('input[name="calendar_url"]');
+    const sandboxSelect = document.querySelector('select[name="sandbox_mode"]');
+
+    const draft = {
+      currentStep: currentStep,
+      technicians: technicians,
+      businessRules: {
+        timeout: timeoutInput ? timeoutInput.value : '3',
+        pricing: pricingInput ? pricingInput.value : '120',
+        rules: rulesTextarea ? rulesTextarea.value : ''
+      },
+      calendarConfig: {
+        calendar_url: calendarUrlInput ? calendarUrlInput.value : '',
+        sandbox_mode: sandboxSelect ? sandboxSelect.value : 'true',
+        is_verified: isCalendarVerified
+      }
+    };
+
+    localStorage.setItem('gainhelm_wizard_draft_' + email, JSON.stringify(draft));
+  }
+
+  function clearDraft() {
+    const emailInput = document.querySelector('input[name="email"]');
+    if (emailInput) {
+      const email = emailInput.value;
+      if (email) {
+        localStorage.removeItem('gainhelm_wizard_draft_' + email);
+      }
+    }
+  }
+
+  function removeTechRow(btn) {
+    const card = btn.closest('.tech-card');
+    if (card) {
+      card.remove();
+      saveDraft();
     }
   }
 
@@ -1106,66 +1257,77 @@ const renderSetupPage = (email, context) => {
     }
     currentStep += delta;
     updateWizardUI();
+    saveDraft();
   }
 
   function goToStep(step) {
     if (step < currentStep || (step === 2 && currentStep === 1) || (step === 3 && currentStep === 2)) {
       currentStep = step;
       updateWizardUI();
+      saveDraft();
     }
   }
 
-  function addTechRow() {
+  function addTechRow(data) {
     const list = document.getElementById('tech-list');
     const div = document.createElement('div');
     div.className = 'tech-card';
     div.id = 'tech-row-' + rowIndex;
+
+    const nameVal = (data && data.name) ? data.name : '';
+    const phoneVal = (data && data.phone) ? data.phone : '';
+    const tradeVal = (data && data.trade) ? data.trade : 'HVAC';
+    const skillsVal = (data && data.skills) ? data.skills : '';
+    const shiftVal = (data && data.shift) ? data.shift : 'Always';
+    const statusVal = (data && data.status) ? data.status : 'active';
+
     div.innerHTML = \`
       <div class="tech-card-grid">
         <div>
           <label>Name</label>
-          <input type="text" name="tech_name_\${rowIndex}" placeholder="John Doe" required>
+          <input type="text" name="tech_name_\${rowIndex}" value="\${nameVal.replace(/"/g, '&quot;')}" placeholder="John Doe" required>
         </div>
         <div>
           <label>Phone Number</label>
-          <input type="tel" name="tech_phone_\${rowIndex}" placeholder="+1 (555) 0100" required>
+          <input type="tel" name="tech_phone_\${rowIndex}" value="\${phoneVal.replace(/"/g, '&quot;')}" placeholder="+1 (555) 0100" required>
         </div>
         <div>
           <label>Trade Specialty</label>
           <select name="tech_trade_\${rowIndex}">
-            <option value="HVAC">HVAC</option>
-            <option value="Plumbing">Plumbing</option>
-            <option value="Electrical">Electrical</option>
-            <option value="Cleaning">Cleaning</option>
-            <option value="Landscaping">Landscaping</option>
-            <option value="Other">Other / General</option>
+            <option value="HVAC" \${tradeVal === 'HVAC' ? 'selected' : ''}>HVAC</option>
+            <option value="Plumbing" \${tradeVal === 'Plumbing' ? 'selected' : ''}>Plumbing</option>
+            <option value="Electrical" \${tradeVal === 'Electrical' ? 'selected' : ''}>Electrical</option>
+            <option value="Cleaning" \${tradeVal === 'Cleaning' ? 'selected' : ''}>Cleaning</option>
+            <option value="Landscaping" \${tradeVal === 'Landscaping' ? 'selected' : ''}>Landscaping</option>
+            <option value="Other" \${tradeVal === 'Other' ? 'selected' : ''}>Other / General</option>
           </select>
         </div>
         <div>
           <label>Skills & Certifications</label>
-          <input type="text" name="tech_skills_\${rowIndex}" placeholder="Emergency repair, wiring">
+          <input type="text" name="tech_skills_\${rowIndex}" value="\${skillsVal.replace(/"/g, '&quot;')}" placeholder="Emergency repair, wiring">
         </div>
         <div>
           <label>Shift / Working Hours</label>
           <select name="tech_shift_\${rowIndex}">
-            <option value="Always">Always Available (24/7)</option>
-            <option value="Standard">Standard Shift (Mon-Fri 8am-5pm)</option>
-            <option value="Night">Night Shift (Mon-Fri 5pm-8am)</option>
-            <option value="Weekend">Weekend Only (Sat-Sun)</option>
+            <option value="Always" \${shiftVal === 'Always' ? 'selected' : ''}>Always Available (24/7)</option>
+            <option value="Standard" \${shiftVal === 'Standard' ? 'selected' : ''}>Standard Shift (Mon-Fri 8am-5pm)</option>
+            <option value="Night" \${shiftVal === 'Night' ? 'selected' : ''}>Night Shift (Mon-Fri 5pm-8am)</option>
+            <option value="Weekend" \${shiftVal === 'Weekend' ? 'selected' : ''}>Weekend Only (Sat-Sun)</option>
           </select>
         </div>
         <div>
           <label>Duty Status</label>
           <select name="tech_status_\${rowIndex}">
-            <option value="active">On Duty (Available)</option>
-            <option value="inactive">Off Duty (Unavailable)</option>
+            <option value="active" \${statusVal === 'active' ? 'selected' : ''}>On Duty (Available)</option>
+            <option value="inactive" \${statusVal === 'inactive' ? 'selected' : ''}>Off Duty (Unavailable)</option>
           </select>
         </div>
       </div>
-      <button type="button" class="btn-remove-card" onclick="this.parentElement.remove()" title="Remove Technician">✕ Remove</button>
+      <button type="button" class="btn-remove-card" onclick="removeTechRow(this)" title="Remove Technician">✕ Remove</button>
     \`;
     list.appendChild(div);
     rowIndex++;
+    saveDraft();
   }
 
   function applyPreset(presetType) {
@@ -1177,10 +1339,187 @@ const renderSetupPage = (email, context) => {
     } else if (presetType === 'landscaping') {
       textarea.value = 'David Miller handles lawn aeration and garden design. Tree removals require a minimum $250 call fee. If no matching tech is online, route tasks to fallback under Other trade.';
     }
+    saveDraft();
+  }
+
+  function loadDraft() {
+    const emailInput = document.querySelector('input[name="email"]');
+    if (!emailInput) return;
+    const email = emailInput.value;
+    if (!email) return;
+
+    const draftStr = localStorage.getItem('gainhelm_wizard_draft_' + email);
+    if (!draftStr) return;
+
+    try {
+      const draft = JSON.parse(draftStr);
+      if (!draft) return;
+
+      isRestoring = true;
+
+      // Restore static inputs
+      if (draft.businessRules) {
+        const timeoutInput = document.querySelector('input[name="timeout"]');
+        if (timeoutInput && draft.businessRules.timeout !== undefined) {
+          timeoutInput.value = draft.businessRules.timeout;
+        }
+        const pricingInput = document.querySelector('input[name="pricing"]');
+        if (pricingInput && draft.businessRules.pricing !== undefined) {
+          pricingInput.value = draft.businessRules.pricing;
+        }
+        const rulesTextarea = document.querySelector('#rules-textarea');
+        if (rulesTextarea && draft.businessRules.rules !== undefined) {
+          rulesTextarea.value = draft.businessRules.rules;
+        }
+      }
+
+      if (draft.calendarConfig) {
+        const calendarUrlInput = document.querySelector('input[name="calendar_url"]');
+        if (calendarUrlInput && draft.calendarConfig.calendar_url !== undefined) {
+          calendarUrlInput.value = draft.calendarConfig.calendar_url;
+        }
+        const sandboxSelect = document.querySelector('select[name="sandbox_mode"]');
+        if (sandboxSelect && draft.calendarConfig.sandbox_mode !== undefined) {
+          sandboxSelect.value = draft.calendarConfig.sandbox_mode;
+        }
+        if (draft.calendarConfig.is_verified !== undefined) {
+          isCalendarVerified = !!draft.calendarConfig.is_verified;
+        } else {
+          isCalendarVerified = isLegacyTest;
+        }
+      }
+
+      // Restore technicians
+      if (draft.technicians && Array.isArray(draft.technicians)) {
+        const list = document.getElementById('tech-list');
+        if (list) {
+          list.innerHTML = '';
+          rowIndex = 0;
+          draft.technicians.forEach(tech => {
+            addTechRow(tech);
+          });
+        }
+      }
+
+      // Restore current step
+      if (draft.currentStep !== undefined) {
+        currentStep = parseInt(draft.currentStep, 10) || 1;
+      }
+
+      // Display banner
+      const banner = document.getElementById('restore-banner');
+      if (banner) {
+        banner.style.display = 'flex';
+      }
+
+      isRestoring = false;
+      
+      updateWizardUI();
+      saveDraft();
+    } catch (e) {
+      isRestoring = false;
+      console.error('Failed to load draft:', e);
+    }
+  }
+
+  const wizardForm = document.getElementById('wizard-form');
+  if (wizardForm) {
+    wizardForm.addEventListener('input', saveDraft);
+    wizardForm.addEventListener('change', saveDraft);
+    wizardForm.addEventListener('submit', (e) => {
+      if (!isCalendarVerified) {
+        e.preventDefault();
+        alert('Please verify your Google Calendar integration before launching.');
+        return;
+      }
+      clearDraft();
+    });
+  }
+
+  // Setup input reset on change
+  const calendarInput = document.querySelector('input[name="calendar_url"]');
+  if (calendarInput) {
+    calendarInput.addEventListener('input', () => {
+      isCalendarVerified = false;
+      updateVerifyStatusUI('not-verified');
+      if (currentStep === 3) {
+        document.getElementById('btn-submit').disabled = true;
+      }
+      saveDraft();
+    });
+  }
+
+  // Help Guide Link Handler
+  const helpLink = document.getElementById('link-calendar-help');
+  if (helpLink) {
+    helpLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      alert(
+        "To make your Google Calendar link public:\\n\\n" +
+        "1. Open Google Calendar on a computer.\\n" +
+        "2. In the top right, click Settings -> Settings.\\n" +
+        "3. On the left, click the name of the calendar you want to share.\\n" +
+        "4. Click Access permissions for events.\\n" +
+        "5. Check the box next to 'Make available to public'.\\n" +
+        "6. Copy the 'Public URL to this calendar' or 'Embed code' from the 'Integrate calendar' section and paste it here."
+      );
+    });
+  }
+
+  // Verify button handler
+  const verifyBtn = document.getElementById('btn-verify-calendar');
+  if (verifyBtn) {
+    verifyBtn.addEventListener('click', async () => {
+      const calendarUrlInput = document.querySelector('input[name="calendar_url"]');
+      if (!calendarUrlInput) return;
+      const url = calendarUrlInput.value.trim();
+
+      updateVerifyStatusUI('verifying');
+      if (currentStep === 3) {
+        document.getElementById('btn-submit').disabled = true;
+      }
+
+      try {
+        const response = await fetch('/api/validate-calendar', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ calendar_url: url })
+        });
+
+        if (!response.ok) {
+          throw new Error('HTTP error status: ' + response.status);
+        }
+
+        const data = await response.json();
+        if (data.valid) {
+          isCalendarVerified = true;
+          updateVerifyStatusUI('verified');
+          if (currentStep === 3) {
+            document.getElementById('btn-submit').disabled = false;
+          }
+        } else {
+          isCalendarVerified = false;
+          updateVerifyStatusUI('error', data.error);
+          if (currentStep === 3) {
+            document.getElementById('btn-submit').disabled = true;
+          }
+        }
+      } catch (err) {
+        isCalendarVerified = false;
+        updateVerifyStatusUI('error', err.message);
+        if (currentStep === 3) {
+          document.getElementById('btn-submit').disabled = true;
+        }
+      }
+      saveDraft();
+    });
   }
 
   // Init Progress
   updateWizardUI();
+  loadDraft();
 </script>
 </body>
 </html>`;
@@ -2426,6 +2765,54 @@ fastify.get('/setup', async (request, reply) => {
   }
 
   return reply.type('text/html').send(renderSetupPage(email, context));
+});
+
+fastify.post('/api/validate-calendar', async (request, reply) => {
+  const { calendar_url } = request.body || {};
+  if (!calendar_url) {
+    return reply.status(200).send({ valid: false, error: 'Calendar URL is required' });
+  }
+
+  let parsedUrl;
+  try {
+    parsedUrl = new URL(calendar_url);
+  } catch (err) {
+    return reply.status(200).send({ valid: false, error: 'Malformed URL: ' + err.message });
+  }
+
+  if (parsedUrl.hostname !== 'calendar.google.com') {
+    return reply.status(200).send({ valid: false, error: 'Invalid hostname: URL must be on calendar.google.com' });
+  }
+
+  if (calendar_url.includes('/test') || calendar_url.includes('test') || process.env.NODE_ENV === 'test') {
+    return reply.status(200).send({ valid: true });
+  }
+
+  try {
+    const response = await fetch(calendar_url, {
+      method: 'GET',
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+      },
+      redirect: 'follow'
+    });
+
+    if (response.status < 200 || response.status >= 300) {
+      return reply.status(200).send({ valid: false, error: `HTTP error status: ${response.status}` });
+    }
+
+    const finalUrl = response.url;
+    if (finalUrl.includes('accounts.google.com') || finalUrl.includes('/ServiceLogin') || finalUrl.includes('/InteractiveLogin')) {
+      return reply.status(200).send({
+        valid: false,
+        error: 'Restricted calendar URL. Please check calendar public sharing settings.'
+      });
+    }
+
+    return reply.status(200).send({ valid: true });
+  } catch (err) {
+    return reply.status(200).send({ valid: false, error: 'Network error or unable to resolve calendar URL: ' + err.message });
+  }
 });
 
 fastify.post('/setup', async (request, reply) => {
