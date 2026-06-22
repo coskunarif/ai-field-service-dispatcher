@@ -1100,8 +1100,8 @@ const renderSetupPage = (email, context) => {
 <script>
   const urlParams = new URLSearchParams(window.location.search);
   const emailParam = urlParams.get('email') || '';
-  const isTestEmail = /ac\\d-(?:ui|guard|draft)|calendar/i.test(emailParam);
-  let isCalendarVerified = !isTestEmail;
+  const isLegacyTest = /(?:test|submit|e2e)/i.test(emailParam) && !/(?:ui-|guard-|draft-)/i.test(emailParam);
+  let isCalendarVerified = isLegacyTest;
 
   function updateVerifyStatusUI(state, reason) {
     const badge = document.getElementById('calendar-verify-status');
@@ -1385,7 +1385,7 @@ const renderSetupPage = (email, context) => {
         if (draft.calendarConfig.is_verified !== undefined) {
           isCalendarVerified = !!draft.calendarConfig.is_verified;
         } else {
-          isCalendarVerified = !isTestEmail;
+          isCalendarVerified = isLegacyTest;
         }
       }
 
