@@ -1,107 +1,172 @@
-# SPEC.md - Landing Page Search CTR & Position Optimization
+# SPEC.md - Wizard Setup Session Resume Specification
 
-## Objective
-Increase landing page search click-through rates (CTR) and average search positions by optimizing meta descriptions to fit the 120-180 character standard and supporting local SEO/GEO audit overrides.
+## 1. Objective
+Enable users to resume incomplete configuration wizard sessions to increase Setup Wizard Completion Rate (SWCR) and minimize drop-offs caused by accidental page refreshes, back-and-forth navigation, or transient session loss.
 
-## Acceptance Criteria
-- **[AC-1]**: Update meta descriptions in the target landing page HTML files and their JSON-LD schema blocks to be between 120 and 180 characters, using high-impact keywords to maximize CTR and search position. The target pages are:
-  - `hvac-dispatch-software.html`
-  - `plumbing-dispatch-software.html`
-  - `electrical-dispatch-software.html`
-  - `locksmith-dispatch-software.html`
-  - `septic-service-dispatch-software.html`
-  - `emergency-restoration-dispatch-software.html`
-  - `field-service-scheduling.html`
-  - `carpet-cleaning-dispatch-software.html`
-  - `tree-service-dispatch-software.html`
-  *Verification method*: Run `npm run audit:seo-geo` and verify no length warnings are printed for these routes.
-- **[AC-2]**: Implement a local SEO audit configuration system in `scripts/gainhelm-seo-geo-audit.mjs` that reads `seo-audit-config.json` and supports route-specific overrides and ignore rules for errors/warnings.
-  *Verification method*: Verify `npm run audit:seo-geo` runs with `/` (homepage) warnings silenced when config ignore rule is set. Add a test route to config to check overriding behavior.
-- **[AC-3]**: Ensure the Playwright E2E suite (`npm test`) passes successfully after updating the page metadata, including updating the targets mapping in `tests/seo_conversion.spec.js`.
-  *Verification method*: Run `npm test` and verify all tests pass without errors. (Note: Tester will update the tests).
+## 2. Acceptance Criteria (AC)
 
-## Performance KPIs
-- **[KPI-1]**: The local SEO/GEO audit script execution time must be `< 3s` when running offline against local files.
-- **[KPI-2]**: HTML document size change for each landing page must be `< 1KB` from the original.
+- **[AC-1] Auto-Save Wizard Draft**
+  - When the user inputs, selects, or changes any field in the `/setup?email=...` form, or adds/removes technician rows, or navigates between steps, the page must automatically serialize the entire current wizard state and write it to browser `localStorage` keyed under the user's email: `gainhelm_wizard_draft_${email}`.
+  - **Verification**: 
+    1. Navigate to `/setup?email=test@example.com`.
+    2. Add a dynamic technician, modify a phone number, select Standard shift, change the guidelines textarea, and click "Next Step" to proceed to Step 2.
+    3. Open browser console and execute `localStorage.getItem('gainhelm_wizard_draft_test@example.com')`.
+    4. Assert that the returned JSON string contains all updated values and `currentStep` is set to `2`.
 
-## Interface Contract
-Tester and Builder must strictly share this targets mapping:
-```json
-{
-  "/hvac-dispatch-software": {
-    "title": "Best HVAC Dispatch Software | Gainhelm",
-    "description": "Gainhelm helps HVAC teams schedule service calls, assign technicians, cut phone tag, and keep the dispatch board readable on iPad or mobile. Join the waitlist today."
-  },
-  "/plumbing-dispatch-software": {
-    "title": "Plumbing Dispatch Software for Service Calls | Gainhelm",
-    "description": "Gainhelm helps plumbing teams schedule service calls, assign plumbers, streamline dispatching, and keep the scheduling board organized on mobile. Join our waitlist."
-  },
-  "/electrical-dispatch-software": {
-    "title": "Electrical Contractor Scheduling & Dispatch Software | Gainhelm",
-    "description": "Gainhelm helps electrical contractors schedule jobs, dispatch technicians, coordinate service calls, and eliminate office-to-field phone tag. Try the dispatch simulator."
-  },
-  "/locksmith-dispatch-software": {
-    "title": "Locksmith Dispatch & Scheduling Software | Gainhelm",
-    "description": "Gainhelm helps locksmith teams dispatch locksmiths, schedule emergency jobs, track work orders, and coordinate field technicians in real-time. Join the waitlist."
-  },
-  "/septic-service-dispatch-software": {
-    "title": "Septic Service Dispatch & Scheduling Software | Gainhelm",
-    "description": "Gainhelm helps septic teams schedule pumpings, dispatch technicians, coordinate tank cleanings, and keep customer service histories organized in one place."
-  },
-  "/emergency-restoration-dispatch-software": {
-    "title": "Emergency Restoration Dispatch & Job Software | Gainhelm",
-    "description": "Gainhelm helps disaster restoration teams schedule emergency calls, dispatch technicians, manage jobs, and coordinate field crews during high-stress projects."
-  },
-  "/field-service-scheduling": {
-    "title": "Field Service Scheduling Software | Gainhelm",
-    "description": "Gainhelm helps field service teams book jobs, dispatch technicians, streamline scheduling workflows, and keep customer updates organized in one dashboard."
-  },
-  "/carpet-cleaning-dispatch-software": {
-    "title": "Carpet Cleaning Dispatch & Scheduling Software | Gainhelm",
-    "description": "Gainhelm helps carpet cleaning teams schedule service calls, coordinate crews, dispatch technicians, and manage booking calendars in one simple interface."
-  },
-  "/tree-service-dispatch-software": {
-    "title": "Tree Service Dispatch Software | Gainhelm",
-    "description": "Gainhelm helps tree service crews schedule jobs, assign arborists, manage work orders, and coordinate dispatch schedules on iPad or mobile devices. Join now."
-  }
+- **[AC-2] Restore Wizard Draft**
+  - On page load, if a serialized draft exists in `localStorage` for the current user's email, the client script must parse and restore all inputs:
+    - Re-populate static fields: `timeout`, `pricing`, `rules` textarea, `calendar_url`, and `sandbox_mode`.
+    - Clear and dynamically re-create all dynamic technician cards inside `#tech-list` using the saved array of technicians.
+    - Set the active step to the saved `currentStep` and trigger `updateWizardUI()`.
+  - **Verification**:
+    1. Visit `/setup?email=persist-test@example.com`.
+    2. Add technician named "Alice Cooper" with phone "+1 (555) 9999", trade "Electrical".
+    3. Navigate to Step 2, change Timeout to "10", go to Step 3.
+    4. Reload the page.
+    5. Assert that the wizard immediately displays Step 3, the Timeout field is set to "10", and returning to Step 1 shows "Alice Cooper" intact.
+
+- **[AC-3] Visual Resume Notification**
+  - When a draft is successfully restored from `localStorage`, a styled resume banner (`#restore-banner`) must appear at the top of the wizard container (above the progress dots).
+  - The banner must read: `"🔄 Resumed incomplete setup wizard session."` and contain a clear `[Start Fresh]` button/link.
+  - **Verification**:
+    1. Fill out any input on `/setup?email=banner-test@example.com` and refresh the page.
+    2. Assert that the banner is visible and matches the theme of the page (Plus Jakarta Sans, brand colors, proper contrast).
+
+- **[AC-4] Discard / Clear Draft**
+  - Clicking "[Start Fresh]" inside the `#restore-banner` must remove the draft key from `localStorage` and reload the page, reverting the wizard to its default server-rendered context.
+  - Submitting the wizard successfully (POST to `/setup` which redirects to `/app`) must clear the draft key from `localStorage` to prevent restoring stale drafts on future setup visits.
+  - **Verification**:
+    1. Restore a draft and verify the banner is shown.
+    2. Click "[Start Fresh]" and assert that the page reloads, the banner is gone, and fields are reset to default database/server-rendered values.
+    3. Fill out the wizard, submit the form to proceed to the Board (`/app`), then navigate back to `/setup?email=...`. Assert that no banner is shown and no draft is restored.
+
+- **[AC-5] E2E Integration Verification**
+  - The Playwright integration test suite must contain an end-to-end test confirming that a partially filled form survives page reloads, successfully restores steps, and clears state upon successful submission.
+  - *Note*: Test writing is done by the Tester and must not be in implementation slices.
+
+---
+
+## 3. Performance KPIs
+
+- **[KPI-1] Restore Initialization Latency**
+  - Restoring form fields and dynamically re-creating technician rows from `localStorage` must complete in `< 15ms` from the `DOMContentLoaded` event to avoid visual flashing or layout shifting (CLS).
+- **[KPI-2] Auto-Save Execution Overhead**
+  - Serializing state and updating `localStorage` on form input/change events must execute in `< 5ms` to avoid input lag.
+- **[KPI-3] Zero Server/Network Overhead**
+  - Draft management must be client-side only; no autosave network calls or backend updates are permitted during editing (0ms server latency impact).
+
+---
+
+## 4. Interface Contract
+
+### Target File
+- `/home/ubuntuadmin/projects/ai-field-service-dispatcher/server.js`
+
+### Client-Side Functions to Add/Modify (Inside the inline `<script>` block in `renderSetupPage`)
+```javascript
+/**
+ * Serializes the current form values, tech list array, and current step,
+ * and saves to localStorage.
+ */
+function saveDraft();
+
+/**
+ * Checks for a saved draft for the current email query param.
+ * If found, restores form values, recreates tech cards, updates currentStep,
+ * displays the #restore-banner, and updates the wizard UI.
+ */
+function loadDraft();
+
+/**
+ * Removes the draft from localStorage for the current email.
+ */
+function clearDraft();
+
+/**
+ * Renders a new technician card in the DOM.
+ * @param {Object} [data] - Optional technician details to prepopulate the card fields.
+ */
+function addTechRow(data);
+
+/**
+ * Removes a technician row card from the DOM and triggers saveDraft().
+ * @param {HTMLElement} btn - The button element triggered.
+ */
+function removeTechRow(btn);
+```
+
+### Visual Layout Schema
+
+```
++-----------------------------------------------------------------------------+
+|                                  GAINHELM                                   |
++-----------------------------------------------------------------------------+
+|                                                                             |
+|   +---------------------------------------------------------------------+   |
+|   | 🔄 Resumed incomplete setup wizard session.            [Start Fresh] |   |  <-- #restore-banner
+|   +---------------------------------------------------------------------+   |
+|                                                                             |
+|      (1) Team                 (2) Rules                (3) Launch           |
+|      o------------------------o------------------------o                    |
+|                                                                             |
+|      ... Step Panel Content ...                                             |
+|                                                                             |
++-----------------------------------------------------------------------------+
+```
+
+### CSS Style Additions (To be placed inside the `<style>` block in `renderSetupPage`)
+```css
+#restore-banner {
+  display: none; /* Controlled by loadDraft */
+  align-items: center;
+  justify-content: space-between;
+  background: hsl(var(--brand) / 0.1);
+  border: 1px dashed hsl(var(--brand) / 0.4);
+  border-radius: 12px;
+  padding: 12px 20px;
+  margin-bottom: 24px;
+  font-size: 0.88rem;
+  color: #fff;
+  font-family: inherit;
+}
+.btn-start-fresh {
+  background: hsl(var(--surface-3));
+  border: 1px solid hsl(var(--line));
+  color: hsl(var(--text-2));
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 0.8rem;
+  transition: all 0.2s ease;
+}
+.btn-start-fresh:hover {
+  background: hsl(0 72% 51% / 0.1);
+  color: hsl(0 100% 70%);
+  border-color: hsl(0 72% 51% / 0.4);
 }
 ```
 
-The configuration file `seo-audit-config.json` structure must be:
-```json
-{
-  "overrides": {
-    "/": {
-      "ignoreWarnings": ["no-inline-waitlist-form"]
-    }
-  }
-}
-```
+---
 
-## Out of Scope
-- Modifying design layout, styling, or adding new routes to `sitemap.xml`.
-- Modifying database schemas or Fastify server routing endpoints.
+## 5. Out of Scope
 
-## Objections
-- Critic Objections: None raised.
+- Backend-side database draft synchronization, REST endpoints, or auto-save cron jobs (YAGNI).
+- Multi-device or cross-browser draft syncing.
+- Validation checks for technician phone/email formats during the draft save process (validation remains on step navigation).
 
-## Slices
-Task type: **refinement** (test strategy: update/snapshot tests).
+---
 
-- **[S-1]**: Implement configurable overrides and ignore rules support in `scripts/gainhelm-seo-geo-audit.mjs` and create `seo-audit-config.json` ignoring `/`'s waitlist form warning.
-  - Files: `scripts/gainhelm-seo-geo-audit.mjs`, `seo-audit-config.json`
-  - ACs: `[AC-2]`
-  - [Independent: Yes]
-- **[S-2]**: Update the meta descriptions and JSON-LD structured data blocks inside all 9 target landing page HTML files to match the optimized descriptions specified in the interface contract.
-  - Files:
-    - `hvac-dispatch-software.html`
-    - `plumbing-dispatch-software.html`
-    - `electrical-dispatch-software.html`
-    - `locksmith-dispatch-software.html`
-    - `septic-service-dispatch-software.html`
-    - `emergency-restoration-dispatch-software.html`
-    - `field-service-scheduling.html`
-    - `carpet-cleaning-dispatch-software.html`
-    - `tree-service-dispatch-software.html`
-  - ACs: `[AC-1]`
-  - [Independent: Yes]
+## 6. Slices
+
+### **[S-1] Setup Wizard State Serialization and Input Extender**
+- **Description**: Add the `saveDraft()`, `clearDraft()`, and `removeTechRow(btn)` helper functions. Update `addTechRow(data)` to accept data arguments. Modify HTML rendering to bind technician card removal to `removeTechRow(this)` instead of `this.parentElement.remove()`. Attach input/change event listeners to the `#wizard-form` to invoke `saveDraft()`. Attach submit listener to clear the draft.
+- **Independent**: Yes
+- **Mapped ACs**: `[AC-1]`, `[AC-4]`
+- **Files**: `/home/ubuntuadmin/projects/ai-field-service-dispatcher/server.js`
+
+### **[S-2] Setup Wizard Restorer and Resume Banner UI**
+- **Description**: Add the `#restore-banner` element and styles. Implement `loadDraft()` to fetch state from `localStorage` on page load, reconstruct technician cards using `addTechRow(data)`, restore other inputs/steps, and handle the "[Start Fresh]" button event.
+- **Independent**: No (depends on `[S-1]`)
+- **Mapped ACs**: `[AC-2]`, `[AC-3]`, `[AC-4]`
+- **Files**: `/home/ubuntuadmin/projects/ai-field-service-dispatcher/server.js`

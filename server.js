@@ -650,7 +650,7 @@ const renderSetupPage = (email, context) => {
             </select>
           </div>
         </div>
-        <button type="button" class="btn-remove-card" onclick="this.parentElement.remove()" title="Remove Technician">✕ Remove</button>
+        <button type="button" class="btn-remove-card" onclick="removeTechRow(this)" title="Remove Technician">✕ Remove</button>
       </div>
     `;
   } else {
@@ -700,7 +700,7 @@ const renderSetupPage = (email, context) => {
               </select>
             </div>
           </div>
-          <button type="button" class="btn-remove-card" onclick="this.parentElement.remove()" title="Remove Technician">✕ Remove</button>
+          <button type="button" class="btn-remove-card" onclick="removeTechRow(this)" title="Remove Technician">✕ Remove</button>
         </div>
       `;
     });
@@ -935,6 +935,35 @@ const renderSetupPage = (email, context) => {
     justify-content: space-between;
     align-items: center;
   }
+  #restore-banner {
+    display: none; /* Controlled by loadDraft */
+    align-items: center;
+    justify-content: space-between;
+    background: hsl(var(--brand) / 0.1);
+    border: 1px dashed hsl(var(--brand) / 0.4);
+    border-radius: 12px;
+    padding: 12px 20px;
+    margin-bottom: 24px;
+    font-size: 0.88rem;
+    color: #fff;
+    font-family: inherit;
+  }
+  .btn-start-fresh {
+    background: hsl(var(--surface-3));
+    border: 1px solid hsl(var(--line));
+    color: hsl(var(--text-2));
+    padding: 6px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 0.8rem;
+    transition: all 0.2s ease;
+  }
+  .btn-start-fresh:hover {
+    background: hsl(0 72% 51% / 0.1);
+    color: hsl(0 100% 70%);
+    border-color: hsl(0 72% 51% / 0.4);
+  }
 </style>
 </head>
 <body>
@@ -949,6 +978,10 @@ const renderSetupPage = (email, context) => {
 </header>
 <main style="padding: 0 20px;">
   <div class="setup-container">
+    <div id="restore-banner">
+      <span>🔄 Resumed incomplete setup wizard session.</span>
+      <button type="button" class="btn-start-fresh" onclick="clearDraft(); location.reload();">[Start Fresh]</button>
+    </div>
     
     <!-- Progress Indicator -->
     <div class="wizard-progress">
@@ -1055,6 +1088,7 @@ const renderSetupPage = (email, context) => {
 <script>
   let currentStep = 1;
   let rowIndex = ${Math.max(technicians.length, 1)};
+  let isRestoring = false;
 
   function updateWizardUI() {
     // Show active panel
@@ -1084,6 +1118,76 @@ const renderSetupPage = (email, context) => {
     }
   }
 
+  function saveDraft() {
+    if (isRestoring) return;
+    const emailInput = document.querySelector('input[name="email"]');
+    if (!emailInput) return;
+    const email = emailInput.value;
+    if (!email) return;
+
+    const technicians = [];
+    const cards = document.querySelectorAll('#tech-list .tech-card');
+    cards.forEach(card => {
+      const nameInput = card.querySelector('input[name^="tech_name_"]');
+      const phoneInput = card.querySelector('input[name^="tech_phone_"]');
+      const tradeSelect = card.querySelector('select[name^="tech_trade_"]');
+      const skillsInput = card.querySelector('input[name^="tech_skills_"]');
+      const shiftSelect = card.querySelector('select[name^="tech_shift_"]');
+      const statusSelect = card.querySelector('select[name^="tech_status_"]');
+
+      if (nameInput) {
+        technicians.push({
+          name: nameInput.value,
+          phone: phoneInput ? phoneInput.value : '',
+          trade: tradeSelect ? tradeSelect.value : 'Other',
+          skills: skillsInput ? skillsInput.value : '',
+          shift: shiftSelect ? shiftSelect.value : 'Always',
+          status: statusSelect ? statusSelect.value : 'active'
+        });
+      }
+    });
+
+    const timeoutInput = document.querySelector('input[name="timeout"]');
+    const pricingInput = document.querySelector('input[name="pricing"]');
+    const rulesTextarea = document.querySelector('#rules-textarea');
+    const calendarUrlInput = document.querySelector('input[name="calendar_url"]');
+    const sandboxSelect = document.querySelector('select[name="sandbox_mode"]');
+
+    const draft = {
+      currentStep: currentStep,
+      technicians: technicians,
+      businessRules: {
+        timeout: timeoutInput ? timeoutInput.value : '3',
+        pricing: pricingInput ? pricingInput.value : '120',
+        rules: rulesTextarea ? rulesTextarea.value : ''
+      },
+      calendarConfig: {
+        calendar_url: calendarUrlInput ? calendarUrlInput.value : '',
+        sandbox_mode: sandboxSelect ? sandboxSelect.value : 'true'
+      }
+    };
+
+    localStorage.setItem('gainhelm_wizard_draft_' + email, JSON.stringify(draft));
+  }
+
+  function clearDraft() {
+    const emailInput = document.querySelector('input[name="email"]');
+    if (emailInput) {
+      const email = emailInput.value;
+      if (email) {
+        localStorage.removeItem('gainhelm_wizard_draft_' + email);
+      }
+    }
+  }
+
+  function removeTechRow(btn) {
+    const card = btn.closest('.tech-card');
+    if (card) {
+      card.remove();
+      saveDraft();
+    }
+  }
+
   function navigateStep(delta) {
     if (delta === 1) {
       // Validate active step inputs
@@ -1106,66 +1210,77 @@ const renderSetupPage = (email, context) => {
     }
     currentStep += delta;
     updateWizardUI();
+    saveDraft();
   }
 
   function goToStep(step) {
     if (step < currentStep || (step === 2 && currentStep === 1) || (step === 3 && currentStep === 2)) {
       currentStep = step;
       updateWizardUI();
+      saveDraft();
     }
   }
 
-  function addTechRow() {
+  function addTechRow(data) {
     const list = document.getElementById('tech-list');
     const div = document.createElement('div');
     div.className = 'tech-card';
     div.id = 'tech-row-' + rowIndex;
+
+    const nameVal = (data && data.name) ? data.name : '';
+    const phoneVal = (data && data.phone) ? data.phone : '';
+    const tradeVal = (data && data.trade) ? data.trade : 'HVAC';
+    const skillsVal = (data && data.skills) ? data.skills : '';
+    const shiftVal = (data && data.shift) ? data.shift : 'Always';
+    const statusVal = (data && data.status) ? data.status : 'active';
+
     div.innerHTML = \`
       <div class="tech-card-grid">
         <div>
           <label>Name</label>
-          <input type="text" name="tech_name_\${rowIndex}" placeholder="John Doe" required>
+          <input type="text" name="tech_name_\${rowIndex}" value="\${nameVal.replace(/"/g, '&quot;')}" placeholder="John Doe" required>
         </div>
         <div>
           <label>Phone Number</label>
-          <input type="tel" name="tech_phone_\${rowIndex}" placeholder="+1 (555) 0100" required>
+          <input type="tel" name="tech_phone_\${rowIndex}" value="\${phoneVal.replace(/"/g, '&quot;')}" placeholder="+1 (555) 0100" required>
         </div>
         <div>
           <label>Trade Specialty</label>
           <select name="tech_trade_\${rowIndex}">
-            <option value="HVAC">HVAC</option>
-            <option value="Plumbing">Plumbing</option>
-            <option value="Electrical">Electrical</option>
-            <option value="Cleaning">Cleaning</option>
-            <option value="Landscaping">Landscaping</option>
-            <option value="Other">Other / General</option>
+            <option value="HVAC" \${tradeVal === 'HVAC' ? 'selected' : ''}>HVAC</option>
+            <option value="Plumbing" \${tradeVal === 'Plumbing' ? 'selected' : ''}>Plumbing</option>
+            <option value="Electrical" \${tradeVal === 'Electrical' ? 'selected' : ''}>Electrical</option>
+            <option value="Cleaning" \${tradeVal === 'Cleaning' ? 'selected' : ''}>Cleaning</option>
+            <option value="Landscaping" \${tradeVal === 'Landscaping' ? 'selected' : ''}>Landscaping</option>
+            <option value="Other" \${tradeVal === 'Other' ? 'selected' : ''}>Other / General</option>
           </select>
         </div>
         <div>
           <label>Skills & Certifications</label>
-          <input type="text" name="tech_skills_\${rowIndex}" placeholder="Emergency repair, wiring">
+          <input type="text" name="tech_skills_\${rowIndex}" value="\${skillsVal.replace(/"/g, '&quot;')}" placeholder="Emergency repair, wiring">
         </div>
         <div>
           <label>Shift / Working Hours</label>
           <select name="tech_shift_\${rowIndex}">
-            <option value="Always">Always Available (24/7)</option>
-            <option value="Standard">Standard Shift (Mon-Fri 8am-5pm)</option>
-            <option value="Night">Night Shift (Mon-Fri 5pm-8am)</option>
-            <option value="Weekend">Weekend Only (Sat-Sun)</option>
+            <option value="Always" \${shiftVal === 'Always' ? 'selected' : ''}>Always Available (24/7)</option>
+            <option value="Standard" \${shiftVal === 'Standard' ? 'selected' : ''}>Standard Shift (Mon-Fri 8am-5pm)</option>
+            <option value="Night" \${shiftVal === 'Night' ? 'selected' : ''}>Night Shift (Mon-Fri 5pm-8am)</option>
+            <option value="Weekend" \${shiftVal === 'Weekend' ? 'selected' : ''}>Weekend Only (Sat-Sun)</option>
           </select>
         </div>
         <div>
           <label>Duty Status</label>
           <select name="tech_status_\${rowIndex}">
-            <option value="active">On Duty (Available)</option>
-            <option value="inactive">Off Duty (Unavailable)</option>
+            <option value="active" \${statusVal === 'active' ? 'selected' : ''}>On Duty (Available)</option>
+            <option value="inactive" \${statusVal === 'inactive' ? 'selected' : ''}>Off Duty (Unavailable)</option>
           </select>
         </div>
       </div>
-      <button type="button" class="btn-remove-card" onclick="this.parentElement.remove()" title="Remove Technician">✕ Remove</button>
+      <button type="button" class="btn-remove-card" onclick="removeTechRow(this)" title="Remove Technician">✕ Remove</button>
     \`;
     list.appendChild(div);
     rowIndex++;
+    saveDraft();
   }
 
   function applyPreset(presetType) {
@@ -1177,10 +1292,94 @@ const renderSetupPage = (email, context) => {
     } else if (presetType === 'landscaping') {
       textarea.value = 'David Miller handles lawn aeration and garden design. Tree removals require a minimum $250 call fee. If no matching tech is online, route tasks to fallback under Other trade.';
     }
+    saveDraft();
+  }
+
+  function loadDraft() {
+    const emailInput = document.querySelector('input[name="email"]');
+    if (!emailInput) return;
+    const email = emailInput.value;
+    if (!email) return;
+
+    const draftStr = localStorage.getItem('gainhelm_wizard_draft_' + email);
+    if (!draftStr) return;
+
+    try {
+      const draft = JSON.parse(draftStr);
+      if (!draft) return;
+
+      isRestoring = true;
+
+      // Restore static inputs
+      if (draft.businessRules) {
+        const timeoutInput = document.querySelector('input[name="timeout"]');
+        if (timeoutInput && draft.businessRules.timeout !== undefined) {
+          timeoutInput.value = draft.businessRules.timeout;
+        }
+        const pricingInput = document.querySelector('input[name="pricing"]');
+        if (pricingInput && draft.businessRules.pricing !== undefined) {
+          pricingInput.value = draft.businessRules.pricing;
+        }
+        const rulesTextarea = document.querySelector('#rules-textarea');
+        if (rulesTextarea && draft.businessRules.rules !== undefined) {
+          rulesTextarea.value = draft.businessRules.rules;
+        }
+      }
+
+      if (draft.calendarConfig) {
+        const calendarUrlInput = document.querySelector('input[name="calendar_url"]');
+        if (calendarUrlInput && draft.calendarConfig.calendar_url !== undefined) {
+          calendarUrlInput.value = draft.calendarConfig.calendar_url;
+        }
+        const sandboxSelect = document.querySelector('select[name="sandbox_mode"]');
+        if (sandboxSelect && draft.calendarConfig.sandbox_mode !== undefined) {
+          sandboxSelect.value = draft.calendarConfig.sandbox_mode;
+        }
+      }
+
+      // Restore technicians
+      if (draft.technicians && Array.isArray(draft.technicians)) {
+        const list = document.getElementById('tech-list');
+        if (list) {
+          list.innerHTML = '';
+          rowIndex = 0;
+          draft.technicians.forEach(tech => {
+            addTechRow(tech);
+          });
+        }
+      }
+
+      // Restore current step
+      if (draft.currentStep !== undefined) {
+        currentStep = parseInt(draft.currentStep, 10) || 1;
+      }
+
+      // Display banner
+      const banner = document.getElementById('restore-banner');
+      if (banner) {
+        banner.style.display = 'flex';
+      }
+
+      isRestoring = false;
+      
+      updateWizardUI();
+      saveDraft();
+    } catch (e) {
+      isRestoring = false;
+      console.error('Failed to load draft:', e);
+    }
+  }
+
+  const wizardForm = document.getElementById('wizard-form');
+  if (wizardForm) {
+    wizardForm.addEventListener('input', saveDraft);
+    wizardForm.addEventListener('change', saveDraft);
+    wizardForm.addEventListener('submit', clearDraft);
   }
 
   // Init Progress
   updateWizardUI();
+  loadDraft();
 </script>
 </body>
 </html>`;
