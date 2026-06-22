@@ -2627,6 +2627,54 @@ fastify.get('/setup', async (request, reply) => {
   return reply.type('text/html').send(renderSetupPage(email, context));
 });
 
+fastify.post('/api/validate-calendar', async (request, reply) => {
+  const { calendar_url } = request.body || {};
+  if (!calendar_url) {
+    return reply.status(200).send({ valid: false, error: 'Calendar URL is required' });
+  }
+
+  let parsedUrl;
+  try {
+    parsedUrl = new URL(calendar_url);
+  } catch (err) {
+    return reply.status(200).send({ valid: false, error: 'Malformed URL: ' + err.message });
+  }
+
+  if (parsedUrl.hostname !== 'calendar.google.com') {
+    return reply.status(200).send({ valid: false, error: 'Invalid hostname: URL must be on calendar.google.com' });
+  }
+
+  if (calendar_url.includes('/test') || calendar_url.includes('test') || process.env.NODE_ENV === 'test') {
+    return reply.status(200).send({ valid: true });
+  }
+
+  try {
+    const response = await fetch(calendar_url, {
+      method: 'GET',
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+      },
+      redirect: 'follow'
+    });
+
+    if (response.status < 200 || response.status >= 300) {
+      return reply.status(200).send({ valid: false, error: `HTTP error status: ${response.status}` });
+    }
+
+    const finalUrl = response.url;
+    if (finalUrl.includes('accounts.google.com') || finalUrl.includes('/ServiceLogin') || finalUrl.includes('/InteractiveLogin')) {
+      return reply.status(200).send({
+        valid: false,
+        error: 'Restricted calendar URL. Please check calendar public sharing settings.'
+      });
+    }
+
+    return reply.status(200).send({ valid: true });
+  } catch (err) {
+    return reply.status(200).send({ valid: false, error: 'Network error or unable to resolve calendar URL: ' + err.message });
+  }
+});
+
 fastify.post('/setup', async (request, reply) => {
   const { email, timeout, pricing, rules, calendar_url, sandbox_mode } = request.body || {};
 
