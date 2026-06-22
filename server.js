@@ -935,6 +935,35 @@ const renderSetupPage = (email, context) => {
     justify-content: space-between;
     align-items: center;
   }
+  #restore-banner {
+    display: none; /* Controlled by loadDraft */
+    align-items: center;
+    justify-content: space-between;
+    background: hsl(var(--brand) / 0.1);
+    border: 1px dashed hsl(var(--brand) / 0.4);
+    border-radius: 12px;
+    padding: 12px 20px;
+    margin-bottom: 24px;
+    font-size: 0.88rem;
+    color: #fff;
+    font-family: inherit;
+  }
+  .btn-start-fresh {
+    background: hsl(var(--surface-3));
+    border: 1px solid hsl(var(--line));
+    color: hsl(var(--text-2));
+    padding: 6px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 0.8rem;
+    transition: all 0.2s ease;
+  }
+  .btn-start-fresh:hover {
+    background: hsl(0 72% 51% / 0.1);
+    color: hsl(0 100% 70%);
+    border-color: hsl(0 72% 51% / 0.4);
+  }
 </style>
 </head>
 <body>
@@ -949,6 +978,10 @@ const renderSetupPage = (email, context) => {
 </header>
 <main style="padding: 0 20px;">
   <div class="setup-container">
+    <div id="restore-banner">
+      <span>🔄 Resumed incomplete setup wizard session.</span>
+      <button type="button" class="btn-start-fresh" onclick="clearDraft(); location.reload();">[Start Fresh]</button>
+    </div>
     
     <!-- Progress Indicator -->
     <div class="wizard-progress">
@@ -1262,6 +1295,81 @@ const renderSetupPage = (email, context) => {
     saveDraft();
   }
 
+  function loadDraft() {
+    const emailInput = document.querySelector('input[name="email"]');
+    if (!emailInput) return;
+    const email = emailInput.value;
+    if (!email) return;
+
+    const draftStr = localStorage.getItem('gainhelm_wizard_draft_' + email);
+    if (!draftStr) return;
+
+    try {
+      const draft = JSON.parse(draftStr);
+      if (!draft) return;
+
+      isRestoring = true;
+
+      // Restore static inputs
+      if (draft.businessRules) {
+        const timeoutInput = document.querySelector('input[name="timeout"]');
+        if (timeoutInput && draft.businessRules.timeout !== undefined) {
+          timeoutInput.value = draft.businessRules.timeout;
+        }
+        const pricingInput = document.querySelector('input[name="pricing"]');
+        if (pricingInput && draft.businessRules.pricing !== undefined) {
+          pricingInput.value = draft.businessRules.pricing;
+        }
+        const rulesTextarea = document.querySelector('#rules-textarea');
+        if (rulesTextarea && draft.businessRules.rules !== undefined) {
+          rulesTextarea.value = draft.businessRules.rules;
+        }
+      }
+
+      if (draft.calendarConfig) {
+        const calendarUrlInput = document.querySelector('input[name="calendar_url"]');
+        if (calendarUrlInput && draft.calendarConfig.calendar_url !== undefined) {
+          calendarUrlInput.value = draft.calendarConfig.calendar_url;
+        }
+        const sandboxSelect = document.querySelector('select[name="sandbox_mode"]');
+        if (sandboxSelect && draft.calendarConfig.sandbox_mode !== undefined) {
+          sandboxSelect.value = draft.calendarConfig.sandbox_mode;
+        }
+      }
+
+      // Restore technicians
+      if (draft.technicians && Array.isArray(draft.technicians)) {
+        const list = document.getElementById('tech-list');
+        if (list) {
+          list.innerHTML = '';
+          rowIndex = 0;
+          draft.technicians.forEach(tech => {
+            addTechRow(tech);
+          });
+        }
+      }
+
+      // Restore current step
+      if (draft.currentStep !== undefined) {
+        currentStep = parseInt(draft.currentStep, 10) || 1;
+      }
+
+      // Display banner
+      const banner = document.getElementById('restore-banner');
+      if (banner) {
+        banner.style.display = 'flex';
+      }
+
+      isRestoring = false;
+      
+      updateWizardUI();
+      saveDraft();
+    } catch (e) {
+      isRestoring = false;
+      console.error('Failed to load draft:', e);
+    }
+  }
+
   const wizardForm = document.getElementById('wizard-form');
   if (wizardForm) {
     wizardForm.addEventListener('input', saveDraft);
@@ -1271,6 +1379,7 @@ const renderSetupPage = (email, context) => {
 
   // Init Progress
   updateWizardUI();
+  loadDraft();
 </script>
 </body>
 </html>`;
