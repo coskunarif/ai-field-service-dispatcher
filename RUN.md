@@ -1,5 +1,5 @@
-task: Validate calendar integration links during configuration to increase Setup Wizard Completion Rate              tier: T2   creativity: 0.5
-state: VERIFY                budget: repairs 0/3
+task: Validate calendar integration links during configuration to increase Setup Wizard Completion Rate              tier: T2   creativity: 0.3
+state: BUILD                budget: repairs 1/3
 branch: asf/20260622-validate-calendar          checkpoint: none
 caps: agents,ui,web,human
 
@@ -15,6 +15,7 @@ caps: agents,ui,web,human
 - 2026-06-22 Conductor: Architect completed SPEC.md. Advanced to TESTER phase. Output path: SPEC.md, elapsed time: 22m
 - 2026-06-22 Conductor: Tester completed test creation. Advanced to BUILD phase. Output path: tests/calendar_validation.spec.js, elapsed time: 9m
 - 2026-06-22 Conductor: Builder completed S-1 and S-2. Advanced to VERIFY phase. Output path: RUN.md, elapsed time: 30m
+- 2026-06-22 Conductor: Verifier failed. Routed back to Builder with hypothesis: default isCalendarVerified to false on page load and update pre-existing setup wizard tests to perform calendar URL verification. Output path: RUN.md, elapsed time: 4m
 
 ## Verdict
 - **[AC-1] PASS**: POST `/api/validate-calendar` route handles malformed URLs, hostname checks, and redirect checks correctly.
