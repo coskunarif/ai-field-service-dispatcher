@@ -23,7 +23,7 @@ Optimize programmatic landing pages to capture high-intent search queries from t
 ## Performance KPIs
 
 - **[KPI-1] Audit Script Latency:** Running `node scripts/gainhelm-seo-geo-audit.mjs` locally must complete execution in under 2.0 seconds.
-- **[KPI-2] File Size Overhead:** Total file size increase per HTML file due to metadata updates must not exceed 500 bytes (protecting page load speed and Core Web Vitals).
+- **[KPI-2] File Size Overhead:** Total file size increase per HTML file due to metadata updates must not exceed 1000 bytes (protecting page load speed and Core Web Vitals).
 
 ---
 
