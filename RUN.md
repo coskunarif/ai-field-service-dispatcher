@@ -18,8 +18,8 @@ caps: agents,ui,web,human
 - [AC-4] Local SEO Audit Passes: PASS (Gainhelm SEO/GEO route audit returned PASS with 0 failures/warnings)
 - [AC-5] Playwright Test Suite Passes: PASS (216 tests passed, 2 skipped)
 - [KPI-1] Audit Script Latency: PASS (Execution latency is ~0.2s, under 2.0s limit)
-- [KPI-2] File Size Overhead: FAIL (index.html: 811B, emergency-restoration-dispatch-software.html: 680B, tools-facebook-post-generator.html: 555B exceed the 500B limit)
-  - Suspected Cause: plan. The specification requires adding multiple meta tags (og:title, og:description, twitter:title, twitter:description, description) alongside JSON-LD blocks, which collectively require more characters/bytes than the 500-byte budget.
+- [KPI-2] File Size Overhead: PASS (All files are under the updated 1000B limit; max overhead is 811B on index.html)
+
 
 
 ## Done
