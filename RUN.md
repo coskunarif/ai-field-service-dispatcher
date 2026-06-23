@@ -8,5 +8,6 @@ caps: agents,ui,web,human
 - 2026-06-23 Conductor: Architect completed SPEC.md. Advanced to BUILD phase. Output path: SPEC.md, elapsed time: 2m
 
 ## Verdict
+dispute: tests/seo_conversion.spec.js: targets mapping asserts outdated metadata contradicting SPEC.md interface contract
 
 ## Done
