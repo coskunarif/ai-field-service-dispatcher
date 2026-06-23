@@ -1,125 +1,129 @@
 import { test, expect } from '@playwright/test';
 
 const targets = {
+  '/': {
+    title: 'Gainhelm | App-Less AI Dispatch Software for Field Services',
+    description: 'Tired of complex field service apps techs hate using? Gainhelm offers 100% app-less SMS/WhatsApp AI dispatching integrated with Google Calendar. Join the waitlist today.'
+  },
   '/hvac-dispatch-software': {
-    title: 'Best HVAC Dispatch Software | Gainhelm',
-    description: 'Gainhelm helps HVAC teams schedule service calls, assign technicians, cut phone tag, and keep the dispatch board readable on iPad or mobile. Join the waitlist today.'
+    title: 'Best HVAC Dispatch App & Software for iPad | Gainhelm',
+    description: 'Tired of complex HVAC dispatch apps techs hate? Gainhelm offers 100% app-less SMS/WhatsApp AI scheduling for iPad & mobile. Try the free dispatch simulator now.'
   },
   '/plumbing-dispatch-software': {
-    title: 'Plumbing Dispatch Software for Service Calls | Gainhelm',
-    description: 'Gainhelm helps plumbing teams schedule service calls, assign plumbers, streamline dispatching, and keep the scheduling board organized on mobile. Join our waitlist.'
+    title: 'Plumbing Dispatch Software & App for Plumbers | Gainhelm',
+    description: 'Looking for lightweight dispatch software for plumbing? Gainhelm provides 100% app-less SMS scheduling integrated with Google Calendar. Try the plumbing simulator.'
+  },
+  '/electrical-dispatch-software': {
+    title: 'Electrician Scheduling & Dispatch Software | Gainhelm',
+    description: 'Looking for electrician dispatch software? Gainhelm offers app-less SMS technician scheduling & electrical service coordination via Google Calendar. Try the simulator.'
   },
   '/field-service-scheduling': {
-    title: 'Field Service Scheduling Software | Gainhelm',
-    description: 'Gainhelm helps field service teams book jobs, dispatch technicians, streamline scheduling workflows, and keep customer updates organized in one dashboard.'
+    title: 'Field Service Scheduling & Dispatch Software | Gainhelm',
+    description: 'Streamline daily field service scheduling. Gainhelm coordinates dispatching with your techs over SMS/WhatsApp—no app downloads required. Try the dispatch simulator.'
   },
   '/tree-service-dispatch-software': {
-    title: 'Tree Service Dispatch Software | Gainhelm',
-    description: 'Gainhelm helps tree service crews schedule jobs, assign arborists, manage work orders, and coordinate dispatch schedules on iPad or mobile devices. Join now.'
+    title: 'Tree Service Dispatch & Scheduling Software | Gainhelm',
+    description: 'Gainhelm helps tree service crews schedule jobs and coordinate arborists using 100% app-less SMS dispatching. Integrate with Google Calendar. Try the simulator.'
   },
   '/septic-service-dispatch-software': {
     title: 'Septic Service Dispatch & Scheduling Software | Gainhelm',
-    description: 'Gainhelm helps septic teams schedule pumpings, dispatch technicians, coordinate tank cleanings, and keep customer service histories organized in one place.'
+    description: 'Gainhelm helps septic teams schedule pumpings and dispatch technicians using simple app-less SMS. Connects directly to Google Calendar. Try the septic simulator.'
   },
   '/carpet-cleaning-dispatch-software': {
     title: 'Carpet Cleaning Dispatch & Scheduling Software | Gainhelm',
-    description: 'Gainhelm helps carpet cleaning teams schedule service calls, coordinate crews, dispatch technicians, and manage booking calendars in one simple interface.'
+    description: 'Gainhelm helps carpet cleaning teams schedule service calls and dispatch crews via simple SMS/WhatsApp text messaging. Google Calendar integrated. Try the simulator.'
   },
   '/emergency-restoration-dispatch-software': {
     title: 'Emergency Restoration Dispatch & Job Software | Gainhelm',
-    description: 'Gainhelm helps disaster restoration teams schedule emergency calls, dispatch technicians, manage jobs, and coordinate field crews during high-stress projects.'
+    description: 'Gainhelm helps disaster restoration teams schedule emergency calls and coordinate field crews via app-less SMS/WhatsApp text messages. Try the dispatch simulator.'
   },
   '/locksmith-dispatch-software': {
     title: 'Locksmith Dispatch & Scheduling Software | Gainhelm',
-    description: 'Gainhelm helps locksmith teams dispatch locksmiths, schedule emergency jobs, track work orders, and coordinate field technicians in real-time. Join the waitlist.'
-  },
-  '/electrical-dispatch-software': {
-    title: 'Electrical Contractor Scheduling & Dispatch Software | Gainhelm',
-    description: 'Gainhelm helps electrical contractors schedule jobs, dispatch technicians, coordinate service calls, and eliminate office-to-field phone tag. Try the dispatch simulator.'
+    description: 'Gainhelm helps locksmith teams schedule emergency jobs and dispatch locksmiths via app-less SMS text messages. Connects with Google Calendar. Try the simulator.'
   },
   '/appliance-repair-dispatch-software': {
-    title: 'Appliance Repair Dispatch Software | Gainhelm',
-    description: 'Gainhelm helps appliance repair teams organize repair requests, technician assignment, schedule changes, job notes, and office-to-field handoffs in one dispatch workflow.'
+    title: 'Appliance Repair Dispatch & Scheduling Software | Gainhelm',
+    description: 'Looking for appliance repair dispatch software? Gainhelm offers 100% app-less SMS technician scheduling & Google Calendar coordination. Try the repair simulator.'
   },
   '/pest-control-dispatch-software': {
-    title: 'Pest Control Dispatch Software | Gainhelm',
-    description: 'Gainhelm helps pest control teams organize service requests, technician assignment, schedule changes, route handoffs, and office-to-field updates in a dispatch workflow.'
+    title: 'Pest Control Dispatch & Scheduling Software | Gainhelm',
+    description: 'Gainhelm helps pest control teams schedule service requests and dispatch technicians using simple app-less SMS. Integrated with Google Calendar. Try the simulator.'
   },
   '/garage-door-dispatch-software': {
-    title: 'Garage Door Dispatch Software | Gainhelm',
-    description: 'Gainhelm helps garage door teams organize service requests, technician assignment, schedule changes, and office-to-field updates in one readable dispatch workflow.'
+    title: 'Garage Door Dispatch & Scheduling Software | Gainhelm',
+    description: 'Gainhelm helps garage door teams coordinate scheduling and dispatch technicians using 100% app-less SMS/WhatsApp. Google Calendar sync. Try the garage simulator.'
   },
   '/cleaning-dispatch-software': {
-    title: 'Cleaning Dispatch Software | Gainhelm',
-    description: 'Gainhelm helps cleaning service teams organize service requests, technician assignment, schedule changes, and office-to-field updates in one readable dispatch workflow.'
+    title: 'Cleaning Dispatch & Maid Scheduling Software | Gainhelm',
+    description: 'Gainhelm helps cleaning and maid service teams schedule jobs and dispatch cleaners via app-less SMS/WhatsApp text messages. Google Calendar sync. Try the simulator.'
   },
   '/landscaping-dispatch-software': {
-    title: 'Landscaping Dispatch Software | Gainhelm',
-    description: 'Gainhelm helps landscaping and lawn care teams organize service requests, crew assignment, schedule changes, and office-to-field updates in one dispatch workflow.'
+    title: 'Landscaping Dispatch & Lawn Care Scheduling | Gainhelm',
+    description: 'Gainhelm helps landscaping and lawn care crews schedule service calls and dispatch technicians via 100% app-less SMS. Connects to Google Calendar. Try the simulator.'
   },
   '/roofing-dispatch-software': {
-    title: 'Roofing Dispatch Software | Gainhelm',
-    description: 'Gainhelm helps roofing contractor teams organize service requests, crew assignment, schedule changes, and office-to-field updates in one readable dispatch workflow.'
+    title: 'Roofing Dispatch & Crew Scheduling Software | Gainhelm',
+    description: 'Gainhelm helps roofing contractor crews schedule service calls and dispatch technicians via 100% app-less SMS/WhatsApp. Google Calendar sync. Try the simulator.'
   },
   '/pool-service-dispatch-software': {
-    title: 'Pool Service Dispatch Software | Gainhelm',
-    description: 'Gainhelm helps pool service teams organize service requests, technician assignment, schedule changes, and office-to-field updates in one readable dispatch workflow.'
+    title: 'Pool Service Dispatch & Scheduling Software | Gainhelm',
+    description: 'Gainhelm helps pool service teams organize jobs and dispatch technicians via 100% app-less SMS/WhatsApp messaging. Google Calendar integrated. Try the simulator.'
   },
   '/commercial-facilities-dispatch-software': {
-    title: 'Commercial Facilities Dispatch Software | Gainhelm',
-    description: 'Gainhelm helps facilities maintenance teams organize service requests, technician assignment, schedule changes, and office-to-field updates in one dispatch workflow.'
+    title: 'Commercial Facilities Dispatch & Job Software | Gainhelm',
+    description: 'Gainhelm helps facilities maintenance teams schedule service requests and dispatch technicians using app-less SMS text messages. Connects with Google Calendar.'
   },
   '/restoration-job-management-software': {
-    title: 'Restoration Job Management Software | Gainhelm',
-    description: 'Gainhelm helps restoration teams manage job intake, crew scheduling, field updates, equipment follow-up, and office-to-field handoffs without phone-tag chaos.'
+    title: 'Restoration Job Management & Dispatch Software | Gainhelm',
+    description: 'Gainhelm helps restoration teams manage job intake, crew scheduling, and technician dispatch via 100% app-less SMS/WhatsApp messages. Try the dispatch simulator.'
   },
   '/handyman-dispatch-software': {
-    title: 'Handyman Dispatch Software | Gainhelm',
-    description: 'Gainhelm helps handyman teams organize job requests, technician assignment, schedule changes, job notes, and office-to-field handoffs in one dispatch workflow.'
+    title: 'Handyman Dispatch & Job Scheduling Software | Gainhelm',
+    description: 'Looking for handyman dispatch software? Gainhelm offers 100% app-less SMS technician scheduling & Google Calendar coordination. Try the handyman simulator now.'
   },
   '/servicetitan-alternative': {
-    title: 'ServiceTitan Alternative: Gainhelm vs ServiceTitan Comparison',
-    description: 'Looking for a ServiceTitan alternative? Gainhelm gives small trades teams clear scheduling and dispatch board routing without complex enterprise pricing.'
+    title: 'Lightweight ServiceTitan Alternative for Small Trades | Gainhelm',
+    description: 'Looking for a ServiceTitan alternative? Gainhelm offers small trades teams lightweight app-less SMS scheduling & Google Calendar integration. Try the simulator.'
   },
   '/jobber-alternative': {
-    title: 'Jobber Alternative: Gainhelm vs Jobber Comparison',
-    description: 'Looking for a lightweight Jobber alternative? Gainhelm gives small contractor teams simple dispatch scheduling without expensive user-based licensing.'
+    title: 'Lightweight Jobber Alternative for Small Contractors | Gainhelm',
+    description: 'Looking for a lightweight Jobber alternative? Gainhelm gives small contractor teams simple app-less SMS dispatch scheduling without expensive user licensing.'
   },
   '/housecallpro-alternative': {
-    title: 'Housecall Pro Alternative: Gainhelm vs Housecall Pro Comparison',
-    description: 'Looking for a Housecall Pro alternative? Gainhelm is a lightweight dispatch scheduling board and routing app for HVAC, plumbing, and trades teams.'
+    title: 'Lightweight Housecall Pro Alternative for Trades | Gainhelm',
+    description: 'Looking for a Housecall Pro alternative? Gainhelm provides a simple, lightweight dispatch scheduling board & app-less SMS routing. Try the free simulator.'
   },
   '/servicefusion-alternative': {
-    title: 'Service Fusion Alternative: Simple Dispatch Board | Gainhelm',
-    description: 'Looking for a Service Fusion alternative? Gainhelm offers a simple, lightweight dispatch scheduling board for trades teams without complex setups.'
+    title: 'Lightweight Service Fusion Alternative for Trades | Gainhelm',
+    description: 'Looking for a Service Fusion alternative? Gainhelm offers a simple, lightweight dispatch scheduling board and app-less SMS routing. Try the free simulator.'
   },
   '/buildops-alternative': {
-    title: 'BuildOps Alternative: Lightweight Dispatch | Gainhelm',
-    description: 'Looking for a BuildOps alternative? Gainhelm gives small trades teams clear scheduling and dispatch board routing without complex enterprise pricing.'
+    title: 'Lightweight BuildOps Alternative for Service Trades | Gainhelm',
+    description: 'Looking for a BuildOps alternative? Gainhelm gives small service trades teams clear scheduling and app-less SMS dispatch board routing. Try the free simulator.'
   },
   '/fieldedge-alternative': {
-    title: 'FieldEdge Alternative: Lightweight Dispatch | Gainhelm',
-    description: 'Looking for a FieldEdge alternative? Gainhelm gives small trades teams clear scheduling and dispatch board routing without complex enterprise pricing.'
+    title: 'Lightweight FieldEdge Alternative for Service Trades | Gainhelm',
+    description: 'Looking for a FieldEdge alternative? Gainhelm gives small service trades teams clear scheduling and app-less SMS dispatch board routing. Try the free simulator.'
   },
   '/hvac-dispatch-app-vs-spreadsheets': {
-    title: 'HVAC Dispatch App vs Spreadsheets for Service Teams | Gainhelm',
-    description: 'Compare an HVAC dispatch app vs spreadsheets for service-call scheduling, technician assignment, mobile updates, and phone-tag reduction when manual boards get busy.'
+    title: 'HVAC Dispatch App vs Spreadsheets: Which is Better? | Gainhelm',
+    description: 'Compare an HVAC dispatch app vs spreadsheets for service-call scheduling, technician assignment, mobile updates, and phone-tag reduction. Try the simulator.'
   },
   '/how-to-choose-hvac-dispatch-app': {
-    title: 'How to Choose an HVAC Dispatch App | Gainhelm',
-    description: 'A practical guide to choosing an HVAC dispatch app: what matters, what to avoid, and which features help small service teams stay organized.'
+    title: 'How to Choose the Best HVAC Dispatch App for Techs | Gainhelm',
+    description: 'A practical guide to choosing the best HVAC dispatch app for your service business: key features, app-less workflows, and how to avoid tech adoption failure.'
   },
   '/how-hvac-dispatch-apps-reduce-phone-tag': {
-    title: 'How HVAC Dispatch Apps Reduce Phone Tag | Gainhelm',
-    description: 'Learn how an HVAC dispatch app reduces phone tag, speeds up assignments, and keeps the schedule clear for small service teams.'
+    title: 'How HVAC Dispatch Apps Stop Office Phone Tag Chaos | Gainhelm',
+    description: 'Learn how an HVAC dispatch app eliminates office-to-field phone tag, automates technician assignments via SMS text messages, and keeps scheduling simple.'
   },
   '/mobile-dispatch-board': {
     title: 'HVAC Dispatch Software for iPad & Mobile Boards | Gainhelm',
-    description: 'See what HVAC dispatch software for iPad should show: a readable mobile board, clear technician assignment, same-day schedule changes, and fewer phone calls.'
+    description: 'Discover how HVAC dispatch software works on iPad and tablets: mobile scheduling boards, app-less SMS/WhatsApp updates for technicians, and zero dispatch friction.'
   },
   '/tools/facebook-post-generator': {
-    title: 'Free Facebook Post Generator for Trades & Field Services | Gainhelm',
-    description: 'Use our free Facebook post generator to create high-converting social media posts for your HVAC, plumbing, electrical, or landscaping business in seconds.'
+    title: 'Free Facebook Post Generator for Trades & Services | Gainhelm',
+    description: 'Generate high-converting Facebook posts for HVAC, plumbing, electrical, and landscaping businesses in seconds with our free AI social media post generator.'
   }
 };
 
@@ -203,7 +207,7 @@ test.describe('SEO/GEO Conversion and Waitlist Enhancements', () => {
   });
 
   // [AC-1]: Above-Fold Landing Page Forms (Unique ID)
-  for (const path of Object.keys(targets)) {
+  for (const path of Object.keys(targets).filter(p => p !== '/')) {
     test(`[AC-1] Above-Fold Landing Page Form: Page ${path} has exactly one waitlist form located above-the-fold inside the hero section and duplicate footer forms removed`, async ({ page }) => {
       await page.goto(path);
 
