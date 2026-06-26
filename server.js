@@ -726,15 +726,35 @@ const renderSetupPage = (email, context) => {
       radial-gradient(900px 520px at 88% 2%, hsl(var(--cta) / 0.05), transparent 50%),
       linear-gradient(180deg, hsl(var(--bg)) 0%, hsl(var(--bg-2)) 100%);
   }
-  .setup-container {
-    max-width: 800px;
+  
+  /* Split layout grid styling */
+  .main-layout {
+    display: grid;
+    grid-template-columns: 1.25fr 1fr;
+    gap: 32px;
+    max-width: 1400px;
     margin: 40px auto 80px auto;
+    padding: 0 24px;
+    align-items: start;
+  }
+  @media (max-width: 1024px) {
+    .main-layout {
+      grid-template-columns: 1fr;
+      gap: 24px;
+      margin: 20px auto 40px auto;
+    }
+  }
+
+  .setup-container {
+    margin: 0;
+    max-width: 100%;
     padding: 40px;
     background: hsl(var(--surface) / 0.7);
     backdrop-filter: blur(16px);
     border: 1px solid hsl(var(--line));
     border-radius: 24px;
     box-shadow: var(--shadow-lg);
+    transition: all 0.3s ease;
   }
   .wizard-progress {
     display: flex;
@@ -782,6 +802,7 @@ const renderSetupPage = (email, context) => {
     transition: all 0.4s ease;
     cursor: pointer;
     font-size: 0.95rem;
+    position: relative;
   }
   .progress-step.active {
     border-color: hsl(var(--brand-2));
@@ -793,6 +814,26 @@ const renderSetupPage = (email, context) => {
     border-color: hsl(var(--brand));
     background: hsl(var(--brand));
     color: hsl(var(--bg));
+  }
+  .progress-step::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 1px solid transparent;
+    top: -2px;
+    left: -2px;
+    padding: 1px;
+    transition: all 0.3s ease;
+  }
+  .progress-step.active::after {
+    border-color: hsl(var(--brand-2));
+    animation: rotateOutline 4s linear infinite;
+  }
+  @keyframes rotateOutline {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
   }
   .step-label {
     position: absolute;
@@ -887,10 +928,18 @@ const renderSetupPage = (email, context) => {
     font-family: inherit;
   }
   input[type="text"]:focus, input[type="tel"]:focus, input[type="number"]:focus, select:focus, textarea:focus {
-    border-color: hsl(var(--brand-2));
+    border-color: #3b82f6 !important;
     outline: none;
-    box-shadow: 0 0 0 3px hsl(var(--brand-2) / 0.15);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2) !important;
     background: #080d1a;
+  }
+  .input-valid {
+    border-color: rgb(16, 185, 129) !important;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='rgb(16, 185, 129)' stroke-width='3'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M4.5 12.75l6 6 9-13.5'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+    padding-right: 40px !important;
   }
   .btn-remove-card {
     margin-top: 14px;
@@ -920,17 +969,19 @@ const renderSetupPage = (email, context) => {
     background: hsl(var(--surface-3));
     border: 1px solid hsl(var(--line));
     color: hsl(var(--text-2));
-    padding: 6px 12px;
+    padding: 6px 14px;
     border-radius: 20px;
-    font-size: 0.82rem;
+    font-size: 0.8rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.25s ease;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   }
   .preset-btn:hover {
     border-color: hsl(var(--brand-2));
     color: #fff;
     background: hsl(var(--surface-3) / 1.5);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
   }
   .button-bar {
     margin-top: 40px;
@@ -969,6 +1020,322 @@ const renderSetupPage = (email, context) => {
     color: hsl(0 100% 70%);
     border-color: hsl(0 72% 51% / 0.4);
   }
+
+  /* Right panel layout */
+  .preview-container {
+    position: sticky;
+    top: 40px;
+    background: hsl(var(--surface) / 0.4);
+    backdrop-filter: blur(24px);
+    border: 1px solid hsl(var(--line));
+    border-left: 3px solid hsl(var(--brand-2));
+    border-radius: 24px;
+    padding: 32px;
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    min-height: 500px;
+  }
+  .preview-header-title {
+    color: #fff;
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .preview-header-subtitle {
+    color: hsl(var(--text-3));
+    font-size: 0.88rem;
+  }
+  .preview-tabs {
+    display: flex;
+    background: #030712;
+    border: 1px solid hsl(var(--line));
+    border-radius: 12px;
+    padding: 4px;
+    gap: 4px;
+  }
+  .preview-tab {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: hsl(var(--text-3));
+    padding: 10px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .preview-tab:hover {
+    color: #fff;
+  }
+  .preview-tab.active {
+    background: hsl(var(--surface-3));
+    color: hsl(var(--brand-2));
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+  .preview-content {
+    display: none;
+    animation: fadeInSlide 0.3s ease-out forwards;
+  }
+  .preview-content.active {
+    display: block;
+  }
+  .preview-code-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: hsl(var(--surface-2));
+    border: 1px solid hsl(var(--line));
+    border-bottom: none;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    padding: 10px 16px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    color: hsl(var(--text-2));
+  }
+  .preview-status-pill {
+    background: hsl(142 70% 45% / 0.15);
+    color: hsl(142 100% 70%);
+    border: 1px solid hsl(142 70% 45% / 0.3);
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+  .preview-code-block {
+    background: #020617;
+    border: 1px solid hsl(var(--line));
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+    padding: 16px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.78rem;
+    color: hsl(var(--text-2));
+    white-space: pre-wrap;
+    word-break: break-all;
+    max-height: 380px;
+    overflow-y: auto;
+    line-height: 1.5;
+    margin: 0;
+  }
+  .preview-keyword {
+    color: hsl(var(--brand-2));
+    font-weight: 600;
+  }
+  .preview-string {
+    color: #38bdf8;
+  }
+  .preview-number {
+    color: #fb7185;
+  }
+  .preview-comment {
+    color: #64748b;
+    font-style: italic;
+  }
+  .roster-grid-title {
+    color: #fff;
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+  .roster-matrix-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .roster-matrix-card {
+    background: hsl(var(--surface-2) / 0.5);
+    border: 1px solid hsl(var(--line));
+    border-radius: 12px;
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.25s ease;
+  }
+  .roster-matrix-card:hover {
+    border-color: hsl(var(--brand) / 0.3);
+    background: hsl(var(--surface-2) / 0.7);
+  }
+  .roster-matrix-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .roster-matrix-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: hsl(var(--brand) / 0.1);
+    color: hsl(var(--brand-2));
+    border: 1.5px solid hsl(var(--brand) / 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.85rem;
+  }
+  .roster-matrix-name {
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.88rem;
+    margin-bottom: 2px;
+  }
+  .roster-matrix-meta {
+    font-size: 0.75rem;
+    color: hsl(var(--text-3));
+  }
+  .roster-status-badge {
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+  .roster-status-badge.active {
+    background: hsl(142 70% 45% / 0.1);
+    color: hsl(142 100% 70%);
+    border: 1px solid hsl(142 70% 45% / 0.25);
+  }
+  .roster-status-badge.inactive {
+    background: hsl(0 72% 51% / 0.1);
+    color: hsl(0 100% 75%);
+    border: 1px solid hsl(0 72% 51% / 0.25);
+  }
+  .dispatch-timeline {
+    position: relative;
+    padding-left: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+  .dispatch-timeline::before {
+    content: '';
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    bottom: 12px;
+    width: 2px;
+    background: hsl(var(--line));
+  }
+  .timeline-event {
+    position: relative;
+  }
+  .timeline-badge {
+    position: absolute;
+    left: -32px;
+    top: 2px;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: #090d16;
+    border: 1.5px solid hsl(var(--line));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    z-index: 2;
+  }
+  .timeline-detail {
+    background: hsl(var(--surface-2) / 0.3);
+    border: 1px solid hsl(var(--line));
+    border-radius: 12px;
+    padding: 12px 16px;
+  }
+  .timeline-title {
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.85rem;
+    margin-bottom: 4px;
+  }
+  .timeline-text {
+    font-size: 0.78rem;
+    color: hsl(var(--text-3));
+    line-height: 1.4;
+  }
+
+  /* Deployment Overlay */
+  #deploy-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(2, 6, 23, 0.96);
+    backdrop-filter: blur(20px);
+    z-index: 10000;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  .deploy-card {
+    background: hsl(var(--surface) / 0.8);
+    border: 1px solid hsl(var(--line));
+    border-radius: 24px;
+    padding: 40px;
+    max-width: 520px;
+    width: 90%;
+    box-shadow: var(--shadow-lg);
+    text-align: center;
+    border-top: 4px solid hsl(var(--brand));
+  }
+  .deploy-spinner {
+    width: 54px;
+    height: 54px;
+    border: 4px solid hsl(var(--line));
+    border-top: 4px solid hsl(var(--brand));
+    border-radius: 50%;
+    margin: 0 auto 24px auto;
+    animation: spin 1s linear infinite;
+  }
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  .deploy-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  .deploy-subtitle {
+    color: hsl(var(--text-3));
+    font-size: 0.9rem;
+    margin-bottom: 30px;
+  }
+  .deploy-steps {
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .deploy-step {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.92rem;
+    color: hsl(var(--text-3));
+    transition: all 0.3s ease;
+  }
+  .deploy-step.active {
+    color: #fff;
+    font-weight: 600;
+  }
+  .deploy-step.completed {
+    color: rgb(16, 185, 129);
+  }
+  .deploy-icon-status {
+    font-size: 1.1rem;
+    width: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 </style>
 </head>
 <body>
@@ -981,7 +1348,7 @@ const renderSetupPage = (email, context) => {
   </a>
   <div style="font-size: 0.9rem; color: hsl(var(--brand-2)); font-weight: 700;">AI Configuration Wizard</div>
 </header>
-<main style="padding: 0 20px;">
+<main class="main-layout">
   <div class="setup-container">
     <div id="restore-banner">
       <span>🔄 Resumed incomplete setup wizard session.</span>
@@ -1095,7 +1462,95 @@ const renderSetupPage = (email, context) => {
 
     </form>
   </div>
+
+  <!-- Right Panel: AI Dispatcher Live Preview -->
+  <div class="preview-container">
+    <div class="preview-header">
+      <div class="preview-header-title">🤖 AI Dispatcher Preview</div>
+      <div class="preview-header-subtitle">Real-time compiler representation of your inputs</div>
+    </div>
+    
+    <!-- Preview Tabs -->
+    <div class="preview-tabs">
+      <button type="button" class="preview-tab active" onclick="switchPreviewTab('prompt')">🧠 Agent Memory</button>
+      <button type="button" class="preview-tab" onclick="switchPreviewTab('roster')">👥 Roster Matrix</button>
+      <button type="button" class="preview-tab" onclick="switchPreviewTab('flow')">🔄 Dispatch Flow</button>
+    </div>
+    
+    <!-- Tab Contents -->
+    <div class="preview-tab-contents">
+      <!-- Tab 1: System Instruction compiled in real time -->
+      <div class="preview-content active" id="preview-tab-prompt">
+        <div class="preview-code-header">
+          <span>SYSTEM_INSTRUCTION</span>
+          <span class="preview-status-pill">Active</span>
+        </div>
+        <pre class="preview-code-block" id="compiled-prompt-view">Compiling dispatcher memory...</pre>
+      </div>
+      
+      <!-- Tab 2: Roster Matrix -->
+      <div class="preview-content" id="preview-tab-roster">
+        <div class="roster-grid-title">Active Team Matrix</div>
+        <div class="roster-matrix-list" id="roster-matrix-view">
+          <!-- Populated via Javascript -->
+        </div>
+      </div>
+      
+      <!-- Tab 3: Dispatch Flow simulation timeline -->
+      <div class="preview-content" id="preview-tab-flow">
+        <div class="dispatch-timeline">
+          <div class="timeline-event">
+            <div class="timeline-badge">📥</div>
+            <div class="timeline-detail">
+              <div class="timeline-title">Job Request Received</div>
+              <div class="timeline-text">"AC fan broken in office" (HVAC Specialty)</div>
+            </div>
+          </div>
+          <div class="timeline-event">
+            <div class="timeline-badge">🤖</div>
+            <div class="timeline-detail">
+              <div class="timeline-title">AI Routing Check</div>
+              <div class="timeline-text" id="timeline-routing-rules">Scanning active technicians list for HVAC match...</div>
+            </div>
+          </div>
+          <div class="timeline-event">
+            <div class="timeline-badge">📱</div>
+            <div class="timeline-detail">
+              <div class="timeline-title">Interactive SMS Dispatch</div>
+              <div class="timeline-text" id="timeline-sms-target">Sending job offer SMS to the first available technician...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </main>
+
+<div id="deploy-overlay">
+  <div class="deploy-card">
+    <div class="deploy-spinner"></div>
+    <div class="deploy-title">Deploying AI Dispatcher</div>
+    <div class="deploy-subtitle">Initializing context environment for trade dispatching...</div>
+    <div class="deploy-steps">
+      <div class="deploy-step">
+        <span class="deploy-icon-status">⚪</span>
+        <span>Analyzing technician roster trade specialties...</span>
+      </div>
+      <div class="deploy-step">
+        <span class="deploy-icon-status">⚪</span>
+        <span>Syncing Google Calendar integration feeds...</span>
+      </div>
+      <div class="deploy-step">
+        <span class="deploy-icon-status">⚪</span>
+        <span>Compiling custom dispatch guidelines...</span>
+      </div>
+      <div class="deploy-step">
+        <span class="deploy-icon-status">⚪</span>
+        <span>Launching Supervision Board!</span>
+      </div>
+    </div>
+  </div>
+</div>
 
 <script>
   const urlParams = new URLSearchParams(window.location.search);
@@ -1164,6 +1619,198 @@ const renderSetupPage = (email, context) => {
     }
   }
 
+  function updateRealtimePreview() {
+    // 1. Get rules inputs
+    const timeoutInput = document.querySelector('input[name="timeout"]');
+    const pricingInput = document.querySelector('input[name="pricing"]');
+    const rulesTextarea = document.querySelector('#rules-textarea');
+    const calendarUrlInput = document.querySelector('input[name="calendar_url"]');
+    const sandboxSelect = document.querySelector('select[name="sandbox_mode"]');
+    
+    const timeout = timeoutInput ? timeoutInput.value : '3';
+    const pricing = pricingInput ? pricingInput.value : '120';
+    const rules = rulesTextarea ? rulesTextarea.value : '';
+    const calendarUrl = calendarUrlInput ? calendarUrlInput.value : '';
+    const sandbox = sandboxSelect ? (sandboxSelect.value === 'true' ? 'Simulation (Sandbox)' : 'Twilio Live') : 'Simulation (Sandbox)';
+
+    // 2. Get technicians
+    const technicians = [];
+    const cards = document.querySelectorAll('#tech-list .tech-card');
+    cards.forEach(card => {
+      const nameInput = card.querySelector('input[name^="tech_name_"]');
+      const phoneInput = card.querySelector('input[name^="tech_phone_"]');
+      const tradeSelect = card.querySelector('select[name^="tech_trade_"]');
+      const skillsInput = card.querySelector('input[name^="tech_skills_"]');
+      const shiftSelect = card.querySelector('select[name^="tech_shift_"]');
+      const statusSelect = card.querySelector('select[name^="tech_status_"]');
+
+      if (nameInput && nameInput.value.trim()) {
+        technicians.push({
+          name: nameInput.value.trim(),
+          phone: phoneInput ? phoneInput.value : '',
+          trade: tradeSelect ? tradeSelect.value : 'Other',
+          skills: skillsInput ? skillsInput.value : '',
+          shift: shiftSelect ? shiftSelect.value : 'Always',
+          status: statusSelect ? statusSelect.value : 'active'
+        });
+      }
+    });
+
+    // 3. Compile SYSTEM_INSTRUCTION
+    let promptText = '<span class="preview-comment"># Gainhelm AI Dispatch System Instructions</span>\\n';
+    promptText += '<span class="preview-comment"># Compiled at: ' + new Date().toISOString() + '</span>\\n\\n';
+    promptText += '<span class="preview-keyword">ROLE</span>: Dispatcher Assistant\\n';
+    promptText += '<span class="preview-keyword">OPERATING_MODE</span>: <span class="preview-string">"' + sandbox + '"</span>\\n';
+    promptText += '<span class="preview-keyword">CALENDAR_FEED</span>: <span class="preview-string">"' + (calendarUrl || 'None') + '"</span>\\n\\n';
+    
+    promptText += '<span class="preview-keyword">DISPATCH_TIMINGS</span>:\\n';
+    promptText += '  - timeout: <span class="preview-number">' + timeout + ' minutes</span> before fallback\\n';
+    promptText += '  - base_call_fee: <span class="preview-number">$' + pricing + '</span>\\n\\n';
+    
+    promptText += '<span class="preview-keyword">ACTIVE_ROSTER</span>:\\n';
+    if (technicians.length === 0) {
+      promptText += '  [] <span class="preview-comment">(Roster empty. Waiting for user input)</span>\\n';
+    } else {
+      technicians.forEach(t => {
+        promptText += '  - name: <span class="preview-string">"' + t.name + '"</span>\\n';
+        promptText += '    phone: <span class="preview-string">"' + t.phone + '"</span>\\n';
+        promptText += '    specialty: <span class="preview-string">"' + t.trade + '"</span>\\n';
+        promptText += '    skills: <span class="preview-string">"' + (t.skills || 'None') + '"</span>\\n';
+        promptText += '    shift: <span class="preview-string">"' + t.shift + '"</span>\\n';
+        promptText += '    status: <span class="preview-string">"' + t.status + '"</span>\\n';
+      });
+    }
+    
+    promptText += '\\n<span class="preview-keyword">BUSINESS_RULES</span>:\\n';
+    if (!rules.trim()) {
+      promptText += '  - <span class="preview-comment">(No custom guidelines specified. AI defaults active)</span>\\n';
+    } else {
+      const escapedRules = rules.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      promptText += '  - <span class="preview-string">"' + escapedRules + '"</span>\\n';
+    }
+
+    const promptView = document.getElementById('compiled-prompt-view');
+    if (promptView) {
+      promptView.innerHTML = promptText;
+    }
+
+    // 4. Compile Roster Matrix
+    const rosterView = document.getElementById('roster-matrix-view');
+    if (rosterView) {
+      if (technicians.length === 0) {
+        rosterView.innerHTML = '<div style="text-align: center; color: hsl(var(--text-3)); font-style: italic; font-size: 0.82rem; padding: 20px 0;">No technicians in roster. Add members in Step 1.</div>';
+      } else {
+        let rosterHtml = '';
+        technicians.forEach(t => {
+          const initials = t.name ? t.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() : '??';
+          const isOnline = t.status === 'active';
+          const statusBadge = isOnline ? '<span class="roster-status-badge active">ON DUTY</span>' : '<span class="roster-status-badge inactive">STANDBY</span>';
+          
+          rosterHtml += '<div class="roster-matrix-card">' +
+            '<div class="roster-matrix-info">' +
+              '<div class="roster-matrix-avatar">' + initials + '</div>' +
+              '<div>' +
+                '<div class="roster-matrix-name">' + t.name + '</div>' +
+                '<div class="roster-matrix-meta">' + t.trade + ' • Shift: ' + t.shift + '</div>' +
+              '</div>' +
+            '</div>' +
+            '<div>' + statusBadge + '</div>' +
+          '</div>';
+        });
+        rosterView.innerHTML = rosterHtml;
+      }
+    }
+
+    // 5. Update timeline preview text dynamically
+    const routingText = document.getElementById('timeline-routing-rules');
+    if (routingText) {
+      if (technicians.length === 0) {
+        routingText.innerHTML = 'Scanning roster... <span style="color: hsl(0 100% 70%);">No technicians configured.</span>';
+      } else {
+        const hvacTechs = technicians.filter(t => t.trade === 'HVAC' && t.status === 'active');
+        if (hvacTechs.length > 0) {
+          routingText.innerHTML = 'Found <span style="color: hsl(var(--brand-2)); font-weight: bold;">' + hvacTechs.length + ' active HVAC Specialist(s)</span> in roster: ' + hvacTechs.map(t => t.name).join(', ') + '. Applying timeout of <span style="color: hsl(var(--brand-2));">' + timeout + ' mins</span>.';
+        } else {
+          routingText.innerHTML = 'No active HVAC technicians found. Falling back to general queue rules. Applying custom guidelines: <span style="color: hsl(var(--text-2)); italic;">"' + (rules ? rules.substring(0, 40) + '...' : 'Default Fallback') + '"</span>.';
+        }
+      }
+    }
+
+    const smsText = document.getElementById('timeline-sms-target');
+    if (smsText) {
+      if (technicians.length === 0) {
+        smsText.innerHTML = 'Awaiting roster configuration...';
+      } else {
+        const hvacTechs = technicians.filter(t => t.trade === 'HVAC' && t.status === 'active');
+        if (hvacTechs.length > 0) {
+          const first = hvacTechs[0];
+          smsText.innerHTML = 'Outgoing SMS sent to <strong style="color:#fff;">' + first.name + '</strong> (' + (first.phone || 'no phone') + '). Message content: "Gainhelm Dispatch: Emergency HVAC Repair at office. Reply YES to accept or NO to decline. (Pricing: $' + pricing + ')"';
+        } else {
+          const first = technicians[0];
+          smsText.innerHTML = 'Outgoing SMS sent to fallback <strong style="color:#fff;">' + first.name + '</strong> (' + (first.phone || 'no phone') + '). Message content: "Gainhelm Dispatch: HVAC job offer. Reply YES to accept. (Pricing: $' + pricing + ')"';
+        }
+      }
+    }
+  }
+
+  window.switchPreviewTab = function(tabId) {
+    document.querySelectorAll('.preview-tab').forEach(btn => {
+      btn.classList.toggle('active', btn.getAttribute('onclick').includes(tabId));
+    });
+    document.querySelectorAll('.preview-content').forEach(content => {
+      content.classList.toggle('active', content.id === 'preview-tab-' + tabId);
+    });
+  };
+
+  function setupInputValidation() {
+    const form = document.getElementById('wizard-form');
+    if (!form) return;
+
+    const validateInput = (input) => {
+      if (!input.value.trim()) {
+        input.classList.remove('input-valid');
+        if (input.hasAttribute('required')) {
+          input.style.borderColor = 'hsl(var(--line))';
+        }
+        return;
+      }
+
+      let isValid = true;
+      if (input.type === 'email') {
+        isValid = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(input.value.trim());
+      } else if (input.type === 'tel') {
+        isValid = /^\\+?[\\d\\s\\-\\(\\)]{7,20}$/.test(input.value.trim());
+      } else if (input.name === 'calendar_url') {
+        isValid = isCalendarVerified;
+      } else if (input.type === 'number') {
+        const min = parseFloat(input.min);
+        const max = parseFloat(input.max);
+        const val = parseFloat(input.value);
+        isValid = !isNaN(val) && (isNaN(min) || val >= min) && (isNaN(max) || val <= max);
+      }
+
+      if (isValid) {
+        input.classList.add('input-valid');
+        input.style.borderColor = '';
+      } else {
+        input.classList.remove('input-valid');
+        if (input.hasAttribute('required')) {
+          input.style.borderColor = '#ef4444';
+        }
+      }
+    };
+
+    form.addEventListener('input', (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') {
+        validateInput(e.target);
+      }
+    });
+
+    setTimeout(() => {
+      form.querySelectorAll('input, textarea, select').forEach(validateInput);
+    }, 100);
+  }
+
   function saveDraft() {
     if (isRestoring) return;
     const emailInput = document.querySelector('input[name="email"]');
@@ -1215,6 +1862,7 @@ const renderSetupPage = (email, context) => {
     };
 
     localStorage.setItem('gainhelm_wizard_draft_' + email, JSON.stringify(draft));
+    updateRealtimePreview();
   }
 
   function clearDraft() {
@@ -1426,13 +2074,55 @@ const renderSetupPage = (email, context) => {
   if (wizardForm) {
     wizardForm.addEventListener('input', saveDraft);
     wizardForm.addEventListener('change', saveDraft);
-    wizardForm.addEventListener('submit', (e) => {
+    wizardForm.addEventListener('submit', async (e) => {
       if (!isCalendarVerified) {
         e.preventDefault();
         alert('Please verify your Google Calendar integration before launching.');
         return;
       }
+      
+      e.preventDefault();
       clearDraft();
+      
+      const overlay = document.getElementById('deploy-overlay');
+      if (overlay) {
+        overlay.style.display = 'flex';
+        
+        const steps = document.querySelectorAll('.deploy-step');
+        
+        const runStep = (index, delay) => {
+          return new Promise(resolve => {
+            setTimeout(() => {
+              if (index > 0) {
+                const prev = steps[index - 1];
+                prev.classList.remove('active');
+                prev.classList.add('completed');
+                prev.querySelector('.deploy-icon-status').innerHTML = '✅';
+              }
+              const curr = steps[index];
+              curr.classList.add('active');
+              curr.querySelector('.deploy-icon-status').innerHTML = '⏳';
+              resolve();
+            }, delay);
+          });
+        };
+
+        await runStep(0, 0);   // Step 1 active
+        await runStep(1, 600); // Step 1 complete, Step 2 active
+        await runStep(2, 600); // Step 2 complete, Step 3 active
+        await runStep(3, 600); // Step 3 complete, Step 4 active
+        
+        setTimeout(() => {
+          const prev = steps[3];
+          prev.classList.remove('active');
+          prev.classList.add('completed');
+          prev.querySelector('.deploy-icon-status').innerHTML = '🚀';
+          
+          wizardForm.submit();
+        }, 600);
+      } else {
+        wizardForm.submit();
+      }
     });
   }
 
@@ -1442,6 +2132,7 @@ const renderSetupPage = (email, context) => {
     calendarInput.addEventListener('input', () => {
       isCalendarVerified = false;
       updateVerifyStatusUI('not-verified');
+      calendarInput.classList.remove('input-valid');
       if (currentStep === 3) {
         document.getElementById('btn-submit').disabled = true;
       }
@@ -1496,12 +2187,18 @@ const renderSetupPage = (email, context) => {
         if (data.valid) {
           isCalendarVerified = true;
           updateVerifyStatusUI('verified');
+          if (calendarUrlInput) {
+            calendarUrlInput.classList.add('input-valid');
+          }
           if (currentStep === 3) {
             document.getElementById('btn-submit').disabled = false;
           }
         } else {
           isCalendarVerified = false;
           updateVerifyStatusUI('error', data.error);
+          if (calendarUrlInput) {
+            calendarUrlInput.classList.remove('input-valid');
+          }
           if (currentStep === 3) {
             document.getElementById('btn-submit').disabled = true;
           }
@@ -1509,6 +2206,9 @@ const renderSetupPage = (email, context) => {
       } catch (err) {
         isCalendarVerified = false;
         updateVerifyStatusUI('error', err.message);
+        if (calendarUrlInput) {
+          calendarUrlInput.classList.remove('input-valid');
+        }
         if (currentStep === 3) {
           document.getElementById('btn-submit').disabled = true;
         }
@@ -1517,9 +2217,11 @@ const renderSetupPage = (email, context) => {
     });
   }
 
-  // Init Progress
+  // Init Progress & Preview
   updateWizardUI();
   loadDraft();
+  setupInputValidation();
+  updateRealtimePreview();
 </script>
 </body>
 </html>`;
