@@ -1,6 +1,6 @@
 # Gainhelm
 
-Gainhelm is an AI dispatch app and software for field service teams.
+> Gainhelm is an AI-powered dispatch app and scheduling software for small field service teams (HVAC, plumbing, electrical, locksmith, restoration, cleaning).
 
 ## What it helps with
 - HVAC dispatch app / HVAC dispatch software
@@ -11,42 +11,42 @@ Gainhelm is an AI dispatch app and software for field service teams.
 - Replacing phone tag, spreadsheets, and messy handoffs
 
 ## Core pages
-- https://gainhelm.com/
-- https://gainhelm.com/hvac-dispatch-software
-- https://gainhelm.com/hvac-dispatch-app-vs-spreadsheets
-- https://gainhelm.com/how-to-choose-hvac-dispatch-app
-- https://gainhelm.com/plumbing-dispatch-software
-- https://gainhelm.com/electrical-dispatch-software
-- https://gainhelm.com/appliance-repair-dispatch-software
-- https://gainhelm.com/pest-control-dispatch-software
-- https://gainhelm.com/garage-door-dispatch-software
-- https://gainhelm.com/cleaning-dispatch-software
-- https://gainhelm.com/landscaping-dispatch-software
-- https://gainhelm.com/roofing-dispatch-software
-- https://gainhelm.com/locksmith-dispatch-software
-- https://gainhelm.com/pool-service-dispatch-software
-- https://gainhelm.com/commercial-facilities-dispatch-software
-- https://gainhelm.com/septic-service-dispatch-software
-- https://gainhelm.com/emergency-restoration-dispatch-software
-- https://gainhelm.com/restoration-job-management-software
-- https://gainhelm.com/field-service-scheduling
-- https://gainhelm.com/how-hvac-dispatch-apps-reduce-phone-tag
-- https://gainhelm.com/mobile-dispatch-board
-- https://gainhelm.com/servicetitan-alternative
-- https://gainhelm.com/jobber-alternative
-- https://gainhelm.com/housecallpro-alternative
-- https://gainhelm.com/servicefusion-alternative
-- https://gainhelm.com/buildops-alternative
-- https://gainhelm.com/fieldedge-alternative
-- https://gainhelm.com/handyman-dispatch-software
-- https://gainhelm.com/carpet-cleaning-dispatch-software
-- https://gainhelm.com/tree-service-dispatch-software
-- https://gainhelm.com/painting-dispatch-software
-- https://gainhelm.com/pressure-washing-dispatch-software
-- https://gainhelm.com/junk-removal-dispatch-software
-- https://gainhelm.com/tools/facebook-post-generator
-- https://gainhelm.com/robots.txt
-- https://gainhelm.com/sitemap.xml
+- [Home](https://gainhelm.com/): AI dispatch software that helps field service businesses assign work faster, cut down on phone tag, and keep schedules clear.
+- [HVAC Dispatch Software](https://gainhelm.com/hvac-dispatch-software): 100% app-less SMS/WhatsApp AI dispatching and scheduling software for HVAC teams.
+- [HVAC Dispatch App vs Spreadsheets](https://gainhelm.com/hvac-dispatch-app-vs-spreadsheets): Comparison of HVAC dispatch apps vs spreadsheets for service-call scheduling and technician updates.
+- [How to Choose an HVAC Dispatch App](https://gainhelm.com/how-to-choose-hvac-dispatch-app): Buying guide with key features to look for in the best HVAC dispatch app for field techs.
+- [Plumbing Dispatch Software](https://gainhelm.com/plumbing-dispatch-software): 100% app-less SMS scheduling and dispatch software for plumbing crews.
+- [Electrical Dispatch Software](https://gainhelm.com/electrical-dispatch-software): Electrician scheduling and dispatch software for small electrical service teams.
+- [Appliance Repair Dispatch Software](https://gainhelm.com/appliance-repair-dispatch-software): Appliance repair dispatch and scheduling software with Google Calendar coordination.
+- [Pest Control Dispatch Software](https://gainhelm.com/pest-control-dispatch-software): Pest control scheduling and dispatch software using simple app-less SMS.
+- [Garage Door Dispatch Software](https://gainhelm.com/garage-door-dispatch-software): Garage door scheduling and technician dispatching with Google Calendar sync.
+- [Cleaning Dispatch Software](https://gainhelm.com/cleaning-dispatch-software): Cleaning dispatch and maid scheduling software via SMS/WhatsApp text messaging.
+- [Landscaping Dispatch Software](https://gainhelm.com/landscaping-dispatch-software): Landscaping dispatch and lawn care scheduling software.
+- [Roofing Dispatch Software](https://gainhelm.com/roofing-dispatch-software): Roofing dispatch and crew scheduling software with Google Calendar coordination.
+- [Locksmith Dispatch Software](https://gainhelm.com/locksmith-dispatch-software): Locksmith dispatch and emergency job scheduling software via app-less SMS.
+- [Pool Service Dispatch Software](https://gainhelm.com/pool-service-dispatch-software): Pool service dispatch and scheduling software integrated with Google Calendar.
+- [Commercial Facilities Dispatch Software](https://gainhelm.com/commercial-facilities-dispatch-software): Commercial facilities dispatch and job scheduling software.
+- [Septic Service Dispatch Software](https://gainhelm.com/septic-service-dispatch-software): Septic service dispatch and pump scheduling software.
+- [Emergency Restoration Dispatch Software](https://gainhelm.com/emergency-restoration-dispatch-software): Emergency restoration dispatch and disaster recovery crew scheduling software.
+- [Restoration Job Management Software](https://gainhelm.com/restoration-job-management-software): Restoration job management and emergency crew dispatch software.
+- [Field Service Scheduling](https://gainhelm.com/field-service-scheduling): Field service scheduling and dispatch board software.
+- [How HVAC Dispatch Apps Reduce Phone Tag](https://gainhelm.com/how-hvac-dispatch-apps-reduce-phone-tag): Learn how an HVAC dispatch app stops office phone tag and automates technician routing.
+- [Mobile Dispatch Board](https://gainhelm.com/mobile-dispatch-board): Mobile dispatch board and scheduling software optimized for iPad and tablet.
+- [ServiceTitan Alternative](https://gainhelm.com/servicetitan-alternative): Lightweight and simple ServiceTitan alternative for small contractor teams.
+- [Jobber Alternative](https://gainhelm.com/jobber-alternative): Lightweight Jobber alternative with app-less SMS dispatch scheduling.
+- [Housecall Pro Alternative](https://gainhelm.com/housecallpro-alternative): Lightweight Housecall Pro alternative for small trade businesses.
+- [Service Fusion Alternative](https://gainhelm.com/servicefusion-alternative): Lightweight Service Fusion alternative with simple dispatch scheduling board.
+- [BuildOps Alternative](https://gainhelm.com/buildops-alternative): Lightweight BuildOps alternative for small trade crews.
+- [FieldEdge Alternative](https://gainhelm.com/fieldedge-alternative): Lightweight FieldEdge alternative with simple mobile-friendly scheduling board.
+- [Handyman Dispatch Software](https://gainhelm.com/handyman-dispatch-software): Handyman job scheduling and technician dispatch software.
+- [Carpet Cleaning Dispatch Software](https://gainhelm.com/carpet-cleaning-dispatch-software): Carpet cleaning dispatch and scheduling software.
+- [Tree Service Dispatch Software](https://gainhelm.com/tree-service-dispatch-software): Tree service crew scheduling and arborist dispatch software.
+- [Facebook Post Generator Tool](https://gainhelm.com/tools/facebook-post-generator): Free AI Facebook post generator for contractor marketing and lead generation.
+- [Painting Dispatch Software](https://gainhelm.com/painting-dispatch-software): Painting dispatch and crew scheduling software.
+- [Pressure Washing Dispatch Software](https://gainhelm.com/pressure-washing-dispatch-software): Pressure washing dispatch and technician scheduling software.
+- [Junk Removal Dispatch Software](https://gainhelm.com/junk-removal-dispatch-software): Junk removal dispatch and truck scheduling software.
+- [robots.txt](https://gainhelm.com/robots.txt): Crawler instructions and sitemap configuration.
+- [sitemap.xml](https://gainhelm.com/sitemap.xml): XML sitemap containing all indexable site routes.
 
 ## Search terms this site should answer
 - hvac dispatch app

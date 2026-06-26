@@ -20,87 +20,95 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/styles.css?v=20260604-readability">
 <script type="application/ld+json">{
-    "@context": "https://schema.org",
-    "@graph": [
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://gainhelm.com/#organization",
+      "name": "Gainhelm",
+      "url": "https://gainhelm.com/"
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://gainhelm.com/#website",
+      "url": "https://gainhelm.com/",
+      "name": "Gainhelm",
+      "publisher": {
+        "@id": "https://gainhelm.com/#organization"
+      }
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://gainhelm.com/emergency-restoration-dispatch-software#webpage",
+      "url": "https://gainhelm.com/emergency-restoration-dispatch-software",
+      "name": "Emergency Restoration Dispatch & Job Software | Gainhelm",
+      "description": "Gainhelm helps disaster restoration teams schedule emergency calls and coordinate field crews via app-less SMS/WhatsApp text messages. Try the dispatch simulator.",
+      "isPartOf": {
+        "@id": "https://gainhelm.com/#website"
+      },
+      "about": {
+        "@id": "https://gainhelm.com/#software"
+      },
+      "author": {
+        "@type": "Person",
+        "name": "Coskun Arif",
+        "jobTitle": "Field Service Expert"
+      },
+      "datePublished": "2026-05-19",
+      "dateModified": "2026-06-26"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "@id": "https://gainhelm.com/#software",
+      "name": "Gainhelm",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Web",
+      "url": "https://gainhelm.com/",
+      "description": "Emergency dispatch software for field service teams.",
+      "featureList": [
+        "Emergency job intake",
+        "Crew assignment",
+        "Water-damage dispatch coordination",
+        "Restoration job management",
+        "Same-day service routing"
+      ],
+      "provider": {
+        "@id": "https://gainhelm.com/#organization"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://gainhelm.com/emergency-restoration-dispatch-software#faq",
+      "mainEntity": [
         {
-            "@type": "Organization",
-            "@id": "https://gainhelm.com/#organization",
-            "name": "Gainhelm",
-            "url": "https://gainhelm.com/"
+          "@type": "Question",
+          "name": "Is Gainhelm an emergency plumber or water-damage provider?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. Gainhelm is dispatch and scheduling software for service businesses. It does not provide homeowner emergency plumbing, water extraction, mold remediation, or restoration services."
+          }
         },
         {
-            "@type": "WebSite",
-            "@id": "https://gainhelm.com/#website",
-            "url": "https://gainhelm.com/",
-            "name": "Gainhelm",
-            "publisher": {
-                "@id": "https://gainhelm.com/#organization"
-            }
+          "@type": "Question",
+          "name": "Who is emergency restoration dispatch software for?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "It is for plumbing, mitigation, and restoration teams that need to triage urgent calls, assign crews, route jobs, and keep the office and field aligned."
+          }
         },
         {
-            "@type": "WebPage",
-            "@id": "https://gainhelm.com/emergency-restoration-dispatch-software#webpage",
-            "url": "https://gainhelm.com/emergency-restoration-dispatch-software",
-            "name": "Emergency Restoration Dispatch & Job Software | Gainhelm",
-            "description": "Gainhelm helps disaster restoration teams schedule emergency calls and coordinate field crews via app-less SMS/WhatsApp text messages. Try the dispatch simulator.",
-            "isPartOf": {
-                "@id": "https://gainhelm.com/#website"
-            },
-            "about": {
-                "@id": "https://gainhelm.com/#software"
-            }
-        },
-        {
-            "@type": "SoftwareApplication",
-            "@id": "https://gainhelm.com/#software",
-            "name": "Gainhelm",
-            "applicationCategory": "BusinessApplication",
-            "operatingSystem": "Web",
-            "url": "https://gainhelm.com/",
-            "description": "Emergency dispatch software for field service teams.",
-            "featureList": [
-                "Emergency job intake",
-                "Crew assignment",
-                "Water-damage dispatch coordination",
-                "Restoration job management",
-                "Same-day service routing"
-            ],
-            "provider": {
-                "@id": "https://gainhelm.com/#organization"
-            }
-        },
-        {
-            "@type": "FAQPage",
-            "@id": "https://gainhelm.com/emergency-restoration-dispatch-software#faq",
-            "mainEntity": [
-                {
-                    "@type": "Question",
-                    "name": "Is Gainhelm an emergency plumber or water-damage provider?",
-                    "acceptedAnswer": {
-                        "@type": "Answer",
-                        "text": "No. Gainhelm is dispatch and scheduling software for service businesses. It does not provide homeowner emergency plumbing, water extraction, mold remediation, or restoration services."
-                    }
-                },
-                {
-                    "@type": "Question",
-                    "name": "Who is emergency restoration dispatch software for?",
-                    "acceptedAnswer": {
-                        "@type": "Answer",
-                        "text": "It is for plumbing, mitigation, and restoration teams that need to triage urgent calls, assign crews, route jobs, and keep the office and field aligned."
-                    }
-                },
-                {
-                    "@type": "Question",
-                    "name": "What emergency workflows can Gainhelm help organize?",
-                    "acceptedAnswer": {
-                        "@type": "Answer",
-                        "text": "Gainhelm is designed around intake, technician or crew assignment, schedule changes, dispatch notes, and follow-up for urgent service calls such as burst-pipe response or water-damage cleanup coordination."
-                    }
-                }
-            ]
+          "@type": "Question",
+          "name": "What emergency workflows can Gainhelm help organize?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Gainhelm is designed around intake, technician or crew assignment, schedule changes, dispatch notes, and follow-up for urgent service calls such as burst-pipe response or water-damage cleanup coordination."
+          }
         }
-    ]
+      ]
+    }
+  ]
 }</script>
+  <link rel="license" type="application/rsl+xml" href="/rsl.xml">
 </head>
 <body>
 <a class="skip-link" href="#main-content">Skip to main content</a>
@@ -121,7 +129,7 @@ Gainhelm
 <div class="hero-layout"><div class="hero-copy">
 <div class="brand-chip">Emergency field service operations</div>
 <h1>Emergency restoration dispatch software for burst-pipe and water-damage response teams.</h1>
-<p>Gainhelm helps plumbing and restoration teams turn urgent calls into assigned jobs faster: intake the request, identify the right crew, keep the dispatch board readable, and reduce phone tag during same-day water-damage work.</p>
+<p>Gainhelm is a lightweight emergency restoration dispatch and crew scheduling software designed for disaster recovery teams to assign emergency calls, coordinate technicians, and route crews via app-less SMS/WhatsApp.</p>
 <form id="waitlist-form" action="/waitlist" method="post" data-api-url="/waitlist" novalidate>
 <div class="form-group">
 <label for="name">Full Name <span class="field-required" aria-hidden="true">*</span><span class="sr-only"> required</span></label>
@@ -334,7 +342,7 @@ Gainhelm
 </div>
 </section>
 </main>
-<footer><div>© 2026 Gainhelm. Built for field service dispatch.</div><div class="footer-links"><a href="#waitlist">Join the waitlist</a> · <a href="/hvac-dispatch-software">HVAC</a> · <a href="/plumbing-dispatch-software">Plumbing</a> · <a href="/electrical-dispatch-software">Electrical</a> · <a href="/appliance-repair-dispatch-software">Appliance Repair</a> · <a href="/pest-control-dispatch-software">Pest Control</a> · <a href="/painting-dispatch-software">Painting</a> · <a href="/garage-door-dispatch-software">Garage Door</a> · <a href="/cleaning-dispatch-software">Cleaning</a> · <a href="/landscaping-dispatch-software">Landscaping</a> · <a href="/roofing-dispatch-software">Roofing</a> · <a href="/locksmith-dispatch-software">Locksmith</a> · <a href="/pool-service-dispatch-software">Pool Service</a> · <a href="/pressure-washing-dispatch-software">Pressure Washing</a> · <a href="/commercial-facilities-dispatch-software">Facilities</a> · <a href="/septic-service-dispatch-software">Septic</a> · <a href="/emergency-restoration-dispatch-software">Emergency Restoration</a> · <a href="/restoration-job-management-software">Restoration Jobs</a> · <a href="/handyman-dispatch-software">Handyman</a> · <a href="/junk-removal-dispatch-software">Junk Removal</a> · <a href="/carpet-cleaning-dispatch-software">Carpet Cleaning</a> · <a href="/tree-service-dispatch-software">Tree Service</a> · <a href="/field-service-scheduling">Scheduling</a> · <a href="/mobile-dispatch-board">Mobile Board</a> · <a href="/servicetitan-alternative">ServiceTitan Alt</a> · <a href="/jobber-alternative">Jobber Alt</a> · <a href="/housecallpro-alternative">Housecall Pro Alt</a> · <a href="/servicefusion-alternative">Service Fusion Alt</a> · <a href="/buildops-alternative">BuildOps Alt</a> · <a href="/fieldedge-alternative">FieldEdge Alt</a> · <a href="/hvac-dispatch-app-vs-spreadsheets">Compare</a> · <a href="/how-to-choose-hvac-dispatch-app">Buying Guide</a> · <a href="/how-hvac-dispatch-apps-reduce-phone-tag">Phone Tag Guide</a> · <a href="/sitemap.xml">sitemap.xml</a> · <a href="/llms.txt">llms.txt</a></div></footer>
+<footer><div>© 2026 Gainhelm. Built for field service dispatch. • Verified by Coskun Arif, Field Service Expert</div><div class="footer-links"><a href="#waitlist">Join the waitlist</a> · <a href="/hvac-dispatch-software">HVAC</a> · <a href="/plumbing-dispatch-software">Plumbing</a> · <a href="/electrical-dispatch-software">Electrical</a> · <a href="/appliance-repair-dispatch-software">Appliance Repair</a> · <a href="/pest-control-dispatch-software">Pest Control</a> · <a href="/painting-dispatch-software">Painting</a> · <a href="/garage-door-dispatch-software">Garage Door</a> · <a href="/cleaning-dispatch-software">Cleaning</a> · <a href="/landscaping-dispatch-software">Landscaping</a> · <a href="/roofing-dispatch-software">Roofing</a> · <a href="/locksmith-dispatch-software">Locksmith</a> · <a href="/pool-service-dispatch-software">Pool Service</a> · <a href="/pressure-washing-dispatch-software">Pressure Washing</a> · <a href="/commercial-facilities-dispatch-software">Facilities</a> · <a href="/septic-service-dispatch-software">Septic</a> · <a href="/emergency-restoration-dispatch-software">Emergency Restoration</a> · <a href="/restoration-job-management-software">Restoration Jobs</a> · <a href="/handyman-dispatch-software">Handyman</a> · <a href="/junk-removal-dispatch-software">Junk Removal</a> · <a href="/carpet-cleaning-dispatch-software">Carpet Cleaning</a> · <a href="/tree-service-dispatch-software">Tree Service</a> · <a href="/field-service-scheduling">Scheduling</a> · <a href="/mobile-dispatch-board">Mobile Board</a> · <a href="/servicetitan-alternative">ServiceTitan Alt</a> · <a href="/jobber-alternative">Jobber Alt</a> · <a href="/housecallpro-alternative">Housecall Pro Alt</a> · <a href="/servicefusion-alternative">Service Fusion Alt</a> · <a href="/buildops-alternative">BuildOps Alt</a> · <a href="/fieldedge-alternative">FieldEdge Alt</a> · <a href="/hvac-dispatch-app-vs-spreadsheets">Compare</a> · <a href="/how-to-choose-hvac-dispatch-app">Buying Guide</a> · <a href="/how-hvac-dispatch-apps-reduce-phone-tag">Phone Tag Guide</a> · <a href="/sitemap.xml">sitemap.xml</a> · <a href="/llms.txt">llms.txt</a></div></footer>
 <script>
 (() => {
   const currentPath = location.pathname.replace(/\/+$/, '') || '/';

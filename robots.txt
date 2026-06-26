@@ -16,4 +16,7 @@ Allow: /
 User-agent: Amazonbot
 Allow: /
 
+License: https://gainhelm.com/rsl.xml
+
 Sitemap: https://gainhelm.com/sitemap.xml
+

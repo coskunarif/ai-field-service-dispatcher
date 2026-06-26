@@ -94,7 +94,7 @@ export default function Footer() {
 
         <div className="mt-16 pt-8 border-t border-slate-900 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-sm text-slate-500">
-            &copy; {new Date().getFullYear()} Gainhelm. All rights reserved.
+            &copy; {new Date().getFullYear()} Gainhelm. All rights reserved. <span className="mx-2">•</span> Verified by Coskun Arif, Field Service Expert
           </p>
           <div className="flex items-center gap-6">
             <a href="#" className="text-slate-500 hover:text-slate-350 transition-colors">
