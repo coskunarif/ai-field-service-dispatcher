@@ -124,6 +124,18 @@ const targets = {
   '/tools/facebook-post-generator': {
     title: 'Free Facebook Post Generator for Trades & Services | Gainhelm',
     description: 'Generate high-converting Facebook posts for HVAC, plumbing, electrical, and landscaping businesses in seconds with our free AI social media post generator.'
+  },
+  '/painting-dispatch-software': {
+    title: 'Painting Dispatch & Scheduling Software | Gainhelm',
+    description: 'Gainhelm helps painting crews coordinate scheduling, assign painters, and manage dispatching using simple, app-less SMS text messages. Connects with Google Calendar.'
+  },
+  '/pressure-washing-dispatch-software': {
+    title: 'Pressure Washing Dispatch & Scheduling Software | Gainhelm',
+    description: 'Gainhelm helps pressure washing crews schedule jobs and coordinate technicians using 100% app-less SMS/WhatsApp dispatching. Google Calendar integrated. Try the simulator.'
+  },
+  '/junk-removal-dispatch-software': {
+    title: 'Junk Removal Dispatch & Scheduling Software | Gainhelm',
+    description: 'Gainhelm helps junk removal teams schedule pickups and dispatch truck crews via app-less SMS text messaging. Connects directly to Google Calendar. Try the simulator.'
   }
 };
 

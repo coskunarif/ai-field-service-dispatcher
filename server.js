@@ -138,6 +138,11 @@ const routeRedirects = {
   '/handyman-scheduling-software': '/handyman-dispatch-software',
   '/carpet-cleaning-scheduling-software': '/carpet-cleaning-dispatch-software',
   '/tree-service-scheduling-software': '/tree-service-dispatch-software',
+  '/painter-dispatch-software': '/painting-dispatch-software',
+  '/painting-scheduling-software': '/painting-dispatch-software',
+  '/power-washing-dispatch-software': '/pressure-washing-dispatch-software',
+  '/pressure-washing-scheduling-software': '/pressure-washing-dispatch-software',
+  '/junk-removal-scheduling-software': '/junk-removal-dispatch-software',
 };
 
 for (const [route, target] of Object.entries(routeRedirects)) {
@@ -168,6 +173,9 @@ const pages = {
   '/handyman-dispatch-software': 'handyman-dispatch-software.html',
   '/carpet-cleaning-dispatch-software': 'carpet-cleaning-dispatch-software.html',
   '/tree-service-dispatch-software': 'tree-service-dispatch-software.html',
+  '/painting-dispatch-software': 'painting-dispatch-software.html',
+  '/pressure-washing-dispatch-software': 'pressure-washing-dispatch-software.html',
+  '/junk-removal-dispatch-software': 'junk-removal-dispatch-software.html',
   '/field-service-scheduling': 'field-service-scheduling.html',
   '/how-hvac-dispatch-apps-reduce-phone-tag': 'how-hvac-dispatch-apps-reduce-phone-tag.html',
   '/mobile-dispatch-board': 'mobile-dispatch-board.html',

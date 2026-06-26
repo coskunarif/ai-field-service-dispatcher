@@ -32,6 +32,9 @@ const pages = [
   '/buildops-alternative',
   '/fieldedge-alternative',
   '/tools/facebook-post-generator',
+  '/painting-dispatch-software',
+  '/pressure-washing-dispatch-software',
+  '/junk-removal-dispatch-software',
 ];
 
 const redirects = {
@@ -58,6 +61,11 @@ const redirects = {
   '/handyman-scheduling-software': '/handyman-dispatch-software',
   '/carpet-cleaning-scheduling-software': '/carpet-cleaning-dispatch-software',
   '/tree-service-scheduling-software': '/tree-service-dispatch-software',
+  '/painter-dispatch-software': '/painting-dispatch-software',
+  '/painting-scheduling-software': '/painting-dispatch-software',
+  '/power-washing-dispatch-software': '/pressure-washing-dispatch-software',
+  '/pressure-washing-scheduling-software': '/pressure-washing-dispatch-software',
+  '/junk-removal-scheduling-software': '/junk-removal-dispatch-software',
 };
 
 const legacyGonePaths = [
