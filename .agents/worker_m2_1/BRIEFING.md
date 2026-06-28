@@ -1,50 +1,62 @@
-# BRIEFING — 2026-06-07T11:44:00Z
+# BRIEFING — 2026-06-27T16:05:30-07:00
 
 ## Mission
-Implement premium UI/UX enhancements on Gainhelm's global stylesheet `styles.css`.
+Standardize FAQ Schema (FAQPage JSON-LD) and align metadata titles (`og:title`, `twitter:title` matching `<title>`) across 14 HTML pages.
 
 ## 🔒 My Identity
 - Archetype: worker
 - Roles: implementer, qa, specialist
 - Working directory: /home/ubuntuadmin/projects/ai-field-service-dispatcher/.agents/worker_m2_1
-- Original parent: c4cc0bb0-1b29-4b75-86cd-bac66e26d74a
-- Milestone: Premium UI/UX Enhancements
+- Original parent: e54a909b-971f-4c9c-a47a-78c624d3423b
+- Milestone: Standardize FAQ Schema & Align Titles
 
 ## 🔒 Key Constraints
-- Keep exact HSL color variable names in :root.
-- Pure CSS glassmorphic header, sticky. No JS scroll listeners unless absolutely necessary.
-- 3-breakpoint layout (Desktop >= 1024px, Tablet 768px-1023px, Mobile < 768px). No premature single-column collapsing.
-- Zero horizontal overflow/scrolling on mobile (320px), tablet (768px), and desktop (1440px).
+- Standardize FAQ Schema: Add/update the `FAQPage` JSON-LD blocks containing at least 3 trade-specific or page-specific questions and answers.
+- Verify and align metadata titles: Ensure that `og:title` and `twitter:title` metadata tags match the main page `<title>` tag exactly (using literal `&` instead of `&amp;`).
+- Add missing metadata tags and FAQPage block to `index.html`.
 - All Playwright tests must pass.
 - Minimal changes (no unrelated refactoring, preserve comments).
 
 ## Current Parent
-- Conversation ID: c4cc0bb0-1b29-4b75-86cd-bac66e26d74a
-- Updated: 2026-06-07T11:44:00Z
+- Conversation ID: e54a909b-971f-4c9c-a47a-78c624d3423b
+- Updated: 2026-06-27T16:05:30-07:00
 
 ## Task Summary
-- **What to build**: Refined styles.css with premium UI/UX typography, Slate & Gold/Amber theme, smooth bezier transitions, glassmorphic sticky header, details/summary transitions, and responsive grid/card layouts with zero overflow.
-- **Success criteria**: All Playwright tests pass; layout visual verification.
-- **Interface contracts**: styles.css and PROJECT.md.
-- **Code layout**: styles.css in root.
+- **What to build**: Standardized FAQ JSON-LD blocks and aligned metadata titles in 14 HTML pages.
+- **Success criteria**: All Playwright tests pass; gainhelm-seo-geo-audit script passes with exit code 0.
+- **Interface contracts**: PROJECT.md and task requirements.
+- **Code layout**: HTML files in the project root.
+
+## Key Decisions Made
+- Checked actual `<title>` tags inside all 14 files to verify exact wording before modifying metadata properties to avoid mismatched terms (e.g. including "Crew" in roofing software).
+- Wrote custom script to double-check that every metadata title tag matches the main page title tag exactly.
 
 ## Change Tracker
-- **Files modified**: styles.css (Applied global variables, typography, transitions, sticky header, FAQ animation, responsiveness media queries)
-- **Build status**: Pass
+- **Files modified**:
+  - index.html
+  - garage-door-dispatch-software.html
+  - roofing-dispatch-software.html
+  - locksmith-dispatch-software.html
+  - pool-service-dispatch-software.html
+  - commercial-facilities-dispatch-software.html
+  - septic-service-dispatch-software.html
+  - restoration-job-management-software.html
+  - handyman-dispatch-software.html
+  - carpet-cleaning-dispatch-software.html
+  - tree-service-dispatch-software.html
+  - mobile-dispatch-board.html
+  - pressure-washing-dispatch-software.html
+  - junk-removal-dispatch-software.html
+- **Build status**: SEO/GEO Audit Passed (success), E2E tests Passed (success).
 - **Pending issues**: None
 
 ## Quality Status
-- **Build/test result**: Pass (All 72 tests passed successfully)
+- **Build/test result**: Pass (All 233 Playwright tests passed)
 - **Lint status**: Pass
 - **Tests added/modified**: None
 
 ## Loaded Skills
 - None
-
-## Key Decisions Made
-- **Header Alignment**: Utilized dynamically calculated viewport padding (`padding: 16px max(12px, calc((100% - var(--container)) / 2));`) to align header elements to the 1200px container width without modifying HTML structures.
-- **Sticky Overflow Safeguard**: Applied `overflow-x: clip;` on `body` instead of `overflow-x: hidden;` to clip horizontal overflow without breaking `position: sticky`.
-- **FAQ Transitions**: Overrode closed `<details>` children selector to `display: block` inside `.faq-item` to enable smooth CSS opening and closing transition animations.
 
 ## Artifact Index
 - `/home/ubuntuadmin/projects/ai-field-service-dispatcher/.agents/worker_m2_1/changes.md` – Changes report

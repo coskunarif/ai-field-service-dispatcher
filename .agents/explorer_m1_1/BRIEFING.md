@@ -1,7 +1,7 @@
-# BRIEFING — 2026-06-07T04:40:00-07:00
+# BRIEFING — 2026-06-27T22:34:11Z
 
 ## Mission
-Analyze current Gainhelm stylesheet and HTML landing pages to design a premium UI/UX enhancement plan matching modern SaaS standards.
+Analyze the automated SEO/GEO audit script and propose updates to verify JSON-LD FAQPage structures and title tag matches.
 
 ## 🔒 My Identity
 - Archetype: Explorer
@@ -9,6 +9,8 @@ Analyze current Gainhelm stylesheet and HTML landing pages to design a premium U
 - Working directory: /home/ubuntuadmin/projects/ai-field-service-dispatcher/.agents/explorer_m1_1/
 - Original parent: c4cc0bb0-1b29-4b75-86cd-bac66e26d74a
 - Milestone: UI/UX Enhancement Plan (M1.1)
+- Parent ID (2026-06-27): e54a909b-971f-4c9c-a47a-78c624d3423b
+- Milestone (2026-06-27): SEO/GEO Audit Update Proposal
 
 ## 🔒 Key Constraints
 - Read-only investigation — do NOT implement
@@ -16,31 +18,33 @@ Analyze current Gainhelm stylesheet and HTML landing pages to design a premium U
 - Only write to own agent folder `/home/ubuntuadmin/projects/ai-field-service-dispatcher/.agents/explorer_m1_1/`
 
 ## Current Parent
-- Conversation ID: c4cc0bb0-1b29-4b75-86cd-bac66e26d74a
-- Updated: 2026-06-07T04:40:00-07:00
+- Conversation ID: e54a909b-971f-4c9c-a47a-78c624d3423b
+- Updated: 2026-06-27T22:34:11Z
 
 ## Investigation State
 - **Explored paths**:
-  - `/home/ubuntuadmin/projects/ai-field-service-dispatcher/styles.css`
+  - `/home/ubuntuadmin/projects/ai-field-service-dispatcher/scripts/gainhelm-seo-geo-audit.mjs`
+  - `/home/ubuntuadmin/projects/ai-field-service-dispatcher/sitemap.xml`
   - `/home/ubuntuadmin/projects/ai-field-service-dispatcher/index.html`
-  - `/home/ubuntuadmin/projects/ai-field-service-dispatcher/hvac-dispatch-software.html`
+  - `/home/ubuntuadmin/projects/ai-field-service-dispatcher/appliance-repair-dispatch-software.html`
   - `/home/ubuntuadmin/projects/ai-field-service-dispatcher/plumbing-dispatch-software.html`
-  - `/home/ubuntuadmin/projects/ai-field-service-dispatcher/field-service-scheduling.html`
+  - `/home/ubuntuadmin/projects/ai-field-service-dispatcher/mobile-dispatch-board.html`
+  - `/home/ubuntuadmin/projects/ai-field-service-dispatcher/pressure-washing-dispatch-software.html`
+  - `/home/ubuntuadmin/projects/ai-field-service-dispatcher/junk-removal-dispatch-software.html`
+  - `/home/ubuntuadmin/projects/ai-field-service-dispatcher/.agents/explorer_m1_1/test-audit.mjs`
 - **Key findings**:
-  - Redundant Inter font loading in HTML files that is overridden by Plus Jakarta Sans in CSS.
-  - Aggressive 960px breakpoint collapses grids into 1-column layouts, wasting tablet space.
-  - Header navigation lacks scroll-triggered glassmorphic visual transition scripts.
-  - Closed details/summary tags snap instantly without animation.
-- **Unexplored areas**: None. Audits are complete.
+  - Found that `/` lacks `og:title`, `twitter:title`, and an `FAQPage` block.
+  - Found that `/mobile-dispatch-board` lacks an `FAQPage` block.
+  - Found that 10 trade-specific landing pages completely lack `FAQPage` schema blocks.
+  - Found that `/pressure-washing-dispatch-software` and `/junk-removal-dispatch-software` have only 2 trade-specific Q&As instead of the required 3.
+- **Unexplored areas**: None. The script logic and HTML content check have been fully validated.
 
 ## Key Decisions Made
-- Unify typography around Plus Jakarta Sans and drop Inter.
-- Define a 3-breakpoint layout guide (Mobile < 768px, Tablet 768px-1024px, Desktop >= 1024px).
-- Refine existing HSL vars to deep obsidian slate gradients.
-- Design max-height animations for details blocks and vanilla JS scroll classes for glassmorphic transitions.
+- Implemented a custom validation test script (`test-audit.mjs`) to verify the correctness of the proposed auditing functions against actual page source code.
+- Normalization via HTML entity decoding was added to prevent false-positive title mismatches.
 
 ## Artifact Index
 - `/home/ubuntuadmin/projects/ai-field-service-dispatcher/.agents/explorer_m1_1/ORIGINAL_REQUEST.md` — Original request context
 - `/home/ubuntuadmin/projects/ai-field-service-dispatcher/.agents/explorer_m1_1/progress.md` — Liveness progress heartbeat
-- `/home/ubuntuadmin/projects/ai-field-service-dispatcher/.agents/explorer_m1_1/analysis.md` — UI/UX Analysis and Plan
-- `/home/ubuntuadmin/projects/ai-field-service-dispatcher/.agents/explorer_m1_1/handoff.md` — Soft Handoff Report
+- `/home/ubuntuadmin/projects/ai-field-service-dispatcher/.agents/explorer_m1_1/test-audit.mjs` — Test audit script for proposed checks
+- `/home/ubuntuadmin/projects/ai-field-service-dispatcher/.agents/explorer_m1_1/handoff.md` — Final Handoff Report

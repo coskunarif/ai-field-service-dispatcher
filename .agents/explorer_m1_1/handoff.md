@@ -1,104 +1,248 @@
-# Soft Handoff Report — UI/UX Enhancement Plan
+# Handoff Report — SEO/GEO Audit Update Proposal
 
 ## 1. Observation
-The following file structures and lines were audited during the read-only investigation:
 
-- **Global Stylesheet Path:** `/home/ubuntuadmin/projects/ai-field-service-dispatcher/styles.css`
-  - Font Import (Line 1):
-    ```css
-    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap');
-    ```
-  - Heading Spacing (Lines 78-84):
-    ```css
-    h1,
-    h2,
-    h3 {
-      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      line-height: 1.1;
-      letter-spacing: -0.03em;
-    }
-    ```
-  - Transition Rule (Lines 102-109):
-    ```css
-    a,
-    button,
-    summary,
-    input,
-    select,
-    textarea {
-      transition: transform 180ms ease, background-color 180ms ease, border-color 180ms ease, color 180ms ease, box-shadow 180ms ease, opacity 180ms ease;
-    }
-    ```
-  - Aggressive 960px Collapse Breakpoint (Lines 1682-1683):
-    ```css
-    @media (max-width: 960px) {
-      /* Grid and layout structures collapsed to 1fr */
-    }
-    ```
+During the read-only investigation, the codebase and existing automated audit script were analyzed:
 
-- **HTML Landing Pages Audited:**
-  - `/home/ubuntuadmin/projects/ai-field-service-dispatcher/hvac-dispatch-software.html`
-  - `/home/ubuntuadmin/projects/ai-field-service-dispatcher/plumbing-dispatch-software.html`
-  - `/home/ubuntuadmin/projects/ai-field-service-dispatcher/field-service-scheduling.html`
-  - `/home/ubuntuadmin/projects/ai-field-service-dispatcher/index.html`
-  - Font Loading (HTML Line 20):
-    ```html
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    ```
-  - FAQ Details Markup (HTML Lines 413-417):
-    ```html
-    <div class="faq-list">
-      <details class="faq-item">
-        <summary>What is Gainhelm for HVAC teams?</summary>
-        <p>Gainhelm is an HVAC dispatch app...</p>
-      </details>
-    </div>
-    ```
+- **Audited File Path:** `/home/ubuntuadmin/projects/ai-field-service-dispatcher/scripts/gainhelm-seo-geo-audit.mjs`
+- **Sitemap Configured Paths:** 34 routes configured in `/home/ubuntuadmin/projects/ai-field-service-dispatcher/sitemap.xml`.
+- **Existing Main Audit Loop (Lines 90-122):**
+  ```javascript
+  for (const p of paths) {
+    const html = await textFor(p);
+    const title = html.match(/<title>([\s\S]*?)<\/title>/i)?.[1]?.trim() || '';
+    const desc = meta(html, 'description');
+    const canonical = href(html, 'canonical');
+    const robotsMeta = meta(html, 'robots');
+    const h1s = [...html.matchAll(/<h1\b/gi)].length;
+    const jsonLd = [...html.matchAll(/<script[^>]+type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi)];
+    const form = html.match(/<form[^>]+id=["']waitlist-form["'][^>]*>/i)?.[0] || '';
+    const card = meta(html, 'twitter:card');
+    const body = strip(html).slice(0, 220);
+
+    if (!title || title.length > 70) errors.push(`${p}: missing/long title (${title.length})`);
+    if (!desc || desc.length < 120 || desc.length > 180) warnings.push(`${p}: meta description outside 120-180 chars (${desc.length})`);
+    ...
+  ```
+
+A dry-run test of the proposed auditing rules on the current landing page files reveals the following **16 failures**:
+- `/`: missing og:title
+- `/`: missing twitter:title
+- `/`: missing FAQPage block with trade-specific questions and answers
+- `/garage-door-dispatch-software`: missing FAQPage block with trade-specific questions and answers
+- `/roofing-dispatch-software`: missing FAQPage block with trade-specific questions and answers
+- `/locksmith-dispatch-software`: missing FAQPage block with trade-specific questions and answers
+- `/pool-service-dispatch-software`: missing FAQPage block with trade-specific questions and answers
+- `/commercial-facilities-dispatch-software`: missing FAQPage block with trade-specific questions and answers
+- `/septic-service-dispatch-software`: missing FAQPage block with trade-specific questions and answers
+- `/restoration-job-management-software`: missing FAQPage block with trade-specific questions and answers
+- `/mobile-dispatch-board`: missing FAQPage block with trade-specific questions and answers
+- `/handyman-dispatch-software`: missing FAQPage block with trade-specific questions and answers
+- `/carpet-cleaning-dispatch-software`: missing FAQPage block with trade-specific questions and answers
+- `/tree-service-dispatch-software`: missing FAQPage block with trade-specific questions and answers
+- `/pressure-washing-dispatch-software`: FAQPage has only 2 trade-specific Q&As, expected at least 3 (keywords: pressure-washing, pressure, washing, power)
+- `/junk-removal-dispatch-software`: FAQPage has only 2 trade-specific Q&As, expected at least 3 (keywords: junk-removal, junk, removal, trash)
 
 ---
 
 ## 2. Logic Chain
-1. **Observation 1:** Google Fonts loads the `Inter` font family in all HTML pages (e.g. Line 20 of `hvac-dispatch-software.html`), but `styles.css` declares `Plus Jakarta Sans` as the primary family for both the `body` and headers (Line 47, 81).
-   - **Inference:** The `Inter` font is a redundant dependency that consumes page weight without rendering.
-2. **Observation 2:** The global headers `h1, h2, h3` in `styles.css` are configured with a line-height of `1.1` and letter-spacing of `-0.03em`.
-   - **Inference:** Headings are excessively compressed, reducing readability when text wraps. High-quality SaaS landing pages require a line-height of `1.2-1.35` for primary headings.
-3. **Observation 3:** Details blocks (`.faq-item`) utilize browser-native `<details>` and `<summary>` wrappers with native snap actions on toggle. While opening fades in via CSS `opacity` rules on the inner `<p>`, closing instantly hides it without transitions.
-   - **Inference:** This creates a jarring transition inconsistency on closing FAQ items. Animating the container's `max-height` or grid layout will solve this behavior.
-4. **Observation 4:** The media query `@media (max-width: 960px)` triggers single-column stacking for all cards and section structures.
-   - **Inference:** This results in an excessively stretched layout on medium tablet viewports (768px - 960px). Staggering this with intermediate rules will optimize spacing for tablet screens.
+
+1. **Observation 1:** Key route pages (`/` and `/mobile-dispatch-board`) and several trade landing pages (e.g. `garage-door-dispatch-software`) completely lack the schema type `"FAQPage"` inside their JSON-LD scripts.
+   - **Inference:** A filter logic is needed to isolate target pages (key routes & trade landing pages ending in `-dispatch-software` or `-job-management-software`), then scan the JSON-LD `@graph` arrays to locate the `FAQPage` block.
+2. **Observation 2:** The trade landing pages `pressure-washing` and `junk-removal` have `FAQPage` blocks but include generic questions/answers that fail to use their trade-specific keywords.
+   - **Inference:** The validator must dynamically extract keywords based on the route name (e.g., `pressure`, `washing`, `power` for `pressure-washing-dispatch-software`) and verify that at least 3 Q&A pairs contain at least one page-specific keyword in either the question or answer text.
+3. **Observation 3:** The homepage (`/` / `index.html`) has no `og:title` or `twitter:title` tags at all.
+   - **Inference:** The script must verify both tags are present.
+4. **Observation 4:** Other pages encode characters like `&` as `&amp;` in meta attributes, whereas the `<title>` tag contains raw `&` characters.
+   - **Inference:** Comparing them directly will lead to false mismatches. The titles must be normalized by decoding HTML entities (e.g. `&amp;` -> `&`, `&#39;` -> `'`) before validation.
 
 ---
 
 ## 3. Caveats
-- No client-side performance measurements (LCP, CLS) were taken due to network restrictions.
-- Investigation is entirely read-only.
-- Tested only on static layout review, without running the React runtime (Vite/Next build pipeline).
+
+- **Assumptions:** It is assumed that sitemap routes consistently match standard layout structures. If live fetching is used, HTML entity encodings are assumed to be consistent with local file parses.
+- **Scope:** The Explorer is restricted to a read-only investigation. No source files or landing pages have been modified; the implementation of code changes and the resolution of the 16 page-level failures are left to the Implementer.
 
 ---
 
 ## 4. Conclusion
-The landing pages' basic semantic structure is clean, but the design is hindered by layout compression, layout snaps on FAQ toggles, tablet layouts that do not make full use of screen widths, and redundant font payloads. 
 
-Implementing the **SaaS UI/UX Enhancement Plan** will establish:
-1. Premium typography scales matching `Plus Jakarta Sans` heights/widths.
-2. Consistent glassmorphic scroll headers across both static and React-driven pages.
-3. Smooth transition curves on all inputs, buttons, and summary elements.
-4. An intermediate tablet viewport (768px-1024px) that prevents premature single-column collapsing.
+The script `scripts/gainhelm-seo-geo-audit.mjs` can be updated cleanly using a set of helper functions for target route recognition, keyword extraction, JSON-LD traversal, and HTML entity decoding. This ensures 100% compliance with local/remote testing of both title tags and `FAQPage` schemas.
+
+### Proposed Code Changes for `scripts/gainhelm-seo-geo-audit.mjs`
+
+#### A. Add Helper Functions (Insert after line 70, after `strip(html)`)
+
+```javascript
+// Decodes common HTML entities for accurate title comparisons
+function decodeEntities(str) {
+  if (!str) return '';
+  return str
+    .replace(/&amp;/g, '&')
+    .replace(/&quot;/g, '"')
+    .replace(/&#039;/g, "'")
+    .replace(/&#39;/g, "'")
+    .replace(/&apos;/g, "'")
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>');
+}
+
+// Determines if page is a trade-specific landing page or key route page
+function isTargetPage(p) {
+  const keyRoutes = ['/', '/field-service-scheduling', '/mobile-dispatch-board'];
+  if (keyRoutes.includes(p)) return true;
+  if (p.endsWith('-dispatch-software') || p.endsWith('-job-management-software')) return true;
+  return false;
+}
+
+// Maps trade pages and key routes to their respective trade keywords
+const TRADE_KEYWORDS = {
+  'hvac': ['hvac', 'heating', 'air conditioning', 'ac', 'cooling'],
+  'plumbing': ['plumbing', 'plumber'],
+  'electrical': ['electrical', 'electrician'],
+  'appliance-repair': ['appliance', 'repair'],
+  'pest-control': ['pest', 'exterminator'],
+  'garage-door': ['garage', 'door'],
+  'cleaning': ['cleaning', 'cleaner'],
+  'landscaping': ['landscaping', 'landscaper', 'lawn', 'mowing'],
+  'roofing': ['roofing', 'roofer'],
+  'locksmith': ['locksmith'],
+  'pool-service': ['pool', 'spa'],
+  'commercial-facilities': ['commercial', 'facilities', 'facility'],
+  'septic-service': ['septic'],
+  'emergency-restoration': ['restoration', 'emergency', 'mitigation'],
+  'restoration-job-management': ['restoration', 'water damage'],
+  'handyman': ['handyman', 'handyperson'],
+  'carpet-cleaning': ['carpet', 'rug', 'cleaning'],
+  'tree-service': ['tree', 'arborist'],
+  'painting': ['painting', 'painter'],
+  'pressure-washing': ['pressure', 'power', 'washing'],
+  'junk-removal': ['junk', 'trash', 'removal']
+};
+
+function getPageTradeKeywords(p) {
+  const keyRoutes = {
+    '/': ['field service', 'dispatch', 'scheduling', 'waitlist', 'technician'],
+    '/field-service-scheduling': ['field service', 'scheduling', 'dispatch', 'technician'],
+    '/mobile-dispatch-board': ['mobile', 'dispatch', 'board', 'ipad', 'tablet', 'technician']
+  };
+  if (keyRoutes[p]) return keyRoutes[p];
+
+  const tradeMatch = p.match(/^\/([a-z-]+)-(?:dispatch-software|job-management-software)$/);
+  if (tradeMatch) {
+    const tradeSlug = tradeMatch[1];
+    const words = tradeSlug.split('-');
+    const extraKeywords = TRADE_KEYWORDS[tradeSlug] || [];
+    return Array.from(new Set([tradeSlug, ...words, ...extraKeywords]));
+  }
+  return [];
+}
+
+// Recursively finds all FAQPage blocks within a JSON-LD object/graph
+function findFAQPages(obj) {
+  const faqPages = [];
+  function traverse(item) {
+    if (!item || typeof item !== 'object') return;
+    if (Array.isArray(item)) {
+      item.forEach(traverse);
+      return;
+    }
+    if (item['@type'] === 'FAQPage') {
+      faqPages.push(item);
+    }
+    if (item['@graph'] && Array.isArray(item['@graph'])) {
+      item['@graph'].forEach(traverse);
+    }
+  }
+  traverse(obj);
+  return faqPages;
+}
+```
+
+#### B. Update the Auditing Loop (Inside `for (const p of paths)` loop)
+
+```javascript
+    // Proposed Check 2: Verify og:title and twitter:title properties
+    const ogTitle = meta(html, 'og:title');
+    const twitterTitle = meta(html, 'twitter:title');
+
+    const normTitle = decodeEntities(title).replace(/\s+/g, ' ').trim();
+    const normOgTitle = decodeEntities(ogTitle).replace(/\s+/g, ' ').trim();
+    const normTwitterTitle = decodeEntities(twitterTitle).replace(/\s+/g, ' ').trim();
+
+    if (title) {
+      if (!ogTitle) {
+        errors.push(`${p}: missing og:title`);
+      } else if (normOgTitle !== normTitle) {
+        errors.push(`${p}: og:title mismatch (expected "${normTitle}", found "${normOgTitle}")`);
+      }
+
+      if (!twitterTitle) {
+        errors.push(`${p}: missing twitter:title`);
+      } else if (normTwitterTitle !== normTitle) {
+        errors.push(`${p}: twitter:title mismatch (expected "${normTitle}", found "${normTwitterTitle}")`);
+      }
+    }
+```
+
+*(Place the FAQPage check inside the loop as well:)*
+
+```javascript
+    // Proposed Check 1: Verify FAQPage structure and trade-specific questions
+    if (isTargetPage(p)) {
+      let maxTradeSpecificFaqs = 0;
+      const kws = getPageTradeKeywords(p);
+
+      for (const [i, m] of jsonLd.entries()) {
+        try {
+          const parsed = JSON.parse(m[1]);
+          const faqPages = findFAQPages(parsed);
+          for (const faq of faqPages) {
+            let tradeSpecificFaqs = 0;
+            if (faq.mainEntity && Array.isArray(faq.mainEntity)) {
+              for (const qa of faq.mainEntity) {
+                const qText = qa.name || '';
+                const aText = qa.acceptedAnswer?.text || '';
+                
+                const isTradeSpec = kws.some(kw => {
+                  const kwLower = kw.toLowerCase();
+                  return qText.toLowerCase().includes(kwLower) || aText.toLowerCase().includes(kwLower);
+                });
+                
+                if (isTradeSpec) {
+                  tradeSpecificFaqs++;
+                }
+              }
+            }
+            if (tradeSpecificFaqs > maxTradeSpecificFaqs) {
+              maxTradeSpecificFaqs = tradeSpecificFaqs;
+            }
+          }
+        } catch (e) {
+          // JSON parsing errors are already handled by baseline checks
+        }
+      }
+
+      if (maxTradeSpecificFaqs === 0) {
+        errors.push(`${p}: missing FAQPage block with trade-specific questions and answers`);
+      } else if (maxTradeSpecificFaqs < 3) {
+        errors.push(`${p}: FAQPage has only ${maxTradeSpecificFaqs} trade-specific Q&As, expected at least 3 (keywords: ${kws.join(', ')})`);
+      }
+    }
+```
 
 ---
 
 ## 5. Verification Method
-- **Layout Inspection:** Verify design improvements by running local preview servers and checking breakpoints in a browser developer panel at 320px, 768px, and 1440px.
-- **Font Load Check:** Check network payloads to verify that `Inter` is no longer loaded, and only `Plus Jakarta Sans` and `IBM Plex Mono` are requested.
-- **Console Audit:** Confirm that scroll scripts for glassmorphic headers do not raise null reference errors when navigation elements are absent or loading asynchronously.
 
----
-
-## 6. Remaining Work
-The next agent (Implementer) should carry out these steps:
-1. **Redundant Font Clean-up:** Search and remove the `<link>` referencing Google Fonts `Inter` in all HTML files. Unify fonts using `Plus Jakarta Sans` in `styles.css`.
-2. **Color Palette Upgrade:** Apply the modernized obsidian slate HSL mappings to `:root` variables in `styles.css`.
-3. **Typography Refinement:** Apply the new modular scale for `h1`, `h2`, `h3`, and body text elements.
-4. **Scroll Header Implementation:** Modify `<header>` styles in `styles.css` to enable scroll-triggered glassmorphic visual transitions, and add the vanilla scroll listener JS script to all static landing pages.
-5. **Details/Summary Transitions:** Refactor `.faq-item` CSS to animate `max-height` smoothly on summary toggle.
-6. **Tablet Breakpoint Integration:** Add media queries for `@media (min-width: 768px) and (max-width: 1024px)` to preserve 2-column layouts for hero features, grids, and cards.
+- **Dry-run Test Execution:**
+  To independently run and verify the new proposed checks against the codebase:
+  ```bash
+  node .agents/explorer_m1_1/test-audit.mjs
+  ```
+  This script executes the exact proposed auditing logic locally and details the 16 current page-level validation errors.
+- **Failures to Address:**
+  When the Implementer fixes the HTML files, re-running `node .agents/explorer_m1_1/test-audit.mjs` must yield:
+  ```
+  PASS: All proposed checks passed!
+  ```

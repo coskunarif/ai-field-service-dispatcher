@@ -69,6 +69,96 @@ function href(html, rel) {
 }
 function strip(html) { return html.replace(/<script[\s\S]*?<\/script>/gi, ' ').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim(); }
 
+// Decodes common HTML entities for accurate title comparisons
+function decodeHtmlEntities(str) {
+  if (!str) return '';
+  return str
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&#039;/g, "'")
+    .replace(/&apos;/g, "'")
+    .replace(/&#x27;/g, "'");
+}
+
+// Normalizes whitespace and HTML entities of titles
+function normalizeTitle(str) {
+  return decodeHtmlEntities(str).replace(/\s+/g, ' ').trim();
+}
+
+// Determines if page is a trade-specific landing page or key route page
+function isTargetPage(p) {
+  const keyRoutes = ['/', '/field-service-scheduling', '/mobile-dispatch-board'];
+  if (keyRoutes.includes(p)) return true;
+  if (p.endsWith('-dispatch-software') || p.endsWith('-job-management-software')) return true;
+  return false;
+}
+
+// Maps trade pages and key routes to their respective trade keywords
+const TRADE_KEYWORDS = {
+  'hvac': ['hvac', 'heating', 'ac', 'air conditioning', 'ventilating', 'cooling'],
+  'plumbing': ['plumb', 'plumbing', 'plumber', 'plumbers'],
+  'electrical': ['electr', 'electrical', 'electrician', 'electricians'],
+  'septic-service': ['septic', 'septic-service'],
+  'pest-control': ['pest', 'exterminator', 'pest-control'],
+  'garage-door': ['garage', 'door', 'garage-door'],
+  'landscaping': ['landscape', 'landscaping', 'landscaper', 'lawn', 'mowing'],
+  'locksmith': ['locksmith', 'locksmiths'],
+  'handyman': ['handyman', 'handymen', 'handyperson'],
+  'appliance-repair': ['appliance', 'repair', 'appliance-repair'],
+  'carpet-cleaning': ['carpet', 'cleaning', 'rug', 'carpet-cleaning'],
+  'cleaning': ['cleaning', 'cleaner', 'cleaners'],
+  'commercial-facilities': ['commercial', 'facilities', 'facility', 'commercial-facilities'],
+  'emergency-restoration': ['emergency', 'restoration', 'mitigation', 'emergency-restoration'],
+  'junk-removal': ['junk', 'removal', 'trash', 'junk-removal'],
+  'painting': ['paint', 'painting', 'painter', 'painters'],
+  'pressure-washing': ['pressure', 'washing', 'power', 'pressure-washing'],
+  'roofing': ['roof', 'roofing', 'roofer', 'roofers'],
+  'tree-service': ['tree', 'service', 'arborist', 'tree-service'],
+  'pool-service': ['pool', 'service', 'spa', 'pool-service'],
+  'restoration-job-management': ['restoration', 'water damage', 'restoration-job-management']
+};
+
+function getPageTradeKeywords(p) {
+  const keyRoutes = {
+    '/': ['field service', 'dispatch', 'scheduling', 'waitlist', 'technician'],
+    '/field-service-scheduling': ['field service', 'scheduling', 'dispatch', 'technician'],
+    '/mobile-dispatch-board': ['mobile', 'dispatch', 'board', 'ipad', 'tablet', 'technician']
+  };
+  if (keyRoutes[p]) return keyRoutes[p];
+
+  const tradeMatch = p.match(/^\/([a-z-]+)-(?:dispatch-software|job-management-software)$/);
+  if (tradeMatch) {
+    const tradeSlug = tradeMatch[1];
+    const extraKeywords = TRADE_KEYWORDS[tradeSlug] || [];
+    const words = tradeSlug.split('-');
+    return Array.from(new Set([tradeSlug, ...words, ...extraKeywords]));
+  }
+  return [];
+}
+
+// Recursively finds all FAQPage blocks within a JSON-LD object/graph
+function findFAQPages(obj) {
+  const faqPages = [];
+  function traverse(item) {
+    if (!item || typeof item !== 'object') return;
+    if (Array.isArray(item)) {
+      item.forEach(traverse);
+      return;
+    }
+    if (item['@type'] === 'FAQPage') {
+      faqPages.push(item);
+    }
+    for (const key of Object.keys(item)) {
+      traverse(item[key]);
+    }
+  }
+  traverse(obj);
+  return faqPages;
+}
+
 async function main() {
   let sitemap = live ? await textFor('/sitemap.xml') : readFileSync('sitemap.xml', 'utf8');
   let robots = live ? await textFor('/robots.txt') : readFileSync('robots.txt', 'utf8');
@@ -119,6 +209,71 @@ async function main() {
       }
     }
     if (!live && !existsSync(localFile)) errors.push(`${p}: sitemap route has no local ${localFile}`);
+
+    // Title alignment check for landing pages
+    if (isTargetPage(p)) {
+      const ogTitle = meta(html, 'og:title');
+      const twitterTitle = meta(html, 'twitter:title');
+      const normTitle = normalizeTitle(title);
+
+      if (!ogTitle) {
+        errors.push(`${p}: missing og:title`);
+      } else {
+        const normOgTitle = normalizeTitle(ogTitle);
+        if (normOgTitle !== normTitle) {
+          errors.push(`${p}: og:title mismatch (expected "${normTitle}", found "${normOgTitle}")`);
+        }
+      }
+
+      if (!twitterTitle) {
+        errors.push(`${p}: missing twitter:title`);
+      } else {
+        const normTwitterTitle = normalizeTitle(twitterTitle);
+        if (normTwitterTitle !== normTitle) {
+          errors.push(`${p}: twitter:title mismatch (expected "${normTitle}", found "${normTwitterTitle}")`);
+        }
+      }
+    }
+
+    // FAQPage validation check for landing pages
+    if (isTargetPage(p)) {
+      let maxTradeSpecificFaqs = 0;
+      const kws = getPageTradeKeywords(p);
+
+      for (const m of jsonLd) {
+        try {
+          const parsed = JSON.parse(m[1]);
+          const faqPages = findFAQPages(parsed);
+          for (const faq of faqPages) {
+            let tradeSpecificFaqs = 0;
+            if (faq.mainEntity && Array.isArray(faq.mainEntity)) {
+              for (const qa of faq.mainEntity) {
+                const qText = qa.name || '';
+                const aText = qa.acceptedAnswer?.text || '';
+                if (qText.trim() && aText.trim()) {
+                  const combined = (qText + ' ' + aText).toLowerCase();
+                  const isTradeSpec = kws.some(kw => combined.includes(kw.toLowerCase()));
+                  if (isTradeSpec) {
+                    tradeSpecificFaqs++;
+                  }
+                }
+              }
+            }
+            if (tradeSpecificFaqs > maxTradeSpecificFaqs) {
+              maxTradeSpecificFaqs = tradeSpecificFaqs;
+            }
+          }
+        } catch (e) {
+          // JSON parsing errors are already handled by baseline checks
+        }
+      }
+
+      if (maxTradeSpecificFaqs === 0) {
+        errors.push(`${p}: missing FAQPage block with trade-specific questions and answers`);
+      } else if (maxTradeSpecificFaqs < 3) {
+        errors.push(`${p}: FAQPage has only ${maxTradeSpecificFaqs} trade-specific Q&As, expected at least 3 (keywords: ${kws.join(', ')})`);
+      }
+    }
   }
 
   const filteredWarnings = warnings.filter(w => {

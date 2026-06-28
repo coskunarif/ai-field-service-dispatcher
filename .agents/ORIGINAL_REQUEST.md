@@ -77,3 +77,27 @@ Produce a detailed execution guide outlining the step-by-step process for perfor
 - [ ] Includes guidelines to avoid spam flags and comply with community rules (especially Reddit's self-promotion rules).
 - [ ] Contains a blank markdown tracking table for logging campaign progress (Platform, Status, Sent Date, Response).
 
+## 2026-06-27T22:32:33Z
+
+Enhance the SEO and GEO (Generative Engine Optimization) performance across the Gainhelm website to improve ranking for core keywords and increase citability by AI search engines.
+
+Working directory: /home/ubuntuadmin/projects/ai-field-service-dispatcher
+Integrity mode: development
+
+## Requirements
+
+### R1. Standardize FAQ Schema
+Add missing `FAQPage` JSON-LD blocks containing relevant questions and answers for all remaining service trade/industry pages (including garage-door, roofing, locksmith, pool-service, commercial-facilities, septic-service, restoration-job-management, handyman, carpet-cleaning, tree-service) and the mobile dispatch board page.
+
+### R2. Verify Social Meta Tags
+Audit and correct `og:title` and `twitter:title` metadata tags on all landing pages to ensure they correctly match the page's service trade focus and do not list incorrect or mismatched trades.
+
+### R3. Update Verification Suite
+Update the automated SEO/GEO audit script (`scripts/gainhelm-seo-geo-audit.mjs`) to verify that all trade-specific landing pages and key route pages have valid FAQPage structured JSON-LD data and consistent OG/Twitter title tags.
+
+## Verification & Acceptance Criteria
+
+### Technical Audits
+- Every trade-specific landing page and key route page has a valid JSON-LD structure including a `FAQPage` block with at least 3 trade-specific questions and answers.
+- Every landing page has matching `og:title` and `twitter:title` properties that correctly correspond to its main page title.
+- Running `node scripts/gainhelm-seo-geo-audit.mjs` completes successfully with a `PASS` status, containing no errors or warnings.
