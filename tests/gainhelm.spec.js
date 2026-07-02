@@ -1,5 +1,11 @@
 import { test, expect } from '@playwright/test';
 
+test.beforeEach(async ({ page }) => {
+  if (process.env.BASE_URL && !process.env.BASE_URL.includes('localhost')) {
+    await page.waitForTimeout(500);
+  }
+});
+
 const pages = [
   '/',
   '/hvac-dispatch-software',

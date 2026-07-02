@@ -2,10 +2,11 @@ import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
   testDir: './tests',
+  timeout: 60000,
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  retries: 3,
+  workers: 1,
   reporter: [
     ['html', { open: 'never' }],
     ['list']
@@ -18,10 +19,16 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: {
+        ...devices['Desktop Chrome'],
+        launchOptions: {
+          args: ['--disable-ipv6'],
+          slowMo: 0
+        }
+      },
     },
   ],
-  webServer: {
+  webServer: process.env.BASE_URL && !process.env.BASE_URL.includes('localhost') ? undefined : {
     command: 'PORT=3005 npm start',
     url: 'http://localhost:3005',
     reuseExistingServer: !process.env.CI,

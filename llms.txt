@@ -42,6 +42,8 @@
 - [Carpet Cleaning Dispatch Software](https://gainhelm.com/carpet-cleaning-dispatch-software): Carpet cleaning dispatch and scheduling software.
 - [Tree Service Dispatch Software](https://gainhelm.com/tree-service-dispatch-software): Tree service crew scheduling and arborist dispatch software.
 - [Facebook Post Generator Tool](https://gainhelm.com/tools/facebook-post-generator): Free AI Facebook post generator for contractor marketing and lead generation.
+- [Lead Queue Tool](https://gainhelm.com/tools/lead-queue): Free contractor lead queue and incoming call simulator.
+- [Contractor Leads Tool](https://gainhelm.com/tools/contractor-leads): Free contractor marketing leads dashboard.
 - [Painting Dispatch Software](https://gainhelm.com/painting-dispatch-software): Painting dispatch and crew scheduling software.
 - [Pressure Washing Dispatch Software](https://gainhelm.com/pressure-washing-dispatch-software): Pressure washing dispatch and technician scheduling software.
 - [Junk Removal Dispatch Software](https://gainhelm.com/junk-removal-dispatch-software): Junk removal dispatch and truck scheduling software.

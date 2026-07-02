@@ -220,10 +220,10 @@ const escapeHtml = (value) => String(value)
 const wantsHtml = (request) => String(request.headers.accept || '').includes('text/html');
 
 const renderWaitlistResponsePage = ({ statusCode, title, heading, message, email = '', returnPath = '/' }) => {
-  const indexHtml = readFileSync(join(root, 'index.html'), 'utf8');
-  const header = (indexHtml.match(/<header>[\s\S]*?<\/header>/)?.[0] || '')
+  const templateHtml = readFileSync(join(root, 'hvac-dispatch-software.html'), 'utf8');
+  const header = (templateHtml.match(/<header>[\s\S]*?<\/header>/)?.[0] || '')
     .replace('href="#waitlist-form" class="nav-cta"', 'href="/#waitlist-form" class="nav-cta"');
-  const currentScript = indexHtml.match(/<script>\s*\(\(\) => \{[\s\S]*?currentPath = location\.pathname[\s\S]*?\}\)\(\);\s*<\/script>/)?.[0] || '';
+  const currentScript = templateHtml.match(/<script>[\s\S]*?currentPath = location\.pathname[\s\S]*?<\/script>/)?.[0] || '';
   const safeReturnPath = normalizePath(returnPath);
 
   const onboardingForm = email ? `
@@ -299,10 +299,10 @@ ${currentScript}
 };
 
 const renderRecoveryPage = ({ pathname, statusCode, title, heading, message }) => {
-  const indexHtml = readFileSync(join(root, 'index.html'), 'utf8');
-  const header = (indexHtml.match(/<header>[\s\S]*?<\/header>/)?.[0] || '')
+  const templateHtml = readFileSync(join(root, 'hvac-dispatch-software.html'), 'utf8');
+  const header = (templateHtml.match(/<header>[\s\S]*?<\/header>/)?.[0] || '')
     .replace('href="#waitlist-form" class="nav-cta"', 'href="/#waitlist-form" class="nav-cta"');
-  const currentScript = indexHtml.match(/<script>\s*\(\(\) => \{[\s\S]*?currentPath = location\.pathname[\s\S]*?\}\)\(\);\s*<\/script>/)?.[0] || '';
+  const currentScript = templateHtml.match(/<script>[\s\S]*?currentPath = location\.pathname[\s\S]*?<\/script>/)?.[0] || '';
   const safePath = escapeHtml(pathname);
 
   return `<!DOCTYPE html>
@@ -4792,6 +4792,11 @@ fastify.get('/api/leads', async (request, reply) => {
   } else {
     leads = [...inMemoryLeads];
   }
+
+  leads = leads.map(l => ({
+    ...l,
+    intent_score: (l.intent_score !== undefined && l.intent_score !== null) ? l.intent_score : 50
+  }));
 
   const { platform, status, sort } = request.query || {};
 

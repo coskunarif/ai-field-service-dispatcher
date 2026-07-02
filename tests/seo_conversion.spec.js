@@ -1,5 +1,11 @@
 import { test, expect } from '@playwright/test';
 
+test.beforeEach(async ({ page }) => {
+  if (process.env.BASE_URL && !process.env.BASE_URL.includes('localhost')) {
+    await page.waitForTimeout(500);
+  }
+});
+
 const targets = {
   '/': {
     title: 'Gainhelm | App-Less AI Dispatch Software for Field Services',
@@ -384,8 +390,8 @@ test.describe('SEO/GEO Conversion and Waitlist Enhancements', () => {
 
   // [AC-5]: Offline Test Resilience (Fastify Server DB Fallback)
   test('[AC-5] Offline Resilience: Fastify server fallback stores lead in-memory when DB is unreachable', async ({ request }) => {
-    if (process.env.DATABASE_URL) {
-      test.skip('DATABASE_URL is set, skipping offline database fallback test');
+    if (process.env.DATABASE_URL || (process.env.BASE_URL && !process.env.BASE_URL.includes('localhost'))) {
+      test.skip('DATABASE_URL is set or running against remote BASE_URL, skipping offline database fallback test');
       return;
     }
 
