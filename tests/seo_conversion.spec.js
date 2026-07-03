@@ -88,11 +88,11 @@ const targets = {
     description: 'Looking for handyman dispatch software? Gainhelm offers 100% app-less SMS technician scheduling & Google Calendar coordination. Try the handyman simulator now.'
   },
   '/servicetitan-alternative': {
-    title: 'Lightweight ServiceTitan Alternative for Small Trades | Gainhelm',
+    title: 'Lightweight ServiceTitan Alternative Board | Gainhelm',
     description: 'Looking for a ServiceTitan alternative? Gainhelm offers small trades teams lightweight app-less SMS scheduling & Google Calendar integration. Try the simulator.'
   },
   '/jobber-alternative': {
-    title: 'Lightweight Jobber Alternative for Small Contractors | Gainhelm',
+    title: 'Lightweight Jobber Alternative for Trades | Gainhelm',
     description: 'Looking for a lightweight Jobber alternative? Gainhelm gives small contractor teams simple app-less SMS dispatch scheduling without expensive user licensing.'
   },
   '/housecallpro-alternative': {
@@ -104,23 +104,23 @@ const targets = {
     description: 'Looking for a Service Fusion alternative? Gainhelm offers a simple, lightweight dispatch scheduling board and app-less SMS routing. Try the free simulator.'
   },
   '/buildops-alternative': {
-    title: 'Lightweight BuildOps Alternative for Service Trades | Gainhelm',
+    title: 'Lightweight BuildOps Alternative for Trades | Gainhelm',
     description: 'Looking for a BuildOps alternative? Gainhelm gives small service trades teams clear scheduling and app-less SMS dispatch board routing. Try the free simulator.'
   },
   '/fieldedge-alternative': {
-    title: 'Lightweight FieldEdge Alternative for Service Trades | Gainhelm',
+    title: 'Lightweight FieldEdge Alternative for Trades | Gainhelm',
     description: 'Looking for a FieldEdge alternative? Gainhelm gives small service trades teams clear scheduling and app-less SMS dispatch board routing. Try the free simulator.'
   },
   '/hvac-dispatch-app-vs-spreadsheets': {
-    title: 'HVAC Dispatch App vs Spreadsheets: Which is Better? | Gainhelm',
+    title: 'HVAC Dispatch App vs Spreadsheets Comparison | Gainhelm',
     description: 'Compare an HVAC dispatch app vs spreadsheets for service-call scheduling, technician assignment, mobile updates, and phone-tag reduction. Try the simulator.'
   },
   '/how-to-choose-hvac-dispatch-app': {
-    title: 'How to Choose the Best HVAC Dispatch App for Techs | Gainhelm',
+    title: 'Choose the Best HVAC Dispatch App for Techs | Gainhelm',
     description: 'A practical guide to choosing the best HVAC dispatch app for your service business: key features, app-less workflows, and how to avoid tech adoption failure.'
   },
   '/how-hvac-dispatch-apps-reduce-phone-tag': {
-    title: 'How HVAC Dispatch Apps Stop Office Phone Tag Chaos | Gainhelm',
+    title: 'Stop HVAC Office Phone Tag with Dispatch Apps | Gainhelm',
     description: 'Learn how an HVAC dispatch app eliminates office-to-field phone tag, automates technician assignments via SMS text messages, and keeps scheduling simple.'
   },
   '/mobile-dispatch-board': {

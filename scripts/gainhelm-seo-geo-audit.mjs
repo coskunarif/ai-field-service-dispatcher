@@ -56,6 +56,10 @@ async function textFor(path) {
 }
 
 function attr(tag, name) {
+  const dq = tag?.match(new RegExp(`${name}="([^"]*)"`, 'i'));
+  if (dq) return dq[1];
+  const sq = tag?.match(new RegExp(`${name}='([^']*)'`, 'i'));
+  if (sq) return sq[1];
   const m = tag?.match(new RegExp(`${name}=["']([^"']*)["']`, 'i'));
   return m?.[1] || '';
 }
@@ -90,10 +94,7 @@ function normalizeTitle(str) {
 
 // Determines if page is a trade-specific landing page or key route page
 function isTargetPage(p) {
-  const keyRoutes = ['/', '/field-service-scheduling', '/mobile-dispatch-board'];
-  if (keyRoutes.includes(p)) return true;
-  if (p.endsWith('-dispatch-software') || p.endsWith('-job-management-software')) return true;
-  return false;
+  return true;
 }
 
 // Maps trade pages and key routes to their respective trade keywords
@@ -129,6 +130,16 @@ function getPageTradeKeywords(p) {
   };
   if (keyRoutes[p]) return keyRoutes[p];
 
+  if (p.includes('alternative')) {
+    return ['alternative', 'dispatch', 'scheduling', 'field service', 'technician', 'contractor', 'software', 'servicetitan', 'jobber', 'housecall', 'servicefusion', 'buildops', 'fieldedge'];
+  }
+  if (p.includes('tool')) {
+    return ['tool', 'leads', 'queue', 'generator', 'marketing', 'facebook', 'contractor', 'dispatch', 'scheduling'];
+  }
+  if (p.includes('hvac-dispatch-app') || p.includes('how-to-choose-hvac') || p.includes('how-hvac-dispatch')) {
+    return ['hvac', 'dispatch', 'scheduling', 'app', 'software', 'spreadsheets', 'phone tag', 'techs'];
+  }
+
   const tradeMatch = p.match(/^\/([a-z-]+)-(?:dispatch-software|job-management-software)$/);
   if (tradeMatch) {
     const tradeSlug = tradeMatch[1];
@@ -157,6 +168,26 @@ function findFAQPages(obj) {
   }
   traverse(obj);
   return faqPages;
+}
+
+// Recursively finds all WebPage blocks within a JSON-LD object/graph
+function findWebPages(obj) {
+  const webPages = [];
+  function traverse(item) {
+    if (!item || typeof item !== 'object') return;
+    if (Array.isArray(item)) {
+      item.forEach(traverse);
+      return;
+    }
+    if (item['@type'] === 'WebPage') {
+      webPages.push(item);
+    }
+    for (const key of Object.keys(item)) {
+      traverse(item[key]);
+    }
+  }
+  traverse(obj);
+  return webPages;
 }
 
 async function main() {
@@ -231,6 +262,32 @@ async function main() {
         const normTwitterTitle = normalizeTitle(twitterTitle);
         if (normTwitterTitle !== normTitle) {
           errors.push(`${p}: twitter:title mismatch (expected "${normTitle}", found "${normTwitterTitle}")`);
+        }
+      }
+    }
+
+    // WebPage validation (author and dateModified)
+    let webPagesFound = [];
+    for (const m of jsonLd) {
+      try {
+        const parsed = JSON.parse(m[1]);
+        const webPages = findWebPages(parsed);
+        webPagesFound.push(...webPages);
+      } catch (e) {
+        // already handled by invalid JSON-LD check
+      }
+    }
+    if (!webPagesFound.length) {
+      errors.push(`${p}: missing WebPage schema in JSON-LD`);
+    } else {
+      for (const wp of webPagesFound) {
+        const author = wp.author;
+        const authorName = typeof author === 'string' ? author : (author && typeof author === 'object' ? author.name : '');
+        if (authorName !== 'Coskun Arif') {
+          errors.push(`${p}: WebPage author must be "Coskun Arif" (found "${authorName || 'missing'}")`);
+        }
+        if (!wp.dateModified) {
+          errors.push(`${p}: WebPage missing dateModified`);
         }
       }
     }
