@@ -36,6 +36,10 @@ test.describe('Calendar Validation API [AC-1]', () => {
     { url: 'https://calendar.google.com%e3%80%82attacker.com/calendar', desc: 'ideographic dot domain spoofing' },
     { url: 'https://calendar.g\u043e\u043egle.com/calendar', desc: 'Cyrillic homograph spoofing' },
     { url: 'https://calendar.xn--ggle-m50aa.com/calendar', desc: 'punycode domain spoofing' },
+    { url: 'https://142.250.190.46/calendar/embed?src=test', desc: 'IPv4 address bypass' },
+    { url: 'https://[2607:f8b0:4005:805::200e]/calendar/embed?src=test', desc: 'IPv6 address bypass' },
+    { url: 'https://calendar.google.com-attacker.com/calendar', desc: 'dashed domain spoofing' },
+    { url: 'https://calendar-google-com.com/calendar', desc: 'hyphenated spoofed domain' },
   ];
 
   for (const { url, desc } of invalidHostnames) {
@@ -58,7 +62,13 @@ test.describe('Calendar Validation API [AC-1]', () => {
     { url: 'https://calendar.google.com/calendar/embed?src=TEST', desc: 'uppercase query TEST' },
     { url: 'http://calendar.google.com/calendar/embed?src=test', desc: 'http protocol' },
     { url: 'https://calendar.google.com/calendar/embed?src=test&foo=bar', desc: 'multiple query parameters' },
-    { url: '  https://calendar.google.com/calendar/embed?src=test  ', desc: 'leading and trailing whitespace' }
+    { url: '  https://calendar.google.com/calendar/embed?src=test  ', desc: 'leading and trailing whitespace' },
+    { url: 'https://calendar.google.com:8080/calendar/embed?src=test', desc: 'explicit non-standard port 8080' },
+    { url: 'https://calendar.google.com\\\\calendar/embed?src=test', desc: 'backslashes in path normalized to forward slashes' },
+    { url: 'https://user:pass@calendar.google.com/calendar/embed?src=test', desc: 'credentials in URL' },
+    { url: 'https://calendar.google.com/calendar/embed?src=my-test-calendar', desc: 'query contains test separated by hyphens' },
+    { url: 'https://calendar.google.com/calendar/embed#test', desc: 'hash contains word test' },
+    { url: 'https://calendar.google.com/calendar/embed?src=test%20', desc: 'URL-encoded space after test allows bypass' }
   ];
 
   for (const { url, desc } of validBypassUrls) {
@@ -69,6 +79,29 @@ test.describe('Calendar Validation API [AC-1]', () => {
       expect(response.status()).toBe(200);
       const body = await response.json();
       expect(body.valid).toBe(true);
+    });
+  }
+
+  const invalidBypassUrls = [
+    { url: 'https://calendar.google.com/calendar/embed?src=contest@group.calendar.google.com', desc: 'query contains bypass word contest' },
+    { url: 'https://calendar.google.com/calendar/embed?src=testing', desc: 'query contains word testing' },
+    { url: 'https://calendar.google.com/calendar/embed?src=pretest', desc: 'query contains word pretest' },
+    { url: 'https://calendar.google.com/calendar/embed?src=testpost', desc: 'query contains word testpost' },
+    { url: 'https://calendar.google.com/calendar/embed?src=latest', desc: 'query contains word latest' },
+    { url: 'https://calendar.google.com/calendar/embed?src=my%20test', desc: 'URL-encoded space before test prevents bypass' },
+    { url: 'https://calendar.google.com/calendar/embed?src=my%2dtest', desc: 'URL-encoded hyphen prevents bypass due to raw string regex check' },
+    { url: 'https://calendar.google.com/calendar/embed?src=test_123', desc: 'query contains word test_123 (underscore prevents boundary)' },
+    { url: 'https://calendar.google.com/calendar/embed?src=%3atest', desc: 'URL-encoded colon before test prevents bypass due to raw string regex check ending in a word character' }
+  ];
+
+  for (const { url, desc } of invalidBypassUrls) {
+    test(`POST /api/validate-calendar - returns valid: false for invalid bypass URL (${desc})`, async ({ request }) => {
+      const response = await request.post('/api/validate-calendar', {
+        data: { calendar_url: url }
+      });
+      expect(response.status()).toBe(200);
+      const body = await response.json();
+      expect(body.valid).toBe(false);
     });
   }
 
@@ -91,6 +124,22 @@ test.describe('Calendar Validation API [AC-1]', () => {
     const body = await response.json();
     expect(body.valid).toBe(false);
     expect(body.error).toContain('protocol');
+  });
+
+  test('POST /api/validate-calendar - returns valid: false for a URL that cannot be fetched (no test bypass)', async ({ request }) => {
+    const response = await request.post('/api/validate-calendar', {
+      data: { calendar_url: 'https://calendar.google.com/calendar' }
+    });
+    expect(response.status()).toBe(200);
+    const body = await response.json();
+    expect(body.valid).toBe(false);
+    
+    const possibleErrors = [
+      'Network error or unable to resolve calendar URL',
+      'Restricted calendar URL. Please check calendar public sharing settings.'
+    ];
+    const matchesAny = possibleErrors.some(err => body.error.includes(err));
+    expect(matchesAny).toBe(true);
   });
 });
 

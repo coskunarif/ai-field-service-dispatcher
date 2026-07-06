@@ -101,4 +101,51 @@ test.describe('Gainhelm Dual-Screen Sandbox Simulator E2E', () => {
     await expect(todayEvents).toContainText('Emergency HVAC');
   });
 
+  test('runs fallback retry path on unsupported response (running late)', async ({ page }) => {
+    await page.goto('/sandbox');
+    
+    await page.selectOption('#trade-select', 'Plumbing');
+    await page.click('.scenario-card:has-text("Burst Pipe")');
+    
+    await page.click('#btn-trigger');
+    
+    const terminal = page.locator('#terminal-feed');
+    const phoneBody = page.locator('#phone-chat');
+    
+    // Wait for phone header to show Sarah Connor
+    await expect(page.locator('#phone-title')).toContainText('Sarah Connor', { timeout: 8000 });
+    
+    // Click 'Running late (15 mins)' (unsupported response)
+    const lateBtn = page.locator('.quick-reply-btn:has-text("Running late")');
+    await expect(lateBtn).toBeVisible({ timeout: 8000 });
+    await lateBtn.click();
+    
+    // Verify phone shows sent text and fallback response
+    await expect(phoneBody).toContainText('LATE', { timeout: 8000 });
+    await expect(phoneBody).toContainText('Sorry, I did not catch that. Reply YES to accept the dispatch, or BUSY to decline.', { timeout: 8000 });
+    await expect(terminal).toContainText('Received reply from Sarah Connor: "LATE"', { timeout: 8000 });
+    
+    // Quick replies should show YES and BUSY buttons, and not late button
+    const yesBtn = page.locator('.quick-reply-btn:has-text("Accept Job (YES)")');
+    const busyBtn = page.locator('.quick-reply-btn:has-text("Decline Job (BUSY)")');
+    const lateBtnAfter = page.locator('.quick-reply-btn:has-text("Running late")');
+    
+    await expect(yesBtn).toBeVisible();
+    await expect(busyBtn).toBeVisible();
+    await expect(lateBtnAfter).not.toBeVisible();
+    
+    // Click 'Accept Job (YES)' to confirm it handles retry correctly
+    await yesBtn.click();
+    
+    // Confirm scheduled
+    await expect(phoneBody).toContainText('YES', { timeout: 8000 });
+    await expect(phoneBody).toContainText('Job confirmed! Scheduled in Google Calendar', { timeout: 8000 });
+    await expect(terminal).toContainText('Booking job to Google Calendar', { timeout: 8000 });
+    await expect(terminal).toContainText('Dispatch cycle complete', { timeout: 8000 });
+    
+    const todayEvents = page.locator('#today-events-col');
+    await expect(todayEvents).toContainText('Sarah Connor');
+    await expect(todayEvents).toContainText('Emergency Plumbing');
+  });
+
 });

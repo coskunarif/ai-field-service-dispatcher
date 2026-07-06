@@ -44,6 +44,7 @@ const pages = [
 ];
 
 const redirects = {
+  '/electrical-contractor-dispatch-software': '/electrical-dispatch-software',
   '/electrical-dispatch-softwar': '/electrical-dispatch-software',
   '/electrician-dispatch-software': '/electrical-dispatch-software',
   '/lawn-care-dispatch-software': '/landscaping-dispatch-software',

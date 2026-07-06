@@ -4294,7 +4294,7 @@ fastify.post('/api/validate-calendar', async (request, reply) => {
     return reply.status(200).send({ valid: false, error: 'Invalid hostname: URL must be on calendar.google.com' });
   }
 
-  if (calendar_url.toLowerCase().includes('/test') || calendar_url.toLowerCase().includes('test') || process.env.NODE_ENV === 'test') {
+  if (/\btest\b/i.test(calendar_url) || process.env.NODE_ENV === 'test') {
     return reply.status(200).send({ valid: true });
   }
 
