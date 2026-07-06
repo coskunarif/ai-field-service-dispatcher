@@ -34,6 +34,8 @@ test.describe('Calendar Validation API [AC-1]', () => {
     { url: 'https://calendar.google.com./calendar/embed?src=test', desc: 'trailing dot in hostname' },
     { url: 'https://calendar.google.com%ef%bc%8eattacker.com/calendar', desc: 'fullwidth dot domain spoofing' },
     { url: 'https://calendar.google.com%e3%80%82attacker.com/calendar', desc: 'ideographic dot domain spoofing' },
+    { url: 'https://calendar.g\u043e\u043egle.com/calendar', desc: 'Cyrillic homograph spoofing' },
+    { url: 'https://calendar.xn--ggle-m50aa.com/calendar', desc: 'punycode domain spoofing' },
   ];
 
   for (const { url, desc } of invalidHostnames) {

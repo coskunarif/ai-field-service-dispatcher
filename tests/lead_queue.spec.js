@@ -144,6 +144,15 @@ test.describe('REST API Endpoints', () => {
       snippet: 'dealing with phone tag is annoying',
       expectedScore: 75,
       expectedReplyContains: 'Hey! If you are dealing with dispatch chaos or trying to get away from spreadsheets'
+    },
+    {
+      desc: 'Explicit overrides for intent score and suggested reply',
+      title: 'Help with HVAC scheduling',
+      snippet: 'We currently use Jobber and a spreadsheet but the dispatcher is overwhelmed and there is a lot of phone tag.',
+      intent_score: 42,
+      suggested_reply: 'Custom overridden reply text.',
+      expectedScore: 42,
+      expectedReplyContains: 'Custom overridden reply text.'
     }
   ];
 
@@ -153,7 +162,9 @@ test.describe('REST API Endpoints', () => {
         platform: 'reddit',
         source_url: `https://reddit.com/r/hvac/comments/test-${Math.random()}`,
         title: scenario.title,
-        snippet: scenario.snippet
+        snippet: scenario.snippet,
+        ...(scenario.intent_score !== undefined && { intent_score: scenario.intent_score }),
+        ...(scenario.suggested_reply !== undefined && { suggested_reply: scenario.suggested_reply })
       };
       const response = await request.post('/api/leads', { data: payload });
       expect(response.status()).toBe(200);
