@@ -4286,11 +4286,15 @@ fastify.post('/api/validate-calendar', async (request, reply) => {
     return reply.status(200).send({ valid: false, error: 'Malformed URL: ' + err.message });
   }
 
+  if (parsedUrl.protocol !== 'http:' && parsedUrl.protocol !== 'https:') {
+    return reply.status(200).send({ valid: false, error: 'Invalid protocol: Only http or https is allowed' });
+  }
+
   if (parsedUrl.hostname !== 'calendar.google.com') {
     return reply.status(200).send({ valid: false, error: 'Invalid hostname: URL must be on calendar.google.com' });
   }
 
-  if (calendar_url.includes('/test') || calendar_url.includes('test') || process.env.NODE_ENV === 'test') {
+  if (calendar_url.toLowerCase().includes('/test') || calendar_url.toLowerCase().includes('test') || process.env.NODE_ENV === 'test') {
     return reply.status(200).send({ valid: true });
   }
 

@@ -5,33 +5,90 @@ import { test, expect } from '@playwright/test';
  * Tests check parsing, hostname validation, bypass logic, and response formats.
  */
 test.describe('Calendar Validation API [AC-1]', () => {
-  test('POST /api/validate-calendar - returns valid: false for malformed URLs', async ({ request }) => {
+  const malformedUrls = [
+    { url: 'not-a-valid-url', desc: 'plain string' },
+    { url: 'https://', desc: 'missing host' },
+    { url: 'https://calendar.google.com:abc/calendar', desc: 'invalid port' }
+  ];
+
+  for (const { url, desc } of malformedUrls) {
+    test(`POST /api/validate-calendar - returns valid: false for malformed URLs (${desc})`, async ({ request }) => {
+      const response = await request.post('/api/validate-calendar', {
+        data: { calendar_url: url }
+      });
+      expect(response.status()).toBe(200);
+      const body = await response.json();
+      expect(body.valid).toBe(false);
+      expect(body.error).toBeDefined();
+    });
+  }
+
+  const invalidHostnames = [
+    { url: 'https://example.com/calendar', desc: 'external domain' },
+    { url: 'https://calendar.google.com.attacker.com/calendar', desc: 'domain spoofing' },
+    { url: 'https://google.com/calendar', desc: 'naked google.com' },
+    { url: 'https://subdomain.calendar.google.com/calendar', desc: 'subdomain of calendar.google.com' },
+    { url: 'https://calendar.google.com@attacker.com/calendar', desc: 'credentials redirect' },
+    { url: 'https://calendar.google.com.com/calendar', desc: 'spoofed com suffix' },
+    { url: 'https://calendar.google.com.cn/calendar', desc: 'spoofed cn suffix' },
+    { url: 'https://calendar.google.com./calendar/embed?src=test', desc: 'trailing dot in hostname' },
+    { url: 'https://calendar.google.com%ef%bc%8eattacker.com/calendar', desc: 'fullwidth dot domain spoofing' },
+    { url: 'https://calendar.google.com%e3%80%82attacker.com/calendar', desc: 'ideographic dot domain spoofing' },
+  ];
+
+  for (const { url, desc } of invalidHostnames) {
+    test(`POST /api/validate-calendar - returns valid: false for hostnames other than calendar.google.com (${desc})`, async ({ request }) => {
+      const response = await request.post('/api/validate-calendar', {
+        data: { calendar_url: url }
+      });
+      expect(response.status()).toBe(200);
+      const body = await response.json();
+      expect(body.valid).toBe(false);
+      expect(body.error).toContain('hostname');
+    });
+  }
+
+  const validBypassUrls = [
+    { url: 'https://calendar.google.com/calendar/embed?src=test', desc: 'standard query test' },
+    { url: 'https://CALENDAR.GOOGLE.COM/calendar/embed?src=test', desc: 'uppercase hostname' },
+    { url: 'https://calendar.google.com/test-path', desc: 'path contains test' },
+    { url: 'https://calendar.google.com:443/calendar/embed?src=test', desc: 'explicit https port 443' },
+    { url: 'https://calendar.google.com/calendar/embed?src=TEST', desc: 'uppercase query TEST' },
+    { url: 'http://calendar.google.com/calendar/embed?src=test', desc: 'http protocol' },
+    { url: 'https://calendar.google.com/calendar/embed?src=test&foo=bar', desc: 'multiple query parameters' },
+    { url: '  https://calendar.google.com/calendar/embed?src=test  ', desc: 'leading and trailing whitespace' }
+  ];
+
+  for (const { url, desc } of validBypassUrls) {
+    test(`POST /api/validate-calendar - returns valid: true for valid bypass URL (${desc})`, async ({ request }) => {
+      const response = await request.post('/api/validate-calendar', {
+        data: { calendar_url: url }
+      });
+      expect(response.status()).toBe(200);
+      const body = await response.json();
+      expect(body.valid).toBe(true);
+    });
+  }
+
+
+  test('POST /api/validate-calendar - returns valid: false when calendar_url is omitted', async ({ request }) => {
     const response = await request.post('/api/validate-calendar', {
-      data: { calendar_url: 'not-a-valid-url' }
+      data: {}
     });
     expect(response.status()).toBe(200);
     const body = await response.json();
     expect(body.valid).toBe(false);
-    expect(body.error).toBeDefined();
+    expect(body.error).toContain('required');
   });
 
-  test('POST /api/validate-calendar - returns valid: false for hostnames other than calendar.google.com', async ({ request }) => {
+  test('POST /api/validate-calendar - returns valid: false for invalid protocols (e.g., ftp)', async ({ request }) => {
     const response = await request.post('/api/validate-calendar', {
-      data: { calendar_url: 'https://example.com/calendar' }
+      data: { calendar_url: 'ftp://calendar.google.com/test' }
     });
     expect(response.status()).toBe(200);
     const body = await response.json();
     expect(body.valid).toBe(false);
-    expect(body.error).toContain('hostname');
-  });
-
-  test('POST /api/validate-calendar - returns valid: true for valid bypass URL containing /test', async ({ request }) => {
-    const response = await request.post('/api/validate-calendar', {
-      data: { calendar_url: 'https://calendar.google.com/calendar/embed?src=test' }
-    });
-    expect(response.status()).toBe(200);
-    const body = await response.json();
-    expect(body.valid).toBe(true);
+    expect(body.error).toContain('protocol');
   });
 });
 

@@ -109,40 +109,59 @@ test.describe('REST API Endpoints', () => {
     }
   });
 
-  test('POST /api/leads - automatically computes intent score and suggested reply templates', async ({ request }) => {
-    // Case 1: HVAC trade keywords matching and multiple intent score boosts
-    // title: "scheduling" -> +15
-    // snippet: "dispatcher" -> +15, "Jobber" -> +20, "spreadsheet" -> +10
-    // Trade: HVAC detected -> HVAC template
-    // Expected score: 50 (base) + 15 + 15 + 20 + 10 = 110, capped at 100
-    const hvacPayload = {
-      platform: 'reddit',
-      source_url: `https://reddit.com/r/hvac/comments/test-${Math.random()}`,
+  const scoringScenarios = [
+    {
+      desc: 'HVAC trade keywords matching and multiple intent score boosts',
       title: 'Help with HVAC scheduling',
-      snippet: 'We currently use Jobber and a spreadsheet but the dispatcher is overwhelmed and there is a lot of phone tag.'
-    };
-    let response = await request.post('/api/leads', { data: hvacPayload });
-    expect(response.status()).toBe(200);
-    let json = await response.json();
-    expect(json.intent_score).toBe(100);
-    expect(json.suggested_reply).toContain('Hey! If you are dealing with dispatch chaos or trying to get away from spreadsheets, check out Gainhelm');
-
-    // Case 2: General trade template and baseline score
-    // No keywords matching adjustments.
-    // Expected score: 50 (base)
-    // Trade: General -> General/Other template
-    const generalPayload = {
-      platform: 'facebook',
-      source_url: `https://facebook.com/groups/contractors/posts/test-${Math.random()}`,
+      snippet: 'We currently use Jobber and a spreadsheet but the dispatcher is overwhelmed and there is a lot of phone tag.',
+      expectedScore: 100,
+      expectedReplyContains: 'Hey! If you are dealing with dispatch chaos or trying to get away from spreadsheets, check out Gainhelm'
+    },
+    {
+      desc: 'General trade template and baseline score',
       title: 'Looking for recommendations',
-      snippet: 'Any advice for starting a general handyman business?'
-    };
-    response = await request.post('/api/leads', { data: generalPayload });
-    expect(response.status()).toBe(200);
-    json = await response.json();
-    expect(json.intent_score).toBe(50);
-    expect(json.suggested_reply).toContain('We had similar scheduling headaches before trying Gainhelm');
-  });
+      snippet: 'Any advice for starting a general handyman business?',
+      expectedScore: 50,
+      expectedReplyContains: 'We had similar scheduling headaches before trying Gainhelm'
+    },
+    {
+      desc: 'Competitor Match only (ServiceTitan alternative, general trade)',
+      title: 'ServiceTitan is too expensive',
+      snippet: 'We are looking for alternatives.',
+      expectedScore: 70,
+      expectedReplyContains: 'We had similar scheduling headaches before trying Gainhelm'
+    },
+    {
+      desc: 'Trade Match Only (Plumbing, no score-boosting keywords)',
+      title: 'plumbing advice',
+      snippet: 'how to fix a faucet',
+      expectedScore: 50,
+      expectedReplyContains: 'Hey! If you are dealing with dispatch chaos or trying to get away from spreadsheets'
+    },
+    {
+      desc: 'Pain + Dispatch match (Electrical, phone tag/dispatch)',
+      title: 'electrician dispatching',
+      snippet: 'dealing with phone tag is annoying',
+      expectedScore: 75,
+      expectedReplyContains: 'Hey! If you are dealing with dispatch chaos or trying to get away from spreadsheets'
+    }
+  ];
+
+  for (const scenario of scoringScenarios) {
+    test(`POST /api/leads - automatically computes intent score and suggested reply templates (${scenario.desc})`, async ({ request }) => {
+      const payload = {
+        platform: 'reddit',
+        source_url: `https://reddit.com/r/hvac/comments/test-${Math.random()}`,
+        title: scenario.title,
+        snippet: scenario.snippet
+      };
+      const response = await request.post('/api/leads', { data: payload });
+      expect(response.status()).toBe(200);
+      const json = await response.json();
+      expect(json.intent_score).toBe(scenario.expectedScore);
+      expect(json.suggested_reply).toContain(scenario.expectedReplyContains);
+    });
+  }
 
   test('POST /api/leads - supports upsert behavior on duplicate source_url', async ({ request }) => {
     const uniqueUrl = `https://reddit.com/r/plumbing/comments/upsert-${Math.random()}`;
