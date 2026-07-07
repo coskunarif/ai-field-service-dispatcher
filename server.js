@@ -337,6 +337,15 @@ ${currentScript}
 
 fastify.setNotFoundHandler((request, reply) => {
   const pathname = normalizePath(request.raw.url);
+  
+  // Dynamic fallback for newly generated dispatch-software pages
+  if (pathname.endsWith('-dispatch-software')) {
+    const localFile = pathname.substring(1) + '.html';
+    if (existsSync(join(root, localFile))) {
+      return reply.type('text/html').send(readFileSync(join(root, localFile), 'utf8'));
+    }
+  }
+
   if (legacyGonePaths.has(pathname)) {
     return reply.code(410).type('text/html').send(renderRecoveryPage({
       pathname,

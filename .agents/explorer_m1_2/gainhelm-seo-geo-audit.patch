@@ -1,0 +1,149 @@
+diff --git a/scripts/gainhelm-seo-geo-audit.mjs b/scripts/gainhelm-seo-geo-audit.mjs
+--- a/scripts/gainhelm-seo-geo-audit.mjs
++++ b/scripts/gainhelm-seo-geo-audit.mjs
+@@ -67,8 +67,31 @@
+ function href(html, rel) {
+   const re = new RegExp(`<link[^>]+rel=["']${rel}["'][^>]*>`, 'i');
+   return attr(html.match(re)?.[0], 'href');
+ }
+ function strip(html) { return html.replace(/<script[\s\S]*?<\/script>/gi, ' ').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim(); }
++
++function findFAQPages(obj) {
++  if (!obj || typeof obj !== 'object') return [];
++  if (Array.isArray(obj)) {
++    return obj.flatMap(findFAQPages);
++  }
++  let results = [];
++  if (obj['@type'] === 'FAQPage' || (Array.isArray(obj['@type']) && obj['@type'].includes('FAQPage'))) {
++    results.push(obj);
++  }
++  for (const key of Object.keys(obj)) {
++    if (key !== '@type' && typeof obj[key] === 'object') {
++      results.push(...findFAQPages(obj[key]));
++    }
++  }
++  return results;
++}
++
++function normalizeTitle(t) {
++  if (!t) return '';
++  return t
++    .replace(/&amp;/g, '&')
++    .replace(/&lt;/g, '<')
++    .replace(/&gt;/g, '>')
++    .replace(/&quot;/g, '"')
++    .replace(/&#39;/g, "'")
++    .replace(/\s+/g, ' ')
++    .toLowerCase()
++    .trim();
++}
+ 
+ async function main() {
+   let sitemap = live ? await textFor('/sitemap.xml') : readFileSync('sitemap.xml', 'utf8');
+@@ -106,6 +129,92 @@
+     if (canonical !== `https://gainhelm.com${p === '/' ? '/' : p}`) errors.push(`${p}: canonical mismatch ${canonical || '(missing)'}`);
+     if (/noindex/i.test(robotsMeta)) errors.push(`${p}: robots meta contains noindex`);
+     if (h1s !== 1) errors.push(`${p}: expected one H1, found ${h1s}`);
+     if (!jsonLd.length) errors.push(`${p}: missing JSON-LD`);
+     for (const [i, m] of jsonLd.entries()) { try { JSON.parse(m[1]); } catch { errors.push(`${p}: invalid JSON-LD block ${i + 1}`); } }
++
++    // og:title and twitter:title properties validation
++    const ogTitle = meta(html, 'og:title');
++    const twitterTitle = meta(html, 'twitter:title');
++
++    if (!ogTitle) {
++      errors.push(`${p}: missing og:title meta property`);
++    } else if (normalizeTitle(ogTitle) !== normalizeTitle(title)) {
++      errors.push(`${p}: og:title mismatch. Main title: "${title}", og:title: "${ogTitle}"`);
++    }
++
++    if (!twitterTitle) {
++      errors.push(`${p}: missing twitter:title meta property`);
++    } else if (normalizeTitle(twitterTitle) !== normalizeTitle(title)) {
++      errors.push(`${p}: twitter:title mismatch. Main title: "${title}", twitter:title: "${twitterTitle}"`);
++    }
++
++    // FAQPage JSON-LD validation for trade-specific landing pages and key route pages
++    const isTradeSpecific = p.match(/-dispatch-software$|-job-management-software$|-service-dispatch-software$/);
++    const isKeyRoute = ['/', '/field-service-scheduling', '/mobile-dispatch-board'].includes(p);
++
++    if (isTradeSpecific || isKeyRoute) {
++      let faqPages = [];
++      for (const [i, m] of jsonLd.entries()) {
++        try {
++          const parsed = JSON.parse(m[1]);
++          faqPages.push(...findFAQPages(parsed));
++        } catch {
++          // Already handled by the invalid JSON-LD block error check
++        }
++      }
++
++      if (faqPages.length === 0) {
++        errors.push(`${p}: missing FAQPage in JSON-LD`);
++      } else {
++        for (const faqPage of faqPages) {
++          if (!faqPage.mainEntity || !Array.isArray(faqPage.mainEntity)) {
++            errors.push(`${p}: FAQPage JSON-LD missing valid mainEntity array`);
++            continue;
++          }
++          if (faqPage.mainEntity.length < 3) {
++            errors.push(`${p}: FAQPage mainEntity has only ${faqPage.mainEntity.length} questions, expected at least 3`);
++            continue;
++          }
++
++          let invalidStructure = false;
++          for (const [index, qa] of faqPage.mainEntity.entries()) {
++            if (qa['@type'] !== 'Question' || !qa.name || typeof qa.name !== 'string') {
++              errors.push(`${p}: FAQPage question at index ${index} is missing @type "Question" or name`);
++              invalidStructure = true;
++            }
++            if (!qa.acceptedAnswer || qa.acceptedAnswer['@type'] !== 'Answer' || !qa.acceptedAnswer.text || typeof qa.acceptedAnswer.text !== 'string') {
++              errors.push(`${p}: FAQPage acceptedAnswer at index ${index} is missing @type "Answer" or text`);
++              invalidStructure = true;
++            }
++          }
++          if (invalidStructure) continue;
++
++          let tradeKeyword = null;
++          let terms = [];
++          if (isTradeSpecific) {
++            tradeKeyword = p.replace(/^\//, '').replace(/-dispatch-software$|-job-management-software$|-service-dispatch-software$/, '');
++            terms.push(tradeKeyword);
++            if (tradeKeyword.includes('-')) {
++              terms.push(...tradeKeyword.split('-'));
++            }
++            if (tradeKeyword === 'electrical') terms.push('electrician', 'electricians', 'electric');
++            if (tradeKeyword === 'plumbing') terms.push('plumber', 'plumbers');
++            if (tradeKeyword === 'septic-service') terms.push('septic');
++            if (tradeKeyword === 'pest-control') terms.push('pest', 'exterminator');
++            if (tradeKeyword === 'garage-door') terms.push('garage');
++            if (tradeKeyword === 'tree-service') terms.push('tree', 'arborist');
++            if (tradeKeyword === 'carpet-cleaning') terms.push('carpet', 'rug');
++            if (tradeKeyword === 'appliance-repair') terms.push('appliance');
++            if (tradeKeyword === 'commercial-facilities') terms.push('commercial', 'facility', 'facilities');
++            if (tradeKeyword === 'emergency-restoration' || tradeKeyword === 'restoration-job') terms.push('restoration', 'restore');
++            if (tradeKeyword === 'pressure-washing') terms.push('pressure', 'power', 'washing');
++            if (tradeKeyword === 'junk-removal') terms.push('junk', 'hauling', 'pickup', 'pickups', 'truck');
++            if (tradeKeyword === 'painting') terms.push('paint', 'painter', 'painters');
++          } else {
++            terms.push('dispatch', 'scheduling', 'schedule', 'field service', 'technician', 'tech', 'waitlist');
++          }
++
++          let matchCount = 0;
++          for (const qa of faqPage.mainEntity) {
++            const questionText = qa.name.toLowerCase();
++            const answerText = qa.acceptedAnswer.text.toLowerCase();
++            const isMatch = terms.some(term => questionText.includes(term.toLowerCase()) || answerText.includes(term.toLowerCase()));
++            if (isMatch) {
++              matchCount++;
++            }
++          }
++
++          if (matchCount < 3) {
++            errors.push(`${p}: FAQPage has only ${matchCount} trade-specific/key-route questions/answers, expected at least 3 (keywords: ${terms.join(', ')})`);
++          }
++        }
++      }
++    }
++ 
+     if (!form) warnings.push(`${p}: no inline waitlist form; confirm alternate CTA path intentionally handles conversion`);

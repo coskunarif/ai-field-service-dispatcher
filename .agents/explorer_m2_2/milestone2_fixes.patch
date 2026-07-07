@@ -1,0 +1,624 @@
+diff -u /tmp/project_copy/before/carpet-cleaning-dispatch-software.html /tmp/project_copy/after/carpet-cleaning-dispatch-software.html
+--- /tmp/project_copy/before/carpet-cleaning-dispatch-software.html	2026-06-27 15:55:22.221518273 -0700
++++ /tmp/project_copy/after/carpet-cleaning-dispatch-software.html	2026-06-27 15:56:16.825642657 -0700
+@@ -9,10 +9,10 @@
+ <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+ <meta property="og:type" content="website">
+ <meta property="og:url" content="https://gainhelm.com/carpet-cleaning-dispatch-software">
+-<meta property="og:title" content="Carpet Cleaning Dispatch &amp; Scheduling Software | Gainhelm">
++<meta property="og:title" content="Carpet Cleaning Dispatch & Scheduling Software | Gainhelm">
+ <meta property="og:description" content="Gainhelm helps carpet cleaning teams schedule service calls and dispatch crews via simple SMS/WhatsApp text messaging. Google Calendar integrated. Try the simulator.">
+ <meta name="twitter:card" content="summary">
+-<meta name="twitter:title" content="Carpet Cleaning Dispatch &amp; Scheduling Software | Gainhelm">
++<meta name="twitter:title" content="Carpet Cleaning Dispatch & Scheduling Software | Gainhelm">
+ <meta name="twitter:description" content="Gainhelm helps carpet cleaning teams schedule service calls and dispatch crews via simple SMS/WhatsApp text messaging. Google Calendar integrated. Try the simulator.">
+ <meta name="theme-color" content="#08111d">
+ <link rel="preconnect" href="https://fonts.googleapis.com">
+@@ -75,6 +75,36 @@
+       "provider": {
+         "@id": "https://gainhelm.com/#organization"
+       }
++    },
++    {
++      "@type": "FAQPage",
++      "@id": "https://gainhelm.com/carpet-cleaning-dispatch-software#faq",
++      "mainEntity": [
++        {
++          "@type": "Question",
++          "name": "What is Gainhelm for carpet cleaning teams?",
++          "acceptedAnswer": {
++            "@type": "Answer",
++            "text": "Gainhelm is a lightweight carpet cleaning scheduling and dispatch tool that helps carpet, rug, and upholstery cleaning crews organize job locations and assign technicians via app-less SMS."
++          }
++        },
++        {
++          "@type": "Question",
++          "name": "How do carpet cleaners receive job assignments?",
++          "acceptedAnswer": {
++            "@type": "Answer",
++            "text": "Technicians receive customer addresses, room counts, and special instructions directly via SMS text messages. They reply with simple texts to update their status (e.g., traveling, working, completed)."
++          }
++        },
++        {
++          "@type": "Question",
++          "name": "Do carpet cleaning technicians need to download a mobile app?",
++          "acceptedAnswer": {
++            "@type": "Answer",
++            "text": "No, carpet cleaning technicians do not need to install anything. They receive their daily job dispatch and log status updates using standard SMS or WhatsApp text messaging."
++          }
++        }
++      ]
+     }
+   ]
+ }</script>
+diff -u /tmp/project_copy/before/commercial-facilities-dispatch-software.html /tmp/project_copy/after/commercial-facilities-dispatch-software.html
+--- /tmp/project_copy/before/commercial-facilities-dispatch-software.html	2026-06-27 15:55:22.221430643 -0700
++++ /tmp/project_copy/after/commercial-facilities-dispatch-software.html	2026-06-27 15:56:16.864979073 -0700
+@@ -9,10 +9,10 @@
+ <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+ <meta property="og:type" content="website">
+ <meta property="og:url" content="https://gainhelm.com/commercial-facilities-dispatch-software">
+-<meta property="og:title" content="Commercial Facilities Dispatch &amp; Job Software | Gainhelm">
++<meta property="og:title" content="Commercial Facilities Dispatch & Job Software | Gainhelm">
+ <meta property="og:description" content="Gainhelm helps facilities maintenance teams schedule service requests and dispatch technicians using app-less SMS text messages. Connects with Google Calendar.">
+ <meta name="twitter:card" content="summary">
+-<meta name="twitter:title" content="Commercial Facilities Dispatch &amp; Job Software | Gainhelm">
++<meta name="twitter:title" content="Commercial Facilities Dispatch & Job Software | Gainhelm">
+ <meta name="twitter:description" content="Gainhelm helps facilities maintenance teams schedule service requests and dispatch technicians using app-less SMS text messages. Connects with Google Calendar.">
+ <meta name="theme-color" content="#08111d">
+ <link rel="preconnect" href="https://fonts.googleapis.com">
+@@ -75,6 +75,36 @@
+       "provider": {
+         "@id": "https://gainhelm.com/#organization"
+       }
++    },
++    {
++      "@type": "FAQPage",
++      "@id": "https://gainhelm.com/commercial-facilities-dispatch-software#faq",
++      "mainEntity": [
++        {
++          "@type": "Question",
++          "name": "What is Gainhelm for commercial facility maintenance teams?",
++          "acceptedAnswer": {
++            "@type": "Answer",
++            "text": "Gainhelm is a lightweight dispatch and scheduling tool designed for facility maintenance managers to assign work orders, coordinate commercial service technicians, and manage schedule boards via app-less SMS."
++          }
++        },
++        {
++          "@type": "Question",
++          "name": "How do commercial technicians receive work orders?",
++          "acceptedAnswer": {
++            "@type": "Answer",
++            "text": "Commercial facility technicians receive work orders, safety guidelines, and tenant contact info via standard text messages (SMS/WhatsApp), eliminating the need for a dedicated mobile app."
++          }
++        },
++        {
++          "@type": "Question",
++          "name": "How does Google Calendar sync work for commercial facilities?",
++          "acceptedAnswer": {
++            "@type": "Answer",
++            "text": "Once configured, facility maintenance jobs and preventative maintenance schedules sync automatically to Google Calendar, ensuring all dispatchers and office staff have a real-time view of active jobs."
++          }
++        }
++      ]
+     }
+   ]
+ }</script>
+diff -u /tmp/project_copy/before/garage-door-dispatch-software.html /tmp/project_copy/after/garage-door-dispatch-software.html
+--- /tmp/project_copy/before/garage-door-dispatch-software.html	2026-06-27 15:55:22.221318076 -0700
++++ /tmp/project_copy/after/garage-door-dispatch-software.html	2026-06-27 15:56:16.803800557 -0700
+@@ -9,10 +9,10 @@
+ <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+ <meta property="og:type" content="website">
+ <meta property="og:url" content="https://gainhelm.com/garage-door-dispatch-software">
+-<meta property="og:title" content="Garage Door Dispatch &amp; Scheduling Software | Gainhelm">
++<meta property="og:title" content="Garage Door Dispatch & Scheduling Software | Gainhelm">
+ <meta property="og:description" content="Gainhelm helps garage door teams coordinate scheduling and dispatch technicians using 100% app-less SMS/WhatsApp. Google Calendar sync. Try the garage simulator.">
+ <meta name="twitter:card" content="summary">
+-<meta name="twitter:title" content="Garage Door Dispatch &amp; Scheduling Software | Gainhelm">
++<meta name="twitter:title" content="Garage Door Dispatch & Scheduling Software | Gainhelm">
+ <meta name="twitter:description" content="Gainhelm helps garage door teams coordinate scheduling and dispatch technicians using 100% app-less SMS/WhatsApp. Google Calendar sync. Try the garage simulator.">
+ <meta name="theme-color" content="#08111d">
+ <link rel="preconnect" href="https://fonts.googleapis.com">
+@@ -75,6 +75,36 @@
+       "provider": {
+         "@id": "https://gainhelm.com/#organization"
+       }
++    },
++    {
++      "@type": "FAQPage",
++      "@id": "https://gainhelm.com/garage-door-dispatch-software#faq",
++      "mainEntity": [
++        {
++          "@type": "Question",
++          "name": "What is Gainhelm for garage door service teams?",
++          "acceptedAnswer": {
++            "@type": "Answer",
++            "text": "Gainhelm is a lightweight, app-less dispatch and scheduling tool designed for garage door service companies to organize technician schedules, assign work orders, and coordinate daily dispatches via SMS."
++          }
++        },
++        {
++          "@type": "Question",
++          "name": "Does Gainhelm require garage door technicians to download an app?",
++          "acceptedAnswer": {
++            "@type": "Answer",
++            "text": "No, Gainhelm is 100% app-less. Your technicians receive job details (such as spring replacements or opener installations) and send status updates via standard SMS or WhatsApp text messages."
++          }
++        },
++        {
++          "@type": "Question",
++          "name": "How does Google Calendar integration help garage door dispatchers?",
++          "acceptedAnswer": {
++            "@type": "Answer",
++            "text": "When you schedule garage door installations or repairs, the details sync automatically to your Google Calendar. Any updates to technician assignments or appointment times are updated in real time for full office visibility."
++          }
++        }
++      ]
+     }
+   ]
+ }</script>
+diff -u /tmp/project_copy/before/handyman-dispatch-software.html /tmp/project_copy/after/handyman-dispatch-software.html
+--- /tmp/project_copy/before/handyman-dispatch-software.html	2026-06-27 15:55:22.221496118 -0700
++++ /tmp/project_copy/after/handyman-dispatch-software.html	2026-06-27 15:56:16.827510157 -0700
+@@ -9,10 +9,10 @@
+ <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+ <meta property="og:type" content="website">
+ <meta property="og:url" content="https://gainhelm.com/handyman-dispatch-software">
+-<meta property="og:title" content="Handyman Dispatch &amp; Job Scheduling Software | Gainhelm">
++<meta property="og:title" content="Handyman Dispatch & Job Scheduling Software | Gainhelm">
+ <meta property="og:description" content="Looking for handyman dispatch software? Gainhelm offers 100% app-less SMS technician scheduling &amp; Google Calendar coordination. Try the handyman simulator now.">
+ <meta name="twitter:card" content="summary">
+-<meta name="twitter:title" content="Handyman Dispatch &amp; Job Scheduling Software | Gainhelm">
++<meta name="twitter:title" content="Handyman Dispatch & Job Scheduling Software | Gainhelm">
+ <meta name="twitter:description" content="Looking for handyman dispatch software? Gainhelm offers 100% app-less SMS technician scheduling &amp; Google Calendar coordination. Try the handyman simulator now.">
+ <meta name="theme-color" content="#08111d">
+ <link rel="preconnect" href="https://fonts.googleapis.com">
+@@ -75,6 +75,36 @@
+       "provider": {
+         "@id": "https://gainhelm.com/#organization"
+       }
++    },
++    {
++      "@type": "FAQPage",
++      "@id": "https://gainhelm.com/handyman-dispatch-software#faq",
++      "mainEntity": [
++        {
++          "@type": "Question",
++          "name": "What is Gainhelm for handyman businesses?",
++          "acceptedAnswer": {
++            "@type": "Answer",
++            "text": "Gainhelm is a lightweight handyman dispatch and scheduling tool designed for handyman teams to schedule repair tasks, assign jobs to technicians, and organize daily tasks via SMS."
++          }
++        },
++        {
++          "@type": "Question",
++          "name": "Does Gainhelm require handyman technicians to download an app?",
++          "acceptedAnswer": {
++            "@type": "Answer",
++            "text": "No, Gainhelm is 100% app-less. Your handymen receive task descriptions, customer details, and location links via SMS or WhatsApp, keeping the work straightforward."
++          }
++        },
++        {
++          "@type": "Question",
++          "name": "How does Google Calendar integration work for handyman teams?",
++          "acceptedAnswer": {
++            "@type": "Answer",
++            "text": "Handyman jobs scheduled in Gainhelm sync directly to your Google Calendar, making it easy for the office to see who is assigned to which home repairs and track same-day schedule updates."
++          }
++        }
++      ]
+     }
+   ]
+ }</script>
+diff -u /tmp/project_copy/before/index.html /tmp/project_copy/after/index.html
+--- /tmp/project_copy/before/index.html	2026-06-27 15:55:22.221582213 -0700
++++ /tmp/project_copy/after/index.html	2026-06-27 15:56:16.955389273 -0700
+@@ -5,6 +5,13 @@
+     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+     <title>Gainhelm | App-Less AI Dispatch Software for Field Services</title>
+     <meta name="description" content="Tired of complex field service apps techs hate using? Gainhelm offers 100% app-less SMS/WhatsApp AI dispatching integrated with Google Calendar. Join the waitlist today." />
++    <meta property="og:type" content="website">
++    <meta property="og:url" content="https://gainhelm.com/">
++    <meta property="og:title" content="Gainhelm | App-Less AI Dispatch Software for Field Services">
++    <meta property="og:description" content="Tired of complex field service apps techs hate using? Gainhelm offers 100% app-less SMS/WhatsApp AI dispatching integrated with Google Calendar. Join the waitlist today.">
++    <meta name="twitter:card" content="summary">
++    <meta name="twitter:title" content="Gainhelm | App-Less AI Dispatch Software for Field Services">
++    <meta name="twitter:description" content="Tired of complex field service apps techs hate using? Gainhelm offers 100% app-less SMS/WhatsApp AI dispatching integrated with Google Calendar. Join the waitlist today.">
+     <link rel="preconnect" href="https://fonts.googleapis.com">
+     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+@@ -65,6 +72,36 @@
+           "provider": {
+             "@id": "https://gainhelm.com/#organization"
+           }
++        },
++        {
++          "@type": "FAQPage",
++          "@id": "https://gainhelm.com/#faq",
++          "mainEntity": [
++            {
++              "@type": "Question",
++              "name": "What is Gainhelm?",
++              "acceptedAnswer": {
++                "@type": "Answer",
++                "text": "Gainhelm is an app-less field service dispatch and scheduling software designed for small trade teams to coordinate jobs, assign technicians, and reduce phone tag via simple SMS and WhatsApp."
++              }
++            },
++            {
++              "@type": "Question",
++              "name": "How does the app-less system work for field technicians?",
++              "acceptedAnswer": {
++                "@type": "Answer",
++                "text": "Instead of requiring technicians to download a complex mobile app, Gainhelm sends all job details via standard SMS or WhatsApp. Technicians reply with text updates to log travel, start, and finish times."
++              }
++            },
++            {
++              "@type": "Question",
++              "name": "Can Gainhelm integrate with Google Calendar?",
++              "acceptedAnswer": {
++                "@type": "Answer",
++                "text": "Yes, Gainhelm integrates directly with Google Calendar, allowing dispatchers to manage scheduling in a familiar interface while automatically syncing dispatch updates to field technicians."
++              }
++            }
++          ]
+         }
+       ]
+     }
+diff -u /tmp/project_copy/before/locksmith-dispatch-software.html /tmp/project_copy/after/locksmith-dispatch-software.html
+--- /tmp/project_copy/before/locksmith-dispatch-software.html	2026-06-27 15:55:22.221390079 -0700
++++ /tmp/project_copy/after/locksmith-dispatch-software.html	2026-06-27 15:56:16.982373180 -0700
+@@ -9,10 +9,10 @@
+ <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+ <meta property="og:type" content="website">
+ <meta property="og:url" content="https://gainhelm.com/locksmith-dispatch-software">
+-<meta property="og:title" content="Locksmith Dispatch &amp; Scheduling Software | Gainhelm">
++<meta property="og:title" content="Locksmith Dispatch & Scheduling Software | Gainhelm">
+ <meta property="og:description" content="Gainhelm helps locksmith teams schedule emergency jobs and dispatch locksmiths via app-less SMS text messages. Connects with Google Calendar. Try the simulator.">
+ <meta name="twitter:card" content="summary">
+-<meta name="twitter:title" content="Locksmith Dispatch &amp; Scheduling Software | Gainhelm">
++<meta name="twitter:title" content="Locksmith Dispatch & Scheduling Software | Gainhelm">
+ <meta name="twitter:description" content="Gainhelm helps locksmith teams schedule emergency jobs and dispatch locksmiths via app-less SMS text messages. Connects with Google Calendar. Try the simulator.">
+ <meta name="theme-color" content="#08111d">
+ <link rel="preconnect" href="https://fonts.googleapis.com">
+@@ -75,6 +75,36 @@
+       "provider": {
+         "@id": "https://gainhelm.com/#organization"
+       }
++    },
++    {
++      "@type": "FAQPage",
++      "@id": "https://gainhelm.com/locksmith-dispatch-software#faq",
++      "mainEntity": [
++        {
++          "@type": "Question",
++          "name": "What is Gainhelm for locksmith dispatchers?",
++          "acceptedAnswer": {
++            "@type": "Answer",
++            "text": "Gainhelm is an app-less locksmith scheduling and dispatch tool that allows dispatchers to coordinate emergency lockouts, key copying, and rekeying jobs by sending details directly to technicians via SMS."
++          }
++        },
++        {
++          "@type": "Question",
++          "name": "How does locksmith dispatch work for emergency lockout calls?",
++          "acceptedAnswer": {
++            "@type": "Answer",
++            "text": "For emergency lockouts, speed is critical. Locksmith dispatchers can assign the nearest technician on the visual schedule board, and the system instantly texts the customer's address and job details to the locksmith's phone."
++          }
++        },
++        {
++          "@type": "Question",
++          "name": "Does Gainhelm require locksmiths to use a complicated mobile app?",
++          "acceptedAnswer": {
++            "@type": "Answer",
++            "text": "No, locksmiths do not need to download or install any apps. They interact with the dispatch system entirely via SMS or WhatsApp, making it easy to use on the go."
++          }
++        }
++      ]
+     }
+   ]
+ }</script>
+diff -u /tmp/project_copy/before/mobile-dispatch-board.html /tmp/project_copy/after/mobile-dispatch-board.html
+--- /tmp/project_copy/before/mobile-dispatch-board.html	2026-06-27 15:55:22.221560214 -0700
++++ /tmp/project_copy/after/mobile-dispatch-board.html	2026-06-27 15:56:16.851129488 -0700
+@@ -92,6 +92,36 @@
+       "provider": {
+         "@id": "https://gainhelm.com/#organization"
+       }
++    },
++    {
++      "@type": "FAQPage",
++      "@id": "https://gainhelm.com/mobile-dispatch-board#faq",
++      "mainEntity": [
++        {
++          "@type": "Question",
++          "name": "What is Gainhelm's mobile dispatch board?",
++          "acceptedAnswer": {
++            "@type": "Answer",
++            "text": "Gainhelm's mobile dispatch board is a responsive scheduling interface optimized for iPad, tablet, and mobile screens, allowing field managers and dispatchers to coordinate jobs on the go."
++          }
++        },
++        {
++          "@type": "Question",
++          "name": "How does the app-less SMS system work with the mobile board?",
++          "acceptedAnswer": {
++            "@type": "Answer",
++            "text": "When a dispatcher assigns or moves a job on the mobile dispatch board, the system automatically texts the technician with the updated details. The technician's text response updates the board status in real time."
++          }
++        },
++        {
++          "@type": "Question",
++          "name": "Can the mobile dispatch board be viewed on any tablet?",
++          "acceptedAnswer": {
++            "@type": "Answer",
++            "text": "Yes, the mobile board is web-based and fully responsive. It requires no installation and works perfectly on iPads, Android tablets, and smartphones."
++          }
++        }
++      ]
+     }
+   ]
+ }</script>
+diff -u /tmp/project_copy/before/pool-service-dispatch-software.html /tmp/project_copy/after/pool-service-dispatch-software.html
+--- /tmp/project_copy/before/pool-service-dispatch-software.html	2026-06-27 15:55:22.221410018 -0700
++++ /tmp/project_copy/after/pool-service-dispatch-software.html	2026-06-27 15:56:16.852395568 -0700
+@@ -9,10 +9,10 @@
+ <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+ <meta property="og:type" content="website">
+ <meta property="og:url" content="https://gainhelm.com/pool-service-dispatch-software">
+-<meta property="og:title" content="Pool Service Dispatch &amp; Scheduling Software | Gainhelm">
++<meta property="og:title" content="Pool Service Dispatch & Scheduling Software | Gainhelm">
+ <meta property="og:description" content="Gainhelm helps pool service teams organize jobs and dispatch technicians via 100% app-less SMS/WhatsApp messaging. Google Calendar integrated. Try the simulator.">
+ <meta name="twitter:card" content="summary">
+-<meta name="twitter:title" content="Pool Service Dispatch &amp; Scheduling Software | Gainhelm">
++<meta name="twitter:title" content="Pool Service Dispatch & Scheduling Software | Gainhelm">
+ <meta name="twitter:description" content="Gainhelm helps pool service teams organize jobs and dispatch technicians via 100% app-less SMS/WhatsApp messaging. Google Calendar integrated. Try the simulator.">
+ <meta name="theme-color" content="#08111d">
+ <link rel="preconnect" href="https://fonts.googleapis.com">
+@@ -75,6 +75,36 @@
+       "provider": {
+         "@id": "https://gainhelm.com/#organization"
+       }
++    },
++    {
++      "@type": "FAQPage",
++      "@id": "https://gainhelm.com/pool-service-dispatch-software#faq",
++      "mainEntity": [
++        {
++          "@type": "Question",
++          "name": "What is Gainhelm for pool service crews?",
++          "acceptedAnswer": {
++            "@type": "Answer",
++            "text": "Gainhelm is a lightweight scheduling and dispatch tool designed for pool maintenance, cleaning, and repair service crews to coordinate technician routes and schedules via app-less SMS."
++          }
++        },
++        {
++          "@type": "Question",
++          "name": "How does route dispatching work for weekly pool service?",
++          "acceptedAnswer": {
++            "@type": "Answer",
++            "text": "Dispatchers can map out weekly pool maintenance schedules on the central board. Technicians receive their route order and customer pool specifications via SMS, replying with status updates once service is complete."
++          }
++        },
++        {
++          "@type": "Question",
++          "name": "Is there a mobile app required for pool technicians?",
++          "acceptedAnswer": {
++            "@type": "Answer",
++            "text": "No, pool cleaning and service technicians do not need to download a mobile app. They receive all job details and send completion updates using standard SMS or WhatsApp."
++          }
++        }
++      ]
+     }
+   ]
+ }</script>
+diff -u /tmp/project_copy/before/restoration-job-management-software.html /tmp/project_copy/after/restoration-job-management-software.html
+--- /tmp/project_copy/before/restoration-job-management-software.html	2026-06-27 15:55:22.221472138 -0700
++++ /tmp/project_copy/after/restoration-job-management-software.html	2026-06-27 15:56:16.851814195 -0700
+@@ -9,10 +9,10 @@
+ <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+ <meta property="og:type" content="website">
+ <meta property="og:url" content="https://gainhelm.com/restoration-job-management-software">
+-<meta property="og:title" content="Restoration Job Management &amp; Dispatch Software | Gainhelm">
++<meta property="og:title" content="Restoration Job Management & Dispatch Software | Gainhelm">
+ <meta property="og:description" content="Gainhelm helps restoration teams manage job intake, crew scheduling, and technician dispatch via 100% app-less SMS/WhatsApp messages. Try the dispatch simulator.">
+ <meta name="twitter:card" content="summary">
+-<meta name="twitter:title" content="Restoration Job Management &amp; Dispatch Software | Gainhelm">
++<meta name="twitter:title" content="Restoration Job Management & Dispatch Software | Gainhelm">
+ <meta name="twitter:description" content="Gainhelm helps restoration teams manage job intake, crew scheduling, and technician dispatch via 100% app-less SMS/WhatsApp messages. Try the dispatch simulator.">
+ <meta name="theme-color" content="#08111d">
+ <link rel="preconnect" href="https://fonts.googleapis.com">
+@@ -75,6 +75,36 @@
+       "provider": {
+         "@id": "https://gainhelm.com/#organization"
+       }
++    },
++    {
++      "@type": "FAQPage",
++      "@id": "https://gainhelm.com/restoration-job-management-software#faq",
++      "mainEntity": [
++        {
++          "@type": "Question",
++          "name": "What is Gainhelm for emergency restoration teams?",
++          "acceptedAnswer": {
++            "@type": "Answer",
++            "text": "Gainhelm is a lightweight job management and dispatch tool designed for water, fire, and mold restoration crews to schedule mitigation jobs and dispatch technicians via app-less SMS."
++          }
++        },
++        {
++          "@type": "Question",
++          "name": "How does emergency dispatch work for restoration jobs?",
++          "acceptedAnswer": {
++            "@type": "Answer",
++            "text": "When an emergency restoration call comes in, dispatchers can immediately assign the mitigation crew on the schedule board. The system automatically texts the crew details on water extraction, drying equipment needs, and property address."
++          }
++        },
++        {
++          "@type": "Question",
++          "name": "Do restoration technicians need to download a mobile app?",
++          "acceptedAnswer": {
++            "@type": "Answer",
++            "text": "No, restoration technicians can view their active jobs, check in on site, and report equipment setup status directly through SMS or WhatsApp text messaging."
++          }
++        }
++      ]
+     }
+   ]
+ }</script>
+diff -u /tmp/project_copy/before/roofing-dispatch-software.html /tmp/project_copy/after/roofing-dispatch-software.html
+--- /tmp/project_copy/before/roofing-dispatch-software.html	2026-06-27 15:55:22.221355158 -0700
++++ /tmp/project_copy/after/roofing-dispatch-software.html	2026-06-27 15:56:16.852922911 -0700
+@@ -9,10 +9,10 @@
+ <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+ <meta property="og:type" content="website">
+ <meta property="og:url" content="https://gainhelm.com/roofing-dispatch-software">
+-<meta property="og:title" content="Roofing Dispatch &amp; Crew Scheduling Software | Gainhelm">
++<meta property="og:title" content="Roofing Dispatch & Crew Scheduling Software | Gainhelm">
+ <meta property="og:description" content="Gainhelm helps roofing contractor crews schedule service calls and dispatch technicians via 100% app-less SMS/WhatsApp. Google Calendar sync. Try the simulator.">
+ <meta name="twitter:card" content="summary">
+-<meta name="twitter:title" content="Roofing Dispatch &amp; Crew Scheduling Software | Gainhelm">
++<meta name="twitter:title" content="Roofing Dispatch & Crew Scheduling Software | Gainhelm">
+ <meta name="twitter:description" content="Gainhelm helps roofing contractor crews schedule service calls and dispatch technicians via 100% app-less SMS/WhatsApp. Google Calendar sync. Try the simulator.">
+ <meta name="theme-color" content="#08111d">
+ <link rel="preconnect" href="https://fonts.googleapis.com">
+@@ -75,6 +75,36 @@
+       "provider": {
+         "@id": "https://gainhelm.com/#organization"
+       }
++    },
++    {
++      "@type": "FAQPage",
++      "@id": "https://gainhelm.com/roofing-dispatch-software#faq",
++      "mainEntity": [
++        {
++          "@type": "Question",
++          "name": "What is Gainhelm for roofing contractors?",
++          "acceptedAnswer": {
++            "@type": "Answer",
++            "text": "Gainhelm is a lightweight dispatch and crew scheduling tool that helps roofing teams track job locations, assign crew members, and coordinate daily roofing jobs without a complex mobile app."
++          }
++        },
++        {
++          "@type": "Question",
++          "name": "How do roofing crews receive job assignments?",
++          "acceptedAnswer": {
++            "@type": "Answer",
++            "text": "Roofing crews receive their job locations and repair details directly via SMS or WhatsApp. They can update the office when they arrive at the site or complete the job, keeping the schedule board current."
++          }
++        },
++        {
++          "@type": "Question",
++          "name": "Can Gainhelm manage roof inspection and repair schedules?",
++          "acceptedAnswer": {
++            "@type": "Answer",
++            "text": "Yes, you can schedule and dispatch for multiple job types, including inspections, leak repairs, and full tear-offs. Jobs sync to Google Calendar to help you visualize active crew assignments."
++          }
++        }
++      ]
+     }
+   ]
+ }</script>
+diff -u /tmp/project_copy/before/septic-service-dispatch-software.html /tmp/project_copy/after/septic-service-dispatch-software.html
+--- /tmp/project_copy/before/septic-service-dispatch-software.html	2026-06-27 15:55:22.221451271 -0700
++++ /tmp/project_copy/after/septic-service-dispatch-software.html	2026-06-27 15:56:16.866549853 -0700
+@@ -9,10 +9,10 @@
+ <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+ <meta property="og:type" content="website">
+ <meta property="og:url" content="https://gainhelm.com/septic-service-dispatch-software">
+-<meta property="og:title" content="Septic Service Dispatch &amp; Scheduling Software | Gainhelm">
++<meta property="og:title" content="Septic Service Dispatch & Scheduling Software | Gainhelm">
+ <meta property="og:description" content="Gainhelm helps septic teams schedule pumpings and dispatch technicians using simple app-less SMS. Connects directly to Google Calendar. Try the septic simulator.">
+ <meta name="twitter:card" content="summary">
+-<meta name="twitter:title" content="Septic Service Dispatch &amp; Scheduling Software | Gainhelm">
++<meta name="twitter:title" content="Septic Service Dispatch & Scheduling Software | Gainhelm">
+ <meta name="twitter:description" content="Gainhelm helps septic teams schedule pumpings and dispatch technicians using simple app-less SMS. Connects directly to Google Calendar. Try the septic simulator.">
+ <meta name="theme-color" content="#08111d">
+ <link rel="preconnect" href="https://fonts.googleapis.com">
+@@ -75,6 +75,36 @@
+       "provider": {
+         "@id": "https://gainhelm.com/#organization"
+       }
++    },
++    {
++      "@type": "FAQPage",
++      "@id": "https://gainhelm.com/septic-service-dispatch-software#faq",
++      "mainEntity": [
++        {
++          "@type": "Question",
++          "name": "What is Gainhelm for septic service companies?",
++          "acceptedAnswer": {
++            "@type": "Answer",
++            "text": "Gainhelm is a lightweight septic dispatch and pump scheduling tool that helps septic tank pumping, inspection, and maintenance crews assign technicians and manage schedules via SMS."
++          }
++        },
++        {
++          "@type": "Question",
++          "name": "How do septic technicians receive septic pump and repair jobs?",
++          "acceptedAnswer": {
++            "@type": "Answer",
++            "text": "Pumper operators and technicians receive their job locations and tank specifications via standard text messages. They can notify the office when a pump job is completed directly via SMS or WhatsApp."
++          }
++        },
++        {
++          "@type": "Question",
++          "name": "Does Gainhelm require septic operators to download a mobile app?",
++          "acceptedAnswer": {
++            "@type": "Answer",
++            "text": "No, Gainhelm is completely app-less. Septic operators and vacuum truck drivers update their status and view job locations using standard SMS, which works even in areas with weak cellular data."
++          }
++        }
++      ]
+     }
+   ]
+ }</script>
+diff -u /tmp/project_copy/before/tree-service-dispatch-software.html /tmp/project_copy/after/tree-service-dispatch-software.html
+--- /tmp/project_copy/before/tree-service-dispatch-software.html	2026-06-27 15:55:22.221537987 -0700
++++ /tmp/project_copy/after/tree-service-dispatch-software.html	2026-06-27 15:56:16.776451414 -0700
+@@ -9,10 +9,10 @@
+ <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+ <meta property="og:type" content="website">
+ <meta property="og:url" content="https://gainhelm.com/tree-service-dispatch-software">
+-<meta property="og:title" content="Tree Service Dispatch &amp; Scheduling Software | Gainhelm">
++<meta property="og:title" content="Tree Service Dispatch & Scheduling Software | Gainhelm">
+ <meta property="og:description" content="Gainhelm helps tree service crews schedule jobs and coordinate arborists using 100% app-less SMS dispatching. Integrate with Google Calendar. Try the simulator.">
+ <meta name="twitter:card" content="summary">
+-<meta name="twitter:title" content="Tree Service Dispatch &amp; Scheduling Software | Gainhelm">
++<meta name="twitter:title" content="Tree Service Dispatch & Scheduling Software | Gainhelm">
+ <meta name="twitter:description" content="Gainhelm helps tree service crews schedule jobs and coordinate arborists using 100% app-less SMS dispatching. Integrate with Google Calendar. Try the simulator.">
+ <meta name="theme-color" content="#08111d">
+ <link rel="preconnect" href="https://fonts.googleapis.com">
+@@ -75,6 +75,36 @@
+       "provider": {
+         "@id": "https://gainhelm.com/#organization"
+       }
++    },
++    {
++      "@type": "FAQPage",
++      "@id": "https://gainhelm.com/tree-service-dispatch-software#faq",
++      "mainEntity": [
++        {
++          "@type": "Question",
++          "name": "What is Gainhelm for tree service crews?",
++          "acceptedAnswer": {
++            "@type": "Answer",
++            "text": "Gainhelm is a lightweight tree service scheduling and dispatch tool designed for arborists, tree removal, and trimming crews to assign jobs and manage crew locations via app-less SMS."
++          }
++        },
++        {
++          "@type": "Question",
++          "name": "How do tree service crews receive removal and pruning jobs?",
++          "acceptedAnswer": {
++            "@type": "Answer",
++            "text": "Crews receive their daily job sites, equipment requirements, and tree pruning specifications directly via SMS or WhatsApp. They can update job statuses in real time."
++          }
++        },
++        {
++          "@type": "Question",
++          "name": "Is there a mobile app required for tree service crews?",
++          "acceptedAnswer": {
++            "@type": "Answer",
++            "text": "No, tree service crews do not need to download a mobile app. They coordinate with the office board and receive job locations via standard text messages."
++          }
++        }
++      ]
+     }
+   ]
+ }</script>
