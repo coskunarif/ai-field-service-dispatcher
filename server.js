@@ -1462,6 +1462,14 @@ const renderSetupPage = (email, context) => {
               <option value="inactive">Off Duty (Unavailable)</option>
             </select>
           </div>
+          <div>
+            <label>Latitude</label>
+            <input type="number" step="any" min="-90" max="90" name="tech_lat_0" placeholder="E.g. 41.8781">
+          </div>
+          <div>
+            <label>Longitude</label>
+            <input type="number" step="any" min="-180" max="180" name="tech_lng_0" placeholder="E.g. -87.6298">
+          </div>
         </div>
         <button type="button" class="btn-remove-card" onclick="removeTechRow(this)" title="Remove Technician">✕ Remove</button>
       </div>
@@ -1512,6 +1520,14 @@ const renderSetupPage = (email, context) => {
                 <option value="inactive" ${status === 'inactive' ? 'selected' : ''}>Off Duty (Unavailable)</option>
               </select>
             </div>
+            <div>
+              <label>Latitude</label>
+              <input type="number" step="any" min="-90" max="90" name="tech_lat_${i}" value="${t.lat !== undefined && t.lat !== null ? t.lat : ''}" placeholder="E.g. 41.8781">
+            </div>
+            <div>
+              <label>Longitude</label>
+              <input type="number" step="any" min="-180" max="180" name="tech_lng_${i}" value="${t.lng !== undefined && t.lng !== null ? t.lng : ''}" placeholder="E.g. -87.6298">
+            </div>
           </div>
           <button type="button" class="btn-remove-card" onclick="removeTechRow(this)" title="Remove Technician">✕ Remove</button>
         </div>
@@ -1527,6 +1543,7 @@ const renderSetupPage = (email, context) => {
 <title>Gainhelm AI Config Setup</title>
 <meta name="robots" content="noindex,follow">
 <link rel="stylesheet" href="/styles.css?v=20260604-redesign">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 <style>
   @keyframes pulse {
     0% { opacity: 0.6; }
@@ -2640,15 +2657,21 @@ const renderSetupPage = (email, context) => {
       const skillsInput = card.querySelector('input[name^="tech_skills_"]');
       const shiftSelect = card.querySelector('select[name^="tech_shift_"]');
       const statusSelect = card.querySelector('select[name^="tech_status_"]');
+      const latInput = card.querySelector('input[name^="tech_lat_"]');
+      const lngInput = card.querySelector('input[name^="tech_lng_"]');
 
       if (nameInput) {
+        const latVal = latInput && latInput.value ? parseFloat(latInput.value) : null;
+        const lngVal = lngInput && lngInput.value ? parseFloat(lngInput.value) : null;
         technicians.push({
           name: nameInput.value,
           phone: phoneInput ? phoneInput.value : '',
           trade: tradeSelect ? tradeSelect.value : 'Other',
           skills: skillsInput ? skillsInput.value : '',
           shift: shiftSelect ? shiftSelect.value : 'Always',
-          status: statusSelect ? statusSelect.value : 'active'
+          status: statusSelect ? statusSelect.value : 'active',
+          lat: isNaN(latVal) ? null : latVal,
+          lng: isNaN(lngVal) ? null : lngVal
         });
       }
     });
@@ -2741,6 +2764,8 @@ const renderSetupPage = (email, context) => {
     const skillsVal = (data && data.skills) ? data.skills : '';
     const shiftVal = (data && data.shift) ? data.shift : 'Always';
     const statusVal = (data && data.status) ? data.status : 'active';
+    const latVal = (data && data.lat !== undefined && data.lat !== null) ? data.lat : '';
+    const lngVal = (data && data.lng !== undefined && data.lng !== null) ? data.lng : '';
 
     div.innerHTML = \`
       <div class="tech-card-grid">
@@ -2782,6 +2807,14 @@ const renderSetupPage = (email, context) => {
             <option value="active" \${statusVal === 'active' ? 'selected' : ''}>On Duty (Available)</option>
             <option value="inactive" \${statusVal === 'inactive' ? 'selected' : ''}>Off Duty (Unavailable)</option>
           </select>
+        </div>
+        <div>
+          <label>Latitude</label>
+          <input type="number" step="any" min="-90" max="90" name="tech_lat_\${rowIndex}" value="\${latVal}" placeholder="E.g. 41.8781">
+        </div>
+        <div>
+          <label>Longitude</label>
+          <input type="number" step="any" min="-180" max="180" name="tech_lng_\${rowIndex}" value="\${lngVal}" placeholder="E.g. -87.6298">
         </div>
       </div>
       <button type="button" class="btn-remove-card" onclick="removeTechRow(this)" title="Remove Technician">✕ Remove</button>
@@ -3036,6 +3069,15 @@ const renderSetupPage = (email, context) => {
   setupInputValidation();
   updateRealtimePreview();
 </script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script>
+  if (typeof L === 'undefined') {
+    const mapEl = document.getElementById('map');
+    if (mapEl) {
+      mapEl.innerHTML = '<div style="color: #94a3b8; font-size: 1rem; font-weight: 600; text-align: center; display: flex; align-items: center; justify-content: center; height: 100%; font-family: sans-serif; background: #0b0f19;">🗺️ Map visualization offline</div>';
+    }
+  }
+</script>
 </body>
 </html>`;
 };
@@ -3052,6 +3094,9 @@ const renderAuditTrailHtml = (logs) => {
     if (l.status === 'accepted') {
       statusColor = '#10b981'; // Green
       statusText = 'Accepted';
+    } else if (l.status === 'manually_assigned') {
+      statusColor = '#10b981'; // Green
+      statusText = 'Manually Assigned';
     } else if (l.status === 'declined') {
       statusColor = '#f59e0b'; // Amber
       statusText = 'Declined';
@@ -3160,6 +3205,9 @@ const renderAppPage = (email, context, dispatchLogs = []) => {
             <div style="display: flex; align-items: center; gap: 8px;">
               <span id="status-badge-${escapeHtml(t.name.replace(/\s+/g, '-'))}">${statusBadge}</span>
               <button type="button" onclick="toggleTechStatus('${escapeHtml(t.name)}')" class="preset-btn" style="margin: 0; padding: 2px 6px; font-size: 0.68rem; background: hsl(var(--surface-3)); border: 1px solid hsl(var(--line)); border-radius: 4px; cursor: pointer; color: hsl(var(--text-2)); font-weight: 500;">Toggle</button>
+              <span id="assign-container-${escapeHtml(t.name.replace(/\s+/g, '-'))}">
+                ${isOnline ? `<button type="button" onclick="forceAssignTech('${escapeHtml(t.name)}')" class="preset-btn" style="margin: 0; padding: 2px 6px; font-size: 0.68rem; background: hsl(var(--brand) / 0.1); border: 1px solid hsl(var(--brand)); border-radius: 4px; cursor: pointer; color: hsl(var(--brand-2)); font-weight: 600;">Assign</button>` : ''}
+              </span>
             </div>
           </div>
         </div>
@@ -3175,7 +3223,20 @@ const renderAppPage = (email, context, dispatchLogs = []) => {
 <title>Gainhelm AI Dispatch Board</title>
 <meta name="robots" content="noindex,follow">
 <link rel="stylesheet" href="/styles.css?v=20260604-redesign">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 <style>
+  /* Leaflet Dark Mode Customizations */
+  .leaflet-popup-content-wrapper, .leaflet-popup-tip {
+    background: #1e293b !important;
+    color: #f1f5f9 !important;
+    border: 1px solid hsl(var(--line));
+    border-radius: 8px;
+  }
+  .leaflet-popup-content {
+    font-family: inherit;
+    font-size: 0.85rem;
+    line-height: 1.4;
+  }
   body {
     background:
       radial-gradient(1000px 500px at 50% -10%, hsl(var(--brand) / 0.08), transparent 50%),
@@ -3574,6 +3635,9 @@ const renderAppPage = (email, context, dispatchLogs = []) => {
 
     <!-- CENTER PANEL: AI Terminal Console & Recent Dispatches -->
     <div style="display: flex; flex-direction: column; gap: 24px;">
+      <div id="map-panel" class="panel" style="height: 280px; min-height: 250px; max-height: 300px; padding: 0; overflow: hidden; position: relative;">
+        <div id="map" style="width: 100%; height: 100%; z-index: 1; background: #0b0f19;"></div>
+      </div>
       <div class="panel" style="gap: 16px;">
         <div class="console-header">
           <div>
@@ -3681,8 +3745,8 @@ const renderAppPage = (email, context, dispatchLogs = []) => {
 
           <!-- Quick replies tray -->
           <div class="quick-reply-drawer" id="quick-replies" style="display: none;">
-            <button type="button" class="quick-pill" onclick="sendMockSMS('YES')">YES</button>
-            <button type="button" class="quick-pill" onclick="sendMockSMS('DECLINE')">DECLINE</button>
+            <button type="button" class="quick-pill quick-reply-btn" onclick="sendMockSMS('YES')">Accept Job (YES)</button>
+            <button type="button" class="quick-pill quick-reply-btn" onclick="sendMockSMS('DECLINE')">Decline Job (BUSY)</button>
             <button type="button" class="quick-pill" onclick="sendMockSMS('I am busy right now')">I am busy</button>
           </div>
 
@@ -3701,6 +3765,7 @@ const renderAppPage = (email, context, dispatchLogs = []) => {
   </div>
 </main>
 
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script>
   const escapeHtml = (str) => String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
@@ -3716,6 +3781,120 @@ const renderAppPage = (email, context, dispatchLogs = []) => {
   let currentStep = 0; // State machine step for conversation simulation
   let currentSessionLogs = [];
 
+  let map = null;
+  let techMarkers = {};
+  let jobMarker = null;
+  let routingPolyline = null;
+
+  // Custom SVG Markers
+  const greenIcon = typeof L !== 'undefined' ? L.divIcon({
+    html: \`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+             <path d="M12 2C8.13 2 5 5.13 5 9C5 14.25 12 22 12 22C12 22 19 14.25 19 9C19 5.13 15.87 2 12 2Z" fill="#10b981" stroke="#fff" stroke-width="2"/>
+             <circle cx="12" cy="9" r="3" fill="#fff"/>
+           </svg>\`,
+    iconSize: [24, 24],
+    iconAnchor: [12, 24],
+    popupAnchor: [0, -24],
+    className: ''
+  }) : null;
+
+  const greyIcon = typeof L !== 'undefined' ? L.divIcon({
+    html: \`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+             <path d="M12 2C8.13 2 5 5.13 5 9C5 14.25 12 22 12 22C12 22 19 14.25 19 9C19 5.13 15.87 2 12 2Z" fill="#94a3b8" stroke="#fff" stroke-width="2"/>
+             <circle cx="12" cy="9" r="3" fill="#fff"/>
+           </svg>\`,
+    iconSize: [24, 24],
+    iconAnchor: [12, 24],
+    popupAnchor: [0, -24],
+    className: ''
+  }) : null;
+
+  const orangeJobIcon = typeof L !== 'undefined' ? L.divIcon({
+    html: \`<svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="animation: pulse 1.5s infinite ease-in-out;">
+             <path d="M12 2C8.13 2 5 5.13 5 9C5 14.25 12 22 12 22C12 22 19 14.25 19 9C19 5.13 15.87 2 12 2Z" fill="#f59e0b" stroke="#fff" stroke-width="2"/>
+             <circle cx="12" cy="9" r="3" fill="#fff"/>
+           </svg>\`,
+    iconSize: [28, 28],
+    iconAnchor: [14, 28],
+    popupAnchor: [0, -28],
+    className: ''
+  }) : null;
+
+  const redJobIcon = typeof L !== 'undefined' ? L.divIcon({
+    html: \`<svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+             <path d="M12 2C8.13 2 5 5.13 5 9C5 14.25 12 22 12 22C12 22 19 14.25 19 9C19 5.13 15.87 2 12 2Z" fill="#ef4444" stroke="#fff" stroke-width="2"/>
+             <circle cx="12" cy="9" r="3" fill="#fff"/>
+           </svg>\`,
+    iconSize: [28, 28],
+    iconAnchor: [14, 28],
+    popupAnchor: [0, -28],
+    className: ''
+  }) : null;
+
+  const defaultLat = 41.8781;
+  const defaultLng = -87.6298;
+
+  function initMap() {
+    if (typeof L === 'undefined') {
+      const mapEl = document.getElementById('map');
+      if (mapEl) {
+        mapEl.innerHTML = '<div style="color: #94a3b8; font-size: 1rem; font-weight: 600; text-align: center; display: flex; align-items: center; justify-content: center; height: 100%; font-family: sans-serif; background: #0b0f19;">🗺️ Map visualization offline</div>';
+      }
+      return;
+    }
+
+    map = L.map('map').setView([defaultLat, defaultLng], 13);
+    
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+      subdomains: 'abcd',
+      maxZoom: 20
+    }).addTo(map);
+
+    plotTechnicians();
+  }
+
+  function plotTechnicians() {
+    if (!map) return;
+    
+    for (let key in techMarkers) {
+      map.removeLayer(techMarkers[key]);
+    }
+    techMarkers = {};
+
+    technicians.forEach((t, i) => {
+      if (t.lat === null || t.lng === null || t.lat === undefined || t.lng === undefined || String(t.lat).trim() === '' || String(t.lng).trim() === '') {
+        return;
+      }
+      let lat = parseFloat(t.lat);
+      let lng = parseFloat(t.lng);
+      
+      const hasValidCoords = !isNaN(lat) && lat >= -90.0 && lat <= 90.0 && !isNaN(lng) && lng >= -180.0 && lng <= 180.0;
+      
+      if (!hasValidCoords) {
+        lat = defaultLat + (i + 1) * 0.005 * Math.sin(i);
+        lng = defaultLng + (i + 1) * 0.005 * Math.cos(i);
+      }
+      
+      const isOnline = t.status === 'active';
+      const icon = isOnline ? greenIcon : greyIcon;
+      
+      const marker = L.marker([lat, lng], { icon: icon }).addTo(map);
+      
+      const popupHtml = \`
+        <div style="font-family: inherit; color: #f1f5f9;">
+          <h4 style="margin: 0 0 4px 0; color: #fff;">\${escapeHtml(t.name)}</h4>
+          <div style="font-size: 0.8rem; margin-bottom: 4px;"><strong>Trade:</strong> \${escapeHtml(t.trade)}</div>
+          <div style="font-size: 0.8rem; margin-bottom: 4px;"><strong>Phone:</strong> \${escapeHtml(t.phone)}</div>
+          <div style="font-size: 0.8rem; margin-bottom: 6px;"><strong>Status:</strong> \${isOnline ? 'On Duty' : 'Off Duty'}</div>
+          \${isOnline ? \`<button type="button" onclick="forceAssignTech('\${escapeHtml(t.name)}')" class="preset-btn" style="margin: 4px 0 0 0; width: 100%; padding: 4px 8px; font-size: 0.72rem; background: hsl(var(--brand) / 0.2); border: 1px solid hsl(var(--brand)); color: hsl(var(--brand-2)); font-weight: bold; border-radius: 6px; cursor: pointer;">Force Assign</button>\` : ''}
+        </div>
+      \`;
+      marker.bindPopup(popupHtml);
+      techMarkers[t.name] = marker;
+    });
+  }
+
   function isTechOnShift(tech, simulatedTime) {
     const shift = tech.shift || 'Always';
     if (shift === 'Always') return true;
@@ -3725,8 +3904,8 @@ const renderAppPage = (email, context, dispatchLogs = []) => {
     return false;
   }
 
-  function findEligibleTechnician(trade, simulatedTime, excludeTechName = null) {
-    logEvent(\`🤖 Agent Reasoning: Evaluating active roster matching trade '\${trade}' or General fallback.\`, 'ai');
+  function findEligibleTechnician(trade, simulatedTime, excludeTechName = null, silent = false) {
+    if (!silent) logEvent(\`🤖 Agent Reasoning: Evaluating active roster matching trade '\${trade}' or General fallback.\`, 'ai');
     
     // First pass: look for exact trade match
     const tradeTechs = technicians.filter(t => t.trade.toUpperCase() === trade.toUpperCase() && t.name !== excludeTechName);
@@ -3738,20 +3917,20 @@ const renderAppPage = (email, context, dispatchLogs = []) => {
       const isOnline = status === 'active';
       
       if (!isOnline) {
-        logEvent(\`🤖 Agent Reasoning: Checked \${t.name} (Trade: \${t.trade}). Skipped - status is Off Duty.\`, 'ai');
+        if (!silent) logEvent(\`🤖 Agent Reasoning: Checked \${t.name} (Trade: \${t.trade}). Skipped - status is Off Duty.\`, 'ai');
         continue;
       }
       if (!isOnShift) {
-        logEvent(\`🤖 Agent Reasoning: Checked \${t.name} (Trade: \${t.trade}, Shift: \${shift}). Skipped - shift not active for \${simulatedTime}.\`, 'ai');
+        if (!silent) logEvent(\`🤖 Agent Reasoning: Checked \${t.name} (Trade: \${t.trade}, Shift: \${shift}). Skipped - shift not active for \${simulatedTime}.\`, 'ai');
         continue;
       }
       
-      logEvent(\`🤖 Agent Reasoning: Checked \${t.name}. Eligible and available (On Duty, shift active).\`, 'ai');
+      if (!silent) logEvent(\`🤖 Agent Reasoning: Checked \${t.name}. Eligible and available (On Duty, shift active).\`, 'ai');
       return t;
     }
     
     // Second pass: look for General / Other fallback
-    logEvent(\`🤖 Agent Reasoning: No exact trade match available on shift. Checking 'Other/General' fallbacks.\`, 'ai');
+    if (!silent) logEvent(\`🤖 Agent Reasoning: No exact trade match available on shift. Checking 'Other/General' fallbacks.\`, 'ai');
     const fallbackTechs = technicians.filter(t => 
       (t.trade.toUpperCase() === 'OTHER' || t.trade.toUpperCase() === 'GENERAL') && t.name !== excludeTechName
     );
@@ -3763,15 +3942,15 @@ const renderAppPage = (email, context, dispatchLogs = []) => {
       const isOnline = status === 'active';
       
       if (!isOnline) {
-        logEvent(\`🤖 Agent Reasoning: Checked fallback \${t.name} (Trade: \${t.trade}). Skipped - status is Off Duty.\`, 'ai');
+        if (!silent) logEvent(\`🤖 Agent Reasoning: Checked fallback \${t.name} (Trade: \${t.trade}). Skipped - status is Off Duty.\`, 'ai');
         continue;
       }
       if (!isOnShift) {
-        logEvent(\`🤖 Agent Reasoning: Checked fallback \${t.name} (Trade: \${t.trade}, Shift: \${shift}). Skipped - shift not active for \${simulatedTime}.\`, 'ai');
+        if (!silent) logEvent(\`🤖 Agent Reasoning: Checked fallback \${t.name} (Trade: \${t.trade}, Shift: \${shift}). Skipped - shift not active for \${simulatedTime}.\`, 'ai');
         continue;
       }
       
-      logEvent(\`🤖 Agent Reasoning: Checked fallback \${t.name}. Eligible and available (On Duty, shift active).\`, 'ai');
+      if (!silent) logEvent(\`🤖 Agent Reasoning: Checked fallback \${t.name}. Eligible and available (On Duty, shift active).\`, 'ai');
       return t;
     }
 
@@ -3799,6 +3978,44 @@ const renderAppPage = (email, context, dispatchLogs = []) => {
     chat.innerHTML = '';
     document.getElementById('quick-replies').style.display = 'flex';
 
+    if (map) {
+      if (routingPolyline) {
+        map.removeLayer(routingPolyline);
+        routingPolyline = null;
+      }
+    }
+
+    // Job Pin Coordinate
+    const jobLat = defaultLat + (Math.random() - 0.5) * 0.015;
+    const jobLng = defaultLng + (Math.random() - 0.5) * 0.015;
+    if (map) {
+      if (jobMarker) {
+        map.removeLayer(jobMarker);
+      }
+      jobMarker = L.marker([jobLat, jobLng], { icon: orangeJobIcon }).addTo(map);
+      jobMarker.bindPopup(\`<div style="color: #fff;"><strong>Job:</strong> \\\${escapeHtml(desc)}</div>\`).openPopup();
+    }
+
+    const firstMatch = findEligibleTechnician(trade, simTime, null, true);
+    if (firstMatch && map && jobMarker) {
+      activeTech = firstMatch;
+      document.getElementById('phone-title').innerText = '💬 ' + firstMatch.name;
+      document.getElementById('phone-subtitle').innerText = firstMatch.trade + ' • ' + firstMatch.phone;
+
+      const techMarker = techMarkers[firstMatch.name];
+      if (techMarker) {
+        const techLatLng = techMarker.getLatLng();
+        const jobLatLng = jobMarker.getLatLng();
+        routingPolyline = L.polyline([techLatLng, jobLatLng], {
+          color: '#f59e0b',
+          dashArray: '5, 10',
+          weight: 3
+        }).addTo(map);
+      }
+    } else if (map && jobMarker) {
+      jobMarker.setIcon(redJobIcon);
+    }
+
     logEvent(\`📥 Job Request Received: "\${desc}" (Trade Required: \${trade}, Time: \${simTime})\`, 'info');
     
     setTimeout(() => {
@@ -3806,6 +4023,8 @@ const renderAppPage = (email, context, dispatchLogs = []) => {
     }, 800);
 
     setTimeout(() => {
+      if (currentStep !== 1) return;
+
       const match = findEligibleTechnician(trade, simTime);
       
       if (!match) {
@@ -3816,6 +4035,14 @@ const renderAppPage = (email, context, dispatchLogs = []) => {
         chat.innerHTML = \`<div style="text-align: center; color: #ef4444; font-size: 0.78rem; margin-top: 80px;">⚠️ Dispatch Alert: No active technician found for \${trade} during \${simTime}</div>\`;
         document.getElementById('phone-subtitle').innerText = 'System Alert';
         saveDispatchLog('escalated');
+
+        if (routingPolyline && map) {
+          map.removeLayer(routingPolyline);
+          routingPolyline = null;
+        }
+        if (jobMarker) {
+          jobMarker.setIcon(redJobIcon);
+        }
         return;
       }
       
@@ -3825,7 +4052,22 @@ const renderAppPage = (email, context, dispatchLogs = []) => {
       
       logEvent(\`🤖 Agent Reasoning: Dispatched job to technician \${match.name} (\${match.phone}) for trade '\${trade}'.\`, 'ai');
       
+      // Update routing line to match technician just in case it changed
+      if (map && techMarkers[match.name] && jobMarker) {
+        const techLatLng = techMarkers[match.name].getLatLng();
+        const jobLatLng = jobMarker.getLatLng();
+        if (routingPolyline) {
+          map.removeLayer(routingPolyline);
+        }
+        routingPolyline = L.polyline([techLatLng, jobLatLng], {
+          color: '#f59e0b',
+          dashArray: '5, 10',
+          weight: 3
+        }).addTo(map);
+      }
+
       setTimeout(() => {
+        if (currentStep !== 1) return;
         const smsText = \`Gainhelm AI Offer: Emergency \${trade} job at \${desc}. Call Fee: $\${rules.pricing}. Reply YES to accept, or NO to decline.\`;
         logEvent(\`💬 Sent SMS to \${match.name}: "\${smsText}"\`, 'sms');
         addPhoneSMS(smsText, 'received');
@@ -3892,6 +4134,9 @@ const renderAppPage = (email, context, dispatchLogs = []) => {
     if (body.status === 'accepted') {
       statusColor = '#10b981';
       statusText = 'Accepted';
+    } else if (body.status === 'manually_assigned') {
+      statusColor = '#10b981';
+      statusText = 'Manually Assigned';
     } else if (body.status === 'declined') {
       statusColor = '#f59e0b';
       statusText = 'Declined';
@@ -3910,7 +4155,7 @@ const renderAppPage = (email, context, dispatchLogs = []) => {
       else if (s.includes('⚠️')) icon = '⚠️';
       
       const cleanText = s
-        .replace(/^[🤖📥💬📱✅⚠️]\\s*/, '')
+        .replace(/^[🤖📥💬📱✅⚠️]\s*/, '')
         .replace('Agent Reasoning:', '<strong>Reasoning:</strong>')
         .replace('Agent Alert:', '<strong>Alert:</strong>')
         .replace('Agent Action:', '<strong>Action:</strong>')
@@ -3973,6 +4218,27 @@ const renderAppPage = (email, context, dispatchLogs = []) => {
               ? \`<span style="display: inline-flex; align-items: center; gap: 6px; color: #10b981; font-weight: 700; font-size: 0.75rem;"><span style="width: 6px; height: 6px; background: #10b981; border-radius: 50%; box-shadow: 0 0 6px #10b981;"></span> On Duty</span>\`
               : \`<span style="display: inline-flex; align-items: center; gap: 6px; color: #94a3b8; font-weight: 700; font-size: 0.75rem;"><span style="width: 6px; height: 6px; background: #94a3b8; border-radius: 50%;"></span> Off Duty</span>\`;
           }
+
+          const assignContainer = document.getElementById('assign-container-' + techName.replace(/\\s+/g, '-'));
+          if (assignContainer) {
+            assignContainer.innerHTML = isOnline
+              ? \`<button type="button" onclick="forceAssignTech('\${escapeHtml(techName)}')" class="preset-btn" style="margin: 0; padding: 2px 6px; font-size: 0.68rem; background: hsl(var(--brand) / 0.1); border: 1px solid hsl(var(--brand)); border-radius: 4px; cursor: pointer; color: hsl(var(--brand-2)); font-weight: 600;">Assign</button>\`
+              : '';
+          }
+
+          if (map && techMarkers[techName]) {
+            techMarkers[techName].setIcon(isOnline ? greenIcon : greyIcon);
+            const popupHtml = \`
+              <div style="font-family: inherit; color: #f1f5f9;">
+                <h4 style="margin: 0 0 4px 0; color: #fff;">\${escapeHtml(tech.name)}</h4>
+                <div style="font-size: 0.8rem; margin-bottom: 4px;"><strong>Trade:</strong> \${escapeHtml(tech.trade)}</div>
+                <div style="font-size: 0.8rem; margin-bottom: 4px;"><strong>Phone:</strong> \${escapeHtml(tech.phone)}</div>
+                <div style="font-size: 0.8rem; margin-bottom: 6px;"><strong>Status:</strong> \${isOnline ? 'On Duty' : 'Off Duty'}</div>
+                \${isOnline ? \`<button type="button" onclick="forceAssignTech('\${escapeHtml(tech.name)}')" class="preset-btn" style="margin: 4px 0 0 0; width: 100%; padding: 4px 8px; font-size: 0.72rem; background: hsl(var(--brand) / 0.2); border: 1px solid hsl(var(--brand)); color: hsl(var(--brand-2)); font-weight: bold; border-radius: 6px; cursor: pointer;">Force Assign</button>\` : ''}
+              </div>
+            \`;
+            techMarkers[techName].setPopupContent(popupHtml);
+          }
           
           logEvent(\`⚙️ Owner Command: Toggled \${techName} status to \${isOnline ? 'On Duty' : 'Off Duty'}.\`, 'info');
         }
@@ -3980,7 +4246,7 @@ const renderAppPage = (email, context, dispatchLogs = []) => {
         alert('Failed to toggle duty status.');
       }
     } catch (err) {
-      console.error(err);
+      console.error('CLIENT: toggleTechStatus error:', err);
       alert('Error connecting to server.');
     }
   }
@@ -4024,6 +4290,18 @@ const renderAppPage = (email, context, dispatchLogs = []) => {
     if (norm.includes('YES')) {
       currentStep = 2; // Accept state
       document.getElementById('quick-replies').style.display = 'none';
+
+      if (routingPolyline) {
+        routingPolyline.setStyle({
+          color: '#10b981',
+          dashArray: null
+        });
+        const pathEl = routingPolyline.getElement();
+        if (pathEl) {
+          pathEl.removeAttribute('stroke-dasharray');
+          pathEl.setAttribute('stroke', '#10b981');
+        }
+      }
       
       setTimeout(() => {
         logEvent(\`🤖 Agent Action: Booking event on Google Calendar (\${calendar.calendar_url || 'https://calendar.google.com'}).\`, 'ai');
@@ -4046,6 +4324,11 @@ const renderAppPage = (email, context, dispatchLogs = []) => {
       document.getElementById('quick-replies').style.display = 'none';
       saveDispatchLog('declined');
 
+      if (routingPolyline && map) {
+        map.removeLayer(routingPolyline);
+        routingPolyline = null;
+      }
+
       setTimeout(() => {
         logEvent(\`🤖 Agent Reasoning: \${activeTech.name} declined the offer. Commencing fallback routing.\`, 'ai');
         
@@ -4064,6 +4347,16 @@ const renderAppPage = (email, context, dispatchLogs = []) => {
             document.getElementById('quick-replies').style.display = 'flex';
             currentStep = 1;
 
+            if (map && techMarkers[fallback.name] && jobMarker) {
+              const techLatLng = techMarkers[fallback.name].getLatLng();
+              const jobLatLng = jobMarker.getLatLng();
+              routingPolyline = L.polyline([techLatLng, jobLatLng], {
+                color: '#f59e0b',
+                dashArray: '5, 10',
+                weight: 3
+              }).addTo(map);
+            }
+
             logEvent(\`🤖 Agent Reasoning: Rerouting job to fallback technician \${fallback.name} (\${fallback.phone}).\`, 'ai');
             
             setTimeout(() => {
@@ -4074,6 +4367,13 @@ const renderAppPage = (email, context, dispatchLogs = []) => {
 
           }, 800);
         } else {
+          if (routingPolyline && map) {
+            map.removeLayer(routingPolyline);
+            routingPolyline = null;
+          }
+          if (jobMarker) {
+            jobMarker.setIcon(redJobIcon);
+          }
           logEvent(\`⚠️ Agent Alert: No fallback technicians are available matching trade '\${activeTrade}' during \${simTime}. Owner alerted.\`, 'warning');
           activeAlerts++;
           document.getElementById('alert-count').innerText = activeAlerts;
@@ -4093,6 +4393,92 @@ const renderAppPage = (email, context, dispatchLogs = []) => {
     }
   }
 
+  function forceAssignTech(techName) {
+    if (!activeJob) {
+      alert('Please initiate a dispatch request first so there is a job to assign.');
+      return;
+    }
+    
+    const tech = technicians.find(t => t.name === techName);
+    if (!tech) return;
+    
+    if (tech.status !== 'active') {
+      alert('Technician is Off Duty and cannot be assigned.');
+      return;
+    }
+    
+    if (currentStep === 2) return;
+    
+    currentStep = 2;
+    activeTech = tech;
+    
+    document.getElementById('phone-title').innerText = '💬 ' + tech.name;
+    document.getElementById('phone-subtitle').innerText = tech.trade + ' • ' + tech.phone;
+    document.getElementById('quick-replies').style.display = 'none';
+    
+    if (map) {
+      if (routingPolyline) {
+        map.removeLayer(routingPolyline);
+      }
+      
+      const techMarker = techMarkers[tech.name];
+      if (techMarker && jobMarker) {
+        const techLatLng = techMarker.getLatLng();
+        const jobLatLng = jobMarker.getLatLng();
+        routingPolyline = L.polyline([techLatLng, jobLatLng], {
+          color: '#10b981',
+          weight: 3
+        }).addTo(map);
+        
+        const pathEl = routingPolyline.getElement();
+        if (pathEl) {
+          pathEl.removeAttribute('stroke-dasharray');
+          pathEl.setAttribute('stroke', '#10b981');
+        }
+      }
+    }
+    
+    logEvent(\`⚙️ Dispatch Override: Manually scheduled \${tech.name} for job.\`, 'info');
+    logEvent(\`🤖 Agent Action: Booking event on Google Calendar (\${calendar.calendar_url || 'https://calendar.google.com'}).\`, 'ai');
+    logEvent(\`✅ Dispatch Complete: \${tech.name} is scheduled for "\${activeJob}". Customer notified.\`, 'success');
+    
+    document.getElementById('calendar-event-text').innerText = \`\${tech.name} scheduled for \${activeJob.substring(0, 20)}...\`;
+    const alertBanner = document.getElementById('calendar-alert');
+    alertBanner.classList.add('show');
+    setTimeout(() => alertBanner.classList.remove('show'), 6000);
+    
+    const body = {
+      email: ${JSON.stringify(email)},
+      jobDescription: activeJob,
+      trade: activeTrade,
+      simulatedTime: document.getElementById('job-time').value,
+      technicianName: tech.name,
+      technicianPhone: tech.phone,
+      stepLogs: currentSessionLogs
+    };
+    
+    fetch('/app/manual-dispatch', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    }).then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          const auditBody = {
+            email: body.email,
+            jobDescription: body.jobDescription,
+            trade: body.trade,
+            simulatedTime: body.simulatedTime,
+            dispatchedToName: body.technicianName,
+            dispatchedToPhone: body.technicianPhone,
+            status: 'manually_assigned',
+            stepLogs: body.stepLogs
+          };
+          appendAuditTrailRow(auditBody);
+        }
+      }).catch(err => console.error('Error logging manual dispatch:', err));
+  }
+
   function submitPhoneSMS() {
     const input = document.getElementById('phone-input');
     const text = input.value.trim();
@@ -4100,6 +4486,9 @@ const renderAppPage = (email, context, dispatchLogs = []) => {
     input.value = '';
     sendMockSMS(text);
   }
+
+  // Initialize map
+  initMap();
 </script>
 </body>
 </html>`;
@@ -4350,13 +4739,32 @@ fastify.post('/setup', async (request, reply) => {
   for (const index of techIndices) {
     const name = request.body[`tech_name_${index}`];
     if (name && name.trim()) {
+      let lat = null;
+      let lng = null;
+      const latStr = request.body[`tech_lat_${index}`];
+      const lngStr = request.body[`tech_lng_${index}`];
+      if (latStr !== undefined && latStr !== null && String(latStr).trim() !== '') {
+        const val = parseFloat(latStr);
+        if (!isNaN(val) && val >= -90.0 && val <= 90.0) {
+          lat = val;
+        }
+      }
+      if (lngStr !== undefined && lngStr !== null && String(lngStr).trim() !== '') {
+        const val = parseFloat(lngStr);
+        if (!isNaN(val) && val >= -180.0 && val <= 180.0) {
+          lng = val;
+        }
+      }
+
       technicians.push({
         name: name.trim(),
         phone: request.body[`tech_phone_${index}`] || '',
         trade: request.body[`tech_trade_${index}`] || 'Other',
         skills: request.body[`tech_skills_${index}`] || '',
         shift: request.body[`tech_shift_${index}`] || 'Always',
-        status: request.body[`tech_status_${index}`] || 'active'
+        status: request.body[`tech_status_${index}`] || 'active',
+        lat,
+        lng
       });
     }
   }
@@ -4515,6 +4923,39 @@ fastify.post('/app/log-dispatch', async (request, reply) => {
       `;
     } catch (err) {
       fastify.log.error('Failed to log dispatch in DB:', err);
+    }
+  }
+
+  return { success: true };
+});
+
+fastify.post('/app/manual-dispatch', async (request, reply) => {
+  let body = request.body || {};
+  if (typeof body === 'string') {
+    try {
+      body = JSON.parse(body);
+    } catch {
+      // parse error
+    }
+  }
+  const { email, jobDescription, trade, simulatedTime, technicianName, technicianPhone, stepLogs } = body;
+  if (!email || !jobDescription || !trade || !simulatedTime || !technicianName) {
+    return reply.status(400).send({ error: 'Missing required manual dispatch fields' });
+  }
+
+  const stepLogsStr = typeof stepLogs === 'string' ? stepLogs : JSON.stringify(stepLogs || []);
+
+  if (sql) {
+    try {
+      await sql`
+        INSERT INTO gainhelm_dispatch_logs (
+          email, job_description, trade, simulated_time, dispatched_to_name, dispatched_to_phone, status, step_logs
+        ) VALUES (
+          ${email}, ${jobDescription}, ${trade}, ${simulatedTime}, ${technicianName}, ${technicianPhone || null}, 'manually_assigned', ${stepLogsStr}
+        )
+      `;
+    } catch (err) {
+      fastify.log.error('Failed to log manual dispatch in DB:', err);
     }
   }
 

@@ -1,72 +1,78 @@
 # Feature Evolution Ledger
 
 ## Status
-state: DONE             # SCOUT | INTAKE | SPEC | TEST | BUILD | VERIFY | DONE
-creativity: 0.5          # 0.0 (strict compliance) to 1.0 (autonomous ideation)
-target_feature: seo/geo
+state: DONE            # SCOUT | INTAKE | SPEC | TEST | BUILD | VERIFY | DONE
+creativity: 1.0          # 0.0 (strict compliance) to 1.0 (autonomous ideation)
+target_feature: supervision/manual-dispatch
 rejections: 0
 budget: 3
 
-## Integration Plan
-- Blast Radius: 
-  - `server.js`: Hardcoded `pages` route map needs dynamic fallback or directory scanning to pick up new files without manual code changes.
-  - `llms.txt`: Programmatic appends required for AI context ingestion.
-  - `sitemap.xml`: XML node insertion for new pages.
-  - Root directory: New `*-dispatch-software.html` files will be written here. Risk of file overwriting if `service_type` collides with existing files.
-- Interface Contract:
-  - File: `seo/geo-generator.mjs` (New module)
-  - Signatures:
-    ```javascript
-    /**
-     * @typedef {Object} PageMetadata
-     * @property {string} service_type
-     * @property {string[]} keywords
-     * @property {string} title
-     * @property {string} url
-     * @property {string} description
-     * @property {string} file_path
-     */
-
-    /**
-     * @param {string} service_type
-     * @param {string[]} keywords
-     * @returns {Promise<PageMetadata>}
-     */
-    export async function page_generator(service_type, keywords) {}
-
-    /**
-     * @param {PageMetadata} page_metadata
-     * @returns {Promise<boolean>}
-     */
-    export async function llms_txt_updater(page_metadata) {}
-    ```
-
-## Feature Definition: seo/geo (LLM SEO & Generative Engine Optimization)
+## Feature Definition: supervision/manual-dispatch (Manual Dispatch Override)
 
 ### Core Philosophy
-Adapt the existing programmatic SEO architecture to cater directly to Generative AI engines (e.g., Perplexity, Google AI Overviews, Claude, ChatGPT). This involves optimizing `llms.txt`, embedding structured data (Schema markup), and structuring page content to provide direct, authoritative, and concise answers to common prompt-based queries (query-to-answer vs query-to-list).
+Provide a visual, real-time manual override mechanism on the Supervision Board. If the AI agent is in the middle of a dispatch search/timeout, or has escalated a job due to no matching technicians, a human dispatcher can take instant control. They can manually force-assign any on-duty technician to the job, instantly scheduling it in the calendar, updating the map routing polyline to a solid green path, and logging the event in PostgreSQL.
 
 ### User Flows
-**1. Admin/Marketing Flow: Programmatic Page Creation**
-- **Trigger:** Administrator defines a new service category or target query (e.g., "HVAC dispatch app for small teams").
-- **Action:** The system generates a landing page that includes:
-  - Direct, conversational answers to prompt-like questions.
-  - Machine-readable structured data (JSON-LD schema).
-  - High-signal context (authoritative data, comparison metrics).
-- **Outcome:** Page is published, and `llms.txt` and `sitemap.xml` are automatically updated to register the new context.
-
-**2. AI Agent Flow: Context Ingestion**
-- **Trigger:** An AI crawler or agent (e.g., Anthropic, OpenAI, Perplexity) accesses the site.
-- **Action:** The agent reads `robots.txt` and is directed to `llms.txt` or a programmatic landing page.
-- **Outcome:** The agent easily parses the exact capabilities, integrations, and target audience of Gainhelm, seamlessly ingesting the "Agentic & LLM Harness Compatibility" rules.
+1. **Initiate Force Assign**
+   - **Trigger**: A dispatcher clicks "Assign" next to an On Duty technician in the roster, or clicks a technician map marker and clicks "Force Assign" in the popup.
+   - **Pre-condition**: A simulated dispatch request must be active (`activeJob` is set). If not, the system alerts: "Please initiate a dispatch request first so there is a job to assign."
+   - **Action**: 
+     - Cancels the active simulation step loops (sets `currentStep` to `2` to halt future timeouts).
+     - Hides the technician phone SMS quick reply panel.
+     - Draws a solid green routing polyline (`#10b981`) on the Leaflet map from the technician's marker to the job pin.
+     - Triggers the simulated Google Calendar slide-in notification on the phone emulator ("Scheduled successfully").
+     - Records a POST request to `/app/manual-dispatch` on the server and appends the new manually assigned row to the recent dispatches audit trail.
+   - **Outcome**: The job is instantly scheduled to the chosen technician, override status is persisted, and visual assets reflect confirmation.
 
 ### Input Validation Constraints
-- **Keywords/Queries:** Must conform to expected industry terms (regex for safe alphanumeric/hyphens to prevent injection in URLs or JSON-LD).
-- **Service Types:** Must be validated against a predefined list of supported trades (HVAC, plumbing, electrical, etc.) to ensure accurate routing and context.
-- **Structured Data:** Generated JSON-LD must strictly validate against Schema.org standards (e.g., `SoftwareApplication`, `FAQPage`, `WebPage`).
+- **Technician Roster Existence**: The manual assignment technician name must exist in the context's technician array.
+- **On Duty Status**: Only technicians who are "active" (On Duty) can be force-assigned. The "Assign" action is hidden or disabled for Off Duty technicians.
 
 ### Edge Cases & Unhappy Paths
-- **Conflicting/Duplicate Intent:** Multiple pages targeting identical prompt structures could confuse RAG models. Need a fallback to canonicalize the primary entity.
-- **AI Crawler Rate Limiting/Blocking:** Misconfigured `robots.txt` or aggressive WAF (Web Application Firewall) blocking could prevent LLMs from reading `llms.txt`.
-- **Malformed llms.txt Generation:** If the programmatic updater fails or generates invalid markdown, LLMs may fail to parse the site context. 
-- **Stale Context:** Deleting or modifying a landing page without updating `llms.txt` could result in AI models hallucinating outdated features.
+- **Leaflet Offline/CDN Blocked**: If Leaflet fails to load, `typeof L === 'undefined'` check must handle the bypass gracefully. Map routing updates are skipped, but the terminal logs, phone simulator, and database post still run flawlessly.
+- **Multiple Override Attempts**: If the user clicks "Assign" multiple times, the state updates are debounced or ignored if `currentStep` is already in a completed state (`currentStep === 2`).
+
+---
+
+## Integration Plan
+
+### Blast Radius Analysis
+- **`server.js`**:
+  - Add POST route handler `/app/manual-dispatch`.
+  - Modify `renderAppPage` template to include "Assign" buttons in the technician cards list and Leaflet popups.
+  - Implement `forceAssignTech(techName)` inside the client-side script of `renderAppPage`.
+- **`tests/manual_dispatch.spec.js`**:
+  - Create a new Playwright test suite to verify the manual override buttons, local overrides, and database persistence.
+- **Regressions**:
+  - Zero impact on landing SEO/GEO pages.
+  - Does not modify existing simulation scripts except by cleanly intercepting loops via the step check.
+
+---
+
+## Interface Contract
+
+### POST `/app/manual-dispatch`
+- **Method**: `POST`
+- **Request Body**:
+  ```typescript
+  interface ManualDispatchPayload {
+    email: string;
+    jobDescription: string;
+    trade: string;
+    simulatedTime: string;
+    technicianName: string;
+    technicianPhone: string;
+    stepLogs: string[];
+  }
+  ```
+- **Response**: `{ success: boolean }`
+
+### Client-Side JavaScript
+- **Function**: `forceAssignTech(techName: string)`
+  - Looks up the technician object in `technicians`.
+  - Validates `activeJob` exists and technician status is `active`.
+  - Sets `activeTech = tech`.
+  - Sets `currentStep = 2`.
+  - Removes active polylines and draws green solid polyline.
+  - Shows calendar alert.
+  - Sends POST request to `/app/manual-dispatch`.
