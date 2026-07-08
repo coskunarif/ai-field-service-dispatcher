@@ -40,6 +40,15 @@ if (sql) {
       )`;
       fastify.log.info('Database table gainhelm_dispatch_logs ensured.');
 
+      try {
+        await sql`ALTER TABLE gainhelm_dispatch_logs ADD COLUMN IF NOT EXISTS distance_miles NUMERIC;`;
+        await sql`ALTER TABLE gainhelm_dispatch_logs ADD COLUMN IF NOT EXISTS duration_mins NUMERIC;`;
+        await sql`ALTER TABLE gainhelm_dispatch_logs ADD COLUMN IF NOT EXISTS traffic_multiplier NUMERIC;`;
+        fastify.log.info('Database table gainhelm_dispatch_logs columns distance_miles, duration_mins, traffic_multiplier ensured.');
+      } catch (err) {
+        fastify.log.error('Migration error for gainhelm_dispatch_logs:', err);
+      }
+
       await sql`CREATE TABLE IF NOT EXISTS social_leads (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         platform VARCHAR(50) NOT NULL,
@@ -196,10 +205,13 @@ for (const [route, file] of Object.entries(pages)) {
   });
 }
 
-for (const asset of ['robots.txt', 'sitemap.xml', 'llms.txt', 'styles.css']) {
+for (const asset of ['robots.txt', 'sitemap.xml', 'llms.txt', 'styles.css', 'route-optimizer.js']) {
   fastify.get(`/${asset}`, async (_request, reply) => {
     if (!existsSync(join(root, asset))) return reply.code(404).send('Not found');
-    const mime = asset.endsWith('.xml') ? 'application/xml' : asset.endsWith('.css') ? 'text/css' : 'text/plain';
+    let mime = 'text/plain';
+    if (asset.endsWith('.xml')) mime = 'application/xml';
+    else if (asset.endsWith('.css')) mime = 'text/css';
+    else if (asset.endsWith('.js')) mime = 'application/javascript';
     reply.type(mime).send(readFileSync(join(root, asset), 'utf8'));
   });
 }
@@ -1544,6 +1556,7 @@ const renderSetupPage = (email, context) => {
 <meta name="robots" content="noindex,follow">
 <link rel="stylesheet" href="/styles.css?v=20260604-redesign">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+<script src="/route-optimizer.js"></script>
 <style>
   @keyframes pulse {
     0% { opacity: 0.6; }
@@ -3151,6 +3164,11 @@ const renderAuditTrailHtml = (logs) => {
         <div style="font-size: 0.8rem; color: hsl(var(--text-3));">
           ⏱️ <strong>Shift Time:</strong> ${escapeHtml(l.simulated_time)}
         </div>
+        ${(l.distance_miles !== null && l.distance_miles !== undefined) ? `
+        <div style="font-size: 0.8rem; color: hsl(var(--text-3));">
+          📍 <strong>Route Info:</strong> ${l.distance_miles} miles, ${l.duration_mins} mins (${l.traffic_multiplier}x traffic)
+        </div>
+        ` : ''}
         <div>
           <button type="button" onclick="document.getElementById('audit-details-${logId}').style.display = document.getElementById('audit-details-${logId}').style.display === 'none' ? 'block' : 'none'" 
                   class="preset-btn" style="margin: 0; padding: 4px 10px; font-size: 0.72rem; background: hsl(var(--surface-3)); border: 1px solid hsl(var(--line)); border-radius: 6px; cursor: pointer; color: hsl(var(--brand-2)); font-weight: bold;">
@@ -3224,6 +3242,7 @@ const renderAppPage = (email, context, dispatchLogs = []) => {
 <meta name="robots" content="noindex,follow">
 <link rel="stylesheet" href="/styles.css?v=20260604-redesign">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+<script src="/route-optimizer.js"></script>
 <style>
   /* Leaflet Dark Mode Customizations */
   .leaflet-popup-content-wrapper, .leaflet-popup-tip {
@@ -3688,6 +3707,15 @@ const renderAppPage = (email, context, dispatchLogs = []) => {
               <option value="Weekend">Weekend / Off-Shift Hours (Saturday 2pm)</option>
             </select>
           </div>
+
+          <div style="display: flex; flex-direction: column; gap: 4px;">
+            <label for="traffic-multiplier" style="font-size: 0.72rem; color: hsl(var(--text-3)); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; display: block;">Traffic Conditions</label>
+            <select id="traffic-multiplier" style="width: 100%;">
+              <option value="1.0">Normal (1.0x)</option>
+              <option value="1.8">Rush Hour (1.8x)</option>
+              <option value="3.0">Accident / Gridlock (3.0x)</option>
+            </select>
+          </div>
           
           <div style="display: flex; gap: 8px; flex-wrap: wrap;">
             <span style="font-size: 0.78rem; color: hsl(var(--text-3)); align-self: center;">Quick Prompts:</span>
@@ -3780,6 +3808,10 @@ const renderAppPage = (email, context, dispatchLogs = []) => {
   let activeTrade = '';
   let currentStep = 0; // State machine step for conversation simulation
   let currentSessionLogs = [];
+
+  let activeRouteDistance = null;
+  let activeRouteDuration = null;
+  let activeTrafficMultiplier = null;
 
   let map = null;
   let techMarkers = {};
@@ -3895,6 +3927,72 @@ const renderAppPage = (email, context, dispatchLogs = []) => {
     });
   }
 
+  function calculateAndAnimateRoute(tech, color = '#f59e0b', isDashed = true) {
+    if (!tech) return;
+    
+    let techLat = parseFloat(tech.lat);
+    let techLng = parseFloat(tech.lng);
+    
+    if (isNaN(techLat) || isNaN(techLng)) {
+      const techMarker = techMarkers[tech.name];
+      if (techMarker) {
+        const latLng = techMarker.getLatLng();
+        techLat = latLng.lat;
+        techLng = latLng.lng;
+      } else {
+        techLat = defaultLat;
+        techLng = defaultLng;
+      }
+    }
+    
+    let jobLat = defaultLat;
+    let jobLng = defaultLng;
+    if (jobMarker) {
+      const jobLatLng = jobMarker.getLatLng();
+      jobLat = jobLatLng.lat;
+      jobLng = jobLatLng.lng;
+    }
+    
+    activeTrafficMultiplier = parseFloat(document.getElementById('traffic-multiplier').value || '1.0');
+    
+    if (techLat === jobLat && techLng === jobLng) {
+      activeRouteDistance = 0;
+      activeRouteDuration = 1;
+    } else {
+      activeRouteDistance = RouteOptimizer.haversineDistance(techLat, techLng, jobLat, jobLng);
+      activeRouteDuration = RouteOptimizer.calculateETA(activeRouteDistance, activeTrafficMultiplier);
+    }
+    
+    if (typeof L !== 'undefined' && map) {
+      const techMarker = techMarkers[tech.name];
+      if (techMarker) {
+        if (routingPolyline) {
+          map.removeLayer(routingPolyline);
+        }
+        
+        const options = {
+          color: color,
+          weight: 3
+        };
+        if (isDashed) {
+          options.dashArray = '5, 10';
+        }
+        
+        routingPolyline = L.polyline([[techLat, techLng], [jobLat, jobLng]], options).addTo(map);
+        
+        if (!isDashed) {
+          const pathEl = routingPolyline.getElement();
+          if (pathEl) {
+            pathEl.removeAttribute('stroke-dasharray');
+            pathEl.setAttribute('stroke', color);
+          }
+        }
+        
+        RouteOptimizer.animateMarker(techMarker, routingPolyline, [techLat, techLng], [jobLat, jobLng], 2000);
+      }
+    }
+  }
+
   function isTechOnShift(tech, simulatedTime) {
     const shift = tech.shift || 'Always';
     if (shift === 'Always') return true;
@@ -3959,12 +4057,16 @@ const renderAppPage = (email, context, dispatchLogs = []) => {
 
   function triggerSimulation(e) {
     if (e) e.preventDefault();
+    plotTechnicians();
     const desc = document.getElementById('job-desc').value.trim();
     const trade = document.getElementById('job-trade').value;
     const simTime = document.getElementById('job-time').value;
     if (!desc) return;
     
     currentSessionLogs = [];
+    activeRouteDistance = null;
+    activeRouteDuration = null;
+    activeTrafficMultiplier = parseFloat(document.getElementById('traffic-multiplier').value || '1.0');
     
     document.getElementById('job-desc').value = '';
     activeJob = desc;
@@ -4052,23 +4154,17 @@ const renderAppPage = (email, context, dispatchLogs = []) => {
       
       logEvent(\`🤖 Agent Reasoning: Dispatched job to technician \${match.name} (\${match.phone}) for trade '\${trade}'.\`, 'ai');
       
-      // Update routing line to match technician just in case it changed
-      if (map && techMarkers[match.name] && jobMarker) {
-        const techLatLng = techMarkers[match.name].getLatLng();
-        const jobLatLng = jobMarker.getLatLng();
-        if (routingPolyline) {
-          map.removeLayer(routingPolyline);
-        }
-        routingPolyline = L.polyline([techLatLng, jobLatLng], {
-          color: '#f59e0b',
-          dashArray: '5, 10',
-          weight: 3
-        }).addTo(map);
-      }
+      // Calculate route and start marker animation
+      calculateAndAnimateRoute(match, '#f59e0b', true);
 
       setTimeout(() => {
         if (currentStep !== 1) return;
-        const smsText = \`Gainhelm AI Offer: Emergency \${trade} job at \${desc}. Call Fee: $\${rules.pricing}. Reply YES to accept, or NO to decline.\`;
+        const trafficMultiplierVal = document.getElementById('traffic-multiplier').value;
+        let trafficLabel = 'Normal';
+        if (trafficMultiplierVal === '1.8') trafficLabel = 'Rush Hour';
+        else if (trafficMultiplierVal === '3.0') trafficLabel = 'Accident';
+        
+        const smsText = \`Gainhelm AI Offer: Emergency \${trade} job at \${desc}. Call Fee: $\${rules.pricing}. ETA: \${activeRouteDuration} mins under \${trafficLabel} traffic. Reply YES to accept, or NO to decline.\`;
         logEvent(\`💬 Sent SMS to \${match.name}: "\${smsText}"\`, 'sms');
         addPhoneSMS(smsText, 'received');
       }, 1000);
@@ -4105,7 +4201,10 @@ const renderAppPage = (email, context, dispatchLogs = []) => {
       dispatchedToName: activeTech ? activeTech.name : null,
       dispatchedToPhone: activeTech ? activeTech.phone : null,
       status: status,
-      stepLogs: currentSessionLogs
+      stepLogs: currentSessionLogs,
+      distance_miles: activeRouteDistance,
+      duration_mins: activeRouteDuration,
+      traffic_multiplier: activeTrafficMultiplier
     };
     fetch('/app/log-dispatch', {
       method: 'POST',
@@ -4185,6 +4284,11 @@ const renderAppPage = (email, context, dispatchLogs = []) => {
       <div style="font-size: 0.8rem; color: hsl(var(--text-3));">
         ⏱️ <strong>Shift Time:</strong> \${escapeHtml(body.simulatedTime)}
       </div>
+      \${(body.distance_miles !== null && body.distance_miles !== undefined) ? \`
+      <div style="font-size: 0.8rem; color: hsl(var(--text-3));">
+        📍 <strong>Route Info:</strong> \${body.distance_miles} miles, \${body.duration_mins} mins (\${body.traffic_multiplier}x traffic)
+      </div>
+      \` : ''}
       <div>
         <button type="button" onclick="document.getElementById('audit-details-\${logId}').style.display = document.getElementById('audit-details-\${logId}').style.display === 'none' ? 'block' : 'none'" 
                 class="preset-btn" style="margin: 0; padding: 4px 10px; font-size: 0.72rem; background: hsl(var(--surface-3)); border: 1px solid hsl(var(--line)); border-radius: 6px; cursor: pointer; color: hsl(var(--brand-2)); font-weight: bold;">
@@ -4347,20 +4451,17 @@ const renderAppPage = (email, context, dispatchLogs = []) => {
             document.getElementById('quick-replies').style.display = 'flex';
             currentStep = 1;
 
-            if (map && techMarkers[fallback.name] && jobMarker) {
-              const techLatLng = techMarkers[fallback.name].getLatLng();
-              const jobLatLng = jobMarker.getLatLng();
-              routingPolyline = L.polyline([techLatLng, jobLatLng], {
-                color: '#f59e0b',
-                dashArray: '5, 10',
-                weight: 3
-              }).addTo(map);
-            }
+            calculateAndAnimateRoute(fallback, '#f59e0b', true);
 
             logEvent(\`🤖 Agent Reasoning: Rerouting job to fallback technician \${fallback.name} (\${fallback.phone}).\`, 'ai');
             
             setTimeout(() => {
-              const smsText = \`Gainhelm AI Offer: Emergency \${activeTrade} job at \${activeJob}. Call Fee: $\${rules.pricing}. Reply YES to accept.\`;
+              const trafficMultiplierVal = document.getElementById('traffic-multiplier').value;
+              let trafficLabel = 'Normal';
+              if (trafficMultiplierVal === '1.8') trafficLabel = 'Rush Hour';
+              else if (trafficMultiplierVal === '3.0') trafficLabel = 'Accident';
+
+              const smsText = \`Gainhelm AI Offer: Emergency \${activeTrade} job at \${activeJob}. Call Fee: $\${rules.pricing}. ETA: \${activeRouteDuration} mins under \${trafficLabel} traffic. Reply YES to accept.\`;
               logEvent(\`💬 Sent SMS to \${fallback.name}: "\${smsText}"\`, 'sms');
               addPhoneSMS(smsText, 'received');
             }, 1000);
@@ -4416,29 +4517,9 @@ const renderAppPage = (email, context, dispatchLogs = []) => {
     document.getElementById('phone-subtitle').innerText = tech.trade + ' • ' + tech.phone;
     document.getElementById('quick-replies').style.display = 'none';
     
-    if (map) {
-      if (routingPolyline) {
-        map.removeLayer(routingPolyline);
-      }
-      
-      const techMarker = techMarkers[tech.name];
-      if (techMarker && jobMarker) {
-        const techLatLng = techMarker.getLatLng();
-        const jobLatLng = jobMarker.getLatLng();
-        routingPolyline = L.polyline([techLatLng, jobLatLng], {
-          color: '#10b981',
-          weight: 3
-        }).addTo(map);
-        
-        const pathEl = routingPolyline.getElement();
-        if (pathEl) {
-          pathEl.removeAttribute('stroke-dasharray');
-          pathEl.setAttribute('stroke', '#10b981');
-        }
-      }
-    }
+    calculateAndAnimateRoute(tech, '#10b981', false);
     
-    logEvent(\`⚙️ Dispatch Override: Manually scheduled \${tech.name} for job.\`, 'info');
+    logEvent(\`⚙. Dispatch Override: Manually scheduled \${tech.name} for job.\`, 'info');
     logEvent(\`🤖 Agent Action: Booking event on Google Calendar (\${calendar.calendar_url || 'https://calendar.google.com'}).\`, 'ai');
     logEvent(\`✅ Dispatch Complete: \${tech.name} is scheduled for "\${activeJob}". Customer notified.\`, 'success');
     
@@ -4454,7 +4535,10 @@ const renderAppPage = (email, context, dispatchLogs = []) => {
       simulatedTime: document.getElementById('job-time').value,
       technicianName: tech.name,
       technicianPhone: tech.phone,
-      stepLogs: currentSessionLogs
+      stepLogs: currentSessionLogs,
+      distance_miles: activeRouteDistance,
+      duration_mins: activeRouteDuration,
+      traffic_multiplier: activeTrafficMultiplier
     };
     
     fetch('/app/manual-dispatch', {
@@ -4472,7 +4556,10 @@ const renderAppPage = (email, context, dispatchLogs = []) => {
             dispatchedToName: body.technicianName,
             dispatchedToPhone: body.technicianPhone,
             status: 'manually_assigned',
-            stepLogs: body.stepLogs
+            stepLogs: body.stepLogs,
+            distance_miles: body.distance_miles,
+            duration_mins: body.duration_mins,
+            traffic_multiplier: body.traffic_multiplier
           };
           appendAuditTrailRow(auditBody);
         }
@@ -4584,6 +4671,7 @@ fastify.get('/setup', async (request, reply) => {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Gainhelm AI Config Setup</title>
 <link rel="stylesheet" href="/styles.css?v=20260604-redesign">
+<script src="/route-optimizer.js"></script>
 <style>
   .setup-container {
     max-width: 480px;
@@ -4654,7 +4742,7 @@ fastify.get('/setup', async (request, reply) => {
       technicians: JSON.stringify([
         { name: 'John Doe', phone: '+1 (555) 0199', trade: 'HVAC', skills: 'Emergency repair, wiring' },
         { name: 'Sarah Connor', phone: '+1 (555) 0288', trade: 'Plumbing', skills: 'Drain leak, pipe replace' },
-        { name: 'David Miller', phone: '+1 (555) 0377', trade: 'Electrical', skills: 'Breaker box, wiring' }
+        { name: 'Marcus Aurelius', phone: '+1 (555) 0377', trade: 'Electrical', skills: 'Breaker box, wiring' }
       ]),
       business_rules: JSON.stringify({
         timeout: '3',
@@ -4905,7 +4993,7 @@ fastify.post('/app/log-dispatch', async (request, reply) => {
       // parse error
     }
   }
-  const { email, jobDescription, trade, simulatedTime, dispatchedToName, dispatchedToPhone, status, stepLogs } = body;
+  const { email, jobDescription, trade, simulatedTime, dispatchedToName, dispatchedToPhone, status, stepLogs, distance_miles, duration_mins, traffic_multiplier } = body;
   if (!email || !jobDescription || !trade || !simulatedTime || !status) {
     return reply.status(400).send({ error: 'Missing required dispatch log fields' });
   }
@@ -4916,9 +5004,9 @@ fastify.post('/app/log-dispatch', async (request, reply) => {
     try {
       await sql`
         INSERT INTO gainhelm_dispatch_logs (
-          email, job_description, trade, simulated_time, dispatched_to_name, dispatched_to_phone, status, step_logs
+          email, job_description, trade, simulated_time, dispatched_to_name, dispatched_to_phone, status, step_logs, distance_miles, duration_mins, traffic_multiplier
         ) VALUES (
-          ${email}, ${jobDescription}, ${trade}, ${simulatedTime}, ${dispatchedToName || null}, ${dispatchedToPhone || null}, ${status}, ${stepLogsStr}
+          ${email}, ${jobDescription}, ${trade}, ${simulatedTime}, ${dispatchedToName || null}, ${dispatchedToPhone || null}, ${status}, ${stepLogsStr}, ${distance_miles ?? null}, ${duration_mins ?? null}, ${traffic_multiplier ?? null}
         )
       `;
     } catch (err) {
@@ -4938,7 +5026,7 @@ fastify.post('/app/manual-dispatch', async (request, reply) => {
       // parse error
     }
   }
-  const { email, jobDescription, trade, simulatedTime, technicianName, technicianPhone, stepLogs } = body;
+  const { email, jobDescription, trade, simulatedTime, technicianName, technicianPhone, stepLogs, distance_miles, duration_mins, traffic_multiplier } = body;
   if (!email || !jobDescription || !trade || !simulatedTime || !technicianName) {
     return reply.status(400).send({ error: 'Missing required manual dispatch fields' });
   }
@@ -4949,9 +5037,9 @@ fastify.post('/app/manual-dispatch', async (request, reply) => {
     try {
       await sql`
         INSERT INTO gainhelm_dispatch_logs (
-          email, job_description, trade, simulated_time, dispatched_to_name, dispatched_to_phone, status, step_logs
+          email, job_description, trade, simulated_time, dispatched_to_name, dispatched_to_phone, status, step_logs, distance_miles, duration_mins, traffic_multiplier
         ) VALUES (
-          ${email}, ${jobDescription}, ${trade}, ${simulatedTime}, ${technicianName}, ${technicianPhone || null}, 'manually_assigned', ${stepLogsStr}
+          ${email}, ${jobDescription}, ${trade}, ${simulatedTime}, ${technicianName}, ${technicianPhone || null}, 'manually_assigned', ${stepLogsStr}, ${distance_miles ?? null}, ${duration_mins ?? null}, ${traffic_multiplier ?? null}
         )
       `;
     } catch (err) {
