@@ -121,24 +121,30 @@ To maintain codebase stability, keep in mind these project-specific lessons lear
 
 ---
 
-## 6. Core Testing Principles for AI Agents
+## 6. Core Testing Principles & TDD Guidelines for AI Agents
 
 To maintain 100% codebase stability, all AI agents must write and verify code using the following core principles:
 
-### 1. The Isolation Principle (Clean Slate)
-*   Every test suite must guarantee hermetic isolation.
-*   Always clear draft local storage entries (e.g., clearing `gainhelm_wizard_draft_${email}` after tests run) and restore files modified during sitemap or document generation.
-*   *Why:* Cascading state pollution leads to flaky tests and false positives.
-
-### 2. The Verification Loop Principle (Hypothesis First)
-*   Operate in strict cycles: Analyze the bug, write a failing integration test, implement the fix, run code quality scripts, and audit.
+### 1. The Verification Loop (Red-Green-Refactor) Principle
+*   Operate in strict cycles: Analyze the bug or feature, write a failing integration or E2E test spec under `tests/` first (defining user flow scenarios or API request expectations), write the minimal logic to make it pass, run code quality scripts, and audit.
 *   Do not submit code modifications without providing a corresponding test that asserts the exact bug behavior.
 
-### 3. The Anti-Flakiness Principle (State Sync)
-*   Never use hardcoded delays (`sleep`, `setTimeout`).
-*   Always use state-based synchronization helpers like Playwright's `await expect(locator).toContainText()` with appropriate timeouts.
-*   Use stable accessibility labels and `id` locators instead of visual coordinates or relative position classes.
+### 2. The Isolation Principle (Clean Slate & Transactions)
+*   Every test suite must guarantee hermetic isolation. Always clear draft local storage entries (e.g., clearing `gainhelm_wizard_draft_${email}` after tests run) and restore files modified during sitemap or document generation.
+*   For PostgreSQL database tests, wrap test cases in database transactions (`BEGIN` -> Run Test -> `ROLLBACK`) using a dedicated client connection checked out via `pool.connect()`. Use `SAVEPOINT`s for application-level transactions to prevent nested transaction failures.
 
-### 4. The Real-Data Principle (Integration Gating)
+### 3. Decoupled Fastify Architecture (In-Memory HTTP)
+*   Decouple app creation from network listening: Instantiate routes inside a factory function (`buildApp()`) without calling `.listen()`.
+*   Leverage `app.inject()` to run in-memory request-response cycles, executing the entire Fastify pipeline (validation, hooks, serialization) without binding to local network ports.
+*   Utilize AJV route schemas as the primary step to satisfy 400 Bad Request error tests (Schema-Driven TDD).
+
+### 4. The Anti-Flakiness Principle (State Sync & Playwright)
+*   Never use hardcoded delays (`sleep`, `setTimeout`, or `page.waitForTimeout`). Always use state-based synchronization helpers like Playwright's `await expect(locator).toContainText()` and web-first auto-retry assertions (e.g. `expect(locator).toBeVisible()`).
+*   Use stable accessibility labels and `id` locators instead of visual coordinates or relative position classes.
+*   Mock external APIs using `page.route()`, and reuse authentication states via `storageState` to bypass repetitive UI login sequences.
+*   Always terminate stale background listeners on port `3005` before starting tests (`kill $(lsof -t -i:3005) 2>/dev/null || true`).
+
+### 5. The Real-Data Principle (Integration Gating)
 *   When validating routing logic, time offsets, and database interactions, ensure that inputs mirror real-world technician schedules and database schemas.
 *   Run the audit scripts against fully rendered files to prevent layout breaking or malformed JSON-LD metadata from reaching production.
+

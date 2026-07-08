@@ -1,12 +1,17 @@
 # Feature Evolution Ledger
 
 ## Status
-state: DONE           # SCOUT | INTAKE | SPEC | TEST | BUILD | VERIFY | DONE
+state: DONE            # SCOUT | INTAKE | SPEC | TEST | BUILD | VERIFY | DONE
 mode: CONTINUOUS
 creativity: 1.0          # 0.0 (strict compliance) to 1.0 (autonomous ideation)
 target_feature: null
 rejections: 0
 budget: 3
+
+## Completed Features
+- `supervision/manual-dispatch`
+- `supervision/route-optimization-eta`
+- `supervision/customer-live-tracking`
 
 ## Feature Definition: supervision/manual-dispatch (Manual Dispatch Override)
 
@@ -98,6 +103,21 @@ Provide a visual routing optimizer and traffic condition simulator on the Superv
 - **Leaflet Offline**: Guard animation calls against `typeof L === 'undefined'`.
 - **Concurrent Overrides**: Clear previous active animations when drawing new paths.
 
+#### 6. supervision/customer-live-tracking: Integration Plan
+- **Decoupled Service Layer**: Introduce `live-tracking-service.js` containing state maps `dispatchLogsStore` (UUID -> log) and `pendingNotes` (UUID -> notes list) to decouple the HTML rendering, backend state management, and DB note persistence for live tracking.
+- **Route Integration in server.js**:
+  - Implement `GET /app/track/:id` (serves the custom tracking page via the service).
+  - Implement `POST /app/track/:id/note` (accepts note payload, persists to DB/fallback map, and updates `pendingNotes`).
+  - Implement `GET /app/poll-notes` (returns pending notes and clears them).
+  - Update `/app/log-dispatch` and `/app/manual-dispatch` to generate and return a unique UUID.
+- **Client Dashboard Integration**:
+  - Save the returned UUID to `activeLogId` on simulation completion or manual override.
+  - Update audit trail rendering (initial rendering in `renderAuditTrailHtml` and dynamic in `appendAuditTrailRow`) to display a tracking link button targeting `/app/track/${id}`.
+  - Set up 2s polling interval for `GET /app/poll-notes?id=${activeLogId}`. Upon receiving notes, trigger `addPhoneSMS` and `logEvent`.
+- **Risks & Mitigations**:
+  - *DB Unreachability*: Mitigation is the `dispatchLogsStore` fallback map.
+  - *Polling Overhead*: Clear the poll interval when starting a new simulation.
+
 ---
 
 ## Interface Contract
@@ -165,3 +185,72 @@ Provide a visual routing optimizer and traffic condition simulator on the Superv
     }
     ```
   - **Response**: `{ success: boolean }`
+
+### 5. supervision/customer-live-tracking: Interface Contract
+
+#### Backend Service: `live-tracking-service.js`
+- **State variables**:
+  - `dispatchLogsStore`: `Map<string, object>` (in-memory UUID to dispatch details mapping)
+  - `pendingNotes`: `Map<string, string[]>` (in-memory UUID to list of pending notes mapping)
+- **Functions**:
+  - `getTrackingDetails(id: string, sql: any): Promise<object | null>`
+    - Fetches the dispatch record from the database. Fallback to `dispatchLogsStore.get(id)` if database is null or query fails.
+  - `saveNote(id: string, note: string, sql: any): Promise<void>`
+    - Parses current `step_logs` from the record, appends `📱 Customer sent entry note: ${note}`, and writes back to DB or `dispatchLogsStore`.
+    - Appends note to `pendingNotes` map for `id`.
+  - `pollNotes(id: string): string[]`
+    - Returns all pending notes for `id` and deletes the entry from `pendingNotes`.
+  - `renderTrackingPage(dispatch: object, context: object | null): string`
+    - Generates dark-theme Leaflet tracking page HTML. Includes map, technician details, Dynamic ETA card, and Note Submission form.
+
+#### REST APIs
+- **GET `/app/track/:id`**
+  - *Path parameter*: `id` (UUID string)
+  - *Returns*: HTML (tracking page) or 404 user-friendly message.
+- **POST `/app/track/:id/note`**
+  - *Path parameter*: `id` (UUID string)
+  - *Payload*: `{ note: string }` (maximum 250 characters)
+  - *Returns*: `{ success: true }` or `{ error: string }`
+- **GET `/app/poll-notes`**
+  - *Query parameter*: `id` (UUID string)
+  - *Returns*: `{ success: true, notes: string[] }`
+
+#### Updated APIs
+- **POST `/app/log-dispatch` & `/app/manual-dispatch`**
+  - *Payload*: Same as existing contracts.
+  - *Returns*: `{ success: true, id: string }`
+
+---
+
+## Feature Definition: supervision/customer-live-tracking (Customer-Facing Live Tracking Share Portal)
+
+### Core Philosophy
+Provide a customer-facing public share page (`/app/track/:id`) representing the dispatch status. Once a technician accepts a simulated job or is force-assigned by the dispatcher, the Supervision Board displays a shareable tracking link in the audit trail. When a customer opens this link, they see an interactive Leaflet map featuring a real-time animated technician marker travelling from their simulated origin to the job site. The customer is presented with the technician's details, dynamic traffic-based ETA, and a text box to submit gate codes or delivery notes. Notes entered by the customer are persisted in PostgreSQL, printed to the dispatcher's live feed, and trigger a simulated SMS notification alert on the technician's phone emulator.
+
+### User Flows
+1. **Access Share Link**
+   - **Trigger**: A dispatcher clicks the "Track Link" button on any completed dispatch card in the audit trail, copying `/app/track/:id` to their clipboard.
+   - **Action**: Opening this link retrieves the dispatch details (technician, job description, coordinates, current status) from PostgreSQL.
+   - **Outcome**: Renders a dark-theme customer tracking portal with the job pin and technician marker.
+2. **Technician Animation & Dynamic ETA**
+   - **Trigger**: Customer loads the tracking page.
+   - **Action**:
+     - Calculates route parameters using `RouteOptimizer` math.
+     - Animates the technician marker moving along the route towards the job pin.
+     - Displays dynamic ETA remaining and traffic density badge.
+3. **Submit Entry Instructions**
+   - **Trigger**: Customer fills the "Notes for Technician" field and clicks "Send Note".
+   - **Action**:
+     - Sends a POST request to `/app/track/:id/note`.
+     - Appends the note to the postgres record's `step_logs`.
+     - Broadcasts the note to the owner's active log feed and technician's emulator in the `/app` dashboard.
+   - **Outcome**: A message appears in the technician's phone emulator: "Customer Note: [Note content]" and a log entry is added: "📱 Customer sent entry note: [Note content]".
+
+### Input Validation Constraints
+- **ID Verification**: The track URL must contain a valid UUID that exists in the `gainhelm_dispatch_logs` table.
+- **Note Content**: Notes must be text strings and restricted to a maximum of 250 characters.
+
+### Edge Cases & Unhappy Paths
+- **Invalid/Expired ID**: If the log ID is not found in the database, the server returns a user-friendly 404 page displaying "Tracking Link Not Found or Expired".
+- **Off Duty / Cancelled Dispatch**: If the technician status changed or the job status is escalated, the tracking map displays the last known position with a status message: "Appointment Completed or Cancelled".
+- **No Technician Assigned**: If the tracking link is opened for an escalated dispatch with no technician, a warning banner is shown stating: "Searching for available technicians".

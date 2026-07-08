@@ -3,6 +3,14 @@ import postgres from 'postgres';
 import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';
 import crypto from 'crypto';
+import {
+  dispatchLogsStore,
+  pendingNotes,
+  getTrackingDetails,
+  saveNote,
+  pollNotes,
+  renderTrackingPage
+} from './live-tracking-service.js';
 
 const fastify = Fastify({ logger: true });
 const sql = process.env.DATABASE_URL ? postgres(process.env.DATABASE_URL) : null;
@@ -220,6 +228,73 @@ fastify.get('/favicon.ico', async (_request, reply) => {
   reply
     .type('image/svg+xml')
     .send('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="#0f172a"/><path d="M9 17.2 14.2 22 24 10" fill="none" stroke="#38bdf8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>');
+});
+
+fastify.get('/app/track/:id', async (request, reply) => {
+  const { id } = request.params;
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  if (!uuidRegex.test(id)) {
+    return reply.status(404).type('text/html').send(renderTrackingPage(null, null));
+  }
+  const dispatch = await getTrackingDetails(id, sql);
+  if (!dispatch) {
+    return reply.status(404).type('text/html').send(renderTrackingPage(null, null));
+  }
+  const email = dispatch.email;
+  let context = null;
+  if (sql) {
+    try {
+      const results = await sql`SELECT * FROM gainhelm_contexts WHERE email = ${email}`;
+      if (results.length > 0) context = results[0];
+    } catch (err) {
+      fastify.log.error('Failed to fetch context for tracking page:', err);
+    }
+  }
+  if (!context) {
+    context = contextStore.get(email);
+  }
+  return reply.type('text/html').send(renderTrackingPage(dispatch, context));
+});
+
+fastify.post('/app/track/:id/note', async (request, reply) => {
+  const { id } = request.params;
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  if (!uuidRegex.test(id)) {
+    return reply.status(404).send({ error: 'Tracking ID not found' });
+  }
+  let body = request.body || {};
+  if (typeof body === 'string') {
+    try {
+      body = JSON.parse(body);
+    } catch {
+      // parse error
+    }
+  }
+  const note = body.note;
+  if (!note) {
+    return reply.status(400).send({ error: 'Note content is required' });
+  }
+  if (typeof note !== 'string' || note.length > 250) {
+    return reply.status(400).send({ error: 'Note must be a text string restricted to a maximum of 250 characters' });
+  }
+  const dispatch = await getTrackingDetails(id, sql);
+  if (!dispatch) {
+    return reply.status(404).send({ error: 'Tracking ID not found' });
+  }
+  await saveNote(id, note, sql);
+  if (String(request.headers.accept || '').includes('text/html')) {
+    return reply.redirect(`/app/track/${id}`);
+  }
+  return { success: true };
+});
+
+fastify.get('/app/poll-notes', async (request, reply) => {
+  const { id } = request.query;
+  if (!id) {
+    return reply.status(400).send({ error: 'Missing log ID' });
+  }
+  const notes = pollNotes(id);
+  return { notes };
 });
 
 const escapeHtml = (value) => String(value)
@@ -3170,10 +3245,17 @@ const renderAuditTrailHtml = (logs) => {
         </div>
         ` : ''}
         <div>
-          <button type="button" onclick="document.getElementById('audit-details-${logId}').style.display = document.getElementById('audit-details-${logId}').style.display === 'none' ? 'block' : 'none'" 
-                  class="preset-btn" style="margin: 0; padding: 4px 10px; font-size: 0.72rem; background: hsl(var(--surface-3)); border: 1px solid hsl(var(--line)); border-radius: 6px; cursor: pointer; color: hsl(var(--brand-2)); font-weight: bold;">
-            Show Agent Reasoning Trail
-          </button>
+          <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 8px;">
+            <button type="button" onclick="document.getElementById('audit-details-${logId}').style.display = document.getElementById('audit-details-${logId}').style.display === 'none' ? 'block' : 'none'" 
+                    class="preset-btn" style="margin: 0; padding: 4px 10px; font-size: 0.72rem; background: hsl(var(--surface-3)); border: 1px solid hsl(var(--line)); border-radius: 6px; cursor: pointer; color: hsl(var(--brand-2)); font-weight: bold;">
+              Show Agent Reasoning Trail
+            </button>
+            ${(l.status === 'accepted' || l.status === 'manually_assigned') ? `
+            <a href="/app/track/${logId}" target="_blank" class="preset-btn" style="margin: 0; padding: 4px 10px; font-size: 0.72rem; background: hsl(var(--brand) / 0.2); border: 1px solid hsl(var(--brand)); border-radius: 6px; text-decoration: none; display: inline-block; color: hsl(var(--brand-2)); font-weight: bold; text-align: center;">
+              Track Live Route
+            </a>
+            ` : ''}
+          </div>
           <div id="audit-details-${logId}" style="display: none; margin-top: 8px; background: hsl(var(--bg) / 0.8); border: 1px solid hsl(var(--line)); border-radius: 8px; padding: 10px; max-height: 200px; overflow-y: auto; scrollbar-width: none;">
             ${stepsHtml}
           </div>
@@ -3817,6 +3899,37 @@ const renderAppPage = (email, context, dispatchLogs = []) => {
   let techMarkers = {};
   let jobMarker = null;
   let routingPolyline = null;
+  let activeLogId = null;
+  let notesPollInterval = null;
+
+  function getStableJobCoords(uuidStr) {
+    let hash = 0;
+    for (let i = 0; i < uuidStr.length; i++) {
+      hash = uuidStr.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const latOffset = ((hash & 0xFF) / 255 - 0.5) * 0.015;
+    const lngOffset = (((hash >> 8) & 0xFF) / 255 - 0.5) * 0.015;
+    return [41.8781 + latOffset, -87.6298 + lngOffset];
+  }
+
+  function startPollingNotes(logId) {
+    activeLogId = logId;
+    if (notesPollInterval) {
+      clearInterval(notesPollInterval);
+    }
+    notesPollInterval = setInterval(() => {
+      fetch('/app/poll-notes?id=' + activeLogId)
+        .then(res => res.json())
+        .then(pollData => {
+          if (pollData && pollData.notes && pollData.notes.length > 0) {
+            pollData.notes.forEach(note => {
+              logEvent('📱 Customer sent entry note: ' + note, 'sms');
+              addPhoneSMS('Customer Note: ' + note, 'received');
+            });
+          }
+        }).catch(err => console.error('Error polling notes:', err));
+    }, 2000);
+  }
 
   // Custom SVG Markers
   const greenIcon = typeof L !== 'undefined' ? L.divIcon({
@@ -3885,6 +3998,14 @@ const renderAppPage = (email, context, dispatchLogs = []) => {
 
     plotTechnicians();
   }
+
+  window.toggleAuditDetails = function(el) {
+    const logId = el.getAttribute('data-id');
+    const target = document.getElementById('audit-details-' + logId);
+    if (target) {
+      target.style.display = target.style.display === 'none' ? 'block' : 'none';
+    }
+  };
 
   function plotTechnicians() {
     if (!map) return;
@@ -4213,6 +4334,29 @@ const renderAppPage = (email, context, dispatchLogs = []) => {
     }).then(res => res.json())
       .then(data => {
         if (data.success) {
+          body.id = data.id;
+          startPollingNotes(data.id);
+          
+          if (jobMarker && data.id) {
+            const stableCoords = getStableJobCoords(data.id);
+            jobMarker.setLatLng(stableCoords);
+            if (activeTech && map) {
+              if (routingPolyline) {
+                map.removeLayer(routingPolyline);
+              }
+              const techMarker = techMarkers[activeTech.name];
+              if (techMarker) {
+                const techLatLng = techMarker.getLatLng();
+                const isManual = currentStep === 2;
+                routingPolyline = L.polyline([techLatLng, stableCoords], {
+                  color: isManual ? '#10b981' : '#f59e0b',
+                  dashArray: isManual ? undefined : '5, 10',
+                  weight: 3
+                }).addTo(map);
+              }
+            }
+          }
+          
           appendAuditTrailRow(body);
         }
       }).catch(err => console.error('Error logging dispatch:', err));
@@ -4241,8 +4385,8 @@ const renderAppPage = (email, context, dispatchLogs = []) => {
       statusText = 'Declined';
     }
     
-    const matchedTechStr = body.dispatchedToName ? \`\${escapeHtml(body.dispatchedToName)} (\${escapeHtml(body.dispatchedToPhone)})\` : 'None (System Escalation)';
-    const logId = 'temp-' + Math.random().toString(36).substring(7);
+    const matchedTechStr = body.dispatchedToName ? (escapeHtml(body.dispatchedToName) + ' (' + escapeHtml(body.dispatchedToPhone) + ')') : 'None (System Escalation)';
+    const logId = body.id || 'temp-' + Math.random().toString(36).substring(7);
     
     const stepsHtml = body.stepLogs.map(s => {
       let icon = 'ℹ️';
@@ -4262,43 +4406,57 @@ const renderAppPage = (email, context, dispatchLogs = []) => {
         .replace('Sent SMS to', '<strong>SMS Sent to</strong>')
         .replace('Received SMS from', '<strong>SMS Recv from</strong>');
         
-      return \`<div style="font-size: 0.76rem; color: hsl(var(--text-2)); padding: 4px 0; border-bottom: 1px solid hsl(var(--line) / 0.3); display: flex; gap: 6px;">
-        <span>\${icon}</span>
-        <span>\${cleanText}</span>
-      </div>\`;
+      return '<div style="font-size: 0.76rem; color: hsl(var(--text-2)); padding: 4px 0; border-bottom: 1px solid hsl(var(--line) / 0.3); display: flex; gap: 6px;">' +
+        '<span>' + icon + '</span>' +
+        '<span>' + cleanText + '</span>' +
+      '</div>';
     }).join('');
 
     const row = document.createElement('div');
     row.style.cssText = 'background: hsl(var(--surface-2) / 0.4); border: 1px solid hsl(var(--line)); border-radius: 12px; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; animation: slideIn 0.3s ease-out;';
-    row.innerHTML = \`
-      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid hsl(var(--line) / 0.5); padding-bottom: 6px;">
-        <span style="font-size: 0.72rem; color: hsl(var(--text-3)); font-family: 'IBM Plex Mono', monospace;">📅 \${timeStr}</span>
-        <span style="padding: 2px 8px; border-radius: 6px; background: \${statusColor}1A; color: \${statusColor}; border: 1px solid \${statusColor}33; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">\${statusText}</span>
-      </div>
-      <div style="font-size: 0.84rem; color: #fff; line-height: 1.4;">
-        🏢 <strong>Job:</strong> "\${escapeHtml(body.jobDescription)}" <span class="brand-chip" style="font-size: 0.7rem; padding: 1px 5px; background: hsl(var(--brand) / 0.1); color: hsl(var(--brand-2)); border: 1px solid hsl(var(--brand) / 0.25); border-radius: 4px;">\${escapeHtml(body.trade)}</span>
-      </div>
-      <div style="font-size: 0.8rem; color: hsl(var(--text-2));">
-        👤 <strong>Dispatched to:</strong> \${matchedTechStr}
-      </div>
-      <div style="font-size: 0.8rem; color: hsl(var(--text-3));">
-        ⏱️ <strong>Shift Time:</strong> \${escapeHtml(body.simulatedTime)}
-      </div>
-      \${(body.distance_miles !== null && body.distance_miles !== undefined) ? \`
-      <div style="font-size: 0.8rem; color: hsl(var(--text-3));">
-        📍 <strong>Route Info:</strong> \${body.distance_miles} miles, \${body.duration_mins} mins (\${body.traffic_multiplier}x traffic)
-      </div>
-      \` : ''}
-      <div>
-        <button type="button" onclick="document.getElementById('audit-details-\${logId}').style.display = document.getElementById('audit-details-\${logId}').style.display === 'none' ? 'block' : 'none'" 
-                class="preset-btn" style="margin: 0; padding: 4px 10px; font-size: 0.72rem; background: hsl(var(--surface-3)); border: 1px solid hsl(var(--line)); border-radius: 6px; cursor: pointer; color: hsl(var(--brand-2)); font-weight: bold;">
-          Show Agent Reasoning Trail
-        </button>
-        <div id="audit-details-\${logId}" style="display: none; margin-top: 8px; background: hsl(var(--bg) / 0.8); border: 1px solid hsl(var(--line)); border-radius: 8px; padding: 10px; max-height: 200px; overflow-y: auto; scrollbar-width: none;">
-          \${stepsHtml}
-        </div>
-      </div>
-    \`;
+    
+    let routeInfoHtml = '';
+    if (body.distance_miles !== null && body.distance_miles !== undefined) {
+      routeInfoHtml = '<div style="font-size: 0.8rem; color: hsl(var(--text-3));">' +
+        '📍 <strong>Route Info:</strong> ' + body.distance_miles + ' miles, ' + body.duration_mins + ' mins (' + body.traffic_multiplier + 'x traffic)' +
+      '</div>';
+    }
+
+    let trackLinkHtml = '';
+    if (body.status === 'accepted' || body.status === 'manually_assigned') {
+      trackLinkHtml = '<a href="/app/track/' + logId + '" target="_blank" class="preset-btn" style="margin: 0; padding: 4px 10px; font-size: 0.72rem; background: hsl(var(--brand) / 0.2); border: 1px solid hsl(var(--brand)); border-radius: 6px; text-decoration: none; display: inline-block; color: hsl(var(--brand-2)); font-weight: bold; text-align: center;">' +
+        'Track Live Route' +
+      '</a>';
+    }
+
+    row.innerHTML = 
+      '<div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid hsl(var(--line) / 0.5); padding-bottom: 6px;">' +
+        '<span style="font-size: 0.72rem; color: hsl(var(--text-3)); font-family: monospace;">📅 ' + timeStr + '</span>' +
+        '<span style="padding: 2px 8px; border-radius: 6px; background: ' + statusColor + '1A; color: ' + statusColor + '; border: 1px solid ' + statusColor + '33; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">' + statusText + '</span>' +
+      '</div>' +
+      '<div style="font-size: 0.84rem; color: #fff; line-height: 1.4;">' +
+        '🏢 <strong>Job:</strong> "' + escapeHtml(body.jobDescription) + '" <span class="brand-chip" style="font-size: 0.7rem; padding: 1px 5px; background: hsl(var(--brand) / 0.1); color: hsl(var(--brand-2)); border: 1px solid hsl(var(--brand) / 0.25); border-radius: 4px;">' + escapeHtml(body.trade) + '</span>' +
+      '</div>' +
+      '<div style="font-size: 0.8rem; color: hsl(var(--text-2));">' +
+        '👤 <strong>Dispatched to:</strong> ' + matchedTechStr +
+      '</div>' +
+      '<div style="font-size: 0.8rem; color: hsl(var(--text-3));">' +
+        '⏱️ <strong>Shift Time:</strong> ' + escapeHtml(body.simulatedTime) +
+      '</div>' +
+      routeInfoHtml +
+      '<div>' +
+        '<div style="display: flex; gap: 8px; align-items: center; margin-bottom: 8px;">' +
+          '<button type="button" onclick="toggleAuditDetails(this)" data-id="' + logId + '"' +
+                  ' class="preset-btn" style="margin: 0; padding: 4px 10px; font-size: 0.72rem; background: hsl(var(--surface-3)); border: 1px solid hsl(var(--line)); border-radius: 6px; cursor: pointer; color: hsl(var(--brand-2)); font-weight: bold;">' +
+            'Show Agent Reasoning Trail' +
+          '</button>' +
+          trackLinkHtml +
+        '</div>' +
+        '<div id="audit-details-' + logId + '" style="display: none; margin-top: 8px; background: hsl(var(--bg) / 0.8); border: 1px solid hsl(var(--line)); border-radius: 8px; padding: 10px; max-height: 200px; overflow-y: auto; scrollbar-width: none;">' +
+          stepsHtml +
+        '</div>' +
+      '</div>';
+    
     container.insertBefore(row, container.firstChild);
   }
 
@@ -4548,7 +4706,29 @@ const renderAppPage = (email, context, dispatchLogs = []) => {
     }).then(res => res.json())
       .then(data => {
         if (data.success) {
+          activeLogId = data.id;
+          startPollingNotes(data.id);
+          
+          if (jobMarker && data.id) {
+            const stableCoords = getStableJobCoords(data.id);
+            jobMarker.setLatLng(stableCoords);
+            if (activeTech && map) {
+              if (routingPolyline) {
+                map.removeLayer(routingPolyline);
+              }
+              const techMarker = techMarkers[activeTech.name];
+              if (techMarker) {
+                const techLatLng = techMarker.getLatLng();
+                routingPolyline = L.polyline([techLatLng, stableCoords], {
+                  color: '#10b981',
+                  weight: 3
+                }).addTo(map);
+              }
+            }
+          }
+
           const auditBody = {
+            id: data.id,
             email: body.email,
             jobDescription: body.jobDescription,
             trade: body.trade,
@@ -4999,14 +5179,15 @@ fastify.post('/app/log-dispatch', async (request, reply) => {
   }
 
   const stepLogsStr = typeof stepLogs === 'string' ? stepLogs : JSON.stringify(stepLogs || []);
+  const logId = crypto.randomUUID();
 
   if (sql) {
     try {
       await sql`
         INSERT INTO gainhelm_dispatch_logs (
-          email, job_description, trade, simulated_time, dispatched_to_name, dispatched_to_phone, status, step_logs, distance_miles, duration_mins, traffic_multiplier
+          id, email, job_description, trade, simulated_time, dispatched_to_name, dispatched_to_phone, status, step_logs, distance_miles, duration_mins, traffic_multiplier
         ) VALUES (
-          ${email}, ${jobDescription}, ${trade}, ${simulatedTime}, ${dispatchedToName || null}, ${dispatchedToPhone || null}, ${status}, ${stepLogsStr}, ${distance_miles ?? null}, ${duration_mins ?? null}, ${traffic_multiplier ?? null}
+          ${logId}, ${email}, ${jobDescription}, ${trade}, ${simulatedTime}, ${dispatchedToName || null}, ${dispatchedToPhone || null}, ${status}, ${stepLogsStr}, ${distance_miles ?? null}, ${duration_mins ?? null}, ${traffic_multiplier ?? null}
         )
       `;
     } catch (err) {
@@ -5014,7 +5195,23 @@ fastify.post('/app/log-dispatch', async (request, reply) => {
     }
   }
 
-  return { success: true };
+  const logDetails = {
+    id: logId,
+    email,
+    job_description: jobDescription,
+    trade,
+    simulated_time: simulatedTime,
+    dispatched_to_name: dispatchedToName || null,
+    dispatched_to_phone: dispatchedToPhone || null,
+    status,
+    step_logs: stepLogsStr,
+    distance_miles: distance_miles ?? null,
+    duration_mins: duration_mins ?? null,
+    traffic_multiplier: traffic_multiplier ?? null
+  };
+  dispatchLogsStore.set(logId, logDetails);
+
+  return { success: true, id: logId };
 });
 
 fastify.post('/app/manual-dispatch', async (request, reply) => {
@@ -5032,14 +5229,15 @@ fastify.post('/app/manual-dispatch', async (request, reply) => {
   }
 
   const stepLogsStr = typeof stepLogs === 'string' ? stepLogs : JSON.stringify(stepLogs || []);
+  const logId = crypto.randomUUID();
 
   if (sql) {
     try {
       await sql`
         INSERT INTO gainhelm_dispatch_logs (
-          email, job_description, trade, simulated_time, dispatched_to_name, dispatched_to_phone, status, step_logs, distance_miles, duration_mins, traffic_multiplier
+          id, email, job_description, trade, simulated_time, dispatched_to_name, dispatched_to_phone, status, step_logs, distance_miles, duration_mins, traffic_multiplier
         ) VALUES (
-          ${email}, ${jobDescription}, ${trade}, ${simulatedTime}, ${technicianName}, ${technicianPhone || null}, 'manually_assigned', ${stepLogsStr}, ${distance_miles ?? null}, ${duration_mins ?? null}, ${traffic_multiplier ?? null}
+          ${logId}, ${email}, ${jobDescription}, ${trade}, ${simulatedTime}, ${technicianName}, ${technicianPhone || null}, 'manually_assigned', ${stepLogsStr}, ${distance_miles ?? null}, ${duration_mins ?? null}, ${traffic_multiplier ?? null}
         )
       `;
     } catch (err) {
@@ -5047,7 +5245,23 @@ fastify.post('/app/manual-dispatch', async (request, reply) => {
     }
   }
 
-  return { success: true };
+  const logDetails = {
+    id: logId,
+    email,
+    job_description: jobDescription,
+    trade,
+    simulated_time: simulatedTime,
+    dispatched_to_name: technicianName,
+    dispatched_to_phone: technicianPhone || null,
+    status: 'manually_assigned',
+    step_logs: stepLogsStr,
+    distance_miles: distance_miles ?? null,
+    duration_mins: duration_mins ?? null,
+    traffic_multiplier: traffic_multiplier ?? null
+  };
+  dispatchLogsStore.set(logId, logDetails);
+
+  return { success: true, id: logId };
 });
 
 function computeIntentScore(title, snippet) {
