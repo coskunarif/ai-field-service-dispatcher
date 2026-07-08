@@ -4,7 +4,7 @@
 state: DONE           # SCOUT | INTAKE | SPEC | TEST | BUILD | VERIFY | DONE
 mode: CONTINUOUS
 creativity: 1.0          # 0.0 (strict compliance) to 1.0 (autonomous ideation)
-target_feature: supervision/route-optimization-eta
+target_feature: null
 rejections: 0
 budget: 3
 
