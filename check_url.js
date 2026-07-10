@@ -4,7 +4,7 @@ async function checkUrl(url) {
   console.log(`Checking ${url}...`);
   const browser = await chromium.launch({
     headless: true,
-    args: ['--disable-ipv6']
+    args: ['--disable-ipv6'],
   });
   const context = await browser.newContext();
   const page = await context.newPage();

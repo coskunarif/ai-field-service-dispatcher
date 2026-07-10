@@ -9,9 +9,11 @@ Window: 2026-02-24 to 2026-05-24
 Google Search Console CLI is now working via gcloud ADC after enabling the Search Console API on project `mindball-b6ac7`.
 
 Verified property access:
+
 - `sc-domain:gainhelm.com` — `siteOwner`
 
 Raw exports:
+
 - `reports/gainhelm-gsc/queries-2026-02-24_2026-05-24.json`
 - `reports/gainhelm-gsc/query-pages-2026-02-24_2026-05-24.json`
 - `reports/gainhelm-gsc/top_queries.csv`
@@ -22,33 +24,33 @@ Total query rows: 104
 
 Main clusters by impressions:
 
-| Cluster | Impressions | Query count | Best avg position |
-|---|---:|---:|---:|
-| HVAC dispatch/scheduling | 868 | 23 | 30.7 |
-| Plumbing dispatch/scheduling | 776 | 48 | 15.0 |
-| ManageByStats alternative | 25 | 1 | 9.6 |
-| Amazon seller fees/profit | 11 | 8 | 12.0 |
-| FieldHive comparison | 9 | 1 | 46.6 |
+| Cluster                      | Impressions | Query count | Best avg position |
+| ---------------------------- | ----------: | ----------: | ----------------: |
+| HVAC dispatch/scheduling     |         868 |          23 |              30.7 |
+| Plumbing dispatch/scheduling |         776 |          48 |              15.0 |
+| ManageByStats alternative    |          25 |           1 |               9.6 |
+| Amazon seller fees/profit    |          11 |           8 |              12.0 |
+| FieldHive comparison         |           9 |           1 |              46.6 |
 
 Top individual queries:
 
-| Query | Impressions | Clicks | Avg position |
-|---|---:|---:|---:|
-| hvac dispatch app | 203 | 0 | 70.4 |
-| hvac dispatch software ipad | 131 | 0 | 30.7 |
-| plumbing scheduling app | 76 | 0 | 78.4 |
-| hvac dispatch | 71 | 0 | 70.4 |
-| dispatch software for plumbing | 70 | 0 | 79.0 |
-| plumbing dispatch software | 70 | 0 | 82.4 |
-| plumber scheduling software | 70 | 0 | 82.4 |
-| hvac dispatch software | 66 | 0 | 83.5 |
-| plumbing scheduling software | 57 | 0 | 83.2 |
-| hvac service dispatch software | 52 | 0 | 83.3 |
-| plumbing dispatching software | 51 | 0 | 84.3 |
-| hvac service dispatching software | 48 | 0 | 77.2 |
-| hvac scheduling and dispatch | 48 | 0 | 81.9 |
-| scheduling software for plumbers | 48 | 0 | 87.0 |
-| dispatch programs for hvac | 40 | 0 | 71.0 |
+| Query                             | Impressions | Clicks | Avg position |
+| --------------------------------- | ----------: | -----: | -----------: |
+| hvac dispatch app                 |         203 |      0 |         70.4 |
+| hvac dispatch software ipad       |         131 |      0 |         30.7 |
+| plumbing scheduling app           |          76 |      0 |         78.4 |
+| hvac dispatch                     |          71 |      0 |         70.4 |
+| dispatch software for plumbing    |          70 |      0 |         79.0 |
+| plumbing dispatch software        |          70 |      0 |         82.4 |
+| plumber scheduling software       |          70 |      0 |         82.4 |
+| hvac dispatch software            |          66 |      0 |         83.5 |
+| plumbing scheduling software      |          57 |      0 |         83.2 |
+| hvac service dispatch software    |          52 |      0 |         83.3 |
+| plumbing dispatching software     |          51 |      0 |         84.3 |
+| hvac service dispatching software |          48 |      0 |         77.2 |
+| hvac scheduling and dispatch      |          48 |      0 |         81.9 |
+| scheduling software for plumbers  |          48 |      0 |         87.0 |
+| dispatch programs for hvac        |          40 |      0 |         71.0 |
 
 ## SERP check notes
 
@@ -63,6 +65,7 @@ For this initial pass, SERP platform discovery used grounded Google search resul
 ### HVAC dispatch app / HVAC dispatch software iPad
 
 Repeated top domains/platforms:
+
 - `servicetitan.com`
 - `buildops.com`
 - `fieldedge.com`
@@ -73,6 +76,7 @@ Repeated top domains/platforms:
 - Apple App Store (`apple.com`)
 
 Likely link opportunities:
+
 - Apple App Store listing if GainHelm has/ships an iOS app.
 - SaaS directories and review platforms where these competitors are listed.
 - Comparison pages targeting `ServiceTitan alternative`, `Jobber alternative`, `Housecall Pro alternative`, `BuildOps alternative`.
@@ -81,6 +85,7 @@ Likely link opportunities:
 ### Plumbing scheduling / dispatch software
 
 Repeated top domains/platforms:
+
 - `servicetitan.com`
 - `getjobber.com`
 - `housecallpro.com`
@@ -92,6 +97,7 @@ Repeated top domains/platforms:
 - `dataforma.com`
 
 Likely link opportunities:
+
 - Plumbing software directory/listicle outreach.
 - Alternative/comparison content against ServiceTitan, Jobber, Housecall Pro, Service Fusion.
 - Community answers only when directly relevant; avoid spam comments.
@@ -99,6 +105,7 @@ Likely link opportunities:
 ### ManageByStats alternative
 
 Top domains/platforms:
+
 - `novadata.io`
 - `landingcube.com`
 - `m2ecloud.com`

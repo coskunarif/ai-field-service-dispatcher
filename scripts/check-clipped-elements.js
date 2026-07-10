@@ -38,14 +38,14 @@ const pages = [
 
 console.log('Starting local server on port 3221...');
 const server = spawn('node', ['server.js'], {
-  env: { ...process.env, PORT: '3221', DATABASE_URL: '' }
+  env: { ...process.env, PORT: '3221', DATABASE_URL: '' },
 });
 
-server.stdout.on('data', (data) => {
+server.stdout.on('data', data => {
   console.log(`[Server] ${data.toString().trim()}`);
 });
 
-server.stderr.on('data', (data) => {
+server.stderr.on('data', data => {
   console.error(`[Server Error] ${data.toString().trim()}`);
 });
 
@@ -56,44 +56,49 @@ const results = [];
 
 try {
   const browser = await chromium.launch();
-  
+
   // We check Mobile (320px) viewport specifically
   const width = 320;
   const height = 568;
-  
+
   const context = await browser.newContext({
     viewport: { width, height },
-    userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 14_7_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Mobile/15E148 Safari/604.1'
+    userAgent:
+      'Mozilla/5.0 (iPhone; CPU iPhone OS 14_7_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Mobile/15E148 Safari/604.1',
   });
-  
+
   const page = await context.newPage();
 
   for (const path of pages) {
     const url = `http://localhost:3221${path}`;
     try {
       const response = await page.goto(url, { waitUntil: 'load', timeout: 10000 });
-      
+
       if (response?.status() !== 200) {
         console.error(`Page ${path} returned status ${response?.status()}`);
         results.push({
           path,
-          error: `HTTP status ${response?.status()}`
+          error: `HTTP status ${response?.status()}`,
         });
         continue;
       }
 
-      const clippedInfo = await page.evaluate((vpWidth) => {
+      const clippedInfo = await page.evaluate(vpWidth => {
         const all = document.querySelectorAll('*');
         const clippedElements = [];
-        
+
         for (const el of all) {
           const style = window.getComputedStyle(el);
-          if (style.display === 'none' || style.visibility === 'hidden' || parseFloat(style.opacity) === 0) {
+          if (
+            style.display === 'none' ||
+            style.visibility === 'hidden' ||
+            parseFloat(style.opacity) === 0
+          ) {
             continue;
           }
-          
+
           const rect = el.getBoundingClientRect();
-          
+
           // Element extends past right edge or left edge of viewport
           if (rect.right > vpWidth + 0.5 || rect.left < -0.5) {
             clippedElements.push({
@@ -103,15 +108,15 @@ try {
               left: rect.left,
               right: rect.right,
               width: rect.width,
-              outerHTML: el.outerHTML.substring(0, 150)
+              outerHTML: el.outerHTML.substring(0, 150),
             });
           }
         }
-        
+
         return {
           scrollWidth: document.documentElement.scrollWidth,
           bodyScrollWidth: document.body.scrollWidth,
-          clippedElements
+          clippedElements,
         };
       }, width);
 
@@ -120,12 +125,16 @@ try {
         scrollWidth: clippedInfo.scrollWidth,
         bodyScrollWidth: clippedInfo.bodyScrollWidth,
         clippedCount: clippedInfo.clippedElements.length,
-        clippedElements: clippedInfo.clippedElements
+        clippedElements: clippedInfo.clippedElements,
       });
-      
+
       if (clippedInfo.clippedElements.length > 0) {
-        console.log(`Path ${path}: scrollWidth=${clippedInfo.scrollWidth}, bodyScrollWidth=${clippedInfo.bodyScrollWidth}`);
-        console.log(`  Found ${clippedInfo.clippedElements.length} elements extending past viewport limit.`);
+        console.log(
+          `Path ${path}: scrollWidth=${clippedInfo.scrollWidth}, bodyScrollWidth=${clippedInfo.bodyScrollWidth}`
+        );
+        console.log(
+          `  Found ${clippedInfo.clippedElements.length} elements extending past viewport limit.`
+        );
         const uniqueTags = [...new Set(clippedInfo.clippedElements.map(e => e.tagName))];
         console.log(`  Tags: ${uniqueTags.join(', ')}`);
       } else {
@@ -135,7 +144,7 @@ try {
       console.error(`Error on ${path}:`, err.message);
       results.push({
         path,
-        error: err.message
+        error: err.message,
       });
     }
   }

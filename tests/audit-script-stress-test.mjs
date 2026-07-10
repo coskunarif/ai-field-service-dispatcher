@@ -24,7 +24,7 @@ function runAudit(args = '') {
     const stdout = execSync(`node scripts/gainhelm-seo-geo-audit.mjs ${args}`, {
       encoding: 'utf8',
       stdio: 'pipe',
-      env: { ...process.env, BASE_URL: '' } // Local mode
+      env: { ...process.env, BASE_URL: '' }, // Local mode
     });
     return { code: 0, stdout, stderr: '' };
   } catch (err) {
@@ -149,7 +149,9 @@ test('Title with attributes fails matching and reports missing title', () => {
     const res = runAudit();
     const output = res.stdout + '\n' + res.stderr;
     if (!output.includes('missing/long title')) {
-      throw new Error(`Expected "missing/long title" failure due to attributes in <title>, got: ${output}`);
+      throw new Error(
+        `Expected "missing/long title" failure due to attributes in <title>, got: ${output}`
+      );
     }
   } finally {
     cleanMockFiles(mockFiles);
@@ -232,7 +234,9 @@ test('H1 tags inside comments or scripts cause false multiple H1 failures', () =
     const res = runAudit();
     const output = res.stdout + '\n' + res.stderr;
     if (!output.includes('expected one H1, found 2')) {
-      throw new Error(`Expected "expected one H1, found 2" failure due to commented H1, got: ${output}`);
+      throw new Error(
+        `Expected "expected one H1, found 2" failure due to commented H1, got: ${output}`
+      );
     }
   } finally {
     cleanMockFiles(mockFiles);
@@ -295,7 +299,9 @@ test('JSON-LD FAQPage with non-string name property has TypeError swallowed and 
       throw new Error(`TypeError was not swallowed! Got: ${output}`);
     }
     if (!output.includes('missing FAQPage block with trade-specific questions and answers')) {
-      throw new Error(`Expected FAQPage failure message due to swallowed TypeError, got: ${output}`);
+      throw new Error(
+        `Expected FAQPage failure message due to swallowed TypeError, got: ${output}`
+      );
     }
   } finally {
     cleanMockFiles(mockFiles);
@@ -350,7 +356,9 @@ test('JSON-LD FAQPage with null entity inside mainEntity has TypeError swallowed
       throw new Error(`TypeError was not swallowed! Got: ${output}`);
     }
     if (!output.includes('missing FAQPage block with trade-specific questions and answers')) {
-      throw new Error(`Expected FAQPage failure message due to swallowed TypeError, got: ${output}`);
+      throw new Error(
+        `Expected FAQPage failure message due to swallowed TypeError, got: ${output}`
+      );
     }
   } finally {
     cleanMockFiles(mockFiles);
@@ -383,7 +391,7 @@ test('Colons in route paths cause shouldIgnore to truncate the path prefix', () 
           "ignoreErrors": ["missing/long title"]
         }
       }
-    }`
+    }`,
   };
 
   const backups = {};
@@ -407,9 +415,13 @@ test('Colons in route paths cause shouldIgnore to truncate the path prefix', () 
     // and ignores the error. So there would be NO errors.
     if (!res.stdout.includes('Failures:')) {
       // The failure was indeed ignored because of the colon bug!
-      console.log('  [Observed Bug] Colon truncation bug confirmed: error was ignored on /test:route because config was set for /test.');
+      console.log(
+        '  [Observed Bug] Colon truncation bug confirmed: error was ignored on /test:route because config was set for /test.'
+      );
     } else {
-      throw new Error(`Expected error to be ignored due to path truncation bug, but it failed: ${res.stdout}`);
+      throw new Error(
+        `Expected error to be ignored due to path truncation bug, but it failed: ${res.stdout}`
+      );
     }
   } finally {
     cleanMockFiles(mockFiles);

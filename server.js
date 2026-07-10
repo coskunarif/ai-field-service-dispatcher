@@ -9,7 +9,7 @@ import {
   getTrackingDetails,
   saveNote,
   pollNotes,
-  renderTrackingPage
+  renderTrackingPage,
 } from './live-tracking-service.js';
 
 const fastify = Fastify({ logger: true });
@@ -17,6 +17,12 @@ const sql = process.env.DATABASE_URL ? postgres(process.env.DATABASE_URL) : null
 const waitlistApiUrl = process.env.WAITLIST_API_URL || 'https://api.gainhelm.com/waitlist';
 const port = process.env.PORT ? parseInt(process.env.PORT) : 3000;
 const root = process.cwd();
+
+const stepEmojis = ['🤖', '📥', '💬', '📱', '✅', '⚠️'];
+function stripLeadingStepEmoji(text) {
+  const matched = stepEmojis.find(e => text.startsWith(e));
+  return matched ? text.slice(matched.length).replace(/^\s*/, '') : text;
+}
 
 const contextStore = new Map();
 const inMemoryLeads = [];
@@ -52,7 +58,9 @@ if (sql) {
         await sql`ALTER TABLE gainhelm_dispatch_logs ADD COLUMN IF NOT EXISTS distance_miles NUMERIC;`;
         await sql`ALTER TABLE gainhelm_dispatch_logs ADD COLUMN IF NOT EXISTS duration_mins NUMERIC;`;
         await sql`ALTER TABLE gainhelm_dispatch_logs ADD COLUMN IF NOT EXISTS traffic_multiplier NUMERIC;`;
-        fastify.log.info('Database table gainhelm_dispatch_logs columns distance_miles, duration_mins, traffic_multiplier ensured.');
+        fastify.log.info(
+          'Database table gainhelm_dispatch_logs columns distance_miles, duration_mins, traffic_multiplier ensured.'
+        );
       } catch (err) {
         fastify.log.error('Migration error for gainhelm_dispatch_logs:', err);
       }
@@ -95,10 +103,13 @@ if (sql) {
   })();
 }
 
-
-fastify.addContentTypeParser('application/x-www-form-urlencoded', { parseAs: 'string' }, (_request, body, done) => {
-  done(null, Object.fromEntries(new URLSearchParams(body)));
-});
+fastify.addContentTypeParser(
+  'application/x-www-form-urlencoded',
+  { parseAs: 'string' },
+  (_request, body, done) => {
+    done(null, Object.fromEntries(new URLSearchParams(body)));
+  }
+);
 
 const legacyGonePaths = new Set([
   '/managebystats-alternative',
@@ -111,7 +122,7 @@ const legacyGonePaths = new Set([
   '/tools/amazon-fba-fees-calculator',
 ]);
 
-const normalizePath = (url) => new URL(url, 'http://localhost').pathname.replace(/\/+$/, '') || '/';
+const normalizePath = url => new URL(url, 'http://localhost').pathname.replace(/\/+$/, '') || '/';
 
 const routeRedirects = {
   '/electrical-dispatch-softwar': '/electrical-dispatch-software',
@@ -227,7 +238,9 @@ for (const asset of ['robots.txt', 'sitemap.xml', 'llms.txt', 'styles.css', 'rou
 fastify.get('/favicon.ico', async (_request, reply) => {
   reply
     .type('image/svg+xml')
-    .send('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="#0f172a"/><path d="M9 17.2 14.2 22 24 10" fill="none" stroke="#38bdf8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>');
+    .send(
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="#0f172a"/><path d="M9 17.2 14.2 22 24 10" fill="none" stroke="#38bdf8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+    );
 });
 
 fastify.get('/app/track/:id', async (request, reply) => {
@@ -275,7 +288,9 @@ fastify.post('/app/track/:id/note', async (request, reply) => {
     return reply.status(400).send({ error: 'Note content is required' });
   }
   if (typeof note !== 'string' || note.length > 250) {
-    return reply.status(400).send({ error: 'Note must be a text string restricted to a maximum of 250 characters' });
+    return reply
+      .status(400)
+      .send({ error: 'Note must be a text string restricted to a maximum of 250 characters' });
   }
   const dispatch = await getTrackingDetails(id, sql);
   if (!dispatch) {
@@ -297,23 +312,36 @@ fastify.get('/app/poll-notes', async (request, reply) => {
   return { notes };
 });
 
-const escapeHtml = (value) => String(value)
-  .replaceAll('&', '&amp;')
-  .replaceAll('<', '&lt;')
-  .replaceAll('>', '&gt;')
-  .replaceAll('"', '&quot;')
-  .replaceAll("'", '&#39;');
+const escapeHtml = value =>
+  String(value)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
 
-const wantsHtml = (request) => String(request.headers.accept || '').includes('text/html');
+const wantsHtml = request => String(request.headers.accept || '').includes('text/html');
 
-const renderWaitlistResponsePage = ({ statusCode, title, heading, message, email = '', returnPath = '/' }) => {
+const renderWaitlistResponsePage = ({
+  statusCode,
+  title,
+  heading,
+  message,
+  email = '',
+  returnPath = '/',
+}) => {
   const templateHtml = readFileSync(join(root, 'hvac-dispatch-software.html'), 'utf8');
-  const header = (templateHtml.match(/<header>[\s\S]*?<\/header>/)?.[0] || '')
-    .replace('href="#waitlist-form" class="nav-cta"', 'href="/#waitlist-form" class="nav-cta"');
-  const currentScript = templateHtml.match(/<script>[\s\S]*?currentPath = location\.pathname[\s\S]*?<\/script>/)?.[0] || '';
+  const header = (templateHtml.match(/<header>[\s\S]*?<\/header>/)?.[0] || '').replace(
+    'href="#waitlist-form" class="nav-cta"',
+    'href="/#waitlist-form" class="nav-cta"'
+  );
+  const currentScript =
+    templateHtml.match(/<script>[\s\S]*?currentPath = location\.pathname[\s\S]*?<\/script>/)?.[0] ||
+    '';
   const safeReturnPath = normalizePath(returnPath);
 
-  const onboardingForm = email ? `
+  const onboardingForm = email
+    ? `
 <div class="onboarding-box" style="margin-top: 30px; text-align: left; padding: 24px; background: #111827; border-radius: 14px; border: 1px solid #374151;">
   <h3 style="margin-bottom: 12px; font-size: 1.25rem; color: #fbbf24;">🚀 Try the AI Dispatcher Instantly</h3>
   <p style="margin-bottom: 16px; font-size: 0.92rem; color: #9ca3af;">
@@ -354,7 +382,8 @@ const renderWaitlistResponsePage = ({ statusCode, title, heading, message, email
     <button type="submit" class="cta-primary" style="margin-top: 8px; cursor: pointer; align-self: flex-start; border: none; padding: 10px 20px; background: #f59e0b; color: #030712; font-weight: bold; border-radius: 8px;">Launch SMS Simulator</button>
   </form>
 </div>
-  ` : '';
+  `
+    : '';
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -387,9 +416,13 @@ ${currentScript}
 
 const renderRecoveryPage = ({ pathname, statusCode, title, heading, message }) => {
   const templateHtml = readFileSync(join(root, 'hvac-dispatch-software.html'), 'utf8');
-  const header = (templateHtml.match(/<header>[\s\S]*?<\/header>/)?.[0] || '')
-    .replace('href="#waitlist-form" class="nav-cta"', 'href="/#waitlist-form" class="nav-cta"');
-  const currentScript = templateHtml.match(/<script>[\s\S]*?currentPath = location\.pathname[\s\S]*?<\/script>/)?.[0] || '';
+  const header = (templateHtml.match(/<header>[\s\S]*?<\/header>/)?.[0] || '').replace(
+    'href="#waitlist-form" class="nav-cta"',
+    'href="/#waitlist-form" class="nav-cta"'
+  );
+  const currentScript =
+    templateHtml.match(/<script>[\s\S]*?currentPath = location\.pathname[\s\S]*?<\/script>/)?.[0] ||
+    '';
   const safePath = escapeHtml(pathname);
 
   return `<!DOCTYPE html>
@@ -424,7 +457,7 @@ ${currentScript}
 
 fastify.setNotFoundHandler((request, reply) => {
   const pathname = normalizePath(request.raw.url);
-  
+
   // Dynamic fallback for newly generated dispatch-software pages
   if (pathname.endsWith('-dispatch-software')) {
     const localFile = pathname.substring(1) + '.html';
@@ -434,36 +467,55 @@ fastify.setNotFoundHandler((request, reply) => {
   }
 
   if (legacyGonePaths.has(pathname)) {
-    return reply.code(410).type('text/html').send(renderRecoveryPage({
-      pathname,
-      statusCode: 410,
-      title: 'Page retired',
-      heading: 'This old page has been retired.',
-      message: 'That legacy route is no longer part of Gainhelm, but the current field-service dispatch pages are still available.',
-    }));
+    return reply
+      .code(410)
+      .type('text/html')
+      .send(
+        renderRecoveryPage({
+          pathname,
+          statusCode: 410,
+          title: 'Page retired',
+          heading: 'This old page has been retired.',
+          message:
+            'That legacy route is no longer part of Gainhelm, but the current field-service dispatch pages are still available.',
+        })
+      );
   }
-  return reply.code(404).type('text/html').send(renderRecoveryPage({
-    pathname,
-    statusCode: 404,
-    title: 'Page not found',
-    heading: 'We could not find that dispatch page.',
-    message: 'The route may be mistyped, outdated, or too ambiguous to redirect safely.',
-  }));
+  return reply
+    .code(404)
+    .type('text/html')
+    .send(
+      renderRecoveryPage({
+        pathname,
+        statusCode: 404,
+        title: 'Page not found',
+        heading: 'We could not find that dispatch page.',
+        message: 'The route may be mistyped, outdated, or too ambiguous to redirect safely.',
+      })
+    );
 });
 
 fastify.post('/waitlist', async (request, reply) => {
   const { name, email, company } = request.body || {};
-  const returnPath = request.headers.referer ? new URL(request.headers.referer, 'http://localhost').pathname : '/';
+  const returnPath = request.headers.referer
+    ? new URL(request.headers.referer, 'http://localhost').pathname
+    : '/';
 
   if (!email) {
     if (wantsHtml(request)) {
-      return reply.status(400).type('text/html').send(renderWaitlistResponsePage({
-        statusCode: 400,
-        title: 'Waitlist needs an email',
-        heading: 'Please add your email before joining the waitlist.',
-        message: 'The waitlist form needs a work email so we know where to send the early-access update.',
-        returnPath,
-      }));
+      return reply
+        .status(400)
+        .type('text/html')
+        .send(
+          renderWaitlistResponsePage({
+            statusCode: 400,
+            title: 'Waitlist needs an email',
+            heading: 'Please add your email before joining the waitlist.',
+            message:
+              'The waitlist form needs a work email so we know where to send the early-access update.',
+            returnPath,
+          })
+        );
     }
     return reply.status(400).send({ error: 'Email is required' });
   }
@@ -485,42 +537,51 @@ fastify.post('/waitlist', async (request, reply) => {
         name,
         email,
         company,
-        created_at: new Date().toISOString()
+        created_at: new Date().toISOString(),
       });
       if (wantsHtml(request)) {
-        return reply.type('text/html').send(renderWaitlistResponsePage({
+        return reply.type('text/html').send(
+          renderWaitlistResponsePage({
+            statusCode: 200,
+            title: 'Waitlist request received',
+            heading: "You're on the waitlist.",
+            message: "Thanks for joining. We'll be in touch when early access is ready.",
+            email,
+            returnPath,
+          })
+        );
+      }
+      return { success: true };
+    }
+
+    if (wantsHtml(request)) {
+      return reply.type('text/html').send(
+        renderWaitlistResponsePage({
           statusCode: 200,
           title: 'Waitlist request received',
           heading: "You're on the waitlist.",
           message: "Thanks for joining. We'll be in touch when early access is ready.",
           email,
           returnPath,
-        }));
-      }
-      return { success: true };
-    }
-
-    if (wantsHtml(request)) {
-      return reply.type('text/html').send(renderWaitlistResponsePage({
-        statusCode: 200,
-        title: 'Waitlist request received',
-        heading: "You're on the waitlist.",
-        message: "Thanks for joining. We'll be in touch when early access is ready.",
-        email,
-        returnPath,
-      }));
+        })
+      );
     }
     return { success: true };
   } catch (err) {
     fastify.log.error(err);
     if (wantsHtml(request)) {
-      return reply.status(500).type('text/html').send(renderWaitlistResponsePage({
-        statusCode: 500,
-        title: 'Waitlist submission failed',
-        heading: 'We had trouble saving your waitlist request.',
-        message: 'Please return to the form and try again in a moment.',
-        returnPath,
-      }));
+      return reply
+        .status(500)
+        .type('text/html')
+        .send(
+          renderWaitlistResponsePage({
+            statusCode: 500,
+            title: 'Waitlist submission failed',
+            heading: 'We had trouble saving your waitlist request.',
+            message: 'Please return to the form and try again in a moment.',
+            returnPath,
+          })
+        );
     }
     return reply.status(500).send({ error: 'Failed to save lead' });
   }
@@ -1475,7 +1536,9 @@ fastify.get('/sandbox', async (request, reply) => {
 
 fastify.get('/onboarding', async (request, reply) => {
   const { email, trade, tech_count, phone } = request.query || {};
-  return reply.redirect(`/sandbox?email=${encodeURIComponent(email || '')}&trade=${encodeURIComponent(trade || '')}&tech_count=${encodeURIComponent(tech_count || '')}&phone=${encodeURIComponent(phone || '')}`);
+  return reply.redirect(
+    `/sandbox?email=${encodeURIComponent(email || '')}&trade=${encodeURIComponent(trade || '')}&tech_count=${encodeURIComponent(tech_count || '')}&phone=${encodeURIComponent(phone || '')}`
+  );
 });
 
 fastify.post('/onboarding', async (request, reply) => {
@@ -1502,8 +1565,12 @@ fastify.post('/onboarding', async (request, reply) => {
 });
 const renderSetupPage = (email, context) => {
   const technicians = context ? JSON.parse(context.technicians) : [];
-  const businessRules = context ? JSON.parse(context.business_rules) : { timeout: '3', pricing: '120', rules: '' };
-  const calendarConfig = context ? JSON.parse(context.calendar_config) : { calendar_url: '', sandbox_mode: 'true' };
+  const businessRules = context
+    ? JSON.parse(context.business_rules)
+    : { timeout: '3', pricing: '120', rules: '' };
+  const calendarConfig = context
+    ? JSON.parse(context.calendar_config)
+    : { calendar_url: '', sandbox_mode: 'true' };
 
   let techRows = '';
   if (technicians.length === 0) {
@@ -1584,7 +1651,7 @@ const renderSetupPage = (email, context) => {
                 <option value="Electrical" ${t.trade === 'Electrical' ? 'selected' : ''}>Electrical</option>
                 <option value="Cleaning" ${t.trade === 'Cleaning' ? 'selected' : ''}>Cleaning</option>
                 <option value="Landscaping" ${t.trade === 'Landscaping' ? 'selected' : ''}>Landscaping</option>
-                <option value="Other" ${t.trade === 'Other' || !['HVAC','Plumbing','Electrical','Cleaning','Landscaping'].includes(t.trade) ? 'selected' : ''}>Other / General</option>
+                <option value="Other" ${t.trade === 'Other' || !['HVAC', 'Plumbing', 'Electrical', 'Cleaning', 'Landscaping'].includes(t.trade) ? 'selected' : ''}>Other / General</option>
               </select>
             </div>
             <div>
@@ -3170,61 +3237,65 @@ const renderSetupPage = (email, context) => {
 </html>`;
 };
 
-const renderAuditTrailHtml = (logs) => {
+const renderAuditTrailHtml = logs => {
   if (!logs || logs.length === 0) {
     return `<div style="text-align: center; color: hsl(var(--text-3)); font-style: italic; font-size: 0.85rem; padding: 20px 0;">No dispatch runs recorded yet. Run a simulation to log history.</div>`;
   }
-  
-  return logs.map(l => {
-    const timeStr = new Date(l.created_at).toLocaleString();
-    let statusColor = '#ef4444'; // Red for escalated
-    let statusText = 'Escalated';
-    if (l.status === 'accepted') {
-      statusColor = '#10b981'; // Green
-      statusText = 'Accepted';
-    } else if (l.status === 'manually_assigned') {
-      statusColor = '#10b981'; // Green
-      statusText = 'Manually Assigned';
-    } else if (l.status === 'declined') {
-      statusColor = '#f59e0b'; // Amber
-      statusText = 'Declined';
-    }
-    
-    const matchedTechStr = l.dispatched_to_name ? `${escapeHtml(l.dispatched_to_name)} (${escapeHtml(l.dispatched_to_phone)})` : 'None (System Escalation)';
-    const logId = l.id;
-    
-    let steps = [];
-    try {
-      steps = JSON.parse(l.step_logs);
-    } catch {
-      steps = [];
-    }
-    
-    const stepsHtml = steps.map(s => {
-      let icon = 'ℹ️';
-      if (s.includes('🤖')) icon = '🤖';
-      else if (s.includes('📥')) icon = '📥';
-      else if (s.includes('💬')) icon = '💬';
-      else if (s.includes('📱')) icon = '📱';
-      else if (s.includes('✅')) icon = '✅';
-      else if (s.includes('⚠️')) icon = '⚠️';
-      
-      const cleanText = s
-        .replace(/^[🤖📥💬📱✅⚠️]\s*/, '')
-        .replace('Agent Reasoning:', '<strong>Reasoning:</strong>')
-        .replace('Agent Alert:', '<strong>Alert:</strong>')
-        .replace('Agent Action:', '<strong>Action:</strong>')
-        .replace('Job Request Received:', '<strong>Job Received:</strong>')
-        .replace('Sent SMS to', '<strong>SMS Sent to</strong>')
-        .replace('Received SMS from', '<strong>SMS Recv from</strong>');
-        
-      return `<div style="font-size: 0.76rem; color: hsl(var(--text-2)); padding: 4px 0; border-bottom: 1px solid hsl(var(--line) / 0.3); display: flex; gap: 6px;">
+
+  return logs
+    .map(l => {
+      const timeStr = new Date(l.created_at).toLocaleString();
+      let statusColor = '#ef4444'; // Red for escalated
+      let statusText = 'Escalated';
+      if (l.status === 'accepted') {
+        statusColor = '#10b981'; // Green
+        statusText = 'Accepted';
+      } else if (l.status === 'manually_assigned') {
+        statusColor = '#10b981'; // Green
+        statusText = 'Manually Assigned';
+      } else if (l.status === 'declined') {
+        statusColor = '#f59e0b'; // Amber
+        statusText = 'Declined';
+      }
+
+      const matchedTechStr = l.dispatched_to_name
+        ? `${escapeHtml(l.dispatched_to_name)} (${escapeHtml(l.dispatched_to_phone)})`
+        : 'None (System Escalation)';
+      const logId = l.id;
+
+      let steps = [];
+      try {
+        steps = JSON.parse(l.step_logs);
+      } catch {
+        steps = [];
+      }
+
+      const stepsHtml = steps
+        .map(s => {
+          let icon = 'ℹ️';
+          if (s.includes('🤖')) icon = '🤖';
+          else if (s.includes('📥')) icon = '📥';
+          else if (s.includes('💬')) icon = '💬';
+          else if (s.includes('📱')) icon = '📱';
+          else if (s.includes('✅')) icon = '✅';
+          else if (s.includes('⚠️')) icon = '⚠️';
+
+          const cleanText = stripLeadingStepEmoji(s)
+            .replace('Agent Reasoning:', '<strong>Reasoning:</strong>')
+            .replace('Agent Alert:', '<strong>Alert:</strong>')
+            .replace('Agent Action:', '<strong>Action:</strong>')
+            .replace('Job Request Received:', '<strong>Job Received:</strong>')
+            .replace('Sent SMS to', '<strong>SMS Sent to</strong>')
+            .replace('Received SMS from', '<strong>SMS Recv from</strong>');
+
+          return `<div style="font-size: 0.76rem; color: hsl(var(--text-2)); padding: 4px 0; border-bottom: 1px solid hsl(var(--line) / 0.3); display: flex; gap: 6px;">
         <span>${icon}</span>
         <span>${cleanText}</span>
       </div>`;
-    }).join('');
+        })
+        .join('');
 
-    return `
+      return `
       <div style="background: hsl(var(--surface-2) / 0.4); border: 1px solid hsl(var(--line)); border-radius: 12px; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px;">
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid hsl(var(--line) / 0.5); padding-bottom: 6px;">
           <span style="font-size: 0.72rem; color: hsl(var(--text-3)); font-family: 'IBM Plex Mono', monospace;">📅 ${timeStr}</span>
@@ -3239,22 +3310,30 @@ const renderAuditTrailHtml = (logs) => {
         <div style="font-size: 0.8rem; color: hsl(var(--text-3));">
           ⏱️ <strong>Shift Time:</strong> ${escapeHtml(l.simulated_time)}
         </div>
-        ${(l.distance_miles !== null && l.distance_miles !== undefined) ? `
+        ${
+          l.distance_miles !== null && l.distance_miles !== undefined
+            ? `
         <div style="font-size: 0.8rem; color: hsl(var(--text-3));">
           📍 <strong>Route Info:</strong> ${l.distance_miles} miles, ${l.duration_mins} mins (${l.traffic_multiplier}x traffic)
         </div>
-        ` : ''}
+        `
+            : ''
+        }
         <div>
           <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 8px;">
             <button type="button" onclick="document.getElementById('audit-details-${logId}').style.display = document.getElementById('audit-details-${logId}').style.display === 'none' ? 'block' : 'none'" 
                     class="preset-btn" style="margin: 0; padding: 4px 10px; font-size: 0.72rem; background: hsl(var(--surface-3)); border: 1px solid hsl(var(--line)); border-radius: 6px; cursor: pointer; color: hsl(var(--brand-2)); font-weight: bold;">
               Show Agent Reasoning Trail
             </button>
-            ${(l.status === 'accepted' || l.status === 'manually_assigned') ? `
+            ${
+              l.status === 'accepted' || l.status === 'manually_assigned'
+                ? `
             <a href="/app/track/${logId}" target="_blank" class="preset-btn" style="margin: 0; padding: 4px 10px; font-size: 0.72rem; background: hsl(var(--brand) / 0.2); border: 1px solid hsl(var(--brand)); border-radius: 6px; text-decoration: none; display: inline-block; color: hsl(var(--brand-2)); font-weight: bold; text-align: center;">
               Track Live Route
             </a>
-            ` : ''}
+            `
+                : ''
+            }
           </div>
           <div id="audit-details-${logId}" style="display: none; margin-top: 8px; background: hsl(var(--bg) / 0.8); border: 1px solid hsl(var(--line)); border-radius: 8px; padding: 10px; max-height: 200px; overflow-y: auto; scrollbar-width: none;">
             ${stepsHtml}
@@ -3262,17 +3341,23 @@ const renderAuditTrailHtml = (logs) => {
         </div>
       </div>
     `;
-  }).join('');
+    })
+    .join('');
 };
 
 const renderAppPage = (email, context, dispatchLogs = []) => {
   const technicians = context ? JSON.parse(context.technicians) : [];
-  const businessRules = context ? JSON.parse(context.business_rules) : { timeout: '3', pricing: '120', rules: '' };
-  const calendarConfig = context ? JSON.parse(context.calendar_config) : { calendar_url: '', sandbox_mode: 'true' };
+  const businessRules = context
+    ? JSON.parse(context.business_rules)
+    : { timeout: '3', pricing: '120', rules: '' };
+  const calendarConfig = context
+    ? JSON.parse(context.calendar_config)
+    : { calendar_url: '', sandbox_mode: 'true' };
 
   let techListHtml = '';
   if (technicians.length === 0) {
-    techListHtml = '<p style="color: hsl(var(--text-3)); font-style: italic; font-size: 0.85rem;">No technicians configured.</p>';
+    techListHtml =
+      '<p style="color: hsl(var(--text-3)); font-style: italic; font-size: 0.85rem;">No technicians configured.</p>';
   } else {
     technicians.forEach(t => {
       const shift = t.shift || 'Always';
@@ -3282,7 +3367,7 @@ const renderAppPage = (email, context, dispatchLogs = []) => {
         Always: '24/7 (Always Available)',
         Standard: 'Standard Shift (Mon-Fri 8-5)',
         Night: 'Night Shift (Mon-Fri 5pm-8am)',
-        Weekend: 'Weekend Shift (Sat-Sun)'
+        Weekend: 'Weekend Shift (Sat-Sun)',
       };
       const shiftLabel = shiftLabels[shift] || shift;
 
@@ -3879,6 +3964,12 @@ const renderAppPage = (email, context, dispatchLogs = []) => {
 <script>
   const escapeHtml = (str) => String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
+  const stepEmojis = ['🤖', '📥', '💬', '📱', '✅', '⚠️'];
+  function stripLeadingStepEmoji(text) {
+    const matched = stepEmojis.find(e => text.startsWith(e));
+    return matched ? text.slice(matched.length).replace(/^\\s*/, '') : text;
+  }
+
   const technicians = ${JSON.stringify(technicians)};
   const rules = ${JSON.stringify(businessRules)};
   const calendar = ${JSON.stringify(calendarConfig)};
@@ -4397,8 +4488,7 @@ const renderAppPage = (email, context, dispatchLogs = []) => {
       else if (s.includes('✅')) icon = '✅';
       else if (s.includes('⚠️')) icon = '⚠️';
       
-      const cleanText = s
-        .replace(/^[🤖📥💬📱✅⚠️]\s*/, '')
+      const cleanText = stripLeadingStepEmoji(s)
         .replace('Agent Reasoning:', '<strong>Reasoning:</strong>')
         .replace('Agent Alert:', '<strong>Alert:</strong>')
         .replace('Agent Action:', '<strong>Action:</strong>')
@@ -4761,7 +4851,7 @@ const renderAppPage = (email, context, dispatchLogs = []) => {
 </html>`;
 };
 
-const renderAccessDeniedPage = (email) => {
+const renderAccessDeniedPage = email => {
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -4920,19 +5010,35 @@ fastify.get('/setup', async (request, reply) => {
     context = {
       email,
       technicians: JSON.stringify([
-        { name: 'John Doe', phone: '+1 (555) 0199', trade: 'HVAC', skills: 'Emergency repair, wiring' },
-        { name: 'Sarah Connor', phone: '+1 (555) 0288', trade: 'Plumbing', skills: 'Drain leak, pipe replace' },
-        { name: 'Marcus Aurelius', phone: '+1 (555) 0377', trade: 'Electrical', skills: 'Breaker box, wiring' }
+        {
+          name: 'John Doe',
+          phone: '+1 (555) 0199',
+          trade: 'HVAC',
+          skills: 'Emergency repair, wiring',
+        },
+        {
+          name: 'Sarah Connor',
+          phone: '+1 (555) 0288',
+          trade: 'Plumbing',
+          skills: 'Drain leak, pipe replace',
+        },
+        {
+          name: 'Marcus Aurelius',
+          phone: '+1 (555) 0377',
+          trade: 'Electrical',
+          skills: 'Breaker box, wiring',
+        },
       ]),
       business_rules: JSON.stringify({
         timeout: '3',
         pricing: '120',
-        rules: 'Offered first to closest certified tech. If no reply, auto-fallback. Only send John for emergency HVAC. Do not dispatch after 9 PM unless emergency.'
+        rules:
+          'Offered first to closest certified tech. If no reply, auto-fallback. Only send John for emergency HVAC. Do not dispatch after 9 PM unless emergency.',
       }),
       calendar_config: JSON.stringify({
         calendar_url: 'https://calendar.google.com/calendar/u/0/r',
-        sandbox_mode: 'true'
-      })
+        sandbox_mode: 'true',
+      }),
     };
   }
 
@@ -4953,11 +5059,15 @@ fastify.post('/api/validate-calendar', async (request, reply) => {
   }
 
   if (parsedUrl.protocol !== 'http:' && parsedUrl.protocol !== 'https:') {
-    return reply.status(200).send({ valid: false, error: 'Invalid protocol: Only http or https is allowed' });
+    return reply
+      .status(200)
+      .send({ valid: false, error: 'Invalid protocol: Only http or https is allowed' });
   }
 
   if (parsedUrl.hostname !== 'calendar.google.com') {
-    return reply.status(200).send({ valid: false, error: 'Invalid hostname: URL must be on calendar.google.com' });
+    return reply
+      .status(200)
+      .send({ valid: false, error: 'Invalid hostname: URL must be on calendar.google.com' });
   }
 
   if (/\btest\b/i.test(calendar_url) || process.env.NODE_ENV === 'test') {
@@ -4968,26 +5078,36 @@ fastify.post('/api/validate-calendar', async (request, reply) => {
     const response = await fetch(calendar_url, {
       method: 'GET',
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+        'User-Agent':
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
       },
-      redirect: 'follow'
+      redirect: 'follow',
     });
 
     if (response.status < 200 || response.status >= 300) {
-      return reply.status(200).send({ valid: false, error: `HTTP error status: ${response.status}` });
+      return reply
+        .status(200)
+        .send({ valid: false, error: `HTTP error status: ${response.status}` });
     }
 
     const finalUrl = response.url;
-    if (finalUrl.includes('accounts.google.com') || finalUrl.includes('/ServiceLogin') || finalUrl.includes('/InteractiveLogin')) {
+    if (
+      finalUrl.includes('accounts.google.com') ||
+      finalUrl.includes('/ServiceLogin') ||
+      finalUrl.includes('/InteractiveLogin')
+    ) {
       return reply.status(200).send({
         valid: false,
-        error: 'Restricted calendar URL. Please check calendar public sharing settings.'
+        error: 'Restricted calendar URL. Please check calendar public sharing settings.',
       });
     }
 
     return reply.status(200).send({ valid: true });
   } catch (err) {
-    return reply.status(200).send({ valid: false, error: 'Network error or unable to resolve calendar URL: ' + err.message });
+    return reply.status(200).send({
+      valid: false,
+      error: 'Network error or unable to resolve calendar URL: ' + err.message,
+    });
   }
 });
 
@@ -5032,7 +5152,7 @@ fastify.post('/setup', async (request, reply) => {
         shift: request.body[`tech_shift_${index}`] || 'Always',
         status: request.body[`tech_status_${index}`] || 'active',
         lat,
-        lng
+        lng,
       });
     }
   }
@@ -5041,7 +5161,7 @@ fastify.post('/setup', async (request, reply) => {
     email,
     technicians: JSON.stringify(technicians),
     business_rules: JSON.stringify({ timeout, pricing, rules }),
-    calendar_config: JSON.stringify({ calendar_url, sandbox_mode })
+    calendar_config: JSON.stringify({ calendar_url, sandbox_mode }),
   };
 
   if (sql) {
@@ -5173,7 +5293,19 @@ fastify.post('/app/log-dispatch', async (request, reply) => {
       // parse error
     }
   }
-  const { email, jobDescription, trade, simulatedTime, dispatchedToName, dispatchedToPhone, status, stepLogs, distance_miles, duration_mins, traffic_multiplier } = body;
+  const {
+    email,
+    jobDescription,
+    trade,
+    simulatedTime,
+    dispatchedToName,
+    dispatchedToPhone,
+    status,
+    stepLogs,
+    distance_miles,
+    duration_mins,
+    traffic_multiplier,
+  } = body;
   if (!email || !jobDescription || !trade || !simulatedTime || !status) {
     return reply.status(400).send({ error: 'Missing required dispatch log fields' });
   }
@@ -5207,7 +5339,7 @@ fastify.post('/app/log-dispatch', async (request, reply) => {
     step_logs: stepLogsStr,
     distance_miles: distance_miles ?? null,
     duration_mins: duration_mins ?? null,
-    traffic_multiplier: traffic_multiplier ?? null
+    traffic_multiplier: traffic_multiplier ?? null,
   };
   dispatchLogsStore.set(logId, logDetails);
 
@@ -5223,7 +5355,18 @@ fastify.post('/app/manual-dispatch', async (request, reply) => {
       // parse error
     }
   }
-  const { email, jobDescription, trade, simulatedTime, technicianName, technicianPhone, stepLogs, distance_miles, duration_mins, traffic_multiplier } = body;
+  const {
+    email,
+    jobDescription,
+    trade,
+    simulatedTime,
+    technicianName,
+    technicianPhone,
+    stepLogs,
+    distance_miles,
+    duration_mins,
+    traffic_multiplier,
+  } = body;
   if (!email || !jobDescription || !trade || !simulatedTime || !technicianName) {
     return reply.status(400).send({ error: 'Missing required manual dispatch fields' });
   }
@@ -5257,7 +5400,7 @@ fastify.post('/app/manual-dispatch', async (request, reply) => {
     step_logs: stepLogsStr,
     distance_miles: distance_miles ?? null,
     duration_mins: duration_mins ?? null,
-    traffic_multiplier: traffic_multiplier ?? null
+    traffic_multiplier: traffic_multiplier ?? null,
   };
   dispatchLogsStore.set(logId, logDetails);
 
@@ -5267,33 +5410,37 @@ fastify.post('/app/manual-dispatch', async (request, reply) => {
 function computeIntentScore(title, snippet) {
   const text = `${title || ''} ${snippet || ''}`.toLowerCase();
   let score = 50;
-  
+
   if (text.includes('scheduling') || text.includes('schedule')) {
     score += 15;
   }
   if (text.includes('dispatch') || text.includes('dispatcher')) {
     score += 15;
   }
-  
-  const competitors = ["jobber", "servicetitan", "housecallpro", "fieldedge", "buildops"];
+
+  const competitors = ['jobber', 'servicetitan', 'housecallpro', 'fieldedge', 'buildops'];
   if (competitors.some(comp => text.includes(comp))) {
     score += 20;
   }
-  
-  const painWords = ["phone tag", "spreadsheet", "lost track", "mess", "calendar"];
+
+  const painWords = ['phone tag', 'spreadsheet', 'lost track', 'mess', 'calendar'];
   if (painWords.some(pain => text.includes(pain))) {
     score += 10;
   }
-  
+
   return Math.max(0, Math.min(100, score));
 }
 
 function draftSuggestedReply(title, snippet) {
   const text = `${title || ''} ${snippet || ''}`.toLowerCase();
   const isHvacPlumbingElectrical = [
-    'hvac', 'plumbing', 'plumber', 'electrical', 'electrician'
+    'hvac',
+    'plumbing',
+    'plumber',
+    'electrical',
+    'electrician',
   ].some(keyword => text.includes(keyword));
-  
+
   if (isHvacPlumbingElectrical) {
     return `Hey! If you are dealing with dispatch chaos or trying to get away from spreadsheets, check out Gainhelm (https://gainhelm.com). It is a lightweight, AI-driven dispatch assistant that routes jobs automatically to technicians via SMS and syncs with your Google Calendar, reducing phone tag.`;
   } else {
@@ -5307,38 +5454,40 @@ async function performDiscovery(sql, inMemoryLeads) {
       platform: 'reddit',
       source_url: 'https://reddit.com/r/hvac/comments/hvac-pain-scheduling',
       title: 'Help with HVAC scheduling',
-      snippet: 'We currently use Jobber and a spreadsheet but the dispatcher is overwhelmed and there is a lot of phone tag.'
+      snippet:
+        'We currently use Jobber and a spreadsheet but the dispatcher is overwhelmed and there is a lot of phone tag.',
     },
     {
       platform: 'facebook',
       source_url: 'https://facebook.com/groups/contractors/posts/general-handyman-help',
       title: 'Looking for recommendations',
-      snippet: 'Any advice for starting a general handyman business?'
+      snippet: 'Any advice for starting a general handyman business?',
     },
     {
       platform: 'reddit',
       source_url: 'https://reddit.com/r/plumbing/comments/plumbing-dispatcher-need',
       title: 'Plumbing dispatcher help',
-      snippet: 'We need to dispatch plumber techs.'
+      snippet: 'We need to dispatch plumber techs.',
     },
     {
       platform: 'facebook',
       source_url: 'https://facebook.com/groups/hvac-talk/posts/servicetitan-alternatives',
       title: 'ServiceTitan alternatives for scheduling?',
-      snippet: 'ServiceTitan is too expensive and complex for our small team. We just need simple dispatching and scheduling.'
+      snippet:
+        'ServiceTitan is too expensive and complex for our small team. We just need simple dispatching and scheduling.',
     },
     {
       platform: 'reddit',
       source_url: 'https://reddit.com/r/electrical/comments/electrician-dispatcher-chaos',
       title: 'Electrician dispatcher chaos',
-      snippet: 'scheduling and dispatching electricians is a mess. Need an app.'
+      snippet: 'scheduling and dispatching electricians is a mess. Need an app.',
     },
     {
       platform: 'facebook',
       source_url: 'https://facebook.com/groups/contractors/posts/dispatch-phone-tag',
       title: 'Need HVAC dispatcher app',
-      snippet: 'Our scheduling is a mess and we are playing phone tag all day.'
-    }
+      snippet: 'Our scheduling is a mess and we are playing phone tag all day.',
+    },
   ];
 
   try {
@@ -5349,7 +5498,7 @@ async function performDiscovery(sql, inMemoryLeads) {
         const url = `https://www.reddit.com/r/${sub}/search.json?q=${encodeURIComponent(kw)}&restrict_sr=on&sort=new&t=year`;
         const res = await fetch(url, {
           headers: { 'User-Agent': 'GainhelmLeadFinder/1.0' },
-          signal: AbortSignal.timeout(2000)
+          signal: AbortSignal.timeout(2000),
         });
         if (!res.ok) continue;
         const data = await res.json();
@@ -5357,12 +5506,16 @@ async function performDiscovery(sql, inMemoryLeads) {
         for (const post of posts) {
           const { title, permalink, selftext } = post.data;
           const bodyLower = (title + ' ' + selftext).toLowerCase();
-          if (bodyLower.includes('schedule') || bodyLower.includes('dispatch') || bodyLower.includes('software')) {
+          if (
+            bodyLower.includes('schedule') ||
+            bodyLower.includes('dispatch') ||
+            bodyLower.includes('software')
+          ) {
             leadsToInsert.push({
               platform: 'reddit',
               source_url: `https://reddit.com${permalink}`,
               title: title || 'Reddit Post',
-              snippet: selftext ? selftext.slice(0, 300) : 'No content'
+              snippet: selftext ? selftext.slice(0, 300) : 'No content',
             });
           }
         }
@@ -5418,7 +5571,7 @@ async function performDiscovery(sql, inMemoryLeads) {
           snippet: lead.snippet,
           intent_score,
           suggested_reply,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         };
       } else {
         inMemoryLeads.push({
@@ -5431,7 +5584,7 @@ async function performDiscovery(sql, inMemoryLeads) {
           status: 'discovered',
           suggested_reply,
           created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         });
       }
       count++;
@@ -5442,7 +5595,8 @@ async function performDiscovery(sql, inMemoryLeads) {
 }
 
 fastify.post('/api/leads', async (request, reply) => {
-  const { platform, source_url, title, snippet, status, intent_score, suggested_reply } = request.body || {};
+  const { platform, source_url, title, snippet, status, intent_score, suggested_reply } =
+    request.body || {};
 
   if (!platform || !source_url || !title || !snippet) {
     return reply.status(400).send({ error: 'Missing required fields' });
@@ -5457,8 +5611,14 @@ fastify.post('/api/leads', async (request, reply) => {
         const newSnippet = snippet || lead.snippet;
         const newPlatform = platform || lead.platform;
         const newStatus = status || lead.status;
-        const newIntentScore = (intent_score !== undefined && intent_score !== null) ? intent_score : computeIntentScore(newTitle, newSnippet);
-        const newSuggestedReply = (suggested_reply !== undefined && suggested_reply !== null) ? suggested_reply : draftSuggestedReply(newTitle, newSnippet);
+        const newIntentScore =
+          intent_score !== undefined && intent_score !== null
+            ? intent_score
+            : computeIntentScore(newTitle, newSnippet);
+        const newSuggestedReply =
+          suggested_reply !== undefined && suggested_reply !== null
+            ? suggested_reply
+            : draftSuggestedReply(newTitle, newSnippet);
 
         const updated = await sql`
           UPDATE social_leads
@@ -5475,8 +5635,14 @@ fastify.post('/api/leads', async (request, reply) => {
         return updated[0];
       } else {
         const id = crypto.randomUUID();
-        const finalIntentScore = (intent_score !== undefined && intent_score !== null) ? intent_score : computeIntentScore(title, snippet);
-        const finalSuggestedReply = (suggested_reply !== undefined && suggested_reply !== null) ? suggested_reply : draftSuggestedReply(title, snippet);
+        const finalIntentScore =
+          intent_score !== undefined && intent_score !== null
+            ? intent_score
+            : computeIntentScore(title, snippet);
+        const finalSuggestedReply =
+          suggested_reply !== undefined && suggested_reply !== null
+            ? suggested_reply
+            : draftSuggestedReply(title, snippet);
         const finalStatus = status || 'discovered';
         const inserted = await sql`
           INSERT INTO social_leads (id, platform, source_url, title, snippet, intent_score, status, suggested_reply, created_at, updated_at)
@@ -5497,8 +5663,14 @@ fastify.post('/api/leads', async (request, reply) => {
       const newSnippet = snippet || lead.snippet;
       const newPlatform = platform || lead.platform;
       const newStatus = status || lead.status;
-      const newIntentScore = (intent_score !== undefined && intent_score !== null) ? intent_score : computeIntentScore(newTitle, newSnippet);
-      const newSuggestedReply = (suggested_reply !== undefined && suggested_reply !== null) ? suggested_reply : draftSuggestedReply(newTitle, newSnippet);
+      const newIntentScore =
+        intent_score !== undefined && intent_score !== null
+          ? intent_score
+          : computeIntentScore(newTitle, newSnippet);
+      const newSuggestedReply =
+        suggested_reply !== undefined && suggested_reply !== null
+          ? suggested_reply
+          : draftSuggestedReply(newTitle, newSnippet);
 
       const updatedLead = {
         ...lead,
@@ -5508,14 +5680,20 @@ fastify.post('/api/leads', async (request, reply) => {
         status: newStatus,
         intent_score: newIntentScore,
         suggested_reply: newSuggestedReply,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       };
       inMemoryLeads[existingIndex] = updatedLead;
       return updatedLead;
     } else {
       const id = crypto.randomUUID();
-      const finalIntentScore = (intent_score !== undefined && intent_score !== null) ? intent_score : computeIntentScore(title, snippet);
-      const finalSuggestedReply = (suggested_reply !== undefined && suggested_reply !== null) ? suggested_reply : draftSuggestedReply(title, snippet);
+      const finalIntentScore =
+        intent_score !== undefined && intent_score !== null
+          ? intent_score
+          : computeIntentScore(title, snippet);
+      const finalSuggestedReply =
+        suggested_reply !== undefined && suggested_reply !== null
+          ? suggested_reply
+          : draftSuggestedReply(title, snippet);
       const finalStatus = status || 'discovered';
 
       const newLead = {
@@ -5528,7 +5706,7 @@ fastify.post('/api/leads', async (request, reply) => {
         status: finalStatus,
         suggested_reply: finalSuggestedReply,
         created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       };
       inMemoryLeads.push(newLead);
       return newLead;
@@ -5551,7 +5729,7 @@ fastify.get('/api/leads', async (request, reply) => {
 
   leads = leads.map(l => ({
     ...l,
-    intent_score: (l.intent_score !== undefined && l.intent_score !== null) ? l.intent_score : 50
+    intent_score: l.intent_score !== undefined && l.intent_score !== null ? l.intent_score : 50,
   }));
 
   const { platform, status, sort } = request.query || {};
@@ -5593,7 +5771,8 @@ fastify.patch('/api/leads/:id', async (request, reply) => {
       }
 
       const newStatus = status !== undefined ? status : existing[0].status;
-      const newReply = suggested_reply !== undefined ? suggested_reply : existing[0].suggested_reply;
+      const newReply =
+        suggested_reply !== undefined ? suggested_reply : existing[0].suggested_reply;
 
       const updated = await sql`
         UPDATE social_leads
@@ -5621,7 +5800,7 @@ fastify.patch('/api/leads/:id', async (request, reply) => {
       ...lead,
       status: newStatus,
       suggested_reply: newReply,
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     };
     inMemoryLeads[leadIndex] = updatedLead;
     return updatedLead;
@@ -5639,7 +5818,18 @@ fastify.post('/api/leads/discover', async (request, reply) => {
 });
 
 fastify.post('/api/contractors', async (request, reply) => {
-  const { company_name, owner_name, email, phone, website, city, state, trade, status, cold_email } = request.body || {};
+  const {
+    company_name,
+    owner_name,
+    email,
+    phone,
+    website,
+    city,
+    state,
+    trade,
+    status,
+    cold_email,
+  } = request.body || {};
 
   if (!company_name || !company_name.trim() || !trade || !trade.trim()) {
     return reply.status(400).send({ error: 'Missing required fields' });
@@ -5743,7 +5933,7 @@ fastify.post('/api/contractors', async (request, reply) => {
           trade: newTrade,
           status: newStatus,
           cold_email: newColdEmail,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         };
         inMemoryContractorLeads[existingIndex] = updatedLead;
         return updatedLead;
@@ -5764,7 +5954,7 @@ fastify.post('/api/contractors', async (request, reply) => {
       status: status || 'discovered',
       cold_email: finalColdEmail,
       created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     };
     inMemoryContractorLeads.push(newLead);
     return newLead;
@@ -5854,7 +6044,7 @@ fastify.patch('/api/contractors/:id', async (request, reply) => {
       ...lead,
       status: newStatus,
       cold_email: newColdEmail,
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     };
     inMemoryContractorLeads[leadIndex] = updatedLead;
     return updatedLead;
@@ -5880,7 +6070,6 @@ fastify.post('/api/contractors/discover', async (request, reply) => {
   }
 });
 
-fastify.listen({ port, host: '0.0.0.0' }, (err) => {
+fastify.listen({ port, host: '0.0.0.0' }, err => {
   if (err) throw err;
 });
-

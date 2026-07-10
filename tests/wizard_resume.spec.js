@@ -18,20 +18,25 @@ test.describe('Wizard Resume: Auto-Save Draft [AC-1]', () => {
     await page.selectOption('select[name="tech_trade_0"]', 'Electrical');
 
     // Wait a brief moment or check directly
-    let draft = await page.evaluate((key) => localStorage.getItem(key), `gainhelm_wizard_draft_${email}`);
+    let draft = await page.evaluate(
+      key => localStorage.getItem(key),
+      `gainhelm_wizard_draft_${email}`
+    );
     expect(draft).not.toBeNull();
     let draftData = JSON.parse(draft);
-    expect(draftData.technicians).toContainEqual(expect.objectContaining({
-      name: 'Test Tech 1',
-      phone: '+15551111',
-      trade: 'Electrical'
-    }));
+    expect(draftData.technicians).toContainEqual(
+      expect.objectContaining({
+        name: 'Test Tech 1',
+        phone: '+15551111',
+        trade: 'Electrical',
+      })
+    );
 
     // Click next step to go to Step 2
     await page.click('#btn-next');
-    
+
     // Check that currentStep is saved as 2
-    draft = await page.evaluate((key) => localStorage.getItem(key), `gainhelm_wizard_draft_${email}`);
+    draft = await page.evaluate(key => localStorage.getItem(key), `gainhelm_wizard_draft_${email}`);
     draftData = JSON.parse(draft);
     expect(draftData.currentStep).toBe(2);
   });
@@ -48,40 +53,50 @@ test.describe('Wizard Resume: Auto-Save Draft [AC-1]', () => {
 test.describe('Wizard Resume: Restore Draft [AC-2]', () => {
   test('restores state from localStorage on page load', async ({ page }) => {
     const email = 'ac2-test@example.com';
-    
+
     const draftState = {
       currentStep: 2,
       technicians: [
-        { name: 'Alice Cooper', phone: '+1 (555) 9999', trade: 'Electrical', skills: 'Wiring', shift: 'Standard', status: 'active' }
+        {
+          name: 'Alice Cooper',
+          phone: '+1 (555) 9999',
+          trade: 'Electrical',
+          skills: 'Wiring',
+          shift: 'Standard',
+          status: 'active',
+        },
       ],
       businessRules: {
         timeout: '10',
         pricing: '150',
-        rules: 'Restore guidelines text'
+        rules: 'Restore guidelines text',
       },
       calendarConfig: {
         calendar_url: 'https://calendar.google.com/test',
-        sandbox_mode: 'false'
-      }
+        sandbox_mode: 'false',
+      },
     };
 
     // Load setup first to get into context and set localStorage
     await page.goto('/setup');
-    await page.evaluate(({ key, val }) => {
-      localStorage.setItem(key, JSON.stringify(val));
-    }, { key: `gainhelm_wizard_draft_${email}`, val: draftState });
+    await page.evaluate(
+      ({ key, val }) => {
+        localStorage.setItem(key, JSON.stringify(val));
+      },
+      { key: `gainhelm_wizard_draft_${email}`, val: draftState }
+    );
 
     // Navigate to setup with query param
     await page.goto(`/setup?email=${encodeURIComponent(email)}`);
 
     // Verify it is on step 2
     await expect(page.locator('#step-panel-2')).toHaveClass(/active/);
-    
+
     // Verify business rules inputs are restored
     await expect(page.locator('input[name="timeout"]')).toHaveValue('10');
     await expect(page.locator('input[name="pricing"]')).toHaveValue('150');
     await expect(page.locator('#rules-textarea')).toHaveValue('Restore guidelines text');
-    
+
     // Go back to step 1 to verify technicians were cleared and restored
     await page.click('#btn-back');
     await expect(page.locator('#tech-list .tech-card')).toHaveCount(1);
@@ -102,22 +117,34 @@ test.describe('Wizard Resume: Visual Notification Banner [AC-3]', () => {
     const email = 'ac3-test@example.com';
     const draftState = {
       currentStep: 1,
-      technicians: [{ name: 'Sarah', phone: '+15550288', trade: 'Plumbing', skills: '', shift: 'Always', status: 'active' }],
+      technicians: [
+        {
+          name: 'Sarah',
+          phone: '+15550288',
+          trade: 'Plumbing',
+          skills: '',
+          shift: 'Always',
+          status: 'active',
+        },
+      ],
       businessRules: { timeout: '3', pricing: '120', rules: '' },
-      calendarConfig: { calendar_url: '', sandbox_mode: 'true' }
+      calendarConfig: { calendar_url: '', sandbox_mode: 'true' },
     };
 
     await page.goto('/setup');
-    await page.evaluate(({ key, val }) => {
-      localStorage.setItem(key, JSON.stringify(val));
-    }, { key: `gainhelm_wizard_draft_${email}`, val: draftState });
+    await page.evaluate(
+      ({ key, val }) => {
+        localStorage.setItem(key, JSON.stringify(val));
+      },
+      { key: `gainhelm_wizard_draft_${email}`, val: draftState }
+    );
 
     await page.goto(`/setup?email=${encodeURIComponent(email)}`);
 
     const banner = page.locator('#restore-banner');
     await expect(banner).toBeVisible();
     await expect(banner).toContainText('🔄 Resumed incomplete setup wizard session.');
-    
+
     const startFreshBtn = banner.locator('.btn-start-fresh');
     await expect(startFreshBtn).toBeVisible();
   });
@@ -133,26 +160,41 @@ test.describe('Wizard Resume: Discard and Clear Draft [AC-4]', () => {
     const email = 'ac4-test@example.com';
     const draftState = {
       currentStep: 1,
-      technicians: [{ name: 'Sarah', phone: '+15550288', trade: 'Plumbing', skills: '', shift: 'Always', status: 'active' }],
+      technicians: [
+        {
+          name: 'Sarah',
+          phone: '+15550288',
+          trade: 'Plumbing',
+          skills: '',
+          shift: 'Always',
+          status: 'active',
+        },
+      ],
       businessRules: { timeout: '3', pricing: '120', rules: '' },
-      calendarConfig: { calendar_url: '', sandbox_mode: 'true' }
+      calendarConfig: { calendar_url: '', sandbox_mode: 'true' },
     };
 
     await page.goto('/setup');
-    await page.evaluate(({ key, val }) => {
-      localStorage.setItem(key, JSON.stringify(val));
-    }, { key: `gainhelm_wizard_draft_${email}`, val: draftState });
+    await page.evaluate(
+      ({ key, val }) => {
+        localStorage.setItem(key, JSON.stringify(val));
+      },
+      { key: `gainhelm_wizard_draft_${email}`, val: draftState }
+    );
 
     await page.goto(`/setup?email=${encodeURIComponent(email)}`);
-    
+
     // Click Start Fresh
     await page.click('#restore-banner .btn-start-fresh');
 
     // Page should reload, banner should not be visible anymore
     await expect(page.locator('#restore-banner')).not.toBeVisible();
-    
+
     // Check localStorage draft is gone
-    const draft = await page.evaluate((key) => localStorage.getItem(key), `gainhelm_wizard_draft_${email}`);
+    const draft = await page.evaluate(
+      key => localStorage.getItem(key),
+      `gainhelm_wizard_draft_${email}`
+    );
     expect(draft).toBeNull();
   });
 
@@ -165,7 +207,10 @@ test.describe('Wizard Resume: Discard and Clear Draft [AC-4]', () => {
     await page.fill('input[name="tech_phone_0"]', '+15559876');
 
     // Verify draft was saved
-    let draft = await page.evaluate((key) => localStorage.getItem(key), `gainhelm_wizard_draft_${email}`);
+    let draft = await page.evaluate(
+      key => localStorage.getItem(key),
+      `gainhelm_wizard_draft_${email}`
+    );
     expect(draft).not.toBeNull();
 
     // Navigate to step 3 and submit
@@ -177,7 +222,7 @@ test.describe('Wizard Resume: Discard and Clear Draft [AC-4]', () => {
     await expect(page).toHaveURL(/\/app/);
 
     // Verify draft was cleared
-    draft = await page.evaluate((key) => localStorage.getItem(key), `gainhelm_wizard_draft_${email}`);
+    draft = await page.evaluate(key => localStorage.getItem(key), `gainhelm_wizard_draft_${email}`);
     expect(draft).toBeNull();
   });
 });
@@ -189,17 +234,19 @@ test.describe('Wizard Resume: Discard and Clear Draft [AC-4]', () => {
  * state upon successful submission.
  */
 test.describe('Wizard Resume: E2E Integration [AC-5]', () => {
-  test('partially filled form survives reloads, restores, and clears on submit', async ({ page }) => {
+  test('partially filled form survives reloads, restores, and clears on submit', async ({
+    page,
+  }) => {
     const email = `ac5-e2e-${Math.random().toString(36).substring(7)}@example.com`;
     await page.goto(`/setup?email=${encodeURIComponent(email)}`);
 
     // Fills tech 0
     await page.fill('input[name="tech_name_0"]', 'E2E Tech A');
     await page.fill('input[name="tech_phone_0"]', '+15551234');
-    
+
     // Click Add Team Member
     await page.click('button:has-text("Add Team Member")');
-    
+
     // Fills newly added tech card using last selector
     const lastCard = page.locator('#tech-list .tech-card').last();
     await lastCard.locator('input[name^="tech_name_"]').fill('E2E Tech B');
@@ -208,7 +255,7 @@ test.describe('Wizard Resume: E2E Integration [AC-5]', () => {
     // Go to Step 2
     await page.click('#btn-next');
     await page.fill('input[name="timeout"]', '15');
-    
+
     // Reload page
     await page.reload();
 
@@ -224,10 +271,10 @@ test.describe('Wizard Resume: E2E Integration [AC-5]', () => {
     await expect(page.locator('#tech-list .tech-card')).toHaveCount(4); // original 3 + 1 added
     await expect(page.locator('input[name="tech_name_0"]')).toHaveValue('E2E Tech A');
     await expect(page.locator('input[name="tech_phone_0"]')).toHaveValue('+15551234');
-    
+
     const secondCard = page.locator('#tech-list .tech-card').nth(1);
     await expect(secondCard.locator('input[name^="tech_name_"]')).toHaveValue('Sarah Connor');
-    
+
     const addedCard = page.locator('#tech-list .tech-card').last();
     await expect(addedCard.locator('input[name^="tech_name_"]')).toHaveValue('E2E Tech B');
     await expect(addedCard.locator('input[name^="tech_phone_"]')).toHaveValue('+15555678');
@@ -241,7 +288,10 @@ test.describe('Wizard Resume: E2E Integration [AC-5]', () => {
     await expect(page).toHaveURL(/\/app/);
 
     // Verify localStorage is cleared
-    const draft = await page.evaluate((key) => localStorage.getItem(key), `gainhelm_wizard_draft_${email}`);
+    const draft = await page.evaluate(
+      key => localStorage.getItem(key),
+      `gainhelm_wizard_draft_${email}`
+    );
     expect(draft).toBeNull();
   });
 });

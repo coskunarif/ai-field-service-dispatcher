@@ -1,6 +1,8 @@
 import postgres from 'postgres';
 
-const sql = postgres("postgresql://postgres:ytMLkXmAHaZLChqnPXwBrNLBltkuewUF@shinkansen.proxy.rlwy.net:36525/railway");
+const sql = postgres(
+  'postgresql://postgres:ytMLkXmAHaZLChqnPXwBrNLBltkuewUF@shinkansen.proxy.rlwy.net:36525/railway'
+);
 
 async function createTable() {
   try {

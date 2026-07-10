@@ -12,24 +12,24 @@ async function main() {
   const port = 3012;
   console.log(`Starting server on port ${port}...`);
   const serverProc = spawn('node', ['server.js'], {
-    env: { ...process.env, PORT: port.toString() }
+    env: { ...process.env, PORT: port.toString() },
   });
 
-  serverProc.stdout.on('data', (data) => {
+  serverProc.stdout.on('data', data => {
     console.log(`[Server stdout] ${data.toString().trim()}`);
   });
 
-  serverProc.stderr.on('data', (data) => {
+  serverProc.stderr.on('data', data => {
     console.error(`[Server stderr] ${data.toString().trim()}`);
   });
 
   // Wait 2 seconds for server to boot
-  await new Promise((resolve) => setTimeout(resolve, 2000));
+  await new Promise(resolve => setTimeout(resolve, 2000));
 
   console.log('Launching browser to capture dogfood screenshots...');
   const browser = await chromium.launch({ headless: true });
   const context = await browser.newContext({
-    viewport: { width: 1280, height: 800 }
+    viewport: { width: 1280, height: 800 },
   });
   const page = await context.newPage();
 
@@ -46,7 +46,9 @@ async function main() {
   // 3. Setup Wizard Step 1
   const testEmail = `scout-dogfood-${Math.random().toString(36).substring(7)}@example.com`;
   console.log(`Navigating to setup wizard for email: ${testEmail}...`);
-  await page.goto(`http://localhost:${port}/setup?email=${encodeURIComponent(testEmail)}`, { waitUntil: 'networkidle' });
+  await page.goto(`http://localhost:${port}/setup?email=${encodeURIComponent(testEmail)}`, {
+    waitUntil: 'networkidle',
+  });
   await page.screenshot({ path: join(outputDir, 'setup-step1.png') });
 
   // Fill in Step 1 technician details
@@ -80,7 +82,7 @@ async function main() {
   await page.selectOption('select[id="job-trade"]', 'HVAC');
   await page.fill('input[id="job-desc"]', 'AC fan broken in office');
   await page.screenshot({ path: join(outputDir, 'simulation-before-dispatch.png') });
-  
+
   await page.click('button[type="submit"]:has-text("Dispatch Work Order")');
   await page.waitForTimeout(2000); // Wait for simulation log print
   await page.screenshot({ path: join(outputDir, 'simulation-dispatched.png') });
@@ -97,13 +99,17 @@ async function main() {
 
   // 6. Facebook Post Generator Tool
   console.log('Capturing Facebook Post Generator page...');
-  await page.goto(`http://localhost:${port}/tools/facebook-post-generator`, { waitUntil: 'networkidle' });
+  await page.goto(`http://localhost:${port}/tools/facebook-post-generator`, {
+    waitUntil: 'networkidle',
+  });
   await page.screenshot({ path: join(outputDir, 'facebook-post-generator.png') });
 
   await browser.close();
   console.log('Closing local server...');
   serverProc.kill();
-  console.log(`Screenshots captured successfully inside dogfood-output/scout-20260620/screenshots/`);
+  console.log(
+    `Screenshots captured successfully inside dogfood-output/scout-20260620/screenshots/`
+  );
 }
 
 main().catch(err => {

@@ -40,7 +40,9 @@ const warnings = [];
 
 async function textFor(path) {
   if (live) {
-    const res = await fetch(origin + path, { headers: { 'User-Agent': 'GainhelmSEOGeoAudit/1.0' } });
+    const res = await fetch(origin + path, {
+      headers: { 'User-Agent': 'GainhelmSEOGeoAudit/1.0' },
+    });
     if (!res.ok) errors.push(`${path}: HTTP ${res.status}`);
     return await res.text();
   }
@@ -71,7 +73,13 @@ function href(html, rel) {
   const re = new RegExp(`<link[^>]+rel=["']${rel}["'][^>]*>`, 'i');
   return attr(html.match(re)?.[0], 'href');
 }
-function strip(html) { return html.replace(/<script[\s\S]*?<\/script>/gi, ' ').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim(); }
+function strip(html) {
+  return html
+    .replace(/<script[\s\S]*?<\/script>/gi, ' ')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
 
 // Decodes common HTML entities for accurate title comparisons
 function decodeHtmlEntities(str) {
@@ -99,45 +107,82 @@ function isTargetPage(p) {
 
 // Maps trade pages and key routes to their respective trade keywords
 const TRADE_KEYWORDS = {
-  'hvac': ['hvac', 'heating', 'ac', 'air conditioning', 'ventilating', 'cooling'],
-  'plumbing': ['plumb', 'plumbing', 'plumber', 'plumbers'],
-  'electrical': ['electr', 'electrical', 'electrician', 'electricians'],
+  hvac: ['hvac', 'heating', 'ac', 'air conditioning', 'ventilating', 'cooling'],
+  plumbing: ['plumb', 'plumbing', 'plumber', 'plumbers'],
+  electrical: ['electr', 'electrical', 'electrician', 'electricians'],
   'septic-service': ['septic', 'septic-service'],
   'pest-control': ['pest', 'exterminator', 'pest-control'],
   'garage-door': ['garage', 'door', 'garage-door'],
-  'landscaping': ['landscape', 'landscaping', 'landscaper', 'lawn', 'mowing'],
-  'locksmith': ['locksmith', 'locksmiths'],
-  'handyman': ['handyman', 'handymen', 'handyperson'],
+  landscaping: ['landscape', 'landscaping', 'landscaper', 'lawn', 'mowing'],
+  locksmith: ['locksmith', 'locksmiths'],
+  handyman: ['handyman', 'handymen', 'handyperson'],
   'appliance-repair': ['appliance', 'repair', 'appliance-repair'],
   'carpet-cleaning': ['carpet', 'cleaning', 'rug', 'carpet-cleaning'],
-  'cleaning': ['cleaning', 'cleaner', 'cleaners'],
+  cleaning: ['cleaning', 'cleaner', 'cleaners'],
   'commercial-facilities': ['commercial', 'facilities', 'facility', 'commercial-facilities'],
   'emergency-restoration': ['emergency', 'restoration', 'mitigation', 'emergency-restoration'],
   'junk-removal': ['junk', 'removal', 'trash', 'junk-removal'],
-  'painting': ['paint', 'painting', 'painter', 'painters'],
+  painting: ['paint', 'painting', 'painter', 'painters'],
   'pressure-washing': ['pressure', 'washing', 'power', 'pressure-washing'],
-  'roofing': ['roof', 'roofing', 'roofer', 'roofers'],
+  roofing: ['roof', 'roofing', 'roofer', 'roofers'],
   'tree-service': ['tree', 'service', 'arborist', 'tree-service'],
   'pool-service': ['pool', 'service', 'spa', 'pool-service'],
-  'restoration-job-management': ['restoration', 'water damage', 'restoration-job-management']
+  'restoration-job-management': ['restoration', 'water damage', 'restoration-job-management'],
 };
 
 function getPageTradeKeywords(p) {
   const keyRoutes = {
     '/': ['field service', 'dispatch', 'scheduling', 'waitlist', 'technician'],
     '/field-service-scheduling': ['field service', 'scheduling', 'dispatch', 'technician'],
-    '/mobile-dispatch-board': ['mobile', 'dispatch', 'board', 'ipad', 'tablet', 'technician']
+    '/mobile-dispatch-board': ['mobile', 'dispatch', 'board', 'ipad', 'tablet', 'technician'],
   };
   if (keyRoutes[p]) return keyRoutes[p];
 
   if (p.includes('alternative')) {
-    return ['alternative', 'dispatch', 'scheduling', 'field service', 'technician', 'contractor', 'software', 'servicetitan', 'jobber', 'housecall', 'servicefusion', 'buildops', 'fieldedge'];
+    return [
+      'alternative',
+      'dispatch',
+      'scheduling',
+      'field service',
+      'technician',
+      'contractor',
+      'software',
+      'servicetitan',
+      'jobber',
+      'housecall',
+      'servicefusion',
+      'buildops',
+      'fieldedge',
+    ];
   }
   if (p.includes('tool')) {
-    return ['tool', 'leads', 'queue', 'generator', 'marketing', 'facebook', 'contractor', 'dispatch', 'scheduling'];
+    return [
+      'tool',
+      'leads',
+      'queue',
+      'generator',
+      'marketing',
+      'facebook',
+      'contractor',
+      'dispatch',
+      'scheduling',
+    ];
   }
-  if (p.includes('hvac-dispatch-app') || p.includes('how-to-choose-hvac') || p.includes('how-hvac-dispatch')) {
-    return ['hvac', 'dispatch', 'scheduling', 'app', 'software', 'spreadsheets', 'phone tag', 'techs'];
+  if (
+    p.includes('hvac-dispatch-app') ||
+    p.includes('how-to-choose-hvac') ||
+    p.includes('how-hvac-dispatch')
+  ) {
+    return [
+      'hvac',
+      'dispatch',
+      'scheduling',
+      'app',
+      'software',
+      'spreadsheets',
+      'phone tag',
+      'techs',
+    ];
   }
 
   const tradeMatch = p.match(/^\/([a-z-]+)-(?:dispatch-software|job-management-software)$/);
@@ -195,17 +240,21 @@ async function main() {
   let robots = live ? await textFor('/robots.txt') : readFileSync('robots.txt', 'utf8');
   let llms = live ? await textFor('/llms.txt') : readFileSync('llms.txt', 'utf8');
 
-  if (!/Sitemap:\s*https:\/\/gainhelm\.com\/sitemap\.xml/i.test(robots)) errors.push('robots.txt missing canonical sitemap declaration');
+  if (!/Sitemap:\s*https:\/\/gainhelm\.com\/sitemap\.xml/i.test(robots))
+    errors.push('robots.txt missing canonical sitemap declaration');
   for (const bot of ['GPTBot', 'ClaudeBot', 'PerplexityBot', 'GoogleOther']) {
-    if (!new RegExp(`User-agent:\\s*${bot}`, 'i').test(robots)) warnings.push(`robots.txt missing explicit ${bot} stanza`);
+    if (!new RegExp(`User-agent:\\s*${bot}`, 'i').test(robots))
+      warnings.push(`robots.txt missing explicit ${bot} stanza`);
   }
 
   const urls = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m => m[1]);
   if (!urls.length) errors.push('sitemap.xml has no <loc> URLs');
-  const paths = urls.map(u => new URL(u).pathname === '/' ? '/' : new URL(u).pathname);
+  const paths = urls.map(u => (new URL(u).pathname === '/' ? '/' : new URL(u).pathname));
   console.log(`Auditing ${paths.length} sitemap routes (${live ? origin : 'local files'})`);
 
-  const llmsLinks = new Set([...llms.matchAll(/https:\/\/gainhelm\.com[^\s)]+/g)].map(m => new URL(m[0]).pathname));
+  const llmsLinks = new Set(
+    [...llms.matchAll(/https:\/\/gainhelm\.com[^\s)]+/g)].map(m => new URL(m[0]).pathname)
+  );
   for (const p of paths) if (!llmsLinks.has(p)) errors.push(`llms.txt missing sitemap route ${p}`);
 
   for (const p of paths) {
@@ -215,23 +264,44 @@ async function main() {
     const canonical = href(html, 'canonical');
     const robotsMeta = meta(html, 'robots');
     const h1s = [...html.matchAll(/<h1\b/gi)].length;
-    const jsonLd = [...html.matchAll(/<script[^>]+type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi)];
+    const jsonLd = [
+      ...html.matchAll(
+        /<script[^>]+type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi
+      ),
+    ];
     const form = html.match(/<form[^>]+id=["']waitlist-form["'][^>]*>/i)?.[0] || '';
     const card = meta(html, 'twitter:card');
     const body = strip(html).slice(0, 220);
 
     if (!title || title.length > 70) errors.push(`${p}: missing/long title (${title.length})`);
-    if (!desc || desc.length < 120 || desc.length > 180) warnings.push(`${p}: meta description outside 120-180 chars (${desc.length})`);
-    if (canonical !== `https://gainhelm.com${p === '/' ? '/' : p}`) errors.push(`${p}: canonical mismatch ${canonical || '(missing)'}`);
+    if (!desc || desc.length < 120 || desc.length > 180)
+      warnings.push(`${p}: meta description outside 120-180 chars (${desc.length})`);
+    if (canonical !== `https://gainhelm.com${p === '/' ? '/' : p}`)
+      errors.push(`${p}: canonical mismatch ${canonical || '(missing)'}`);
     if (/noindex/i.test(robotsMeta)) errors.push(`${p}: robots meta contains noindex`);
     if (h1s !== 1) errors.push(`${p}: expected one H1, found ${h1s}`);
     if (!jsonLd.length) errors.push(`${p}: missing JSON-LD`);
-    for (const [i, m] of jsonLd.entries()) { try { JSON.parse(m[1]); } catch { errors.push(`${p}: invalid JSON-LD block ${i + 1}`); } }
-    if (!form) warnings.push(`${p}: no inline waitlist form; confirm alternate CTA path intentionally handles conversion`);
-    if (form && !/action=["']\/waitlist["']/i.test(form)) warnings.push(`${p}: waitlist form lacks native /waitlist action`);
-    if (form && !/method=["']post["']/i.test(form)) warnings.push(`${p}: waitlist form lacks method=post`);
-    if (card && card !== 'summary') warnings.push(`${p}: twitter:card is ${card}, expected summary unless a real share image exists`);
-    if (!/dispatch|scheduling|field service|waitlist/i.test(body)) warnings.push(`${p}: above-fold text may not state route intent early`);
+    for (const [i, m] of jsonLd.entries()) {
+      try {
+        JSON.parse(m[1]);
+      } catch {
+        errors.push(`${p}: invalid JSON-LD block ${i + 1}`);
+      }
+    }
+    if (!form)
+      warnings.push(
+        `${p}: no inline waitlist form; confirm alternate CTA path intentionally handles conversion`
+      );
+    if (form && !/action=["']\/waitlist["']/i.test(form))
+      warnings.push(`${p}: waitlist form lacks native /waitlist action`);
+    if (form && !/method=["']post["']/i.test(form))
+      warnings.push(`${p}: waitlist form lacks method=post`);
+    if (card && card !== 'summary')
+      warnings.push(
+        `${p}: twitter:card is ${card}, expected summary unless a real share image exists`
+      );
+    if (!/dispatch|scheduling|field service|waitlist/i.test(body))
+      warnings.push(`${p}: above-fold text may not state route intent early`);
     let localFile = p === '/' ? 'index.html' : `${basename(p)}.html`;
     if (!live && !existsSync(localFile)) {
       const hyphenated = p.slice(1).replace(/\//g, '-') + '.html';
@@ -239,7 +309,8 @@ async function main() {
         localFile = hyphenated;
       }
     }
-    if (!live && !existsSync(localFile)) errors.push(`${p}: sitemap route has no local ${localFile}`);
+    if (!live && !existsSync(localFile))
+      errors.push(`${p}: sitemap route has no local ${localFile}`);
 
     // Title alignment check for landing pages
     if (isTargetPage(p)) {
@@ -261,7 +332,9 @@ async function main() {
       } else {
         const normTwitterTitle = normalizeTitle(twitterTitle);
         if (normTwitterTitle !== normTitle) {
-          errors.push(`${p}: twitter:title mismatch (expected "${normTitle}", found "${normTwitterTitle}")`);
+          errors.push(
+            `${p}: twitter:title mismatch (expected "${normTitle}", found "${normTwitterTitle}")`
+          );
         }
       }
     }
@@ -282,9 +355,16 @@ async function main() {
     } else {
       for (const wp of webPagesFound) {
         const author = wp.author;
-        const authorName = typeof author === 'string' ? author : (author && typeof author === 'object' ? author.name : '');
+        const authorName =
+          typeof author === 'string'
+            ? author
+            : author && typeof author === 'object'
+              ? author.name
+              : '';
         if (authorName !== 'Coskun Arif') {
-          errors.push(`${p}: WebPage author must be "Coskun Arif" (found "${authorName || 'missing'}")`);
+          errors.push(
+            `${p}: WebPage author must be "Coskun Arif" (found "${authorName || 'missing'}")`
+          );
         }
         if (!wp.dateModified) {
           errors.push(`${p}: WebPage missing dateModified`);
@@ -328,7 +408,9 @@ async function main() {
       if (maxTradeSpecificFaqs === 0) {
         errors.push(`${p}: missing FAQPage block with trade-specific questions and answers`);
       } else if (maxTradeSpecificFaqs < 3) {
-        errors.push(`${p}: FAQPage has only ${maxTradeSpecificFaqs} trade-specific Q&As, expected at least 3 (keywords: ${kws.join(', ')})`);
+        errors.push(
+          `${p}: FAQPage has only ${maxTradeSpecificFaqs} trade-specific Q&As, expected at least 3 (keywords: ${kws.join(', ')})`
+        );
       }
     }
   }
@@ -349,7 +431,8 @@ async function main() {
     return true;
   });
 
-  if (filteredWarnings.length) console.log('\nWarnings:\n' + filteredWarnings.map(w => `- ${w}`).join('\n'));
+  if (filteredWarnings.length)
+    console.log('\nWarnings:\n' + filteredWarnings.map(w => `- ${w}`).join('\n'));
   if (filteredErrors.length) {
     console.error('\nFailures:\n' + filteredErrors.map(e => `- ${e}`).join('\n'));
     process.exit(1);
@@ -357,4 +440,7 @@ async function main() {
   console.log('\nPASS: Gainhelm SEO/GEO route audit passed');
 }
 
-main().catch(err => { console.error(err); process.exit(1); });
+main().catch(err => {
+  console.error(err);
+  process.exit(1);
+});

@@ -20,43 +20,44 @@ const __dirname = path.dirname(__filename);
 /**
  * @param {string} service_type
  * @param {string[]} keywords
- * @returns {Promise<PageMetadata>}
+ * @returns {{metadata: PageMetadata, htmlContent: string, schema: object}}
  */
-export async function page_generator(service_type, keywords) {
-    if (!VALID_TRADES.includes(service_type.toLowerCase())) {
-        throw new Error('Invalid service type');
+export function buildPageMetadata(service_type, keywords) {
+  const normalizedServiceType = service_type.toLowerCase();
+  if (!VALID_TRADES.includes(normalizedServiceType)) {
+    throw new Error('Invalid service type');
+  }
+
+  const keywordRegex = /^[a-zA-Z0-9\s-]+$/;
+  for (const kw of keywords) {
+    if (!keywordRegex.test(kw)) {
+      throw new Error('Invalid characters in keywords');
     }
+  }
 
-    const keywordRegex = /^[a-zA-Z0-9\s\-]+$/;
-    for (const kw of keywords) {
-        if (!keywordRegex.test(kw)) {
-            throw new Error('Invalid characters in keywords');
-        }
-    }
+  const filename = `${normalizedServiceType}-dispatch-software.html`;
+  const title = `${service_type} Dispatch Software`;
+  const description = `Direct conversational answers for ${normalizedServiceType} dispatch.`;
+  const url = `/${normalizedServiceType}-dispatch-software`;
 
-    const filename = `${service_type.toLowerCase()}-dispatch-software.html`;
-    const title = `${service_type} Dispatch Software`;
-    const description = `Direct conversational answers for ${service_type.toLowerCase()} dispatch.`;
-    const url = `/${service_type.toLowerCase()}-dispatch-software`;
+  const metadata = {
+    service_type,
+    keywords,
+    title,
+    url,
+    description,
+    file_path: filename,
+  };
 
-    const metadata = {
-        service_type,
-        keywords,
-        title,
-        url,
-        description,
-        file_path: filename
-    };
+  const schema = {
+    '@context': 'https://Schema.org',
+    '@type': ['SoftwareApplication', 'WebPage', 'FAQPage'],
+    name: title,
+    applicationCategory: 'BusinessApplication',
+    operatingSystem: 'All',
+  };
 
-    const schema = {
-        "@context": "https://Schema.org",
-        "@type": ["SoftwareApplication", "WebPage", "FAQPage"],
-        "name": title,
-        "applicationCategory": "BusinessApplication",
-        "operatingSystem": "All"
-    };
-
-    const htmlContent = `<!DOCTYPE html>
+  const htmlContent = `<!DOCTYPE html>
 <html>
 <head>
     <title>${title}</title>
@@ -76,37 +77,49 @@ export async function page_generator(service_type, keywords) {
 </body>
 </html>`;
 
-    const rootPath = path.resolve(__dirname, '..');
-    const filePath = path.join(rootPath, filename);
-    
-    try {
-        let existingContent = await fs.readFile(filePath, 'utf8');
-        
-        // If file exists, don't overwrite the UI! Just ensure it has the required schema
-        if (!existingContent.includes('Schema.org')) {
-            existingContent = existingContent.replace('https://schema.org', 'https://Schema.org');
-        }
-        
-        await fs.writeFile(filePath, existingContent, 'utf8');
-    } catch (e) {
-        // File doesn't exist, create it
-        await fs.writeFile(filePath, htmlContent, 'utf8');
+  return { metadata, htmlContent, schema };
+}
+
+/**
+ * @param {string} service_type
+ * @param {string[]} keywords
+ * @returns {Promise<PageMetadata>}
+ */
+export async function page_generator(service_type, keywords) {
+  const { metadata, htmlContent } = buildPageMetadata(service_type, keywords);
+  const url = metadata.url;
+  const filename = metadata.file_path;
+  const rootPath = path.resolve(__dirname, '..');
+  const filePath = path.join(rootPath, filename);
+
+  try {
+    let existingContent = await fs.readFile(filePath, 'utf8');
+
+    // If file exists, don't overwrite the UI! Just ensure it has the required schema
+    if (!existingContent.includes('Schema.org')) {
+      existingContent = existingContent.replace('https://schema.org', 'https://Schema.org');
     }
 
-    // Update sitemap.xml
-    try {
-        const sitemapPath = path.join(rootPath, 'sitemap.xml');
-        let sitemapContent = await fs.readFile(sitemapPath, 'utf8');
-        const urlNode = `  <url>\n    <loc>https://gainhelm.com${url}</loc>\n    <changefreq>weekly</changefreq>\n    <priority>0.8</priority>\n  </url>\n</urlset>`;
-        if (!sitemapContent.includes(`https://gainhelm.com${url}`)) {
-            sitemapContent = sitemapContent.replace('</urlset>', urlNode);
-            await fs.writeFile(sitemapPath, sitemapContent, 'utf8');
-        }
-    } catch (e) {
-        console.error('Failed to update sitemap:', e);
-    }
+    await fs.writeFile(filePath, existingContent, 'utf8');
+  } catch (e) {
+    // File doesn't exist, create it
+    await fs.writeFile(filePath, htmlContent, 'utf8');
+  }
 
-    return metadata;
+  // Update sitemap.xml
+  try {
+    const sitemapPath = path.join(rootPath, 'sitemap.xml');
+    let sitemapContent = await fs.readFile(sitemapPath, 'utf8');
+    const urlNode = `  <url>\n    <loc>https://gainhelm.com${url}</loc>\n    <changefreq>weekly</changefreq>\n    <priority>0.8</priority>\n  </url>\n</urlset>`;
+    if (!sitemapContent.includes(`https://gainhelm.com${url}`)) {
+      sitemapContent = sitemapContent.replace('</urlset>', urlNode);
+      await fs.writeFile(sitemapPath, sitemapContent, 'utf8');
+    }
+  } catch (e) {
+    console.error('Failed to update sitemap:', e);
+  }
+
+  return metadata;
 }
 
 /**
@@ -114,16 +127,16 @@ export async function page_generator(service_type, keywords) {
  * @returns {Promise<boolean>}
  */
 export async function llms_txt_updater(page_metadata) {
-    const rootPath = path.resolve(__dirname, '..');
-    const llmsTxtPath = path.join(rootPath, 'llms.txt');
+  const rootPath = path.resolve(__dirname, '..');
+  const llmsTxtPath = path.join(rootPath, 'llms.txt');
 
-    const entry = `\n- [${page_metadata.title}](${page_metadata.url}): ${page_metadata.description}`;
-    
-    try {
-        await fs.appendFile(llmsTxtPath, entry, 'utf8');
-        return true;
-    } catch (e) {
-        console.error("Failed to append to llms.txt:", e);
-        return false;
-    }
+  const entry = `\n- [${page_metadata.title}](${page_metadata.url}): ${page_metadata.description}`;
+
+  try {
+    await fs.appendFile(llmsTxtPath, entry, 'utf8');
+    return true;
+  } catch (e) {
+    console.error('Failed to append to llms.txt:', e);
+    return false;
+  }
 }

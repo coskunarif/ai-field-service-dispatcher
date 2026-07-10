@@ -1,0 +1,10 @@
+{
+  "extends": "./api/tsconfig.json",
+  "include": ["tests/**/*.ts", "vitest.config.ts"],
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": false,
+    "types": ["node"],
+    "noEmit": true
+  }
+}

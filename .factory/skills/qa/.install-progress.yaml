@@ -1,0 +1,61 @@
+category_1:
+  default_target: local_dev
+  restrictions: ['No restrictions; QA can create data anywhere']
+category_2:
+  personas:
+    - name: new_user
+      description: 'Fresh visitor, not on the waitlist'
+      test_focus: ['waitlist_signup', 'landing_page', 'setup_access_denied']
+    - name: owner
+      description: 'Waitlist user with setup context and technicians configured'
+      email_pattern: 'qa+owner_{RUN_ID}@gainhelm.com'
+      test_focus: ['setup_wizard', 'supervision_board', 'dispatch_simulator', 'live_tracking']
+    - name: restricted_user
+      description: 'On waitlist but has not completed setup yet'
+      email_pattern: 'qa+restricted_{RUN_ID}@gainhelm.com'
+      test_focus: ['waitlist_signup', 'setup_empty_context', 'first_run_experience']
+  credentials_source: github_secrets_and_local_env
+category_3:
+  critical_flows:
+    - Waitlist signup + onboarding
+    - Setup wizard (technicians, business rules, calendar validation)
+    - Supervision board (logs, technician toggle)
+    - Sandbox dispatch simulator
+    - Customer live tracking share portal
+    - Lead queue / contractor leads tools
+    - SEO/GEO landing page + audit compliance
+  multi_persona_flows:
+    - Setup wizard (new_user vs owner vs restricted_user)
+    - Supervision board (owner only)
+  cleanup_required: user_unsure
+category_4:
+  external_integrations:
+    - provider: PostgreSQL
+      test_mode: dedicated_test_database
+      credentials: QA creates a dedicated test DATABASE_URL during setup
+    - provider: Zoho ZeptoMail
+      test_mode: existing_credentials
+      credentials: From .env / GitHub secrets
+    - provider: Google Cloud Firestore
+      test_mode: existing_credentials
+      credentials: From .env / GitHub secrets
+    - provider: Google Calendar
+      test_mode: existing_credentials
+      credentials: From .env / GitHub secrets (used only for URL validation)
+category_5:
+  cleanup:
+    strategy: delete_test_rows_by_email_pattern
+    instructions: >
+      After each QA run, delete rows from PostgreSQL where email matches the
+      QA-created patterns (qa+owner_*@gainhelm.com, qa+restricted_*@gainhelm.com).
+      Target tables: waitlist_leads, gainhelm_contexts, gainhelm_dispatch_logs.
+    auto_cleanup: true
+category_6:
+  imagemagick: true
+category_7:
+  generate_github_action: true
+  required: true
+  preview_deployments: false
+  local_dev_server: true
+category_8:
+  failure_learning: suggest_in_report

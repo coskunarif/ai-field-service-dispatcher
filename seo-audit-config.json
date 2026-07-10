@@ -1,27 +1,17 @@
 {
   "overrides": {
     "/": {
-      "ignoreWarnings": [
-        "no-inline-waitlist-form"
-      ]
+      "ignoreWarnings": ["no-inline-waitlist-form"]
     },
     "/tools/lead-queue": {
-      "ignoreWarnings": [
-        "no-inline-waitlist-form"
-      ]
+      "ignoreWarnings": ["no-inline-waitlist-form"]
     },
     "/tools/contractor-leads": {
-      "ignoreWarnings": [
-        "no-inline-waitlist-form"
-      ]
+      "ignoreWarnings": ["no-inline-waitlist-form"]
     },
     "/test-route": {
-      "ignoreWarnings": [
-        "test-warning"
-      ],
-      "ignoreErrors": [
-        "test-error"
-      ]
+      "ignoreWarnings": ["test-warning"],
+      "ignoreErrors": ["test-error"]
     }
   }
 }

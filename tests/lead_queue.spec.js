@@ -65,32 +65,32 @@ test.describe('REST API Endpoints', () => {
         data: {
           source_url: 'https://reddit.com/r/hvac/comments/1',
           title: 'Need HVAC dispatcher app',
-          snippet: 'Our scheduling is a mess.'
-        }
+          snippet: 'Our scheduling is a mess.',
+        },
       },
       {
         desc: 'Missing source_url',
         data: {
           platform: 'reddit',
           title: 'Need HVAC dispatcher app',
-          snippet: 'Our scheduling is a mess.'
-        }
+          snippet: 'Our scheduling is a mess.',
+        },
       },
       {
         desc: 'Missing title',
         data: {
           platform: 'reddit',
           source_url: 'https://reddit.com/r/hvac/comments/2',
-          snippet: 'Our scheduling is a mess.'
-        }
+          snippet: 'Our scheduling is a mess.',
+        },
       },
       {
         desc: 'Missing snippet',
         data: {
           platform: 'reddit',
           source_url: 'https://reddit.com/r/hvac/comments/3',
-          title: 'Need HVAC dispatcher app'
-        }
+          title: 'Need HVAC dispatcher app',
+        },
       },
       {
         desc: 'Empty platform',
@@ -98,9 +98,9 @@ test.describe('REST API Endpoints', () => {
           platform: '',
           source_url: 'https://reddit.com/r/hvac/comments/4',
           title: 'Need HVAC dispatcher app',
-          snippet: 'Our scheduling is a mess.'
-        }
-      }
+          snippet: 'Our scheduling is a mess.',
+        },
+      },
     ];
 
     for (const p of payloads) {
@@ -113,58 +113,67 @@ test.describe('REST API Endpoints', () => {
     {
       desc: 'HVAC trade keywords matching and multiple intent score boosts',
       title: 'Help with HVAC scheduling',
-      snippet: 'We currently use Jobber and a spreadsheet but the dispatcher is overwhelmed and there is a lot of phone tag.',
+      snippet:
+        'We currently use Jobber and a spreadsheet but the dispatcher is overwhelmed and there is a lot of phone tag.',
       expectedScore: 100,
-      expectedReplyContains: 'Hey! If you are dealing with dispatch chaos or trying to get away from spreadsheets, check out Gainhelm'
+      expectedReplyContains:
+        'Hey! If you are dealing with dispatch chaos or trying to get away from spreadsheets, check out Gainhelm',
     },
     {
       desc: 'General trade template and baseline score',
       title: 'Looking for recommendations',
       snippet: 'Any advice for starting a general handyman business?',
       expectedScore: 50,
-      expectedReplyContains: 'We had similar scheduling headaches before trying Gainhelm'
+      expectedReplyContains: 'We had similar scheduling headaches before trying Gainhelm',
     },
     {
       desc: 'Competitor Match only (ServiceTitan alternative, general trade)',
       title: 'ServiceTitan is too expensive',
       snippet: 'We are looking for alternatives.',
       expectedScore: 70,
-      expectedReplyContains: 'We had similar scheduling headaches before trying Gainhelm'
+      expectedReplyContains: 'We had similar scheduling headaches before trying Gainhelm',
     },
     {
       desc: 'Trade Match Only (Plumbing, no score-boosting keywords)',
       title: 'plumbing advice',
       snippet: 'how to fix a faucet',
       expectedScore: 50,
-      expectedReplyContains: 'Hey! If you are dealing with dispatch chaos or trying to get away from spreadsheets'
+      expectedReplyContains:
+        'Hey! If you are dealing with dispatch chaos or trying to get away from spreadsheets',
     },
     {
       desc: 'Pain + Dispatch match (Electrical, phone tag/dispatch)',
       title: 'electrician dispatching',
       snippet: 'dealing with phone tag is annoying',
       expectedScore: 75,
-      expectedReplyContains: 'Hey! If you are dealing with dispatch chaos or trying to get away from spreadsheets'
+      expectedReplyContains:
+        'Hey! If you are dealing with dispatch chaos or trying to get away from spreadsheets',
     },
     {
       desc: 'Explicit overrides for intent score and suggested reply',
       title: 'Help with HVAC scheduling',
-      snippet: 'We currently use Jobber and a spreadsheet but the dispatcher is overwhelmed and there is a lot of phone tag.',
+      snippet:
+        'We currently use Jobber and a spreadsheet but the dispatcher is overwhelmed and there is a lot of phone tag.',
       intent_score: 42,
       suggested_reply: 'Custom overridden reply text.',
       expectedScore: 42,
-      expectedReplyContains: 'Custom overridden reply text.'
-    }
+      expectedReplyContains: 'Custom overridden reply text.',
+    },
   ];
 
   for (const scenario of scoringScenarios) {
-    test(`POST /api/leads - automatically computes intent score and suggested reply templates (${scenario.desc})`, async ({ request }) => {
+    test(`POST /api/leads - automatically computes intent score and suggested reply templates (${scenario.desc})`, async ({
+      request,
+    }) => {
       const payload = {
         platform: 'reddit',
         source_url: `https://reddit.com/r/hvac/comments/test-${Math.random()}`,
         title: scenario.title,
         snippet: scenario.snippet,
         ...(scenario.intent_score !== undefined && { intent_score: scenario.intent_score }),
-        ...(scenario.suggested_reply !== undefined && { suggested_reply: scenario.suggested_reply })
+        ...(scenario.suggested_reply !== undefined && {
+          suggested_reply: scenario.suggested_reply,
+        }),
       };
       const response = await request.post('/api/leads', { data: payload });
       expect(response.status()).toBe(200);
@@ -174,15 +183,17 @@ test.describe('REST API Endpoints', () => {
     });
   }
 
-  test('POST /api/leads - supports upsert behavior on duplicate source_url', async ({ request }) => {
+  test('POST /api/leads - supports upsert behavior on duplicate source_url', async ({
+    request,
+  }) => {
     const uniqueUrl = `https://reddit.com/r/plumbing/comments/upsert-${Math.random()}`;
     const initialPayload = {
       platform: 'reddit',
       source_url: uniqueUrl,
       title: 'Plumbing dispatcher help',
-      snippet: 'We need to dispatch plumber techs.'
+      snippet: 'We need to dispatch plumber techs.',
     };
-    
+
     // First post
     let response = await request.post('/api/leads', { data: initialPayload });
     expect(response.status()).toBe(200);
@@ -195,12 +206,12 @@ test.describe('REST API Endpoints', () => {
       source_url: uniqueUrl,
       title: 'Plumbing dispatcher help',
       snippet: 'We need to dispatch plumber techs. Jobber is too expensive.',
-      status: 'queued'
+      status: 'queued',
     };
     response = await request.post('/api/leads', { data: updatedPayload });
     expect(response.status()).toBe(200);
     const secondJson = await response.json();
-    
+
     expect(secondJson.id).toBe(firstJson.id); // Same lead ID
     expect(secondJson.snippet).toBe(updatedPayload.snippet);
     expect(secondJson.status).toBe('queued');
@@ -213,7 +224,7 @@ test.describe('REST API Endpoints', () => {
       platform: 'reddit',
       source_url: `https://reddit.com/r/elect/test-get-1-${rand}`,
       title: 'Electrician dispatcher chaos',
-      snippet: 'scheduling and dispatching electricians is a mess.', 
+      snippet: 'scheduling and dispatching electricians is a mess.',
     };
     const lead2 = {
       platform: 'facebook',
@@ -242,16 +253,18 @@ test.describe('REST API Endpoints', () => {
     expect(response.status()).toBe(200);
     data = await response.json();
     for (let i = 0; i < data.length - 1; i++) {
-      expect(data[i].intent_score).toBeGreaterThanOrEqual(data[i+1].intent_score);
+      expect(data[i].intent_score).toBeGreaterThanOrEqual(data[i + 1].intent_score);
     }
   });
 
-  test('PATCH /api/leads/:id - status update validation and custom reply updates', async ({ request }) => {
+  test('PATCH /api/leads/:id - status update validation and custom reply updates', async ({
+    request,
+  }) => {
     const leadPayload = {
       platform: 'reddit',
       source_url: `https://reddit.com/r/hvac/test-patch-${Math.random()}`,
       title: 'Plumber dispatch scheduling',
-      snippet: 'Need a calendar that works with dispatch.'
+      snippet: 'Need a calendar that works with dispatch.',
     };
     const createRes = await request.post('/api/leads', { data: leadPayload });
     const lead = await createRes.json();
@@ -259,7 +272,7 @@ test.describe('REST API Endpoints', () => {
 
     // Invalid status (should return 400)
     let patchRes = await request.patch(`/api/leads/${id}`, {
-      data: { status: 'invalid-status' }
+      data: { status: 'invalid-status' },
     });
     expect(patchRes.status()).toBe(400);
 
@@ -267,8 +280,8 @@ test.describe('REST API Endpoints', () => {
     patchRes = await request.patch(`/api/leads/${id}`, {
       data: {
         status: 'replied',
-        suggested_reply: 'Updated custom draft pitch response.'
-      }
+        suggested_reply: 'Updated custom draft pitch response.',
+      },
     });
     expect(patchRes.status()).toBe(200);
     const updatedLead = await patchRes.json();
@@ -276,7 +289,9 @@ test.describe('REST API Endpoints', () => {
     expect(updatedLead.suggested_reply).toBe('Updated custom draft pitch response.');
   });
 
-  test('POST /api/leads/discover - returns count of newly discovered leads', async ({ request }) => {
+  test('POST /api/leads/discover - returns count of newly discovered leads', async ({
+    request,
+  }) => {
     const response = await request.post('/api/leads/discover');
     expect(response.status()).toBe(200);
     const json = await response.json();
@@ -306,7 +321,7 @@ test.describe('Web UI Dashboard Page', () => {
 test.describe('Dashboard Functionality', () => {
   test.beforeEach(async ({ page }) => {
     // Mock API requests for UI tests to run fast and reliably
-    await page.route('**/api/leads', async (route) => {
+    await page.route('**/api/leads', async route => {
       if (route.request().method() === 'GET') {
         const url = new URL(route.request().url());
         const platform = url.searchParams.get('platform');
@@ -322,9 +337,10 @@ test.describe('Dashboard Functionality', () => {
             snippet: 'Looking for scheduling help. HVAC technician dispatch is a mess.',
             intent_score: 90,
             status: 'discovered',
-            suggested_reply: 'Hey! If you are dealing with dispatch chaos or trying to get away from spreadsheets...',
+            suggested_reply:
+              'Hey! If you are dealing with dispatch chaos or trying to get away from spreadsheets...',
             created_at: new Date(Date.now() - 3600000).toISOString(),
-            updated_at: new Date(Date.now() - 3600000).toISOString()
+            updated_at: new Date(Date.now() - 3600000).toISOString(),
           },
           {
             id: 'e2b9c3f5-7b8f-4c28-9f96-c350bb0c59d1',
@@ -336,8 +352,8 @@ test.describe('Dashboard Functionality', () => {
             status: 'queued',
             suggested_reply: 'We had similar scheduling headaches before trying Gainhelm...',
             created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
-          }
+            updated_at: new Date().toISOString(),
+          },
         ];
 
         if (platform && platform !== 'all') {
@@ -346,7 +362,7 @@ test.describe('Dashboard Functionality', () => {
         if (status && status !== 'all') {
           leads = leads.filter(l => l.status === status);
         }
-        
+
         if (sort === 'intent_desc') {
           leads.sort((a, b) => b.intent_score - a.intent_score);
         } else if (sort === 'date_asc') {
@@ -375,13 +391,13 @@ test.describe('Dashboard Functionality', () => {
             status: payload.status || 'discovered',
             suggested_reply: 'Suggested reply text draft...',
             created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
-          })
+            updated_at: new Date().toISOString(),
+          }),
         });
       }
     });
 
-    await page.route('**/api/leads/*', async (route) => {
+    await page.route('**/api/leads/*', async route => {
       if (route.request().method() === 'PATCH') {
         const payload = route.request().postDataJSON();
         await route.fulfill({
@@ -397,17 +413,17 @@ test.describe('Dashboard Functionality', () => {
             status: payload.status || 'discovered',
             suggested_reply: payload.suggested_reply || 'Original reply draft...',
             created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
-          })
+            updated_at: new Date().toISOString(),
+          }),
         });
       }
     });
 
-    await page.route('**/api/leads/discover', async (route) => {
+    await page.route('**/api/leads/discover', async route => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
-        body: JSON.stringify({ count: 5 })
+        body: JSON.stringify({ count: 5 }),
       });
     });
   });
@@ -468,7 +484,9 @@ test.describe('Dashboard Functionality', () => {
     await expect(urlInput).toHaveValue('');
   });
 
-  test('Lead list cards show details, allow editing/copying pitch, and updating status', async ({ page }) => {
+  test('Lead list cards show details, allow editing/copying pitch, and updating status', async ({
+    page,
+  }) => {
     await page.goto('/tools/lead-queue');
 
     const firstCard = page.locator('.lead-card').first();
@@ -485,7 +503,7 @@ test.describe('Dashboard Functionality', () => {
     // Copy Pitch button copies message and shows toast
     await page.evaluate(() => {
       window.copiedText = null;
-      navigator.clipboard.writeText = async (text) => {
+      navigator.clipboard.writeText = async text => {
         window.copiedText = text;
       };
     });

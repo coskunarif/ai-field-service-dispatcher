@@ -2,7 +2,6 @@ import { test, expect } from '@playwright/test';
 import postgres from 'postgres';
 
 test.describe('Supervision Map Routing - Technician Setup Wizard', () => {
-
   test('Latitude and Longitude input fields exist for each technician card', async ({ page }) => {
     const email = 'map-test@example.com';
     await page.goto(`/setup?email=${encodeURIComponent(email)}`);
@@ -31,14 +30,19 @@ test.describe('Supervision Map Routing - Technician Setup Wizard', () => {
     await page.fill('input[name="tech_lng_0"]', '-87.6298');
 
     // Trigger auto-save draft by changing a value or navigating
-    const draft = await page.evaluate((key) => localStorage.getItem(key), `gainhelm_wizard_draft_${email}`);
+    const draft = await page.evaluate(
+      key => localStorage.getItem(key),
+      `gainhelm_wizard_draft_${email}`
+    );
     expect(draft).not.toBeNull();
     const draftData = JSON.parse(draft);
-    expect(draftData.technicians[0]).toEqual(expect.objectContaining({
-      name: 'Sarah Connor',
-      lat: 41.8781,
-      lng: -87.6298
-    }));
+    expect(draftData.technicians[0]).toEqual(
+      expect.objectContaining({
+        name: 'Sarah Connor',
+        lat: 41.8781,
+        lng: -87.6298,
+      })
+    );
   });
 
   test('Coordinates are restored from LocalStorage draft on page load', async ({ page }) => {
@@ -46,17 +50,28 @@ test.describe('Supervision Map Routing - Technician Setup Wizard', () => {
     const draftState = {
       currentStep: 1,
       technicians: [
-        { name: 'Sarah Connor', phone: '+15550288', trade: 'HVAC', shift: 'Standard', status: 'active', lat: 41.8781, lng: -87.6298 }
+        {
+          name: 'Sarah Connor',
+          phone: '+15550288',
+          trade: 'HVAC',
+          shift: 'Standard',
+          status: 'active',
+          lat: 41.8781,
+          lng: -87.6298,
+        },
       ],
       businessRules: { timeout: '3', pricing: '120', rules: '' },
-      calendarConfig: { calendar_url: '', sandbox_mode: 'true' }
+      calendarConfig: { calendar_url: '', sandbox_mode: 'true' },
     };
 
     // Load setup first to set context
     await page.goto('/setup');
-    await page.evaluate(({ key, val }) => {
-      localStorage.setItem(key, JSON.stringify(val));
-    }, { key: `gainhelm_wizard_draft_${email}`, val: draftState });
+    await page.evaluate(
+      ({ key, val }) => {
+        localStorage.setItem(key, JSON.stringify(val));
+      },
+      { key: `gainhelm_wizard_draft_${email}`, val: draftState }
+    );
 
     // Navigate to setup with query param to restore
     await page.goto(`/setup?email=${encodeURIComponent(email)}`);
@@ -66,7 +81,9 @@ test.describe('Supervision Map Routing - Technician Setup Wizard', () => {
     await expect(page.locator('input[name="tech_lng_0"]')).toHaveValue('-87.6298');
   });
 
-  test('Coordinates inputted are persisted in Database Context on form submission', async ({ page }) => {
+  test('Coordinates inputted are persisted in Database Context on form submission', async ({
+    page,
+  }) => {
     const email = `map-db-test-${Math.random().toString(36).substring(7)}@example.com`;
     await page.goto(`/setup?email=${encodeURIComponent(email)}`);
 
@@ -99,11 +116,9 @@ test.describe('Supervision Map Routing - Technician Setup Wizard', () => {
       await expect(page.locator(`strong:has-text("${email}")`).first()).toBeVisible();
     }
   });
-
 });
 
 test.describe('Supervision Map Routing - Supervision Board Map rendering', () => {
-
   test('Map panel and container are rendered on Supervision Board', async ({ page }) => {
     const email = `map-board-test-${Math.random().toString(36).substring(7)}@example.com`;
     // Create a setup first
@@ -129,7 +144,7 @@ test.describe('Supervision Map Routing - Supervision Board Map rendering', () =>
 
   test('Renders fallback warning message when Leaflet JS fails to load', async ({ page }) => {
     // Intercept/block Leaflet JS CDN request
-    await page.route('**/unpkg.com/leaflet@1.9.4/dist/leaflet.js', async (route) => {
+    await page.route('**/unpkg.com/leaflet@1.9.4/dist/leaflet.js', async route => {
       await route.abort();
     });
 
@@ -150,7 +165,9 @@ test.describe('Supervision Map Routing - Supervision Board Map rendering', () =>
     await expect(fallbackText).toBeVisible();
   });
 
-  test('Dispatch simulation plots Job pin and draws polylines representing dispatch flow', async ({ page }) => {
+  test('Dispatch simulation plots Job pin and draws polylines representing dispatch flow', async ({
+    page,
+  }) => {
     const email = `map-dispatch-test-${Math.random().toString(36).substring(7)}@example.com`;
     await page.goto(`/setup?email=${encodeURIComponent(email)}`);
     await page.fill('input[name="tech_name_0"]', 'Sarah Connor');
@@ -191,7 +208,7 @@ test.describe('Supervision Map Routing - Supervision Board Map rendering', () =>
 
     // 3. Confirm dispatch (YES reply) -> routing polyline turns solid green
     await page.click('.quick-reply-btn:has-text("Accept Job (YES)")');
-    
+
     // Polyline should now be solid green (no dasharray and solid color)
     await expect(polyline).not.toHaveAttribute('stroke-dasharray');
     await expect(polyline).toHaveAttribute('stroke', /#10b981|green|#00ff00/i);
@@ -213,5 +230,4 @@ test.describe('Supervision Map Routing - Supervision Board Map rendering', () =>
     await expect(updatedPolyline).toBeVisible();
     await expect(updatedPolyline).toHaveAttribute('stroke-dasharray', /.+/);
   });
-
 });

@@ -42,20 +42,22 @@ const results = [];
 
 try {
   const browser = await chromium.launch();
-  
+
   const viewports = [
     { name: 'Mobile (320px)', width: 320, height: 568, isMobile: true },
     { name: 'Tablet (768px)', width: 768, height: 1024, isMobile: false },
-    { name: 'Desktop (1440px)', width: 1440, height: 900, isMobile: false }
+    { name: 'Desktop (1440px)', width: 1440, height: 900, isMobile: false },
   ];
 
   for (const vp of viewports) {
     console.log(`\n=================== TESTING VIEWPORT: ${vp.name} ===================`);
     const context = await browser.newContext({
       viewport: { width: vp.width, height: vp.height },
-      userAgent: vp.isMobile ? 'Mozilla/5.0 (iPhone; CPU iPhone OS 14_7_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Mobile/15E148 Safari/604.1' : undefined
+      userAgent: vp.isMobile
+        ? 'Mozilla/5.0 (iPhone; CPU iPhone OS 14_7_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Mobile/15E148 Safari/604.1'
+        : undefined,
     });
-    
+
     const page = await context.newPage();
 
     for (const path of pages) {
@@ -68,7 +70,7 @@ try {
           path,
           status: response?.status(),
           overflow: false,
-          error: 'Failed to load page'
+          error: 'Failed to load page',
         });
         continue;
       }
@@ -78,9 +80,9 @@ try {
         const scrollWidth = document.documentElement.scrollWidth;
         const innerWidth = window.innerWidth;
         const bodyScrollWidth = document.body.scrollWidth;
-        
+
         const overflow = scrollWidth > innerWidth || bodyScrollWidth > innerWidth;
-        
+
         let badElements = [];
         if (overflow) {
           const all = document.querySelectorAll('*');
@@ -89,7 +91,7 @@ try {
             if (style.display === 'none' || style.visibility === 'hidden') {
               continue;
             }
-            
+
             const rect = el.getBoundingClientRect();
             if (rect.right > innerWidth + 0.5 || rect.left < -0.5) {
               badElements.push({
@@ -99,7 +101,7 @@ try {
                 right: rect.right,
                 left: rect.left,
                 width: rect.width,
-                outerHTML: el.outerHTML.substring(0, 200)
+                outerHTML: el.outerHTML.substring(0, 200),
               });
             }
           }
@@ -110,7 +112,7 @@ try {
           scrollWidth,
           bodyScrollWidth,
           innerWidth,
-          badElements
+          badElements,
         };
       });
 
@@ -119,15 +121,19 @@ try {
         width: vp.width,
         path,
         status: 200,
-        ...overflowInfo
+        ...overflowInfo,
       });
 
       if (overflowInfo.overflow) {
-        console.warn(`[${vp.name}] ⚠️ OVERFLOW on ${path}: scrollWidth=${overflowInfo.scrollWidth}, bodyScrollWidth=${overflowInfo.bodyScrollWidth}, innerWidth=${overflowInfo.innerWidth}`);
+        console.warn(
+          `[${vp.name}] ⚠️ OVERFLOW on ${path}: scrollWidth=${overflowInfo.scrollWidth}, bodyScrollWidth=${overflowInfo.bodyScrollWidth}, innerWidth=${overflowInfo.innerWidth}`
+        );
         if (overflowInfo.badElements.length > 0) {
           console.warn(`  Offending elements count: ${overflowInfo.badElements.length}`);
           overflowInfo.badElements.slice(0, 3).forEach(el => {
-            console.warn(`    <${el.tagName} class="${el.className}" id="${el.id}"> width=${el.width.toFixed(1)} left=${el.left.toFixed(1)} right=${el.right.toFixed(1)}`);
+            console.warn(
+              `    <${el.tagName} class="${el.className}" id="${el.id}"> width=${el.width.toFixed(1)} left=${el.left.toFixed(1)} right=${el.right.toFixed(1)}`
+            );
           });
         }
       } else {

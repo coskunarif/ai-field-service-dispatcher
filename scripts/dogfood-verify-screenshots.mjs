@@ -11,10 +11,10 @@ async function main() {
 
   console.log('Launching browser to capture Verifier dogfood screenshots...');
   const browser = await chromium.launch({ headless: true });
-  
+
   // 1. Desktop Context
   const desktopContext = await browser.newContext({
-    viewport: { width: 1280, height: 800 }
+    viewport: { width: 1280, height: 800 },
   });
   const page = await desktopContext.newPage();
 
@@ -37,7 +37,9 @@ async function main() {
   await page.screenshot({ path: join(outputDir, 'desktop-homepage-success.png') });
 
   // Check the link in success message
-  const setupLink = await page.locator('#waitlist-status a.waitlist-setup-link').getAttribute('href');
+  const setupLink = await page
+    .locator('#waitlist-status a.waitlist-setup-link')
+    .getAttribute('href');
   console.log(`Success link constructed: ${setupLink}`);
 
   // C. HVAC Software Page Hero Form
@@ -54,7 +56,7 @@ async function main() {
   // 2. Mobile Context
   const mobileContext = await browser.newContext({
     viewport: { width: 375, height: 667 },
-    isMobile: true
+    isMobile: true,
   });
   const mobilePage = await mobileContext.newPage();
 
@@ -65,7 +67,9 @@ async function main() {
 
   // B. HVAC Page Hero Form Mobile
   console.log('2B. Capturing mobile HVAC page hero form...');
-  await mobilePage.goto('http://localhost:3005/hvac-dispatch-software', { waitUntil: 'networkidle' });
+  await mobilePage.goto('http://localhost:3005/hvac-dispatch-software', {
+    waitUntil: 'networkidle',
+  });
   await mobilePage.screenshot({ path: join(outputDir, 'mobile-hvac-hero.png') });
 
   // 3. E2E Setup Wizard Flow from Success Link

@@ -105,6 +105,8 @@ for (const file of files) {
     fs.writeFileSync(filePath, content, 'utf8');
     console.log(`Successfully updated ${file}`);
   } else {
-    console.log(`No changes made to ${file} (might already be updated or using different formatting)`);
+    console.log(
+      `No changes made to ${file} (might already be updated or using different formatting)`
+    );
   }
 }

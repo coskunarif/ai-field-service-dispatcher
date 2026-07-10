@@ -11,7 +11,7 @@ async function main() {
   console.log('Launching browser to capture dogfood screenshots...');
   const browser = await chromium.launch({ headless: true });
   const context = await browser.newContext({
-    viewport: { width: 1280, height: 800 }
+    viewport: { width: 1280, height: 800 },
   });
   const page = await context.newPage();
 
@@ -28,7 +28,9 @@ async function main() {
   // 3. Capture Setup Wizard Step 1
   const testEmail = `scout-test-${Math.random().toString(36).substring(7)}@example.com`;
   console.log(`Navigating to setup wizard for email: ${testEmail}...`);
-  await page.goto(`http://localhost:3005/setup?email=${encodeURIComponent(testEmail)}`, { waitUntil: 'networkidle' });
+  await page.goto(`http://localhost:3005/setup?email=${encodeURIComponent(testEmail)}`, {
+    waitUntil: 'networkidle',
+  });
   await page.screenshot({ path: join(outputDir, 'setup-step1.png') });
 
   // Fill in Step 1 technician details
@@ -62,13 +64,15 @@ async function main() {
   await page.selectOption('select[id="job-trade"]', 'HVAC');
   await page.fill('input[id="job-desc"]', 'AC fan broken in office');
   await page.screenshot({ path: join(outputDir, 'simulation-before-dispatch.png') });
-  
+
   await page.click('button[type="submit"]:has-text("Dispatch Work Order")');
   await page.waitForTimeout(2000); // Wait for simulation log print
   await page.screenshot({ path: join(outputDir, 'simulation-dispatched.png') });
 
   await browser.close();
-  console.log('Screenshots captured successfully inside dogfood-output/scout-20260619/screenshots/');
+  console.log(
+    'Screenshots captured successfully inside dogfood-output/scout-20260619/screenshots/'
+  );
 }
 
 main().catch(err => {

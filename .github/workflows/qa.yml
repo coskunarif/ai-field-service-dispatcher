@@ -1,0 +1,143 @@
+name: QA
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: qa-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: qa
+          POSTGRES_PASSWORD: qa
+          POSTGRES_DB: gainhelm_qa
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      CI: true
+      DATABASE_URL: postgres://qa:qa@localhost:5432/gainhelm_qa
+      PORT: 3005
+      WAITLIST_API_URL: ${{ secrets.WAITLIST_API_URL }}
+      ZEPTOMAIL_TOKEN: ${{ secrets.ZEPTOMAIL_TOKEN }}
+      ZEPTOMAIL_FROM_EMAIL: ${{ secrets.ZEPTOMAIL_FROM_EMAIL }}
+      ZEPTOMAIL_FROM_NAME: ${{ secrets.ZEPTOMAIL_FROM_NAME }}
+
+    permissions:
+      contents: read
+      pull-requests: write
+      actions: read
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Install Backend Dependencies
+        run: cd api && npm ci
+
+      - name: Install ImageMagick
+        run: sudo apt-get install -y -qq imagemagick
+
+      - name: Install droid CLI
+        run: curl -fsSL https://app.factory.ai/cli | sh
+
+      - name: Determine affected apps
+        id: affected
+        run: |
+          CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
+          echo "$CHANGED_FILES"
+          if echo "$CHANGED_FILES" | grep -qE '^api/'; then
+            echo "BACKEND_AFFECTED=true" >> "$GITHUB_ENV"
+          fi
+          if echo "$CHANGED_FILES" | grep -qE '^(server\.js|.*\.html|styles\.css|route-optimizer\.js|live-tracking-service\.js|scripts/|seo/|tests/)'; then
+            echo "WEB_AFFECTED=true" >> "$GITHUB_ENV"
+          fi
+
+      - name: Authenticate to Google Cloud
+        if: env.BACKEND_AFFECTED == 'true'
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: 'projects/250134012801/locations/global/workloadIdentityPools/github-actions-pool/providers/github-actions-provider'
+          service_account: 'github-actions-deployer@profithelm-477200.iam.gserviceaccount.com'
+
+      - name: Set up Google Cloud SDK
+        if: env.BACKEND_AFFECTED == 'true'
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Run QA
+        id: qa
+        timeout-minutes: 20
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          droid exec --auto high <<'PROMPT'
+          You are running in a non-interactive CI environment. There is NO human available.
+          Do NOT use AskUser, do NOT wait for confirmations, do NOT pause for input.
+          Run the qa skill. Write the final report to qa-results/report.md.
+          Use the local dev server strategy. The web app should be started with PORT=3005 npm start.
+          The backend API should be started with cd api && npm start if the backend app is affected.
+          The PostgreSQL database is already running at DATABASE_URL=${{ env.DATABASE_URL }}.
+          PROMPT
+
+      - name: Upload QA artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: qa-results-${{ github.run_id }}
+          path: |
+            qa-results/
+          retention-days: 14
+
+      - name: Post QA report as PR comment
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          REPORT_FILE="qa-results/report.md"
+          if [ -f "$REPORT_FILE" ]; then
+            REPORT_BODY="$(cat "$REPORT_FILE")"
+          else
+            REPORT_BODY="## QA Report\n\nNo report generated. Check the workflow artifacts for logs."
+          fi
+
+          # Ensure the report starts with the QA heading
+          if ! echo "$REPORT_BODY" | head -n 1 | grep -q '## QA Report'; then
+            REPORT_BODY="## QA Report\n\n${REPORT_BODY}"
+          fi
+
+          COMMENT_BODY="<!-- qa-report -->\n${REPORT_BODY}\n\n---\n[View QA artifacts](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})"
+
+          # Find an existing QA comment to update
+          EXISTING_COMMENT=$(gh pr view ${{ github.event.pull_request.number }} --json comments --jq '.comments[] | select(.body | startswith("<!-- qa-report -->")) | .id' || true)
+
+          if [ -n "$EXISTING_COMMENT" ]; then
+            gh api "repos/${{ github.repository }}/issues/comments/${EXISTING_COMMENT}" --method PATCH --field body="$COMMENT_BODY"
+          else
+            gh pr comment ${{ github.event.pull_request.number }} --body "$COMMENT_BODY"
+          fi

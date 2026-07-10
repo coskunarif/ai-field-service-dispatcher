@@ -11,7 +11,10 @@ try {
       const idx = trimmed.indexOf('=');
       if (idx !== -1) {
         const k = trimmed.substring(0, idx).trim();
-        const v = trimmed.substring(idx + 1).trim().replace(/^['"]|['"]$/g, '');
+        const v = trimmed
+          .substring(idx + 1)
+          .trim()
+          .replace(/^['"]|['"]$/g, '');
         if (!process.env[k]) {
           process.env[k] = v;
         }
@@ -36,29 +39,29 @@ async function sendZeptoMail({ toEmail, toName, subject, body }) {
   const payload = {
     from: {
       address: fromEmail,
-      name: fromName
+      name: fromName,
     },
     to: [
       {
         email_address: {
           address: toEmail,
-          name: toName
-        }
-      }
+          name: toName,
+        },
+      },
     ],
     subject: subject,
     textbody: body,
-    htmlbody: `<div style="font-family: Arial, sans-serif; white-space: pre-wrap; line-height: 1.5;">${body}</div>`
+    htmlbody: `<div style="font-family: Arial, sans-serif; white-space: pre-wrap; line-height: 1.5;">${body}</div>`,
   };
 
   const response = await fetch(url, {
     method: 'POST',
     headers: {
-      'Accept': 'application/json',
+      Accept: 'application/json',
       'Content-Type': 'application/json',
-      'Authorization': token.startsWith('Zoho-enczapikey') ? token : `Zoho-enczapikey ${token}`
+      Authorization: token.startsWith('Zoho-enczapikey') ? token : `Zoho-enczapikey ${token}`,
     },
-    body: JSON.stringify(payload)
+    body: JSON.stringify(payload),
   });
 
   const data = await response.json();
@@ -92,7 +95,7 @@ async function run() {
 
   for (const lead of leads) {
     const targetEmail = lead.emails.length > 0 ? lead.emails[0] : null;
-    
+
     if (!targetEmail) {
       console.log(`[Skip] ${lead.domain} - No email found.`);
       continue;
@@ -104,7 +107,7 @@ async function run() {
     }
 
     console.log(`[Target] Sending pitch to ${targetEmail} (${lead.domain})...`);
-    
+
     // Parse pitch to separate subject and body
     const pitchLines = lead.pitch.split('\n');
     let subject = `Lightweight addition for your software list`;
@@ -129,7 +132,7 @@ async function run() {
           toEmail: targetEmail,
           toName: targetEmail.split('@')[0],
           subject,
-          body
+          body,
         });
         console.log(`SUCCESS: Sent to ${targetEmail}`);
         statusLog[targetEmail] = 'sent';

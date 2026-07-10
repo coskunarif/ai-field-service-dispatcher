@@ -73,44 +73,46 @@ test.describe('Database Schema & Table', () => {
 
 // [AC-2] REST API Endpoints
 test.describe('REST API Endpoints', () => {
-  test('POST /api/contractors - validation errors (400) for missing/invalid fields', async ({ request }) => {
+  test('POST /api/contractors - validation errors (400) for missing/invalid fields', async ({
+    request,
+  }) => {
     const payloads = [
       {
         desc: 'Missing company_name',
         data: {
           trade: 'hvac',
-          email: 'test@hvac.com'
-        }
+          email: 'test@hvac.com',
+        },
       },
       {
         desc: 'Missing trade',
         data: {
           company_name: 'Test Contractor',
-          email: 'test@hvac.com'
-        }
+          email: 'test@hvac.com',
+        },
       },
       {
         desc: 'Empty company_name',
         data: {
           company_name: '',
-          trade: 'hvac'
-        }
+          trade: 'hvac',
+        },
       },
       {
         desc: 'Empty trade',
         data: {
           company_name: 'Test Contractor',
-          trade: ''
-        }
+          trade: '',
+        },
       },
       {
         desc: 'Invalid email format',
         data: {
           company_name: 'Test Contractor',
           trade: 'hvac',
-          email: 'invalid-email-format'
-        }
-      }
+          email: 'invalid-email-format',
+        },
+      },
     ];
 
     for (const p of payloads) {
@@ -119,7 +121,9 @@ test.describe('REST API Endpoints', () => {
     }
   });
 
-  test('POST /api/contractors - creates lead and generates cold_email automatically if missing', async ({ request }) => {
+  test('POST /api/contractors - creates lead and generates cold_email automatically if missing', async ({
+    request,
+  }) => {
     const payload = {
       company_name: 'Seattle Plumbers Inc',
       owner_name: 'Bob',
@@ -128,13 +132,13 @@ test.describe('REST API Endpoints', () => {
       website: 'https://seattleplumbers.net',
       city: 'Seattle',
       state: 'WA',
-      trade: 'plumbing'
+      trade: 'plumbing',
     };
 
     const response = await request.post('/api/contractors', { data: payload });
     expect(response.status()).toBe(200);
     const json = await response.json();
-    
+
     expect(json.id).toBeDefined();
     expect(json.company_name).toBe(payload.company_name);
     expect(json.trade).toBe(payload.trade);
@@ -144,13 +148,15 @@ test.describe('REST API Endpoints', () => {
     expect(json.cold_email.length).toBeGreaterThan(20);
   });
 
-  test('POST /api/contractors - supports upsert on email duplicate conflict', async ({ request }) => {
+  test('POST /api/contractors - supports upsert on email duplicate conflict', async ({
+    request,
+  }) => {
     const duplicateEmail = `conflict-${Math.random()}@hvacpro.com`;
     const initialPayload = {
       company_name: 'HVAC Pro Seattle',
       email: duplicateEmail,
       trade: 'hvac',
-      city: 'Seattle'
+      city: 'Seattle',
     };
 
     // First post
@@ -164,7 +170,7 @@ test.describe('REST API Endpoints', () => {
       company_name: 'HVAC Pro Seattle Updated',
       email: duplicateEmail,
       trade: 'hvac',
-      status: 'queued'
+      status: 'queued',
     };
     response = await request.post('/api/contractors', { data: updatedPayload });
     expect(response.status()).toBe(200);
@@ -182,14 +188,14 @@ test.describe('REST API Endpoints', () => {
       email: `electrician-${rand}-1@seattle.com`,
       trade: 'electrical',
       city: 'Seattle',
-      status: 'discovered'
+      status: 'discovered',
     };
     const lead2 = {
       company_name: `Z-9 Cleaning Pros-${rand}`,
       email: `cleaner-${rand}-2@seattle.com`,
       trade: 'cleaning',
       city: 'Seattle',
-      status: 'queued'
+      status: 'queued',
     };
 
     await request.post('/api/contractors', { data: lead1 });
@@ -213,15 +219,17 @@ test.describe('REST API Endpoints', () => {
     expect(response.status()).toBe(200);
     data = await response.json();
     for (let i = 0; i < data.length - 1; i++) {
-      expect(data[i].company_name.localeCompare(data[i+1].company_name)).toBeLessThanOrEqual(0);
+      expect(data[i].company_name.localeCompare(data[i + 1].company_name)).toBeLessThanOrEqual(0);
     }
   });
 
-  test('PATCH /api/contractors/:id - status update validation and cold_email editing', async ({ request }) => {
+  test('PATCH /api/contractors/:id - status update validation and cold_email editing', async ({
+    request,
+  }) => {
     const payload = {
       company_name: 'Landscaping Masters',
       trade: 'landscaping',
-      email: `landscaper-${Math.random()}@green.com`
+      email: `landscaper-${Math.random()}@green.com`,
     };
     const createRes = await request.post('/api/contractors', { data: payload });
     const lead = await createRes.json();
@@ -229,7 +237,7 @@ test.describe('REST API Endpoints', () => {
 
     // Invalid status (should return 400)
     let patchRes = await request.patch(`/api/contractors/${id}`, {
-      data: { status: 'invalid-status' }
+      data: { status: 'invalid-status' },
     });
     expect(patchRes.status()).toBe(400);
 
@@ -237,8 +245,8 @@ test.describe('REST API Endpoints', () => {
     patchRes = await request.patch(`/api/contractors/${id}`, {
       data: {
         status: 'email_sent',
-        cold_email: 'Updated custom email draft body.'
-      }
+        cold_email: 'Updated custom email draft body.',
+      },
     });
     expect(patchRes.status()).toBe(200);
     const updatedLead = await patchRes.json();
@@ -246,7 +254,9 @@ test.describe('REST API Endpoints', () => {
     expect(updatedLead.cold_email).toBe('Updated custom email draft body.');
   });
 
-  test('POST /api/contractors/discover - triggers contractor discovery and returns count', async ({ request }) => {
+  test('POST /api/contractors/discover - triggers contractor discovery and returns count', async ({
+    request,
+  }) => {
     const response = await request.post('/api/contractors/discover');
     expect(response.status()).toBe(200);
     const json = await response.json();
@@ -259,7 +269,7 @@ test.describe('REST API Endpoints', () => {
 test.describe('Contractor Discovery Script', () => {
   test('Verify discovery script exports and generateColdEmail tone and rules', async () => {
     const scriptPath = join(process.cwd(), 'scripts', 'find-local-contractors.mjs');
-    
+
     // Dynamic import to test ESM file exports
     let module;
     try {
@@ -321,12 +331,14 @@ test.describe('Contractor Discovery Script', () => {
 
 // [AC-4] Contractor Leads UI Dashboard Page
 test.describe('Contractor Leads UI Dashboard Page', () => {
-  test('/tools/contractor-leads serves HTML successfully and matches design system', async ({ page }) => {
+  test('/tools/contractor-leads serves HTML successfully and matches design system', async ({
+    page,
+  }) => {
     const response = await page.goto('/tools/contractor-leads');
     expect(response?.status()).toBe(200);
 
     await expect(page).toHaveTitle(/Gainhelm/);
-    
+
     // Verify stylesheet exists
     const stylesheet = page.locator('link[rel="stylesheet"]');
     await expect(stylesheet).toHaveAttribute('href', /styles\.css/);
@@ -337,7 +349,7 @@ test.describe('Contractor Leads UI Dashboard Page', () => {
 test.describe('Dashboard Functionality E2E', () => {
   test.beforeEach(async ({ page }) => {
     // Route & intercept API calls to run UI tests in isolation
-    await page.route('**/api/contractors', async (route) => {
+    await page.route('**/api/contractors', async route => {
       if (route.request().method() === 'GET') {
         const url = new URL(route.request().url());
         const trade = url.searchParams.get('trade');
@@ -358,7 +370,7 @@ test.describe('Dashboard Functionality E2E', () => {
             status: 'discovered',
             cold_email: 'Hey Alice! Need simple SMS dispatch for Seattle Heating Pros?',
             created_at: new Date(Date.now() - 3600000).toISOString(),
-            updated_at: new Date(Date.now() - 3600000).toISOString()
+            updated_at: new Date(Date.now() - 3600000).toISOString(),
           },
           {
             id: 'bb32df23-dcae-4f12-9c16-c950bb0c59e2',
@@ -373,8 +385,8 @@ test.describe('Dashboard Functionality E2E', () => {
             status: 'queued',
             cold_email: 'Hey Tom! SMS dispatching solves phone tag at Austin Plumbing Co.',
             created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
-          }
+            updated_at: new Date().toISOString(),
+          },
         ];
 
         if (trade && trade !== 'all') {
@@ -387,15 +399,19 @@ test.describe('Dashboard Functionality E2E', () => {
         if (sort === 'company_name_asc') {
           contractors.sort((a, b) => a.company_name.localeCompare(b.company_name));
         } else if (sort === 'date_asc') {
-          contractors.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+          contractors.sort(
+            (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+          );
         } else {
-          contractors.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+          contractors.sort(
+            (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+          );
         }
 
         await route.fulfill({
           status: 200,
           contentType: 'application/json',
-          body: JSON.stringify(contractors)
+          body: JSON.stringify(contractors),
         });
       } else if (route.request().method() === 'POST') {
         const payload = route.request().postDataJSON();
@@ -415,13 +431,13 @@ test.describe('Dashboard Functionality E2E', () => {
             status: payload.status || 'discovered',
             cold_email: 'Generated cold email...',
             created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
-          })
+            updated_at: new Date().toISOString(),
+          }),
         });
       }
     });
 
-    await page.route('**/api/contractors/*', async (route) => {
+    await page.route('**/api/contractors/*', async route => {
       if (route.request().method() === 'PATCH') {
         const payload = route.request().postDataJSON();
         await route.fulfill({
@@ -438,19 +454,20 @@ test.describe('Dashboard Functionality E2E', () => {
             state: 'WA',
             trade: 'hvac',
             status: payload.status || 'discovered',
-            cold_email: payload.cold_email || 'Hey Alice! Need simple SMS dispatch for Seattle Heating Pros?',
+            cold_email:
+              payload.cold_email || 'Hey Alice! Need simple SMS dispatch for Seattle Heating Pros?',
             created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
-          })
+            updated_at: new Date().toISOString(),
+          }),
         });
       }
     });
 
-    await page.route('**/api/contractors/discover', async (route) => {
+    await page.route('**/api/contractors/discover', async route => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
-        body: JSON.stringify({ count: 12 })
+        body: JSON.stringify({ count: 12 }),
       });
     });
   });
@@ -504,13 +521,15 @@ test.describe('Dashboard Functionality E2E', () => {
     // Successful submission
     await emailInput.fill('info@tacomaelectric.com');
     await submitButton.click();
-    
+
     // Form should clear
     await expect(nameInput).toHaveValue('');
     await expect(emailInput).toHaveValue('');
   });
 
-  test('Contractor card features manual email editing, clipboard copy and status transitioning', async ({ page }) => {
+  test('Contractor card features manual email editing, clipboard copy and status transitioning', async ({
+    page,
+  }) => {
     await page.goto('/tools/contractor-leads');
 
     const firstCard = page.locator('.contractor-card').first();
@@ -526,7 +545,7 @@ test.describe('Dashboard Functionality E2E', () => {
     // Clipboard copy mock
     await page.evaluate(() => {
       window.copiedText = null;
-      navigator.clipboard.writeText = async (text) => {
+      navigator.clipboard.writeText = async text => {
         window.copiedText = text;
       };
     });

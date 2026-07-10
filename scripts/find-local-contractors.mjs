@@ -4,25 +4,37 @@ import crypto from 'node:crypto';
 
 const painPoints = {
   hvac: 'the constant phone tag trying to get technicians dispatched to the next job when they are in the middle of a call',
-  plumbing: 'having to call plumbers back and forth while they are under a sink or on the road just to update their schedule',
-  electrical: 'the technician scheduling friction and endless phone tag trying to coordinate dispatch times',
-  locksmith: 'the chaos of emergency dispatching and playing phone tag with technicians to see who is available',
-  cleaning: 'the headache of manual scheduling changes and trying to dispatch cleaners without constantly interrupting their work',
-  landscaping: 'the dispatcher playing phone tag to coordinate route changes and scheduling updates with crews in the field',
-  roofing: 'the difficulty of manual scheduling and dispatching teams on-site when details change last minute',
-  pest_control: 'the scheduling friction and phone tag when trying to coordinate appointment times between dispatchers and techs',
-  restoration: 'the critical phone tag delays when trying to dispatch restoration teams to emergency jobs',
-  handyman: 'the tedious phone tag and manual dispatching needed to coordinate multiple small jobs throughout the day',
-  tree_service: 'the scheduling friction and field dispatching coordination issues with crews out on jobs'
+  plumbing:
+    'having to call plumbers back and forth while they are under a sink or on the road just to update their schedule',
+  electrical:
+    'the technician scheduling friction and endless phone tag trying to coordinate dispatch times',
+  locksmith:
+    'the chaos of emergency dispatching and playing phone tag with technicians to see who is available',
+  cleaning:
+    'the headache of manual scheduling changes and trying to dispatch cleaners without constantly interrupting their work',
+  landscaping:
+    'the dispatcher playing phone tag to coordinate route changes and scheduling updates with crews in the field',
+  roofing:
+    'the difficulty of manual scheduling and dispatching teams on-site when details change last minute',
+  pest_control:
+    'the scheduling friction and phone tag when trying to coordinate appointment times between dispatchers and techs',
+  restoration:
+    'the critical phone tag delays when trying to dispatch restoration teams to emergency jobs',
+  handyman:
+    'the tedious phone tag and manual dispatching needed to coordinate multiple small jobs throughout the day',
+  tree_service:
+    'the scheduling friction and field dispatching coordination issues with crews out on jobs',
 };
 
 export function generateColdEmail(companyName, trade, city, ownerName) {
   const greeting = ownerName ? `Hi ${ownerName}` : 'Hi there';
   const tradeName = (trade || 'contractor').toLowerCase();
   const cityString = city ? ` in ${city}` : '';
-  
-  const painPoint = painPoints[tradeName] || 'the headache of manual scheduling and constant phone tag with technicians';
-  
+
+  const painPoint =
+    painPoints[tradeName] ||
+    'the headache of manual scheduling and constant phone tag with technicians';
+
   return `${greeting},
 
 I came across ${companyName}${cityString} and wanted to reach out directly.
@@ -48,7 +60,7 @@ const candidateLeads = [
     website: 'https://chicagohvacpros.com',
     city: 'Chicago',
     state: 'IL',
-    trade: 'hvac'
+    trade: 'hvac',
   },
   {
     company_name: 'Seattle Plumbing Experts',
@@ -58,7 +70,7 @@ const candidateLeads = [
     website: 'https://seattleplumbexpert.com',
     city: 'Seattle',
     state: 'WA',
-    trade: 'plumbing'
+    trade: 'plumbing',
   },
   {
     company_name: 'Austin Electric & Power',
@@ -68,7 +80,7 @@ const candidateLeads = [
     website: 'https://austinelectricpower.com',
     city: 'Austin',
     state: 'TX',
-    trade: 'electrical'
+    trade: 'electrical',
   },
   {
     company_name: 'Windy City Locksmiths',
@@ -78,7 +90,7 @@ const candidateLeads = [
     website: 'https://windycitylocksmiths.com',
     city: 'Chicago',
     state: 'IL',
-    trade: 'locksmith'
+    trade: 'locksmith',
   },
   {
     company_name: 'Emerald City Cleaning Co',
@@ -88,7 +100,7 @@ const candidateLeads = [
     website: 'https://emeraldcitycleaners.com',
     city: 'Seattle',
     state: 'WA',
-    trade: 'cleaning'
+    trade: 'cleaning',
   },
   {
     company_name: 'Lone Star Landscaping',
@@ -98,7 +110,7 @@ const candidateLeads = [
     website: 'https://lonestarlandscaping.com',
     city: 'Austin',
     state: 'TX',
-    trade: 'landscaping'
+    trade: 'landscaping',
   },
   {
     company_name: 'Chicago Roofing Solutions',
@@ -108,7 +120,7 @@ const candidateLeads = [
     website: 'https://chicagoroofingsolutions.com',
     city: 'Chicago',
     state: 'IL',
-    trade: 'roofing'
+    trade: 'roofing',
   },
   {
     company_name: 'Seattle Pest Control',
@@ -118,7 +130,7 @@ const candidateLeads = [
     website: 'https://seattlepestcontrol.net',
     city: 'Seattle',
     state: 'WA',
-    trade: 'pest_control'
+    trade: 'pest_control',
   },
   {
     company_name: 'Austin Emergency Restoration',
@@ -128,7 +140,7 @@ const candidateLeads = [
     website: 'https://austinrestoration.com',
     city: 'Austin',
     state: 'TX',
-    trade: 'restoration'
+    trade: 'restoration',
   },
   {
     company_name: 'Chicago Handyman Guild',
@@ -138,17 +150,22 @@ const candidateLeads = [
     website: 'https://chicagohandymanguild.com',
     city: 'Chicago',
     state: 'IL',
-    trade: 'handyman'
-  }
+    trade: 'handyman',
+  },
 ];
 
 export async function performContractorDiscovery(sql, inMemoryLeads) {
   let newLeadsCount = 0;
-  
+
   if (sql) {
     for (const lead of candidateLeads) {
-      const coldEmail = generateColdEmail(lead.company_name, lead.trade, lead.city, lead.owner_name);
-      
+      const coldEmail = generateColdEmail(
+        lead.company_name,
+        lead.trade,
+        lead.city,
+        lead.owner_name
+      );
+
       const result = await sql`
         INSERT INTO local_contractor_leads (
           company_name, owner_name, email, phone, website, city, state, trade, status, cold_email
@@ -164,7 +181,12 @@ export async function performContractorDiscovery(sql, inMemoryLeads) {
     for (const lead of candidateLeads) {
       const emailExists = inMemoryLeads.some(l => l.email === lead.email);
       if (!emailExists) {
-        const coldEmail = generateColdEmail(lead.company_name, lead.trade, lead.city, lead.owner_name);
+        const coldEmail = generateColdEmail(
+          lead.company_name,
+          lead.trade,
+          lead.city,
+          lead.owner_name
+        );
         const newLead = {
           id: crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(),
           company_name: lead.company_name,
@@ -178,7 +200,7 @@ export async function performContractorDiscovery(sql, inMemoryLeads) {
           status: 'discovered',
           cold_email: coldEmail,
           created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         };
         inMemoryLeads.push(newLead);
         newLeadsCount++;

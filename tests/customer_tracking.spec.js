@@ -2,7 +2,6 @@ import { test, expect } from '@playwright/test';
 import postgres from 'postgres';
 
 test.describe('Customer Live Tracking', () => {
-
   test('GET /app/track/:id with an invalid UUID returns 404', async ({ request }) => {
     const invalidUuid = '00000000-0000-0000-0000-000000000000';
     const response = await request.get(`/app/track/${invalidUuid}`);
@@ -18,7 +17,7 @@ test.describe('Customer Live Tracking', () => {
 
     // 1. Setup trade technician in /setup
     await page.goto(`/setup?email=${encodeURIComponent(email)}`);
-    
+
     // Configure Card 0 -> Sarah Connor
     await page.fill('input[name="tech_name_0"]', 'Sarah Connor');
     await page.fill('input[name="tech_phone_0"]', '+15550288');
@@ -48,7 +47,9 @@ test.describe('Customer Live Tracking', () => {
     await page.click('.quick-reply-btn:has-text("Accept Job (YES)")');
 
     // 3. Wait for the "Track Live Route" button/link to appear on the new audit trail card
-    const trackLink = page.locator('a:has-text("Track Live Route"), button:has-text("Track Live Route"), a[href*="/app/track/"]');
+    const trackLink = page.locator(
+      'a:has-text("Track Live Route"), button:has-text("Track Live Route"), a[href*="/app/track/"]'
+    );
     await expect(trackLink).toBeVisible({ timeout: 15000 });
 
     // 4. Capture the URL from the link
@@ -67,16 +68,23 @@ test.describe('Customer Live Tracking', () => {
     await expect(customerPage.locator('body')).toContainText(/ETA/i);
 
     // 6. Submit a note (e.g. "Gate code: 5432") from the customer tracking page
-    const noteInput = customerPage.locator('textarea, input[placeholder*="note" i], input[name="note"]');
+    const noteInput = customerPage.locator(
+      'textarea, input[placeholder*="note" i], input[name="note"]'
+    );
     const sendButton = customerPage.locator('button:has-text("Send Note"), button[type="submit"]');
     await noteInput.fill('Gate code: 5432');
     await sendButton.click();
 
     // 7. Verify that the dispatcher feed on the /app page receives: "📱 Customer sent entry note: Gate code: 5432"
-    await expect(page.locator('#feed')).toContainText('📱 Customer sent entry note: Gate code: 5432', { timeout: 15000 });
+    await expect(page.locator('#feed')).toContainText(
+      '📱 Customer sent entry note: Gate code: 5432',
+      { timeout: 15000 }
+    );
 
     // 8. Verify that the technician phone simulator displays the note: "Customer Note: Gate code: 5432"
-    await expect(page.locator('#phone-chat')).toContainText('Customer Note: Gate code: 5432', { timeout: 15000 });
+    await expect(page.locator('#phone-chat')).toContainText('Customer Note: Gate code: 5432', {
+      timeout: 15000,
+    });
 
     // 9. Verify database logs contain the note inside the log's step_logs
     if (process.env.DATABASE_URL) {
@@ -85,7 +93,7 @@ test.describe('Customer Live Tracking', () => {
         const uuidMatch = trackingUrl.match(/\/app\/track\/([a-f0-9-]{36})/i);
         expect(uuidMatch).toBeTruthy();
         const uuid = uuidMatch[1];
-        
+
         await page.waitForTimeout(1000); // Give database write a brief moment to complete
         const results = await sql`
           SELECT step_logs FROM gainhelm_dispatch_logs
@@ -100,5 +108,4 @@ test.describe('Customer Live Tracking', () => {
       }
     }
   });
-
 });

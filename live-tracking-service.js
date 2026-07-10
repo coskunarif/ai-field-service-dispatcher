@@ -9,8 +9,8 @@ function getStableJobCoords(uuidStr) {
   for (let i = 0; i < uuidStr.length; i++) {
     hash = uuidStr.charCodeAt(i) + ((hash << 5) - hash);
   }
-  const latOffset = ((hash & 0xFF) / 255 - 0.5) * 0.015;
-  const lngOffset = (((hash >> 8) & 0xFF) / 255 - 0.5) * 0.015;
+  const latOffset = ((hash & 0xff) / 255 - 0.5) * 0.015;
+  const lngOffset = (((hash >> 8) & 0xff) / 255 - 0.5) * 0.015;
   return [41.8781 + latOffset, -87.6298 + lngOffset];
 }
 
@@ -37,9 +37,10 @@ export async function saveNote(id, note, sql) {
   let stepLogs = [];
   if (logDetails) {
     try {
-      stepLogs = typeof logDetails.step_logs === 'string'
-        ? JSON.parse(logDetails.step_logs)
-        : (logDetails.step_logs || []);
+      stepLogs =
+        typeof logDetails.step_logs === 'string'
+          ? JSON.parse(logDetails.step_logs)
+          : logDetails.step_logs || [];
     } catch {
       stepLogs = [];
     }
@@ -57,9 +58,10 @@ export async function saveNote(id, note, sql) {
       `;
       if (results.length > 0) {
         try {
-          stepLogs = typeof results[0].step_logs === 'string'
-            ? JSON.parse(results[0].step_logs)
-            : (results[0].step_logs || []);
+          stepLogs =
+            typeof results[0].step_logs === 'string'
+              ? JSON.parse(results[0].step_logs)
+              : results[0].step_logs || [];
         } catch {
           stepLogs = [];
         }
@@ -104,9 +106,10 @@ export function renderTrackingPage(dispatch, context) {
 </html>`;
   }
 
-  const technicians = typeof context.technicians === 'string'
-    ? JSON.parse(context.technicians)
-    : (context.technicians || []);
+  const technicians =
+    typeof context.technicians === 'string'
+      ? JSON.parse(context.technicians)
+      : context.technicians || [];
 
   const techName = dispatch.dispatched_to_name || 'Sarah Connor';
   const tech = technicians.find(t => t.name === techName) || technicians[0];

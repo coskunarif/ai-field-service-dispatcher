@@ -1,0 +1,130 @@
+project: Gainhelm
+imagemagick: true
+
+environments:
+  local_dev:
+    url: http://localhost:3005
+    backend_url: http://localhost:3000
+    restrictions: []
+  production:
+    url: https://gainhelm.com
+    backend_url: https://gainhelm-api-250134012801.us-central1.run.app
+    restrictions: []
+  backend_prod:
+    url: https://gainhelm-api-250134012801.us-central1.run.app
+    restrictions: []
+
+default_target: local_dev
+
+auth:
+  method: email-waitlist
+  provider: custom
+  note: >
+    Gainhelm has no formal login. Access to /setup and /app is gated by an
+    email query parameter that must exist in the waitlist_leads table (or end
+    with @example.com when the database is unavailable). QA creates dedicated
+    test emails per run.
+
+personas:
+  - name: new_user
+    description: 'Fresh visitor, not on the waitlist'
+    email_pattern: 'qa+newuser_{RUN_ID}@gainhelm.com'
+    credentials_source: none
+    test_focus:
+      - landing_page
+      - waitlist_signup
+      - setup_access_denied
+      - onboarding_redirect
+  - name: owner
+    description: 'Waitlist user with setup context and technicians configured'
+    email_pattern: 'qa+owner_{RUN_ID}@gainhelm.com'
+    credentials_source: none
+    test_focus:
+      - setup_wizard
+      - supervision_board
+      - dispatch_simulator
+      - live_tracking
+      - technician_toggle
+  - name: restricted_user
+    description: 'On waitlist but has not completed setup yet'
+    email_pattern: 'qa+restricted_{RUN_ID}@gainhelm.com'
+    credentials_source: none
+    test_focus:
+      - waitlist_signup
+      - setup_empty_context
+      - first_run_experience
+
+apps:
+  web:
+    path_patterns:
+      - 'server.js'
+      - '*.html'
+      - 'styles.css'
+      - 'route-optimizer.js'
+      - 'live-tracking-service.js'
+      - 'scripts/*.mjs'
+      - 'seo/*.mjs'
+      - 'tests/*.spec.js'
+    skill: qa-web
+    test_tool: agent-browser
+    build_command: 'PORT=3005 npm start'
+    local_dev_ready: 'http://localhost:3005'
+  backend:
+    path_patterns:
+      - 'api/**'
+    skill: qa-backend
+    test_tool: curl
+    build_command: 'cd api && npm start'
+    local_dev_ready: 'http://localhost:3000'
+
+feature_flags:
+  provider: none
+  dashboard_url: ''
+  how_to_override: 'No feature flags detected in this project.'
+
+integrations:
+  postgresql:
+    provider: postgres
+    env_var: DATABASE_URL
+    test_mode: dedicated_test_database
+    note: >
+      QA uses a dedicated PostgreSQL database for local/CI runs. When a
+      DATABASE_URL is provided, the app creates waitlist_leads, gainhelm_contexts,
+      gainhelm_dispatch_logs, social_leads, and local_contractor_leads tables.
+  zeptomail:
+    provider: Zoho ZeptoMail
+    env_vars:
+      - ZEPTOMAIL_TOKEN
+      - ZEPTOMAIL_FROM_EMAIL
+      - ZEPTOMAIL_FROM_NAME
+    test_mode: existing_credentials
+    note: >
+      Used only by outreach scripts (scripts/send-outreach-emails.mjs). Most QA
+      flows do not need it.
+  firestore:
+    provider: Google Cloud Firestore
+    env_vars:
+      - GOOGLE_APPLICATION_CREDENTIALS
+    test_mode: existing_credentials
+    note: >
+      Used by the backend API app (api/server.js). The local Firestore emulator is
+      preferred for CI; otherwise use a dedicated test project.
+  google_calendar:
+    provider: Google Calendar
+    env_vars: []
+    test_mode: existing_credentials
+    note: >
+      Only the URL is validated in /api/validate-calendar. QA uses a public
+      Google Calendar URL for positive tests and a restricted URL for negative tests.
+
+cleanup:
+  auto_cleanup: true
+  strategy: delete_test_rows_by_email_pattern
+  instructions: >
+    After each QA run, delete PostgreSQL rows created by QA where email matches
+    'qa+newuser_%@gainhelm.com', 'qa+owner_%@gainhelm.com', or
+    'qa+restricted_%@gainhelm.com'. Target tables: waitlist_leads,
+    gainhelm_contexts, gainhelm_dispatch_logs. Run this cleanup only when
+    DATABASE_URL is connected and never outside the QA-created email patterns.
+
+failure_learning: suggest_in_report

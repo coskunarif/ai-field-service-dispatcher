@@ -16,3 +16,22 @@ artifacts/*
 # Playwright reports and test results
 playwright-report/
 test-results/
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+
+# Tooling caches
+.eslintcache
+.jscpd/
+.husky/_
+coverage/
+dist/
+build/
+*.log

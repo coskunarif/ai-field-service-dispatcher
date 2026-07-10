@@ -11,7 +11,10 @@ try {
       const idx = trimmed.indexOf('=');
       if (idx !== -1) {
         const k = trimmed.substring(0, idx).trim();
-        const v = trimmed.substring(idx + 1).trim().replace(/^['"]|['"]$/g, '');
+        const v = trimmed
+          .substring(idx + 1)
+          .trim()
+          .replace(/^['"]|['"]$/g, '');
         if (!process.env[k]) {
           process.env[k] = v;
         }
@@ -35,7 +38,7 @@ const contractors = [
     email: 'john@chicagohvacpros.com',
     city: 'Chicago',
     trade: 'hvac',
-    pain: 'the constant phone tag trying to get technicians dispatched to the next job when they are in the middle of a call'
+    pain: 'the constant phone tag trying to get technicians dispatched to the next job when they are in the middle of a call',
   },
   {
     company_name: 'Seattle Plumbing Experts',
@@ -43,7 +46,7 @@ const contractors = [
     email: 'sarah@seattleplumbexpert.com',
     city: 'Seattle',
     trade: 'plumbing',
-    pain: 'having to call plumbers back and forth while they are under a sink or on the road just to update their schedule'
+    pain: 'having to call plumbers back and forth while they are under a sink or on the road just to update their schedule',
   },
   {
     company_name: 'Austin Electric & Power',
@@ -51,7 +54,7 @@ const contractors = [
     email: 'michael@austinelectricpower.com',
     city: 'Austin',
     trade: 'electrical',
-    pain: 'the technician scheduling friction and endless phone tag trying to coordinate dispatch times'
+    pain: 'the technician scheduling friction and endless phone tag trying to coordinate dispatch times',
   },
   {
     company_name: 'Windy City Locksmiths',
@@ -59,7 +62,7 @@ const contractors = [
     email: 'david@windycitylocksmiths.com',
     city: 'Chicago',
     trade: 'locksmith',
-    pain: 'the chaos of emergency dispatching and playing phone tag with technicians to see who is available'
+    pain: 'the chaos of emergency dispatching and playing phone tag with technicians to see who is available',
   },
   {
     company_name: 'Emerald City Cleaning Co',
@@ -67,7 +70,7 @@ const contractors = [
     email: 'emily@emeraldcitycleaners.com',
     city: 'Seattle',
     trade: 'cleaning',
-    pain: 'the headache of manual scheduling changes and trying to dispatch cleaners without constantly interrupting their work'
+    pain: 'the headache of manual scheduling changes and trying to dispatch cleaners without constantly interrupting their work',
   },
   {
     company_name: 'Lone Star Landscaping',
@@ -75,7 +78,7 @@ const contractors = [
     email: 'robert@lonestarlandscaping.com',
     city: 'Austin',
     trade: 'landscaping',
-    pain: 'the dispatcher playing phone tag to coordinate route changes and scheduling updates with crews in the field'
+    pain: 'the dispatcher playing phone tag to coordinate route changes and scheduling updates with crews in the field',
   },
   {
     company_name: 'Chicago Roofing Solutions',
@@ -83,7 +86,7 @@ const contractors = [
     email: 'kevin@chicagoroofingsolutions.com',
     city: 'Chicago',
     trade: 'roofing',
-    pain: 'the difficulty of manual scheduling and dispatching teams on-site when details change last minute'
+    pain: 'the difficulty of manual scheduling and dispatching teams on-site when details change last minute',
   },
   {
     company_name: 'Seattle Pest Control',
@@ -91,7 +94,7 @@ const contractors = [
     email: 'linda@seattlepestcontrol.net',
     city: 'Seattle',
     trade: 'pest_control',
-    pain: 'the scheduling friction and phone tag when trying to coordinate appointment times between dispatchers and techs'
+    pain: 'the scheduling friction and phone tag when trying to coordinate appointment times between dispatchers and techs',
   },
   {
     company_name: 'Austin Emergency Restoration',
@@ -99,7 +102,7 @@ const contractors = [
     email: 'james@austinrestoration.com',
     city: 'Austin',
     trade: 'restoration',
-    pain: 'the critical phone tag delays when trying to dispatch restoration teams to emergency jobs'
+    pain: 'the critical phone tag delays when trying to dispatch restoration teams to emergency jobs',
   },
   {
     company_name: 'Chicago Handyman Guild',
@@ -107,8 +110,8 @@ const contractors = [
     email: 'thomas@chicagohandymanguild.com',
     city: 'Chicago',
     trade: 'handyman',
-    pain: 'the tedious phone tag and manual dispatching needed to coordinate multiple small jobs throughout the day'
-  }
+    pain: 'the tedious phone tag and manual dispatching needed to coordinate multiple small jobs throughout the day',
+  },
 ];
 
 const statusPath = path.resolve('reports/contractor-outreach-status.json');
@@ -118,29 +121,29 @@ async function sendZeptoMail({ toEmail, toName, subject, body }) {
   const payload = {
     from: {
       address: fromEmail,
-      name: fromName
+      name: fromName,
     },
     to: [
       {
         email_address: {
           address: toEmail,
-          name: toName
-        }
-      }
+          name: toName,
+        },
+      },
     ],
     subject: subject,
     textbody: body,
-    htmlbody: `<div style="font-family: Arial, sans-serif; white-space: pre-wrap; line-height: 1.5;">${body}</div>`
+    htmlbody: `<div style="font-family: Arial, sans-serif; white-space: pre-wrap; line-height: 1.5;">${body}</div>`,
   };
 
   const response = await fetch(url, {
     method: 'POST',
     headers: {
-      'Accept': 'application/json',
+      Accept: 'application/json',
       'Content-Type': 'application/json',
-      'Authorization': token.startsWith('Zoho-enczapikey') ? token : `Zoho-enczapikey ${token}`
+      Authorization: token.startsWith('Zoho-enczapikey') ? token : `Zoho-enczapikey ${token}`,
     },
-    body: JSON.stringify(payload)
+    body: JSON.stringify(payload),
   });
 
   const data = await response.json();
@@ -174,7 +177,7 @@ async function run() {
 
     const greeting = lead.owner_name ? `Hi ${lead.owner_name}` : 'Hi there';
     const cityString = lead.city ? ` in ${lead.city}` : '';
-    
+
     const subject = `quick question about ${lead.company_name}'s scheduling`;
     const body = `${greeting},
 
@@ -199,7 +202,7 @@ Gainhelm Team`;
           toEmail: lead.email,
           toName: lead.owner_name || lead.company_name,
           subject,
-          body
+          body,
         });
         console.log(`SUCCESS: Sent to ${lead.email}`);
         statusLog[lead.email] = 'sent';

@@ -106,7 +106,10 @@ test.describe('Gainhelm Page Checks', () => {
 
       // Verify canonical link matches the current path (SEO best practice)
       const canonical = page.locator('link[rel="canonical"]');
-      await expect(canonical).toHaveAttribute('href', new RegExp(`https://gainhelm.com${path === '/' ? '' : path}`));
+      await expect(canonical).toHaveAttribute(
+        'href',
+        new RegExp(`https://gainhelm.com${path === '/' ? '' : path}`)
+      );
 
       // Verify that common header and footer exist
       const footer = page.locator('footer');
@@ -153,7 +156,7 @@ test.describe('Footer & Navigation links', () => {
     await page.goto('/');
     const links = page.locator('footer a');
     const count = await links.count();
-    
+
     // Check that we have a substantial number of links in the footer
     expect(count).toBeGreaterThan(5);
 
@@ -169,7 +172,7 @@ test.describe('Footer & Navigation links', () => {
 test.describe('Waitlist Form Integration', () => {
   test('Successful waitlist signup on root page', async ({ page }) => {
     // Intercept client-side fetch to /waitlist
-    await page.route('**/waitlist', async (route) => {
+    await page.route('**/waitlist', async route => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -178,11 +181,11 @@ test.describe('Waitlist Form Integration', () => {
     });
 
     await page.goto('/');
-    
+
     // Fill the waitlist form
     const form = page.locator('#waitlist-form');
     // Ensure the waitlist form is present
-    if (await form.count() > 0) {
+    if ((await form.count()) > 0) {
       await page.fill('#name', 'Test User');
       await page.fill('#email', 'testuser@example.com');
       await page.fill('#company', 'Test Company');
@@ -200,7 +203,7 @@ test.describe('Waitlist Form Integration', () => {
 
   test('Shows validation error on empty fields', async ({ page }) => {
     await page.goto('/hvac-dispatch-software');
-    
+
     // Submit empty form
     await page.click('#waitlist-form button[type="submit"]');
 
@@ -220,7 +223,7 @@ test.describe('Waitlist Form Integration', () => {
 
   test('Shows server side error if submission fails', async ({ page }) => {
     // Intercept client-side fetch and return 500
-    await page.route('**/waitlist', async (route) => {
+    await page.route('**/waitlist', async route => {
       await route.fulfill({
         status: 500,
         contentType: 'application/json',
@@ -249,11 +252,11 @@ test.describe('Gainhelm Product Setup & App Board', () => {
 
   test('/setup?email=test@example.com renders wizard page', async ({ page }) => {
     await page.goto('/setup?email=test%40example.com');
-    
+
     // Check that the step-dot is visible instead of checking the 0-width progress bar
     const stepDot = page.locator('#step-dot-1');
     await expect(stepDot).toBeVisible();
-    
+
     const wizardTitle = page.locator('.section-title').first();
     await expect(wizardTitle).toContainText('Configure Your Dispatch Team');
   });
@@ -261,27 +264,27 @@ test.describe('Gainhelm Product Setup & App Board', () => {
   test('Walks through setup wizard and redirects to /app', async ({ page }) => {
     const testEmail = `test-${Math.random().toString(36).substring(7)}@example.com`;
     await page.goto(`/setup?email=${encodeURIComponent(testEmail)}`);
-    
+
     // Step 1: Fill technician
     await page.fill('input[name="tech_name_0"]', 'Sarah Connor');
     await page.fill('input[name="tech_phone_0"]', '+1 (555) 0288');
-    
+
     // Go to Step 2
     await page.click('#btn-next');
     const sectionTitle2 = page.locator('.section-title').nth(1);
     await expect(sectionTitle2).toContainText('AI Dispatch Rules');
-    
+
     // Go to Step 3
     await page.click('#btn-next');
     const sectionTitle3 = page.locator('.section-title').nth(2);
     await expect(sectionTitle3).toContainText('Google Calendar');
-    
+
     // Submit Wizard
     await page.click('#btn-submit');
-    
+
     // Should redirect to app supervision board
     await expect(page).toHaveURL(/\/app/);
-    
+
     // Verify context owner is listed
     const ownerEmail = page.locator(`strong:has-text("${testEmail}")`).first();
     await expect(ownerEmail).toBeVisible();
@@ -295,10 +298,14 @@ test.describe('Gainhelm Product Setup & App Board', () => {
     await expect(phoneFrame).toBeVisible();
   });
 
-  test('Configures shifts and availability, and tests shift-based AI dispatch simulator routing', async ({ page }) => {
+  test('Configures shifts and availability, and tests shift-based AI dispatch simulator routing', async ({
+    page,
+  }) => {
     // Listen to console and dialog events for debugging
     page.on('console', msg => console.log('BROWSER LOG:', msg.text()));
-    page.on('pageerror', exception => console.log('BROWSER EXCEPTION:', exception.stack || exception.message));
+    page.on('pageerror', exception =>
+      console.log('BROWSER EXCEPTION:', exception.stack || exception.message)
+    );
     page.on('dialog', async dialog => {
       console.log('DIALOG OPENED:', dialog.message());
       await dialog.dismiss();
@@ -307,21 +314,21 @@ test.describe('Gainhelm Product Setup & App Board', () => {
     const testEmail = `shifts-test-${Math.random().toString(36).substring(7)}@example.com`;
     // 1. Go to setup page
     await page.goto(`/setup?email=${encodeURIComponent(testEmail)}`);
-    
+
     // 2. Configure Technician 1 (On Duty, Standard Shift, HVAC)
     await page.fill('input[name="tech_name_0"]', 'Sarah Connor');
     await page.fill('input[name="tech_phone_0"]', '+1 (555) 0288');
     await page.selectOption('select[name="tech_trade_0"]', 'HVAC');
     await page.selectOption('select[name="tech_shift_0"]', 'Standard');
     await page.selectOption('select[name="tech_status_0"]', 'active');
-    
+
     // 3. Configure Technician 2 (On Duty, Night Shift, HVAC) — already pre-populated as row 1
     await page.fill('input[name="tech_name_1"]', 'David Miller');
     await page.fill('input[name="tech_phone_1"]', '+1 (555) 0999');
     await page.selectOption('select[name="tech_trade_1"]', 'HVAC');
     await page.selectOption('select[name="tech_shift_1"]', 'Night');
     await page.selectOption('select[name="tech_status_1"]', 'active');
-    
+
     // 4. Configure Technician 3 (Off Duty, Always Shift, HVAC) — already pre-populated as row 2
     await page.fill('input[name="tech_name_2"]', 'John Doe');
     await page.fill('input[name="tech_phone_2"]', '+1 (555) 0111');
@@ -338,21 +345,21 @@ test.describe('Gainhelm Product Setup & App Board', () => {
       console.log('PAGE CONTENT ON FAILURE:', await page.content());
       throw err;
     }
-    
+
     // 6. Should redirect to app supervision board
     await expect(page).toHaveURL(/\/app/);
-    
+
     // 7. Verify technician statuses and shifts are displayed
     await expect(page.locator('text=Sarah Connor')).toBeVisible();
     await expect(page.locator('text=Standard Shift (Mon-Fri 8-5)')).toBeVisible();
     const sarahCard = page.locator('strong:has-text("Sarah Connor") >> xpath=../..');
     await expect(sarahCard.locator('text=On Duty')).toBeVisible();
-    
+
     await expect(page.locator('text=David Miller')).toBeVisible();
     await expect(page.locator('text=Night Shift (Mon-Fri 5pm-8am)')).toBeVisible();
     const davidCard = page.locator('strong:has-text("David Miller") >> xpath=../..');
     await expect(davidCard.locator('text=On Duty')).toBeVisible();
-    
+
     await expect(page.locator('text=John Doe')).toBeVisible();
     await expect(page.locator('text=24/7 (Always Available)')).toBeVisible();
     const johnCard = page.locator('strong:has-text("John Doe") >> xpath=../..');
@@ -380,26 +387,30 @@ test.describe('Gainhelm Product Setup & App Board', () => {
     await expect(logs).toContainText('Dispatched job to technician David Miller');
   });
 
-  test('Toggles technician duty status dynamically on Supervision Board and affects simulation routing', async ({ page }) => {
+  test('Toggles technician duty status dynamically on Supervision Board and affects simulation routing', async ({
+    page,
+  }) => {
     page.on('console', msg => console.log('BROWSER LOG:', msg.text()));
-    page.on('pageerror', exception => console.log('BROWSER EXCEPTION:', exception.stack || exception.message));
+    page.on('pageerror', exception =>
+      console.log('BROWSER EXCEPTION:', exception.stack || exception.message)
+    );
     page.on('dialog', async dialog => {
       console.log('DIALOG WINDOW:', dialog.message());
       await dialog.dismiss();
     });
 
     const testEmail = `toggle-test-${Math.random().toString(36).substring(7)}@example.com`;
-    
+
     // 1. Setup technicians
     await page.goto(`/setup?email=${encodeURIComponent(testEmail)}`);
-    
+
     // Sarah Connor (HVAC, Standard, active)
     await page.fill('input[name="tech_name_0"]', 'Sarah Connor');
     await page.fill('input[name="tech_phone_0"]', '+1 (555) 0288');
     await page.selectOption('select[name="tech_trade_0"]', 'HVAC');
     await page.selectOption('select[name="tech_shift_0"]', 'Standard');
     await page.selectOption('select[name="tech_status_0"]', 'active');
-    
+
     // David Miller (HVAC, Always, active)
     await page.fill('input[name="tech_name_1"]', 'David Miller');
     await page.fill('input[name="tech_phone_1"]', '+1 (555) 0999');
@@ -436,4 +447,3 @@ test.describe('Gainhelm Product Setup & App Board', () => {
     await expect(logs).toContainText('Dispatched job to technician David Miller');
   });
 });
-

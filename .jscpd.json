@@ -1,0 +1,22 @@
+{
+  "threshold": 10,
+  "reporters": ["console"],
+  "ignore": [
+    "node_modules/**",
+    ".git/**",
+    "artifacts/**",
+    "playwright-report/**",
+    "test-results/**",
+    ".husky/**",
+    ".agents/**",
+    "reports/**",
+    "scripts/*.json",
+    "*.html",
+    "package-lock.json",
+    "index.html",
+    "dist/**",
+    "build/**"
+  ],
+  "absolute": false,
+  "gitignore": true
+}

@@ -4,15 +4,54 @@
   "type": "module",
   "scripts": {
     "start": "node server.js",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "jscpd": "jscpd",
+    "knip": "knip",
+    "audit:tech-debt": "node scripts/scan-tech-debt.js",
     "audit:seo-geo": "node scripts/gainhelm-seo-geo-audit.mjs",
+    "analyze:gsc": "node scripts/gsc-analyzer.mjs",
     "find-leads": "node scripts/find-social-leads.mjs",
-    "test": "playwright test"
+    "test:unit": "vitest run",
+    "test": "npm run test:unit && playwright test",
+    "prepare": "husky"
   },
   "dependencies": {
     "fastify": "^5.0.0",
+    "google-auth-library": "^9.15.1",
     "postgres": "^3.4.9"
   },
+  "lint-staged": {
+    "*.{js,mjs}": [
+      "eslint --fix"
+    ],
+    "api/**/*.ts": [
+      "eslint --fix"
+    ],
+    "tests/**/*.ts": [
+      "eslint --fix"
+    ],
+    "*.{js,mjs,ts,json}": [
+      "prettier --write"
+    ]
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  },
   "devDependencies": {
-    "@playwright/test": "^1.60.0"
+    "@eslint/js": "^9.39.4",
+    "@playwright/test": "^1.60.0",
+    "@typescript-eslint/eslint-plugin": "^8.63.0",
+    "@typescript-eslint/parser": "^8.63.0",
+    "eslint": "^9.39.4",
+    "globals": "^17.7.0",
+    "husky": "^9.1.7",
+    "jscpd": "^5.0.12",
+    "knip": "^6.25.0",
+    "lint-staged": "^16.4.0",
+    "prettier": "^3.9.5",
+    "vitest": "^4.1.10"
   }
 }

@@ -17,6 +17,7 @@
 URL reached: `https://app.g2digitalmarkets.com/get-listed/start`
 
 Filled initial product listing form:
+
 - Business email: `arif.coskun@profithelm.com`
 - Product name: `GainHelm`
 - Product website: `https://gainhelm.com/`
@@ -28,6 +29,7 @@ Result: form returned inline error:
 Status: blocked pending vendor account login or support route.
 
 Notes:
+
 - Correct vendor landing page is `https://www.capterra.com/vendors/`.
 - It states approved listings publish on Capterra first and can be added to GetApp and Software Advice later.
 
@@ -103,12 +105,12 @@ Initial no-login submission failed after filling GainHelm details; requires sign
 
 Checked `https://www.saasworthy.com/promote-your-product`; old route returns 404 but page still shows “Get Listed.” Click did not navigate. Contact fallback is `feedback@saasworthy.com`.
 
-
 ### SoftwareSuggest
 
 Checked: `https://www.softwaresuggest.com/vendors`
 
 Status: accessible submission form. Filled visible safe fields:
+
 - Name: Arif Coskun
 - Business Email: arif.coskun@profithelm.com
 - Organization: GainHelm
@@ -136,17 +138,19 @@ Status: Submit Startup link visible; route appears account/sign-in gated or JS-o
 - SaaSworthy fallback: `feedback@saasworthy.com`
 - Capterra page footer has vendor flow and Capterra support context; vendor route is G2 Digital Markets app.
 
-
 ### SoftwareSuggest continued with Vault contact
 
 Vault source used:
+
 - `infrastructure` Identity & Contact: Arif personal phone `425-698-7259`
 - `identity`: fallback ZIP `98075`, used to select `Sammamish` as head-office city from SoftwareSuggest dropdown
 
 Completed first step and received page message:
+
 > The Verification email has been sent to your email address.
 
 Completed second step:
+
 - Employees: Freelancer
 - Customers: 1–25
 - Type: Software
@@ -166,7 +170,6 @@ Subject: `Complete free listing for GainHelm`
 
 Purpose: asked them to confirm the submitted free listing request and provide next steps because the welcome email did not include a verification link.
 
-
 ### LaunchPedia outreach sent
 
 Checked `https://launchpedia.co/submit/`; embedded iframe form did not load a usable form. Found footer mailto `launchpediateam@gmail.com` and sent a concise submission request from `arif.coskun@profithelm.com` with GainHelm details.
@@ -184,6 +187,7 @@ Checked `https://tools.launchllama.co/` via Submit Tool. Submission requires sig
 Submitted GainHelm at `https://b2bsaasmarket.com/submit`.
 
 Fields used:
+
 - Tool: GainHelm
 - Tagline: AI dispatch app for 1–20 tech field-service teams
 - URL: https://gainhelm.com/
@@ -224,6 +228,7 @@ Checked `https://microsaasdirectory.com/`; submit routes point to `/register`. M
 Checked `https://www.leadrpro.com/contact`. Submitted contact form asking to add GainHelm to the software directory.
 
 Visible confirmation:
+
 > Message Sent Successfully! Thanks for reaching out! We'll get back to you within 24 hours.
 
 Screenshot before submit: `reports/gainhelm-gsc/leadrpro-filled.png`.
@@ -239,6 +244,7 @@ Checked `https://www.venkatsoftware.com/contact`. Add Software requires sign-in,
 ### AIForest asset attempt
 
 Generated local assets from GainHelm:
+
 - `reports/gainhelm-gsc/assets/gainhelm-logo.svg`
 - `reports/gainhelm-gsc/assets/gainhelm-home-16x9.png`
 
@@ -366,11 +372,13 @@ Used `https://submitatool.com/dir/ai` as a discovery index and checked another b
 Used additional targets from `submitatool.com/dir/ai`.
 
 Outreach sent:
+
 - AILibri: emailed `hi@ailibri.com`.
 - AI Tool Mall: emailed `business@aitoolmall.com`.
 - BestOfAI: Add Tool requires account, emailed `hello@bestofai.com`.
 
 Attempted/blocked:
+
 - AI Valley: filled simple submit form; fields cleared/no visible success, `attempted-unclear`.
 - Early Tools: requires magic-link sign-in, `needs-account`.
 - Raiday: submit page errored/reload-only, `broken-submit`.

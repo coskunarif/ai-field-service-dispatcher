@@ -7,33 +7,37 @@ import crypto from 'crypto';
 function computeIntentScore(title, snippet) {
   const text = `${title || ''} ${snippet || ''}`.toLowerCase();
   let score = 50;
-  
+
   if (text.includes('scheduling') || text.includes('schedule')) {
     score += 15;
   }
   if (text.includes('dispatch') || text.includes('dispatcher')) {
     score += 15;
   }
-  
-  const competitors = ["jobber", "servicetitan", "housecallpro", "fieldedge", "buildops"];
+
+  const competitors = ['jobber', 'servicetitan', 'housecallpro', 'fieldedge', 'buildops'];
   if (competitors.some(comp => text.includes(comp))) {
     score += 20;
   }
-  
-  const painWords = ["phone tag", "spreadsheet", "lost track", "mess", "calendar"];
+
+  const painWords = ['phone tag', 'spreadsheet', 'lost track', 'mess', 'calendar'];
   if (painWords.some(pain => text.includes(pain))) {
     score += 10;
   }
-  
+
   return Math.max(0, Math.min(100, score));
 }
 
 function draftSuggestedReply(title, snippet) {
   const text = `${title || ''} ${snippet || ''}`.toLowerCase();
   const isHvacPlumbingElectrical = [
-    'hvac', 'plumbing', 'plumber', 'electrical', 'electrician'
+    'hvac',
+    'plumbing',
+    'plumber',
+    'electrical',
+    'electrician',
   ].some(keyword => text.includes(keyword));
-  
+
   if (isHvacPlumbingElectrical) {
     return `Hey! If you are dealing with dispatch chaos or trying to get away from spreadsheets, check out Gainhelm (https://gainhelm.com). It is a lightweight, AI-driven dispatch assistant that routes jobs automatically to technicians via SMS and syncs with your Google Calendar, reducing phone tag.`;
   } else {
@@ -47,38 +51,40 @@ async function main() {
       platform: 'reddit',
       source_url: 'https://reddit.com/r/hvac/comments/hvac-pain-scheduling',
       title: 'Help with HVAC scheduling',
-      snippet: 'We currently use Jobber and a spreadsheet but the dispatcher is overwhelmed and there is a lot of phone tag.'
+      snippet:
+        'We currently use Jobber and a spreadsheet but the dispatcher is overwhelmed and there is a lot of phone tag.',
     },
     {
       platform: 'facebook',
       source_url: 'https://facebook.com/groups/contractors/posts/general-handyman-help',
       title: 'Looking for recommendations',
-      snippet: 'Any advice for starting a general handyman business?'
+      snippet: 'Any advice for starting a general handyman business?',
     },
     {
       platform: 'reddit',
       source_url: 'https://reddit.com/r/plumbing/comments/plumbing-dispatcher-need',
       title: 'Plumbing dispatcher help',
-      snippet: 'We need to dispatch plumber techs.'
+      snippet: 'We need to dispatch plumber techs.',
     },
     {
       platform: 'facebook',
       source_url: 'https://facebook.com/groups/hvac-talk/posts/servicetitan-alternatives',
       title: 'ServiceTitan alternatives for scheduling?',
-      snippet: 'ServiceTitan is too expensive and complex for our small team. We just need simple dispatching and scheduling.'
+      snippet:
+        'ServiceTitan is too expensive and complex for our small team. We just need simple dispatching and scheduling.',
     },
     {
       platform: 'reddit',
       source_url: 'https://reddit.com/r/electrical/comments/electrician-dispatcher-chaos',
       title: 'Electrician dispatcher chaos',
-      snippet: 'scheduling and dispatching electricians is a mess. Need an app.'
+      snippet: 'scheduling and dispatching electricians is a mess. Need an app.',
     },
     {
       platform: 'facebook',
       source_url: 'https://facebook.com/groups/contractors/posts/dispatch-phone-tag',
       title: 'Need HVAC dispatcher app',
-      snippet: 'Our scheduling is a mess and we are playing phone tag all day.'
-    }
+      snippet: 'Our scheduling is a mess and we are playing phone tag all day.',
+    },
   ];
 
   try {
@@ -89,7 +95,7 @@ async function main() {
         const url = `https://www.reddit.com/r/${sub}/search.json?q=${encodeURIComponent(kw)}&restrict_sr=on&sort=new&t=year`;
         const res = await fetch(url, {
           headers: { 'User-Agent': 'GainhelmLeadFinder/1.0' },
-          signal: AbortSignal.timeout(2000)
+          signal: AbortSignal.timeout(2000),
         });
         if (!res.ok) continue;
         const data = await res.json();
@@ -97,12 +103,16 @@ async function main() {
         for (const post of posts) {
           const { title, permalink, selftext } = post.data;
           const bodyLower = (title + ' ' + selftext).toLowerCase();
-          if (bodyLower.includes('schedule') || bodyLower.includes('dispatch') || bodyLower.includes('software')) {
+          if (
+            bodyLower.includes('schedule') ||
+            bodyLower.includes('dispatch') ||
+            bodyLower.includes('software')
+          ) {
             leadsToInsert.push({
               platform: 'reddit',
               source_url: `https://reddit.com${permalink}`,
               title: title || 'Reddit Post',
-              snippet: selftext ? selftext.slice(0, 300) : 'No content'
+              snippet: selftext ? selftext.slice(0, 300) : 'No content',
             });
           }
         }

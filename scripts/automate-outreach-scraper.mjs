@@ -15,7 +15,7 @@ const targetUrls = [
   'https://planado.app/industries/plumbers',
   'https://www.getweave.com/how-a-plumbing-scheduling-software-offers-flexibility-in-unpredictable-jobs/',
   'https://www.ownedandoperated.com/post/why-you-need-a-dispatcher-in-your-hvac-plumbing-and-electrical-business',
-  'https://www.businessgenieapp.com/industries/plumbing/dispatch-software'
+  'https://www.businessgenieapp.com/industries/plumbing/dispatch-software',
 ];
 
 // Helper to extract email addresses from page text
@@ -27,10 +27,11 @@ function findEmails(text) {
 
 // Generate a personalized listicle pitch email
 function generateListiclePitch(url, companyOrDomain, matchedEmails) {
-  const isPlumbing = url.toLowerCase().includes('plumbing') || url.toLowerCase().includes('plumber');
+  const isPlumbing =
+    url.toLowerCase().includes('plumbing') || url.toLowerCase().includes('plumber');
   const isHvac = url.toLowerCase().includes('hvac');
-  const tradeType = isPlumbing ? 'plumbing' : (isHvac ? 'HVAC' : 'field service');
-  
+  const tradeType = isPlumbing ? 'plumbing' : isHvac ? 'HVAC' : 'field service';
+
   const recipientEmail = matchedEmails.length > 0 ? matchedEmails[0] : `editor@${companyOrDomain}`;
 
   return `To: ${recipientEmail}
@@ -55,7 +56,7 @@ async function scrapeOutreachTargets() {
   console.log('Launching browser to find listicle emails...');
   const browser = await chromium.launch({ headless: true, args: ['--disable-ipv6'] });
   const context = await browser.newContext();
-  
+
   const leads = [];
 
   for (const url of targetUrls) {
@@ -66,7 +67,7 @@ async function scrapeOutreachTargets() {
     try {
       // Go to page
       await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 15000 });
-      
+
       // Extract text content and mailto links
       const bodyText = await page.innerText('body');
       const hrefs = await page.evaluate(() => {
@@ -92,9 +93,8 @@ async function scrapeOutreachTargets() {
         url,
         domain,
         emails,
-        pitch
+        pitch,
       });
-
     } catch (err) {
       console.error(`Failed to scrape ${url}:`, err.message);
       // Still add to leads list with a placeholder editor email
@@ -104,7 +104,7 @@ async function scrapeOutreachTargets() {
         domain,
         emails: [],
         pitch,
-        error: err.message
+        error: err.message,
       });
     } finally {
       await page.close();
@@ -118,7 +118,7 @@ async function scrapeOutreachTargets() {
   if (!fs.existsSync(reportsDir)) {
     fs.mkdirSync(reportsDir, { recursive: true });
   }
-  
+
   fs.writeFileSync(
     path.join(reportsDir, 'automated-outreach-leads.json'),
     JSON.stringify(leads, null, 2),
@@ -130,11 +130,12 @@ async function scrapeOutreachTargets() {
   let report = `# GainHelm Automated Listicle Outreach Report\n`;
   report += `*Generated on: ${new Date().toLocaleString()}*\n\n`;
   report += `This report lists outreach targets discovered by scanning the ranking listicles for HVAC/Plumbing scheduling. Pitch emails have been drafted for each editor.\n\n`;
-  
+
   report += `| Domain | Target URL | Discovered Emails | Action Status |\n`;
   report += `| :--- | :--- | :--- | :--- |\n`;
   for (const lead of leads) {
-    const emailStr = lead.emails.length > 0 ? lead.emails.join(', ') : `editor@${lead.domain} (Suggested)`;
+    const emailStr =
+      lead.emails.length > 0 ? lead.emails.join(', ') : `editor@${lead.domain} (Suggested)`;
     report += `| **${lead.domain}** | [Link](${lead.url}) | ${emailStr} | Ready to Send |\n`;
   }
 

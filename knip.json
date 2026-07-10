@@ -1,0 +1,15 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "entry": [
+    "route-optimizer.js",
+    "scripts/*.mjs",
+    "scripts/*.js",
+    "check_*.js",
+    "test_post.js",
+    "tests/**/*.spec.js",
+    "tests/**/*.mjs",
+    "tests/**/*.js"
+  ],
+  "project": ["**/*.js", "**/*.mjs", "**/*.ts"],
+  "ignore": [".agents/**", "api/**"]
+}

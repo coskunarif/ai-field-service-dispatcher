@@ -2,13 +2,14 @@ import { test, expect } from '@playwright/test';
 import postgres from 'postgres';
 
 test.describe('Supervision - Manual Dispatch Override', () => {
-
-  test('Assign button is visible for On Duty technicians and status updates correctly', async ({ page }) => {
+  test('Assign button is visible for On Duty technicians and status updates correctly', async ({
+    page,
+  }) => {
     const email = `manual-tech-test-${Math.random().toString(36).substring(7)}@example.com`;
-    
+
     // Create setup
     await page.goto(`/setup?email=${encodeURIComponent(email)}`);
-    
+
     // Configure Card 0 -> Sarah Connor
     await page.fill('input[name="tech_name_0"]', 'Sarah Connor');
     await page.fill('input[name="tech_phone_0"]', '+15550288');
@@ -52,12 +53,14 @@ test.describe('Supervision - Manual Dispatch Override', () => {
     await expect(assignBtnDave).not.toBeVisible();
   });
 
-  test('Clicking Assign alerts the user if no active dispatch request is running', async ({ page }) => {
+  test('Clicking Assign alerts the user if no active dispatch request is running', async ({
+    page,
+  }) => {
     const email = `manual-alert-test-${Math.random().toString(36).substring(7)}@example.com`;
-    
+
     // Create setup
     await page.goto(`/setup?email=${encodeURIComponent(email)}`);
-    
+
     // Configure Card 0 -> Sarah Connor
     await page.fill('input[name="tech_name_0"]', 'Sarah Connor');
     await page.fill('input[name="tech_phone_0"]', '+15550288');
@@ -88,12 +91,14 @@ test.describe('Supervision - Manual Dispatch Override', () => {
     expect(dialogMessage).toContain('Please initiate a dispatch request first');
   });
 
-  test('Active dispatch simulation can be manually overridden and logs correctly', async ({ page }) => {
+  test('Active dispatch simulation can be manually overridden and logs correctly', async ({
+    page,
+  }) => {
     const email = `manual-override-test-${Math.random().toString(36).substring(7)}@example.com`;
-    
+
     // Create setup
     await page.goto(`/setup?email=${encodeURIComponent(email)}`);
-    
+
     // Configure Card 0 -> Sarah Connor
     await page.fill('input[name="tech_name_0"]', 'Sarah Connor');
     await page.fill('input[name="tech_phone_0"]', '+15550288');
@@ -164,5 +169,4 @@ test.describe('Supervision - Manual Dispatch Override', () => {
       }
     }
   });
-
 });

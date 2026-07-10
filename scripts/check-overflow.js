@@ -37,26 +37,28 @@ const pages = [
 
 console.log('Starting local server on port 3005...');
 const server = spawn('node', ['server.js'], {
-  env: { ...process.env, PORT: '3005', DATABASE_URL: '' }
+  env: { ...process.env, PORT: '3005', DATABASE_URL: '' },
 });
 
 await new Promise(resolve => setTimeout(resolve, 2000));
 
 try {
   const browser = await chromium.launch();
-  
+
   const viewports = [
     { name: 'Desktop (1280x800)', width: 1280, height: 800, isMobile: false },
-    { name: 'Mobile (390x844)', width: 390, height: 844, isMobile: true }
+    { name: 'Mobile (390x844)', width: 390, height: 844, isMobile: true },
   ];
 
   for (const vp of viewports) {
     console.log(`\n=================== TESTING VIEWPORT: ${vp.name} ===================`);
     const context = await browser.newContext({
       viewport: { width: vp.width, height: vp.height },
-      userAgent: vp.isMobile ? 'Mozilla/5.0 (iPhone; CPU iPhone OS 14_7_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Mobile/15E148 Safari/604.1' : undefined
+      userAgent: vp.isMobile
+        ? 'Mozilla/5.0 (iPhone; CPU iPhone OS 14_7_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Mobile/15E148 Safari/604.1'
+        : undefined,
     });
-    
+
     const page = await context.newPage();
 
     page.on('console', msg => {
@@ -81,7 +83,7 @@ try {
         const scrollWidth = document.documentElement.scrollWidth;
         const innerWidth = window.innerWidth;
         const bodyScrollWidth = document.body.scrollWidth;
-        
+
         let badElement = null;
         if (scrollWidth > innerWidth || bodyScrollWidth > innerWidth) {
           const all = document.querySelectorAll('*');
@@ -94,7 +96,7 @@ try {
                 id: el.id,
                 right: rect.right,
                 left: rect.left,
-                width: rect.width
+                width: rect.width,
               };
               break;
             }
@@ -106,14 +108,18 @@ try {
           scrollWidth,
           bodyScrollWidth,
           innerWidth,
-          badElement
+          badElement,
         };
       });
 
       if (overflowInfo.overflow) {
-        console.warn(`[${vp.name}] ⚠️ OVERFLOW on ${path}: scrollWidth=${overflowInfo.scrollWidth}, bodyScrollWidth=${overflowInfo.bodyScrollWidth}, innerWidth=${overflowInfo.innerWidth}`);
+        console.warn(
+          `[${vp.name}] ⚠️ OVERFLOW on ${path}: scrollWidth=${overflowInfo.scrollWidth}, bodyScrollWidth=${overflowInfo.bodyScrollWidth}, innerWidth=${overflowInfo.innerWidth}`
+        );
         if (overflowInfo.badElement) {
-          console.warn(`  Offending element: <${overflowInfo.badElement.tagName} class="${overflowInfo.badElement.className}" id="${overflowInfo.badElement.id}"> (width=${overflowInfo.badElement.width}, right=${overflowInfo.badElement.right})`);
+          console.warn(
+            `  Offending element: <${overflowInfo.badElement.tagName} class="${overflowInfo.badElement.className}" id="${overflowInfo.badElement.id}"> (width=${overflowInfo.badElement.width}, right=${overflowInfo.badElement.right})`
+          );
         }
       }
     }

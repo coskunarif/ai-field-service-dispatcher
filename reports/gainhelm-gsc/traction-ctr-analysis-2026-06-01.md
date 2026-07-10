@@ -18,42 +18,42 @@ Gainhelm is getting real discovery growth, but CTR is not the main standalone pr
 
 Recent Search Console totals by device for 2026-05-04 to 2026-05-31:
 
-| Device | Clicks | Impressions | CTR | Avg position |
-|---|---:|---:|---:|---:|
-| Desktop | 3 | 1,786 | 0.17% | 69.7 |
-| Mobile | 0 | 379 | 0.00% | 67.4 |
-| Tablet | 0 | 24 | 0.00% | 60.0 |
-| Total | 3 | 2,189 | 0.14% | ~69.3 |
+| Device  | Clicks | Impressions |   CTR | Avg position |
+| ------- | -----: | ----------: | ----: | -----------: |
+| Desktop |      3 |       1,786 | 0.17% |         69.7 |
+| Mobile  |      0 |         379 | 0.00% |         67.4 |
+| Tablet  |      0 |          24 | 0.00% |         60.0 |
+| Total   |      3 |       2,189 | 0.14% |        ~69.3 |
 
 Weekly impression trend from date rows:
 
-| Week ending | Clicks | Impressions | Notes |
-|---|---:|---:|---|
-| 2026-05-16 | 0 | 308 | Early baseline after page work started showing more impressions |
-| 2026-05-23 | 1 | 746 | 142% more impressions than prior week |
-| 2026-05-30 | 2 | 955 | 28% more impressions than prior week |
+| Week ending | Clicks | Impressions | Notes                                                           |
+| ----------- | -----: | ----------: | --------------------------------------------------------------- |
+| 2026-05-16  |      0 |         308 | Early baseline after page work started showing more impressions |
+| 2026-05-23  |      1 |         746 | 142% more impressions than prior week                           |
+| 2026-05-30  |      2 |         955 | 28% more impressions than prior week                            |
 
 Country split:
 
-| Country | Clicks | Impressions | CTR | Avg position |
-|---|---:|---:|---:|---:|
-| USA | 3 | 1,550 | 0.19% | 71.8 |
-| Australia | 0 | 348 | 0.00% | 66.0 |
-| Great Britain | 0 | 176 | 0.00% | 61.5 |
-| Canada | 0 | 99 | 0.00% | 57.3 |
+| Country       | Clicks | Impressions |   CTR | Avg position |
+| ------------- | -----: | ----------: | ----: | -----------: |
+| USA           |      3 |       1,550 | 0.19% |         71.8 |
+| Australia     |      0 |         348 | 0.00% |         66.0 |
+| Great Britain |      0 |         176 | 0.00% |         61.5 |
+| Canada        |      0 |          99 | 0.00% |         57.3 |
 
 Interpretation: impressions are accelerating, especially in the final reported week. The weak CTR is expected at current average positions; a snippet rewrite alone will not move CTR much while most impressions are far below page 1.
 
 ## Top page evidence
 
-| Page | Clicks | Impressions | CTR | Avg position | Index status |
-|---|---:|---:|---:|---:|---|
-| `/plumbing-dispatch-software` | 1 | 1,267 | 0.08% | 74.8 | Submitted and indexed; last crawled 2026-05-22 |
-| `/hvac-dispatch-software` | 1 | 937 | 0.11% | 63.8 | Submitted and indexed; last crawled 2026-05-31 |
-| `/how-to-choose-hvac-dispatch-app` | 0 | 63 | 0.00% | 58.7 | Submitted and indexed; last crawled 2026-05-26 |
-| `/hvac-dispatch-app-vs-spreadsheets` | 0 | 61 | 0.00% | 59.8 | Not inspected in this pass |
-| `/septic-service-dispatch-software` | 0 | 46 | 0.00% | 74.0 | Not inspected in this pass |
-| `/mobile-dispatch-board` | 0 | not surfaced as a page row | n/a | n/a | Discovered, currently not indexed |
+| Page                                 | Clicks |                Impressions |   CTR | Avg position | Index status                                   |
+| ------------------------------------ | -----: | -------------------------: | ----: | -----------: | ---------------------------------------------- |
+| `/plumbing-dispatch-software`        |      1 |                      1,267 | 0.08% |         74.8 | Submitted and indexed; last crawled 2026-05-22 |
+| `/hvac-dispatch-software`            |      1 |                        937 | 0.11% |         63.8 | Submitted and indexed; last crawled 2026-05-31 |
+| `/how-to-choose-hvac-dispatch-app`   |      0 |                         63 | 0.00% |         58.7 | Submitted and indexed; last crawled 2026-05-26 |
+| `/hvac-dispatch-app-vs-spreadsheets` |      0 |                         61 | 0.00% |         59.8 | Not inspected in this pass                     |
+| `/septic-service-dispatch-software`  |      0 |                         46 | 0.00% |         74.0 | Not inspected in this pass                     |
+| `/mobile-dispatch-board`             |      0 | not surfaced as a page row |   n/a |          n/a | Discovered, currently not indexed              |
 
 Sitemap status:
 
@@ -67,18 +67,18 @@ Sitemap status:
 
 Highest-impression recent queries:
 
-| Query | Clicks | Impressions | CTR | Avg position | Current page |
-|---|---:|---:|---:|---:|---|
-| `hvac dispatch app` | 0 | 193 | 0.00% | 65.5 | Mostly `/hvac-dispatch-software` |
-| `hvac dispatch software ipad` | 0 | 147 | 0.00% | 22.9 | Mostly `/hvac-dispatch-software` |
-| `plumber scheduling software` | 0 | 133 | 0.00% | 78.5 | `/plumbing-dispatch-software` |
-| `plumbing scheduling software` | 0 | 113 | 0.00% | 78.6 | `/plumbing-dispatch-software` |
-| `plumbing dispatch software` | 0 | 106 | 0.00% | 74.7 | `/plumbing-dispatch-software` |
-| `plumbing scheduling app` | 0 | 102 | 0.00% | 75.3 | `/plumbing-dispatch-software` |
-| `dispatch software for plumbing` | 0 | 77 | 0.00% | 73.4 | `/plumbing-dispatch-software` |
-| `plumbing dispatching software` | 0 | 77 | 0.00% | 79.9 | `/plumbing-dispatch-software` |
-| `hvac dispatch software` | 1 | 74 | 1.35% | 80.9 | `/hvac-dispatch-software` |
-| `scheduling software for plumbers` | 0 | 72 | 0.00% | 80.2 | `/plumbing-dispatch-software` |
+| Query                              | Clicks | Impressions |   CTR | Avg position | Current page                     |
+| ---------------------------------- | -----: | ----------: | ----: | -----------: | -------------------------------- |
+| `hvac dispatch app`                |      0 |         193 | 0.00% |         65.5 | Mostly `/hvac-dispatch-software` |
+| `hvac dispatch software ipad`      |      0 |         147 | 0.00% |         22.9 | Mostly `/hvac-dispatch-software` |
+| `plumber scheduling software`      |      0 |         133 | 0.00% |         78.5 | `/plumbing-dispatch-software`    |
+| `plumbing scheduling software`     |      0 |         113 | 0.00% |         78.6 | `/plumbing-dispatch-software`    |
+| `plumbing dispatch software`       |      0 |         106 | 0.00% |         74.7 | `/plumbing-dispatch-software`    |
+| `plumbing scheduling app`          |      0 |         102 | 0.00% |         75.3 | `/plumbing-dispatch-software`    |
+| `dispatch software for plumbing`   |      0 |          77 | 0.00% |         73.4 | `/plumbing-dispatch-software`    |
+| `plumbing dispatching software`    |      0 |          77 | 0.00% |         79.9 | `/plumbing-dispatch-software`    |
+| `hvac dispatch software`           |      1 |          74 | 1.35% |         80.9 | `/hvac-dispatch-software`        |
+| `scheduling software for plumbers` |      0 |          72 | 0.00% |         80.2 | `/plumbing-dispatch-software`    |
 
 Best near-term target:
 

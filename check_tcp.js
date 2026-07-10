@@ -9,7 +9,7 @@ client.connect(443, '216.239.34.21', () => {
   client.destroy();
 });
 
-client.on('error', (err) => {
+client.on('error', err => {
   console.error('Connection error:', err.message);
   client.destroy();
 });

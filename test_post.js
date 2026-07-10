@@ -7,7 +7,7 @@ async function run() {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ calendar_url: 'not-a-valid-url' })
+      body: JSON.stringify({ calendar_url: 'not-a-valid-url' }),
     });
     console.log('Status:', res.status);
     console.log('Body:', await res.text());

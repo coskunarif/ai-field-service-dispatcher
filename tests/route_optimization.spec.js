@@ -2,8 +2,9 @@ import { test, expect } from '@playwright/test';
 import postgres from 'postgres';
 
 test.describe('Route Optimization & ETA Simulator', () => {
-
-  test('GET /route-optimizer.js returns the file with javascript Content-Type', async ({ request }) => {
+  test('GET /route-optimizer.js returns the file with javascript Content-Type', async ({
+    request,
+  }) => {
     const response = await request.get('/route-optimizer.js');
     expect(response.status()).toBe(200);
     const contentType = response.headers()['content-type'];
@@ -13,16 +14,20 @@ test.describe('Route Optimization & ETA Simulator', () => {
   test('Unit calculations for RouteOptimizer in browser context', async ({ page }) => {
     // Go to /app where the script should be loaded
     await page.goto('/app');
-    
+
     // Check RouteOptimizer exists
     const exists = await page.evaluate(() => typeof window.RouteOptimizer !== 'undefined');
     expect(exists).toBe(true);
-    
+
     // Test haversineDistance calculations
-    const distSame = await page.evaluate(() => window.RouteOptimizer.haversineDistance(41.8781, -87.6298, 41.8781, -87.6298));
+    const distSame = await page.evaluate(() =>
+      window.RouteOptimizer.haversineDistance(41.8781, -87.6298, 41.8781, -87.6298)
+    );
     expect(distSame).toBe(0);
-    
-    const distDiff = await page.evaluate(() => window.RouteOptimizer.haversineDistance(41.8781, -87.6298, 41.8900, -87.6300));
+
+    const distDiff = await page.evaluate(() =>
+      window.RouteOptimizer.haversineDistance(41.8781, -87.6298, 41.89, -87.63)
+    );
     expect(distDiff).toBe(0.82);
 
     // Test calculateETA formulas
@@ -42,15 +47,23 @@ test.describe('Route Optimization & ETA Simulator', () => {
     const animIdSet = await page.evaluate(() => {
       const dummyMarker = { setLatLng: () => {} };
       const dummyPolyline = { getLatLngs: () => [] };
-      window.RouteOptimizer.animateMarker(dummyMarker, dummyPolyline, [41.8781, -87.6298], [41.8900, -87.6300], 100);
+      window.RouteOptimizer.animateMarker(
+        dummyMarker,
+        dummyPolyline,
+        [41.8781, -87.6298],
+        [41.89, -87.63],
+        100
+      );
       return window.activeRouteAnimationId !== undefined;
     });
     expect(animIdSet).toBe(true);
   });
 
-  test('E2E flow: Selecting traffic multiplier (Rush Hour), submitting dispatch request, verifying that the SMS text shows the ETA, verifying the database logs', async ({ page }) => {
+  test('E2E flow: Selecting traffic multiplier (Rush Hour), submitting dispatch request, verifying that the SMS text shows the ETA, verifying the database logs', async ({
+    page,
+  }) => {
     const email = `route-e2e-test-${Math.random().toString(36).substring(7)}@example.com`;
-    
+
     // 1. Go to setup and configure Sarah Connor
     await page.goto(`/setup?email=${encodeURIComponent(email)}`);
     await page.fill('input[name="tech_name_0"]', 'Sarah Connor');
@@ -79,7 +92,7 @@ test.describe('Route Optimization & ETA Simulator', () => {
 
     // 4. Verify SMS text contains the ETA
     await expect(page.locator('#phone-title')).toHaveText('💬 Sarah Connor');
-    
+
     const phoneChat = page.locator('#phone-chat');
     await expect(phoneChat).toContainText(/ETA/i);
     await expect(phoneChat).toContainText(/Rush Hour/i);
@@ -100,13 +113,13 @@ test.describe('Route Optimization & ETA Simulator', () => {
         `;
         expect(results.length).toBe(1);
         const log = results[0];
-        
+
         expect(log.distance_miles).not.toBeNull();
         expect(Number(log.distance_miles)).toBeGreaterThan(0);
-        
+
         expect(log.duration_mins).not.toBeNull();
         expect(Number(log.duration_mins)).toBeGreaterThan(0);
-        
+
         expect(log.traffic_multiplier).not.toBeNull();
         expect(Number(log.traffic_multiplier)).toBe(1.8);
       } finally {
@@ -115,9 +128,11 @@ test.describe('Route Optimization & ETA Simulator', () => {
     }
   });
 
-  test('E2E flow: Manual dispatch also does the calculations and records it in the DB', async ({ page }) => {
+  test('E2E flow: Manual dispatch also does the calculations and records it in the DB', async ({
+    page,
+  }) => {
     const email = `route-manual-test-${Math.random().toString(36).substring(7)}@example.com`;
-    
+
     // 1. Go to setup and configure David Miller
     await page.goto(`/setup?email=${encodeURIComponent(email)}`);
     await page.fill('input[name="tech_name_0"]', 'David Miller');
@@ -162,13 +177,13 @@ test.describe('Route Optimization & ETA Simulator', () => {
         `;
         expect(results.length).toBe(1);
         const log = results[0];
-        
+
         expect(log.distance_miles).not.toBeNull();
         expect(Number(log.distance_miles)).toBeGreaterThan(0);
-        
+
         expect(log.duration_mins).not.toBeNull();
         expect(Number(log.duration_mins)).toBeGreaterThan(0);
-        
+
         expect(log.traffic_multiplier).not.toBeNull();
         expect(Number(log.traffic_multiplier)).toBe(3.0);
       } finally {
@@ -176,5 +191,4 @@ test.describe('Route Optimization & ETA Simulator', () => {
       }
     }
   });
-
 });

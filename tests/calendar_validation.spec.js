@@ -8,13 +8,15 @@ test.describe('Calendar Validation API [AC-1]', () => {
   const malformedUrls = [
     { url: 'not-a-valid-url', desc: 'plain string' },
     { url: 'https://', desc: 'missing host' },
-    { url: 'https://calendar.google.com:abc/calendar', desc: 'invalid port' }
+    { url: 'https://calendar.google.com:abc/calendar', desc: 'invalid port' },
   ];
 
   for (const { url, desc } of malformedUrls) {
-    test(`POST /api/validate-calendar - returns valid: false for malformed URLs (${desc})`, async ({ request }) => {
+    test(`POST /api/validate-calendar - returns valid: false for malformed URLs (${desc})`, async ({
+      request,
+    }) => {
       const response = await request.post('/api/validate-calendar', {
-        data: { calendar_url: url }
+        data: { calendar_url: url },
       });
       expect(response.status()).toBe(200);
       const body = await response.json();
@@ -27,25 +29,42 @@ test.describe('Calendar Validation API [AC-1]', () => {
     { url: 'https://example.com/calendar', desc: 'external domain' },
     { url: 'https://calendar.google.com.attacker.com/calendar', desc: 'domain spoofing' },
     { url: 'https://google.com/calendar', desc: 'naked google.com' },
-    { url: 'https://subdomain.calendar.google.com/calendar', desc: 'subdomain of calendar.google.com' },
+    {
+      url: 'https://subdomain.calendar.google.com/calendar',
+      desc: 'subdomain of calendar.google.com',
+    },
     { url: 'https://calendar.google.com@attacker.com/calendar', desc: 'credentials redirect' },
     { url: 'https://calendar.google.com.com/calendar', desc: 'spoofed com suffix' },
     { url: 'https://calendar.google.com.cn/calendar', desc: 'spoofed cn suffix' },
-    { url: 'https://calendar.google.com./calendar/embed?src=test', desc: 'trailing dot in hostname' },
-    { url: 'https://calendar.google.com%ef%bc%8eattacker.com/calendar', desc: 'fullwidth dot domain spoofing' },
-    { url: 'https://calendar.google.com%e3%80%82attacker.com/calendar', desc: 'ideographic dot domain spoofing' },
+    {
+      url: 'https://calendar.google.com./calendar/embed?src=test',
+      desc: 'trailing dot in hostname',
+    },
+    {
+      url: 'https://calendar.google.com%ef%bc%8eattacker.com/calendar',
+      desc: 'fullwidth dot domain spoofing',
+    },
+    {
+      url: 'https://calendar.google.com%e3%80%82attacker.com/calendar',
+      desc: 'ideographic dot domain spoofing',
+    },
     { url: 'https://calendar.g\u043e\u043egle.com/calendar', desc: 'Cyrillic homograph spoofing' },
     { url: 'https://calendar.xn--ggle-m50aa.com/calendar', desc: 'punycode domain spoofing' },
     { url: 'https://142.250.190.46/calendar/embed?src=test', desc: 'IPv4 address bypass' },
-    { url: 'https://[2607:f8b0:4005:805::200e]/calendar/embed?src=test', desc: 'IPv6 address bypass' },
+    {
+      url: 'https://[2607:f8b0:4005:805::200e]/calendar/embed?src=test',
+      desc: 'IPv6 address bypass',
+    },
     { url: 'https://calendar.google.com-attacker.com/calendar', desc: 'dashed domain spoofing' },
     { url: 'https://calendar-google-com.com/calendar', desc: 'hyphenated spoofed domain' },
   ];
 
   for (const { url, desc } of invalidHostnames) {
-    test(`POST /api/validate-calendar - returns valid: false for hostnames other than calendar.google.com (${desc})`, async ({ request }) => {
+    test(`POST /api/validate-calendar - returns valid: false for hostnames other than calendar.google.com (${desc})`, async ({
+      request,
+    }) => {
       const response = await request.post('/api/validate-calendar', {
-        data: { calendar_url: url }
+        data: { calendar_url: url },
       });
       expect(response.status()).toBe(200);
       const body = await response.json();
@@ -58,23 +77,49 @@ test.describe('Calendar Validation API [AC-1]', () => {
     { url: 'https://calendar.google.com/calendar/embed?src=test', desc: 'standard query test' },
     { url: 'https://CALENDAR.GOOGLE.COM/calendar/embed?src=test', desc: 'uppercase hostname' },
     { url: 'https://calendar.google.com/test-path', desc: 'path contains test' },
-    { url: 'https://calendar.google.com:443/calendar/embed?src=test', desc: 'explicit https port 443' },
+    {
+      url: 'https://calendar.google.com:443/calendar/embed?src=test',
+      desc: 'explicit https port 443',
+    },
     { url: 'https://calendar.google.com/calendar/embed?src=TEST', desc: 'uppercase query TEST' },
     { url: 'http://calendar.google.com/calendar/embed?src=test', desc: 'http protocol' },
-    { url: 'https://calendar.google.com/calendar/embed?src=test&foo=bar', desc: 'multiple query parameters' },
-    { url: '  https://calendar.google.com/calendar/embed?src=test  ', desc: 'leading and trailing whitespace' },
-    { url: 'https://calendar.google.com:8080/calendar/embed?src=test', desc: 'explicit non-standard port 8080' },
-    { url: 'https://calendar.google.com\\\\calendar/embed?src=test', desc: 'backslashes in path normalized to forward slashes' },
-    { url: 'https://user:pass@calendar.google.com/calendar/embed?src=test', desc: 'credentials in URL' },
-    { url: 'https://calendar.google.com/calendar/embed?src=my-test-calendar', desc: 'query contains test separated by hyphens' },
+    {
+      url: 'https://calendar.google.com/calendar/embed?src=test&foo=bar',
+      desc: 'multiple query parameters',
+    },
+    {
+      url: '  https://calendar.google.com/calendar/embed?src=test  ',
+      desc: 'leading and trailing whitespace',
+    },
+    {
+      url: 'https://calendar.google.com:8080/calendar/embed?src=test',
+      desc: 'explicit non-standard port 8080',
+    },
+    {
+      url: 'https://calendar.google.com\\\\calendar/embed?src=test',
+      desc: 'backslashes in path normalized to forward slashes',
+    },
+    {
+      url: 'https://user:pass@calendar.google.com/calendar/embed?src=test',
+      desc: 'credentials in URL',
+    },
+    {
+      url: 'https://calendar.google.com/calendar/embed?src=my-test-calendar',
+      desc: 'query contains test separated by hyphens',
+    },
     { url: 'https://calendar.google.com/calendar/embed#test', desc: 'hash contains word test' },
-    { url: 'https://calendar.google.com/calendar/embed?src=test%20', desc: 'URL-encoded space after test allows bypass' }
+    {
+      url: 'https://calendar.google.com/calendar/embed?src=test%20',
+      desc: 'URL-encoded space after test allows bypass',
+    },
   ];
 
   for (const { url, desc } of validBypassUrls) {
-    test(`POST /api/validate-calendar - returns valid: true for valid bypass URL (${desc})`, async ({ request }) => {
+    test(`POST /api/validate-calendar - returns valid: true for valid bypass URL (${desc})`, async ({
+      request,
+    }) => {
       const response = await request.post('/api/validate-calendar', {
-        data: { calendar_url: url }
+        data: { calendar_url: url },
       });
       expect(response.status()).toBe(200);
       const body = await response.json();
@@ -83,21 +128,50 @@ test.describe('Calendar Validation API [AC-1]', () => {
   }
 
   const invalidBypassUrls = [
-    { url: 'https://calendar.google.com/calendar/embed?src=contest@group.calendar.google.com', desc: 'query contains bypass word contest' },
-    { url: 'https://calendar.google.com/calendar/embed?src=testing', desc: 'query contains word testing' },
-    { url: 'https://calendar.google.com/calendar/embed?src=pretest', desc: 'query contains word pretest' },
-    { url: 'https://calendar.google.com/calendar/embed?src=testpost', desc: 'query contains word testpost' },
-    { url: 'https://calendar.google.com/calendar/embed?src=latest', desc: 'query contains word latest' },
-    { url: 'https://calendar.google.com/calendar/embed?src=my%20test', desc: 'URL-encoded space before test prevents bypass' },
-    { url: 'https://calendar.google.com/calendar/embed?src=my%2dtest', desc: 'URL-encoded hyphen prevents bypass due to raw string regex check' },
-    { url: 'https://calendar.google.com/calendar/embed?src=test_123', desc: 'query contains word test_123 (underscore prevents boundary)' },
-    { url: 'https://calendar.google.com/calendar/embed?src=%3atest', desc: 'URL-encoded colon before test prevents bypass due to raw string regex check ending in a word character' }
+    {
+      url: 'https://calendar.google.com/calendar/embed?src=contest@group.calendar.google.com',
+      desc: 'query contains bypass word contest',
+    },
+    {
+      url: 'https://calendar.google.com/calendar/embed?src=testing',
+      desc: 'query contains word testing',
+    },
+    {
+      url: 'https://calendar.google.com/calendar/embed?src=pretest',
+      desc: 'query contains word pretest',
+    },
+    {
+      url: 'https://calendar.google.com/calendar/embed?src=testpost',
+      desc: 'query contains word testpost',
+    },
+    {
+      url: 'https://calendar.google.com/calendar/embed?src=latest',
+      desc: 'query contains word latest',
+    },
+    {
+      url: 'https://calendar.google.com/calendar/embed?src=my%20test',
+      desc: 'URL-encoded space before test prevents bypass',
+    },
+    {
+      url: 'https://calendar.google.com/calendar/embed?src=my%2dtest',
+      desc: 'URL-encoded hyphen prevents bypass due to raw string regex check',
+    },
+    {
+      url: 'https://calendar.google.com/calendar/embed?src=test_123',
+      desc: 'query contains word test_123 (underscore prevents boundary)',
+    },
+    {
+      url: 'https://calendar.google.com/calendar/embed?src=%3atest',
+      desc: 'URL-encoded colon before test prevents bypass due to raw string regex check ending in a word character',
+    },
   ];
 
   for (const { url, desc } of invalidBypassUrls) {
-    test(`POST /api/validate-calendar - returns valid: false for invalid bypass URL (${desc})`, async ({ request }) => {
+    test(`POST /api/validate-calendar - returns valid: false for invalid bypass URL (${desc})`, async ({
+      request,
+    }) => {
       const response = await request.post('/api/validate-calendar', {
-        data: { calendar_url: url }
+        data: { calendar_url: url },
       });
       expect(response.status()).toBe(200);
       const body = await response.json();
@@ -105,10 +179,11 @@ test.describe('Calendar Validation API [AC-1]', () => {
     });
   }
 
-
-  test('POST /api/validate-calendar - returns valid: false when calendar_url is omitted', async ({ request }) => {
+  test('POST /api/validate-calendar - returns valid: false when calendar_url is omitted', async ({
+    request,
+  }) => {
     const response = await request.post('/api/validate-calendar', {
-      data: {}
+      data: {},
     });
     expect(response.status()).toBe(200);
     const body = await response.json();
@@ -116,9 +191,11 @@ test.describe('Calendar Validation API [AC-1]', () => {
     expect(body.error).toContain('required');
   });
 
-  test('POST /api/validate-calendar - returns valid: false for invalid protocols (e.g., ftp)', async ({ request }) => {
+  test('POST /api/validate-calendar - returns valid: false for invalid protocols (e.g., ftp)', async ({
+    request,
+  }) => {
     const response = await request.post('/api/validate-calendar', {
-      data: { calendar_url: 'ftp://calendar.google.com/test' }
+      data: { calendar_url: 'ftp://calendar.google.com/test' },
     });
     expect(response.status()).toBe(200);
     const body = await response.json();
@@ -126,17 +203,19 @@ test.describe('Calendar Validation API [AC-1]', () => {
     expect(body.error).toContain('protocol');
   });
 
-  test('POST /api/validate-calendar - returns valid: false for a URL that cannot be fetched (no test bypass)', async ({ request }) => {
+  test('POST /api/validate-calendar - returns valid: false for a URL that cannot be fetched (no test bypass)', async ({
+    request,
+  }) => {
     const response = await request.post('/api/validate-calendar', {
-      data: { calendar_url: 'https://calendar.google.com/calendar' }
+      data: { calendar_url: 'https://calendar.google.com/calendar' },
     });
     expect(response.status()).toBe(200);
     const body = await response.json();
     expect(body.valid).toBe(false);
-    
+
     const possibleErrors = [
       'Network error or unable to resolve calendar URL',
-      'Restricted calendar URL. Please check calendar public sharing settings.'
+      'Restricted calendar URL. Please check calendar public sharing settings.',
     ];
     const matchesAny = possibleErrors.some(err => body.error.includes(err));
     expect(matchesAny).toBe(true);
@@ -178,7 +257,10 @@ test.describe('Wizard Step 3 UI Component [AC-2]', () => {
     await page.click('#btn-next');
 
     // Fill calendar URL
-    await page.fill('input[name="calendar_url"]', 'https://calendar.google.com/calendar/embed?src=test');
+    await page.fill(
+      'input[name="calendar_url"]',
+      'https://calendar.google.com/calendar/embed?src=test'
+    );
 
     // Mock API response if needed, but since we are in test mode it will return valid: true.
     // Let's click verify
@@ -186,7 +268,7 @@ test.describe('Wizard Step 3 UI Component [AC-2]', () => {
 
     // Immediately after click, it should show verifying state
     const badge = page.locator('#calendar-verify-status');
-    // Note: Due to fast processing in test mode, the verifying state might be brief, 
+    // Note: Due to fast processing in test mode, the verifying state might be brief,
     // but the class or pulsing animation should be checked.
     await expect(badge).toContainText('Calendar integration verified.');
     await expect(badge).toHaveCSS('color', 'rgb(16, 185, 129)'); // Success color #10b981
@@ -235,7 +317,9 @@ test.describe('Verification Form Submission Guard [AC-3]', () => {
     await expect(submitBtn).toBeDisabled();
   });
 
-  test('enables submission on successful verification and disables again on URL edit', async ({ page }) => {
+  test('enables submission on successful verification and disables again on URL edit', async ({
+    page,
+  }) => {
     const email = 'ac3-guard-verify@example.com';
     await page.goto(`/setup?email=${encodeURIComponent(email)}`);
 
@@ -279,10 +363,15 @@ test.describe('Verification State Persistence in Drafts [AC-4]', () => {
     await page.click('#btn-verify-calendar');
 
     // Ensure status is verified
-    await expect(page.locator('#calendar-verify-status')).toContainText('Calendar integration verified.');
+    await expect(page.locator('#calendar-verify-status')).toContainText(
+      'Calendar integration verified.'
+    );
 
     // Check localStorage draft contains calendarConfig.is_verified: true
-    const draft = await page.evaluate((key) => localStorage.getItem(key), `gainhelm_wizard_draft_${email}`);
+    const draft = await page.evaluate(
+      key => localStorage.getItem(key),
+      `gainhelm_wizard_draft_${email}`
+    );
     expect(draft).not.toBeNull();
     const draftData = JSON.parse(draft);
     expect(draftData.calendarConfig).toBeDefined();
@@ -294,21 +383,31 @@ test.describe('Verification State Persistence in Drafts [AC-4]', () => {
     const draftState = {
       currentStep: 3,
       technicians: [
-        { name: 'Sarah Connor', phone: '+15551234', trade: 'HVAC', skills: '', shift: 'Always', status: 'active' }
+        {
+          name: 'Sarah Connor',
+          phone: '+15551234',
+          trade: 'HVAC',
+          skills: '',
+          shift: 'Always',
+          status: 'active',
+        },
       ],
       businessRules: { timeout: '3', pricing: '120', rules: '' },
       calendarConfig: {
         calendar_url: 'https://calendar.google.com/calendar/embed?src=test',
         sandbox_mode: 'true',
-        is_verified: true
-      }
+        is_verified: true,
+      },
     };
 
     // Load setup first to access domain/localStorage
     await page.goto('/setup');
-    await page.evaluate(({ key, val }) => {
-      localStorage.setItem(key, JSON.stringify(val));
-    }, { key: `gainhelm_wizard_draft_${email}`, val: draftState });
+    await page.evaluate(
+      ({ key, val }) => {
+        localStorage.setItem(key, JSON.stringify(val));
+      },
+      { key: `gainhelm_wizard_draft_${email}`, val: draftState }
+    );
 
     // Load setup with email to trigger restore
     await page.goto(`/setup?email=${encodeURIComponent(email)}`);
