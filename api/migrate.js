@@ -1,8 +1,8 @@
 import postgres from 'postgres';
 
-const sql = postgres(
-  'postgresql://postgres:ytMLkXmAHaZLChqnPXwBrNLBltkuewUF@shinkansen.proxy.rlwy.net:36525/railway'
-);
+const connectionString =
+  process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/postgres';
+const sql = postgres(connectionString);
 
 async function createTable() {
   try {

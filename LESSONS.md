@@ -8,3 +8,5 @@
 - HWL-008: Aligned title, OG/Twitter tags, and JSON-LD schema (with author Coskun Arif and dateModified) across competitor alternative pages to resolve technical SEO/GEO inconsistencies, validating via local seo-geo-audit and updating playwright test expectations.
 - HWL-009: When validating external calendar URLs, enforce that the URL protocol is http or https before validating and processing. Also, because Playwright tests are configured to reuse an existing server locally, make sure to terminate any stale running node processes on the test port (3005) so code changes are correctly loaded.
 - HWL-010: Fix calendar URL bypass check by utilizing word boundaries (/\btest\b/i) instead of simple substring checking (.includes('test')) to avoid false-positives on query parameters containing words like 'contest'.
+- HWL-011: Expanded Generative Engine Optimization (GEO) by building structured problem-solution guides (e.g. after-hours plumbing dispatch, Google Calendar sync) featuring HowTo JSON-LD schema, trade-specific FAQPage schemas, and automated sitemap/llms.txt registration.
+

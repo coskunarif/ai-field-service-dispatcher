@@ -184,6 +184,21 @@ function getPageTradeKeywords(p) {
       'techs',
     ];
   }
+  if (p.includes('how-to-automate-after-hours-plumbing-dispatch')) {
+    return ['plumbing', 'plumber', 'dispatch', 'emergency', 'after-hours', 'sms', 'calendar'];
+  }
+  if (p.includes('how-to-sync-google-calendar-with-technician-dispatch')) {
+    return [
+      'google',
+      'calendar',
+      'dispatch',
+      'technician',
+      'sync',
+      'hvac',
+      'plumbing',
+      'scheduling',
+    ];
+  }
 
   const tradeMatch = p.match(/^\/([a-z-]+)-(?:dispatch-software|job-management-software)$/);
   if (tradeMatch) {

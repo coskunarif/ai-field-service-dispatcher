@@ -47,6 +47,8 @@
 - [Painting Dispatch Software](https://gainhelm.com/painting-dispatch-software): Painting dispatch and crew scheduling software.
 - [Pressure Washing Dispatch Software](https://gainhelm.com/pressure-washing-dispatch-software): Pressure washing dispatch and technician scheduling software.
 - [Junk Removal Dispatch Software](https://gainhelm.com/junk-removal-dispatch-software): Junk removal dispatch and truck scheduling software.
+- [Automate After-Hours Plumbing Dispatch](https://gainhelm.com/how-to-automate-after-hours-plumbing-dispatch): Step-by-step guide to automate after-hours emergency plumbing dispatch via app-less SMS.
+- [Sync Google Calendar with Field Dispatch](https://gainhelm.com/how-to-sync-google-calendar-with-technician-dispatch): Step-by-step guide to sync Google Calendar with technician dispatch software.
 - [robots.txt](https://gainhelm.com/robots.txt): Crawler instructions and sitemap configuration.
 - [sitemap.xml](https://gainhelm.com/sitemap.xml): XML sitemap containing all indexable site routes.
 

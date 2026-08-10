@@ -27,6 +27,7 @@ function stripLeadingStepEmoji(text) {
 const contextStore = new Map();
 const inMemoryLeads = [];
 const inMemoryContractorLeads = [];
+const inMemoryWaitlistLeads = [];
 
 if (sql) {
   (async () => {
@@ -532,11 +533,11 @@ fastify.post('/waitlist', async (request, reply) => {
     }
 
     if (!dbSaved) {
-      inMemoryLeads.push({
-        id: String(inMemoryLeads.length + 1),
-        name,
-        email,
-        company,
+      inMemoryWaitlistLeads.push({
+        id: String(inMemoryWaitlistLeads.length + 1),
+        name: name || null,
+        email: email || null,
+        company: company || null,
         created_at: new Date().toISOString(),
       });
       if (wantsHtml(request)) {
@@ -5712,6 +5713,71 @@ fastify.post('/api/leads', async (request, reply) => {
       return newLead;
     }
   }
+});
+
+fastify.get('/api/waitlist', async (request, reply) => {
+  let leads = [];
+  if (sql) {
+    try {
+      leads = await sql`SELECT * FROM waitlist_leads ORDER BY created_at ASC`;
+    } catch (err) {
+      fastify.log.error('DB GET /api/waitlist error:', err);
+      return reply.status(500).send({ error: 'Database error' });
+    }
+  } else {
+    leads = [...inMemoryWaitlistLeads];
+  }
+  return leads;
+});
+
+fastify.get('/api/waitlist/first', async (request, reply) => {
+  let firstLead = null;
+  let source = 'waitlist_leads';
+
+  if (sql) {
+    try {
+      const dbLeads = await sql`SELECT * FROM waitlist_leads ORDER BY created_at ASC LIMIT 1`;
+      if (dbLeads.length > 0) {
+        firstLead = dbLeads[0];
+      }
+    } catch (err) {
+      fastify.log.error('DB GET /api/waitlist/first error:', err);
+    }
+  }
+
+  if (!firstLead && inMemoryWaitlistLeads.length > 0) {
+    firstLead = inMemoryWaitlistLeads[0];
+    source = 'waitlist_leads';
+  }
+
+  // Fallback to social_leads if waitlist_leads has no entries yet
+  if (!firstLead) {
+    if (sql) {
+      try {
+        const socialLeads =
+          await sql`SELECT * FROM social_leads ORDER BY intent_score DESC, created_at ASC LIMIT 1`;
+        if (socialLeads.length > 0) {
+          firstLead = socialLeads[0];
+          source = 'social_leads';
+        }
+      } catch (err) {
+        fastify.log.error('DB GET /api/waitlist/first social_leads fallback error:', err);
+      }
+    } else if (inMemoryLeads.length > 0) {
+      firstLead = inMemoryLeads[0];
+      source = 'social_leads';
+    }
+  }
+
+  if (!firstLead) {
+    return reply.status(404).send({ error: 'No waitlist leads found' });
+  }
+
+  return {
+    success: true,
+    source,
+    customer: firstLead,
+  };
 });
 
 fastify.get('/api/leads', async (request, reply) => {
