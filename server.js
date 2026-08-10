@@ -533,13 +533,15 @@ fastify.post('/waitlist', async (request, reply) => {
     }
 
     if (!dbSaved) {
-      inMemoryWaitlistLeads.push({
+      const newLead = {
         id: String(inMemoryWaitlistLeads.length + 1),
         name: name || null,
         email: email || null,
         company: company || null,
         created_at: new Date().toISOString(),
-      });
+      };
+      inMemoryWaitlistLeads.push(newLead);
+      inMemoryLeads.push(newLead);
       if (wantsHtml(request)) {
         return reply.type('text/html').send(
           renderWaitlistResponsePage({

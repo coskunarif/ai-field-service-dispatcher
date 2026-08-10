@@ -134,7 +134,8 @@ async function main() {
 
   console.log(`Discovered ${uniqueLeads.length} total leads (including simulated).`);
 
-  const dbUrl = process.env.DATABASE_URL;
+  const dbUrl =
+    process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/postgres';
   if (dbUrl) {
     const sql = postgres(dbUrl);
     try {
