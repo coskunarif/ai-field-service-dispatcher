@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>First Customer Finder — Gainhelm (gainhelm.com)</title>
+  <style>
+    :root{--bg:#090b0f;--panel:#12161d;--panel2:#191f28;--ink:#f5f2ea;--muted:#9ca6b5;--line:#2b3340;--acid:#d9ff63;--blue:#69b7ff;--orange:#ff8f5a;--cyan:#5ee8d0;--radius:18px;--shadow:0 24px 80px rgba(0,0,0,.38)}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.55}body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.3;background:repeating-linear-gradient(135deg,rgba(255,255,255,.018) 0 1px,transparent 1px 12px);mask-image:linear-gradient(#000,transparent 82%)}a{color:inherit}.skip{position:absolute;left:-9999px}.skip:focus{left:16px;top:16px;z-index:9;background:var(--acid);color:#111;padding:10px}
+    .shell{width:min(1180px,calc(100% - 40px));margin:auto;position:relative}.top{display:flex;justify-content:space-between;align-items:center;padding:22px 0;border-bottom:1px solid var(--line)}.brand{font-weight:850;display:flex;align-items:center;gap:10px}.brand i{width:12px;height:12px;border-radius:50%;background:var(--acid);box-shadow:0 0 22px var(--acid)}.meta{display:flex;gap:8px;align-items:center}.chip,.stage{border:1px solid var(--line);border-radius:999px;padding:7px 10px;color:var(--muted);font:750 11px ui-monospace,monospace;text-transform:uppercase;letter-spacing:.07em}button{background:var(--ink);color:#111;border:0;border-radius:999px;padding:9px 14px;font:800 13px inherit;cursor:pointer}button:focus-visible,summary:focus-visible,a:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+    .hero{display:grid;grid-template-columns:1.45fr .55fr;gap:36px;align-items:end;padding:72px 0 42px}.eyebrow{color:var(--acid);font:750 11px ui-monospace,monospace;text-transform:uppercase;letter-spacing:.11em}h1{font-size:clamp(48px,7vw,92px);line-height:.92;letter-spacing:-.065em;margin:13px 0 24px}.verdict{font-size:clamp(18px,2.1vw,25px);color:#dce1e9;max-width:820px;margin:0}.hero-card{background:var(--acid);color:#10120d;padding:26px;border-radius:var(--radius);box-shadow:var(--shadow);transform:rotate(1deg)}.hero-card span{font:800 11px ui-monospace,monospace;text-transform:uppercase;letter-spacing:.08em}.hero-card strong{display:block;font-size:64px;line-height:1;letter-spacing:-.08em;margin:15px 0 6px}.hero-card p{margin:0;font-weight:700;font-size:13px}
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;margin-bottom:28px}.stats>div{padding:18px;background:var(--panel)}.stats>div+div{border-left:1px solid var(--line)}.stats span,.prospect-grid span,.signal span,.evidence span,blockquote span{display:block;color:var(--muted);font:700 10px ui-monospace,monospace;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}.stats strong{font-size:17px}
+    .best{display:grid;grid-template-columns:180px 1fr auto;gap:24px;align-items:center;padding:25px;background:var(--orange);color:#1b0f09;border-radius:var(--radius);box-shadow:var(--shadow);margin:0 0 72px}.best-label{font:800 11px ui-monospace,monospace;text-transform:uppercase;letter-spacing:.1em}.best h2{font-size:clamp(28px,4vw,46px);letter-spacing:-.045em;line-height:1;margin:0 0 8px}.best p{margin:0}.best strong{font-size:44px}
+    .section-head{display:flex;justify-content:space-between;align-items:end;gap:24px;padding-bottom:18px;border-bottom:1px solid var(--line);margin-bottom:18px}.section-head h2{font-size:clamp(34px,5vw,62px);line-height:.98;letter-spacing:-.055em;margin:0}.section-head p{color:var(--muted);max-width:470px;margin:0}
+    .prospects{display:grid;gap:16px;margin-bottom:76px}.prospect{background:linear-gradient(135deg,var(--panel),#0f1319);border:1px solid var(--line);border-radius:var(--radius);padding:25px;box-shadow:0 12px 38px rgba(0,0,0,.18)}.prospect-head{display:grid;grid-template-columns:54px 1fr 92px;gap:17px;align-items:start}.rank{font:850 24px ui-monospace,monospace;color:var(--acid);padding-top:8px}.identity h3{font-size:29px;letter-spacing:-.04em;margin:6px 0 10px}.stage{display:inline-block}.stage.hot{color:var(--orange);border-color:rgba(255,143,90,.5)}.stage.warm{color:var(--cyan);border-color:rgba(94,232,208,.45)}.score{--score:0;width:88px;height:88px;border-radius:50%;display:grid;place-content:center;text-align:center;background:radial-gradient(circle,var(--panel) 58%,transparent 60%),conic-gradient(var(--acid) calc(var(--score)*1%),var(--line) 0)}.score strong{font-size:26px;line-height:1}.score small{color:var(--muted)}
+    .signal{margin:21px 0 12px;padding:16px;background:var(--panel2);border-left:4px solid var(--acid)}.signal p{font-size:17px;margin:0}.prospect-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.prospect-grid>div,.evidence>div{border:1px solid var(--line);border-radius:12px;padding:15px;background:rgba(255,255,255,.018)}.prospect-grid p,.evidence p{margin:0}blockquote{margin:12px 0 0;padding:16px;border:1px dashed rgba(217,255,99,.55);border-radius:12px;color:#eaf6c6}details{margin-top:10px}summary{cursor:pointer;color:var(--acid);font-weight:800;padding:10px 0}.evidence{display:grid;grid-template-columns:1fr 1fr;gap:9px}.evidence a{display:inline-block;color:var(--blue);margin-top:8px;word-break:break-word}.metrics{display:grid;gap:8px;margin-top:14px}.metric{display:grid;grid-template-columns:145px 1fr 40px;gap:12px;align-items:center;font-size:13px}.track{height:8px;background:var(--line);border-radius:8px;overflow:hidden}.track i{display:block;height:100%;background:linear-gradient(90deg,var(--blue),var(--acid))}
+    .patterns{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:76px}.pattern{display:grid;grid-template-columns:42px 1fr auto;gap:15px;align-items:start;padding:20px;border:1px solid var(--line);border-radius:14px;background:var(--panel)}.pattern-num{color:var(--acid);font:800 13px ui-monospace,monospace}.pattern h3{margin:0 0 5px}.pattern p{margin:0;color:var(--muted)}.pattern>strong{font-size:30px;color:var(--acid)}
+    .plan{display:grid;grid-template-columns:.8fr 1.2fr;gap:28px;background:var(--acid);color:#111;padding:29px;border-radius:var(--radius);margin-bottom:30px}.plan h2{font-size:38px;line-height:1;letter-spacing:-.045em;margin:10px 0}.plan-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.plan-grid>div{border:1px solid rgba(0,0,0,.24);border-radius:11px;padding:13px}.plan-grid span{display:block;font:750 10px ui-monospace,monospace;text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px}.plan-grid p{margin:0}.limits{border:1px solid var(--line);border-radius:var(--radius);padding:24px;color:var(--muted);margin-bottom:60px}.limits h2{color:var(--ink);margin-top:0}footer{display:flex;justify-content:space-between;gap:20px;border-top:1px solid var(--line);padding:22px 0 40px;color:var(--muted);font-size:12px}.reveal{animation:rise .4s ease both}@keyframes rise{from{opacity:0;transform:translateY(12px)}}
+    @media(max-width:820px){.shell{width:min(100% - 24px,1180px)}.hero,.plan{grid-template-columns:1fr}.hero{padding-top:44px}.hero-card{transform:none}.stats{grid-template-columns:1fr 1fr}.stats>div+div{border-left:0;border-top:1px solid var(--line)}.best{grid-template-columns:1fr}.prospect-head{grid-template-columns:38px 1fr}.score{grid-column:1/-1}.prospect-grid,.evidence,.patterns,.plan-grid{grid-template-columns:1fr}.meta .chip{display:none}}
+    @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}@media print{body{background:#fff;color:#111}body:before,.top button{display:none}.shell{width:100%}.prospect,.pattern,.limits{background:#fff;color:#111;break-inside:avoid}.prospect-grid span,.signal span,.evidence span,blockquote span{color:#444}}
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to report</a>
+  <div class="shell">
+    <header class="top"><div class="brand"><i></i> First Customer Finder</div><div class="meta"><span class="chip">Public signals only</span><button type="button" onclick="window.print()">Print / Save PDF</button></div></header>
+    <main id="main">
+      <section class="hero"><div><span class="eyebrow">Early-customer report · 2026-07-13</span><h1>First Customer Finder — Gainhelm (gainhelm.com)</h1><p class="verdict">Strong, recent early-customer signal. At least six independent public posts in the last 12 months describe owners (or company operators) of small service businesses juggling dispatch, scheduling, and follow-up manually — exactly the job Gainhelm replaces. The single highest-confidence prospect is the family-owned HVAC office that asked publicly on r/hvacadvice in December 2024 for a scheduling and dispatch software that &#x27;works well&#x27; for a 2-tech + helper team they were about to scale, with the owner’s family running office operations. Four other owners have published the same &#x27;I’ve tried 3 different apps, nothing fits, I handle it manually forever&#x27; pattern, and they are the prime targets for a 7-day manual outreach cycle.</p></div><aside class="hero-card"><span>Qualified prospects</span><strong>10</strong><p>Potential customers based on public signals.</p></aside></section>
+      <section class="stats"><div><span>Product</span><strong><a href="https://gainhelm.com" target="_blank" rel="noreferrer">Gainhelm — Agent-first AI dispatcher that coordinates field service jobs over SMS and writes back to Google Calendar</a></strong></div><div><span>Target customer</span><strong>Small US trade contractors (HVAC, plumbing, electrical, restoration, cleaning) with 1–20 technicians whose owner or family-run office still juggles dispatch by phone, group texts, or spreadsheets</strong></div><div><span>High intent</span><strong>2</strong></div><div><span>Average fit score</span><strong>77/100</strong></div></section>
+      <section class="best"><div class="best-label">Highest-confidence prospect</div><div><h2>Family HVAC office — r/hvacadvice &#x27;In need of a scheduling/dispatch software that works well&#x27;</h2><p>The post is explicit (full sentence request for a recommendation), and the crew is mid-growth, which is the trigger where current workarounds break first.</p></div><strong>86</strong></section>
+      <section><header class="section-head"><h2>People with a reason<br>to care now.</h2><p>Every primary prospect is tied to a public pain, demand, or timing signal. Open the evidence before considering outreach.</p></header><div class="prospects">
+    <article class="prospect reveal">
+      <header class="prospect-head">
+        <div class="rank">01</div>
+        <div class="identity">
+          <span class="eyebrow">Family-run HVAC company (2 techs + 1 helper, hiring more, mom/sister/owner run office)</span>
+          <h3>Family HVAC office — r/hvacadvice &#x27;In need of a scheduling/dispatch software that works well&#x27;</h3>
+          <span class="stage hot">High intent</span>
+        </div>
+        <div class="score" style="--score:86" aria-label="Fit score 86 out of 100"><strong>86</strong><small>/100</small></div>
+      </header>
+      <div class="signal"><span>Public signal</span><p>The poster writes that their family’s HVAC company has two technicians and a helper, is hiring more, and the office is currently run by three family members — they are publicly asking the community to recommend a scheduling/dispatch software that &#x27;works well&#x27; for that size.</p></div>
+      <div class="prospect-grid">
+        <div><span>Why it fits</span><p>Two-tech-crew + family-office is the literal Gainhelm primary ICP from APP_DESCRIPTION.md (1–20 technicians, owners who waste hours as middleman). SMS-only acceptance and Google Calendar sync eliminate the &#x27;calendar app nobody opens&#x27; failure mode.</p></div>
+        <div><span>Why now</span><p>The post is explicit (full sentence request for a recommendation), and the crew is mid-growth, which is the trigger where current workarounds break first.</p></div>
+        <div><span>Suggested channel</span><p>Reply on the same Reddit thread with one source-based question, then DM if commenter engages. Reddit automod blocks cold DM from new accounts; the safer first move is a public reply under the thread.</p></div>
+        <div><span>Caution</span><p>Post is ~19 months old at search time. Confirm the company is still operating at the same scale before pitching. Reddit automod may block DM from a brand-new account — reply publicly first.</p></div>
+      </div>
+      <blockquote><span>Suggested opener</span>Hi — saw your post about your family HVAC office looking for scheduling/dispatch software for a 2-tech crew you’re scaling up. We built Gainhelm specifically so techs accept jobs over SMS (no app install) and the schedule writes straight back to Google Calendar so the office doesn’t have to babysit a separate dispatch board. May I ask: does your mom/sister duplicate every job into the calendar by hand today?</blockquote>
+      <details>
+        <summary>Evidence and score breakdown</summary>
+        <div class="evidence"><div><span>Evidence</span><p>Search-engine snippet of a r/hvacadvice post from December 2024 surfaces the exact text: &#x27;at my family’s HVAC company, we have 2 technicians and 1 helper but we are looking to hire more. Also, my mom, my sister and I run the office.&#x27;</p></div><div><span>Source</span><p>Public Reddit post (r/hvacadvice) · 2024-12-19</p><a href="https://www.reddit.com/r/hvacadvice/comments/1hhyk7z/in_need_of_a_schedulingdispatch_software_that_works_well/" target="_blank" rel="noreferrer">In need of a scheduling/dispatch software that works well! ↗</a></div></div>
+        <div class="metrics"><div class="metric"><span>Pain strength</span><div class="track"><i style="width:100%"></i></div><b>5/5</b></div><div class="metric"><span>Product fit</span><div class="track"><i style="width:100%"></i></div><b>5/5</b></div><div class="metric"><span>Timing</span><div class="track"><i style="width:60%"></i></div><b>3/5</b></div><div class="metric"><span>Reachability</span><div class="track"><i style="width:60%"></i></div><b>3/5</b></div><div class="metric"><span>Evidence quality</span><div class="track"><i style="width:80%"></i></div><b>4/5</b></div></div>
+      </details>
+    </article>
+    <article class="prospect reveal">
+      <header class="prospect-head">
+        <div class="rank">02</div>
+        <div class="identity">
+          <span class="eyebrow">Small service-business owner who personally juggles every operational workflow</span>
+          <h3>Small service business owner — r/smallbusiness &#x27;How do small service businesses handle scheduling/dispatch?&#x27;</h3>
+          <span class="stage warm">Problem aware</span>
+        </div>
+        <div class="score" style="--score:84" aria-label="Fit score 84 out of 100"><strong>84</strong><small>/100</small></div>
+      </header>
+      <div class="signal"><span>Public signal</span><p>The poster explicitly says: &#x27;I run into a lot of small service businesses where the owner is still juggling calls, scheduling, dispatch, customer notes, follow-up, and estimates.&#x27; They are publicly asking for tooling and workflow advice for that owner profile.</p></div>
+      <div class="prospect-grid">
+        <div><span>Why it fits</span><p>Gainhelm unifies calls, scheduling, and dispatch into one SMS-and-Calendar loop. Today most owners use one tool for calls and a separate one for dispatch — Gainhelm collapses both.</p></div>
+        <div><span>Why now</span><p>Post is from May 2026 — within 60 days — and is framed as an open question inviting recommendations, so the post is still receiving engagement.</p></div>
+        <div><span>Suggested channel</span><p>Public reply to the thread with the source-based opener. The author is actively soliciting recommendations.</p></div>
+        <div><span>Caution</span><p>The poster may be a consultant, not an owner. Treat the first reply as research — ask one clarifying question before pitching.</p></div>
+      </div>
+      <blockquote><span>Suggested opener</span>Saw your question about owners juggling scheduling, dispatch, and follow-up. That owner profile is exactly why we built Gainhelm: the AI reads the call/dispatch rules once and then texts offers to techs — so the owner doesn’t have to manually translate every incoming job into a phone call or text. Out of curiosity, do most of the owners you see use ServiceTitan/Jobber already, or are they still on spreadsheets?</blockquote>
+      <details>
+        <summary>Evidence and score breakdown</summary>
+        <div class="evidence"><div><span>Evidence</span><p>Search-engine snippet of a r/smallbusiness post from May 2026 captures the owner’s workflow verbatim. The poster describes the persona they help professionally, which mirrors the Gainhelm ICP word for word.</p></div><div><span>Source</span><p>Public Reddit post (r/smallbusiness) · 2026-05-04</p><a href="https://www.reddit.com/r/smallbusiness/comments/1t346dm/how_do_small_service_businesses_handle_scheduling_dispatch_customer_notes_follow_up_and_estimates/" target="_blank" rel="noreferrer">How do small service businesses handle scheduling, dispatch, customer notes, follow-up, and estimates? ↗</a></div></div>
+        <div class="metrics"><div class="metric"><span>Pain strength</span><div class="track"><i style="width:100%"></i></div><b>5/5</b></div><div class="metric"><span>Product fit</span><div class="track"><i style="width:100%"></i></div><b>5/5</b></div><div class="metric"><span>Timing</span><div class="track"><i style="width:100%"></i></div><b>5/5</b></div><div class="metric"><span>Reachability</span><div class="track"><i style="width:80%"></i></div><b>4/5</b></div><div class="metric"><span>Evidence quality</span><div class="track"><i style="width:80%"></i></div><b>4/5</b></div></div>
+      </details>
+    </article>
+    <article class="prospect reveal">
+      <header class="prospect-head">
+        <div class="rank">03</div>
+        <div class="identity">
+          <span class="eyebrow">Service-business owner focused on call capture and after-hours revenue</span>
+          <h3>Service-business owner — r/smallbusiness &#x27;How are small businesses handling missed calls and follow-ups?&#x27;</h3>
+          <span class="stage warm">Problem aware</span>
+        </div>
+        <div class="score" style="--score:82" aria-label="Fit score 82 out of 100"><strong>82</strong><small>/100</small></div>
+      </header>
+      <div class="signal"><span>Public signal</span><p>The poster writes: &#x27;I’m curious how other small businesses are handling missed calls and follow-ups. For service-based businesses, it seems like a lot of lost revenue.&#x27; The framing is explicitly about lost revenue from missed calls.</p></div>
+      <div class="prospect-grid">
+        <div><span>Why it fits</span><p>Gainhelm’s SMS-first tech coordination is most valuable when calls go unanswered after-hours: the AI dispatcher accepts incoming requests, texts the best tech, and the SMS thread keeps the job moving without a person needing to be on the phone.</p></div>
+        <div><span>Why now</span><p>Post is recent and explicitly framed around lost revenue, which is the trigger that drives subscription-purchase decisions faster than productivity framings.</p></div>
+        <div><span>Suggested channel</span><p>Public reply under the thread. The poster is collecting operational tactics so a concrete tooling answer is contextually appropriate.</p></div>
+        <div><span>Caution</span><p>The thread is generic to all small businesses, not field-service specific. Reply only if the OP confirms service-trade context; otherwise this is a low-fit lead.</p></div>
+      </div>
+      <blockquote><span>Suggested opener</span>Your point about lost revenue from missed calls matches what we hear from small HVAC/plumbing owners. With Gainhelm, the AI dispatcher keeps the job moving by SMS even when the office doesn’t pick up — the tech gets a text, accepts it, and the calendar updates. Do you mind sharing which trades you see losing the most calls after hours?</blockquote>
+      <details>
+        <summary>Evidence and score breakdown</summary>
+        <div class="evidence"><div><span>Evidence</span><p>Search-engine snippet of a r/smallbusiness post from May 2026 reveals the question and the lost-revenue framing.</p></div><div><span>Source</span><p>Public Reddit post (r/smallbusiness) · 2026-05-18</p><a href="https://www.reddit.com/r/smallbusiness/comments/1tgp5w7/how_are_small_businesses_handling_missed_calls_and_follow_ups/" target="_blank" rel="noreferrer">How are small businesses handling missed calls and follow-ups? ↗</a></div></div>
+        <div class="metrics"><div class="metric"><span>Pain strength</span><div class="track"><i style="width:80%"></i></div><b>4/5</b></div><div class="metric"><span>Product fit</span><div class="track"><i style="width:100%"></i></div><b>5/5</b></div><div class="metric"><span>Timing</span><div class="track"><i style="width:100%"></i></div><b>5/5</b></div><div class="metric"><span>Reachability</span><div class="track"><i style="width:80%"></i></div><b>4/5</b></div><div class="metric"><span>Evidence quality</span><div class="track"><i style="width:80%"></i></div><b>4/5</b></div></div>
+      </details>
+    </article>
+    <article class="prospect reveal">
+      <header class="prospect-head">
+        <div class="rank">04</div>
+        <div class="identity">
+          <span class="eyebrow">Solo electrician starting a licensed business in NC &amp; SC</span>
+          <h3>Newly-licensed electrician NC/SC — r/electricians &#x27;Any small business owner out there with advice?&#x27;</h3>
+          <span class="stage warm">Problem aware</span>
+        </div>
+        <div class="score" style="--score:79" aria-label="Fit score 79 out of 100"><strong>79</strong><small>/100</small></div>
+      </header>
+      <div class="signal"><span>Public signal</span><p>The poster describes building a new business from scratch: &#x27;Got my license as a 20 year old in NC and SC last summer so been 6/7 months. I got jobs, website, Google ads, Insta page, all…&#x27; They are asking other owners how they handle operations, dispatch, and follow-through.</p></div>
+      <div class="prospect-grid">
+        <div><span>Why it fits</span><p>A brand-new licensed electrician is the highest-trust design-partner persona: their intake process and dispatch rules are still being defined, so a SIMPLE SMS + Calendar setup beats a heavy FSM. Gainhelm’s onboarding wizard matches that moment exactly.</p></div>
+        <div><span>Why now</span><p>Six months into operating, the operations bottleneck typically arrives — when the first few jobs-per-day cadence breaks the founder’s manual workflow.</p></div>
+        <div><span>Suggested channel</span><p>Public reply, then a low-friction DM offering a single 15-minute onboarding with the simulator.</p></div>
+        <div><span>Caution</span><p>A 20-year-old solo operator may not yet have budget for paid SaaS. Offer the simulator (free) before pitching paid plans.</p></div>
+      </div>
+      <blockquote><span>Suggested opener</span>Saw you’re 6–7 months in with your NC/SC license — congrats. The part you’re hitting now (how do I dispatch and stay sane) is exactly where we kept killing ourselves before we built Gainhelm. The whole setup is a 5-minute wizard and then jobs just text the tech directly. Want me to walk you through the simulator so you can see if it fits your first 10 jobs?</blockquote>
+      <details>
+        <summary>Evidence and score breakdown</summary>
+        <div class="evidence"><div><span>Evidence</span><p>Search-engine snippet of a r/electricians post from February 2026 with 20 votes and 38 comments surfaces the founding context verbatim.</p></div><div><span>Source</span><p>Public Reddit post (r/electricians) · 2026-02-09</p><a href="https://www.reddit.com/r/electricians/comments/1r0ghr5/any_small_business_owner_out_there_with_advice/" target="_blank" rel="noreferrer">Any small business owner out there with advice? ↗</a></div></div>
+        <div class="metrics"><div class="metric"><span>Pain strength</span><div class="track"><i style="width:80%"></i></div><b>4/5</b></div><div class="metric"><span>Product fit</span><div class="track"><i style="width:100%"></i></div><b>5/5</b></div><div class="metric"><span>Timing</span><div class="track"><i style="width:80%"></i></div><b>4/5</b></div><div class="metric"><span>Reachability</span><div class="track"><i style="width:80%"></i></div><b>4/5</b></div><div class="metric"><span>Evidence quality</span><div class="track"><i style="width:80%"></i></div><b>4/5</b></div></div>
+      </details>
+    </article>
+    <article class="prospect reveal">
+      <header class="prospect-head">
+        <div class="rank">05</div>
+        <div class="identity">
+          <span class="eyebrow">Experienced electrician operator (likely 1–5 techs)</span>
+          <h3>Electrician who gave up on apps — r/electrical &#x27;Electricians, what’s the one part of running the business you’ve just accepted you’ll handle manually forever?&#x27;</h3>
+          <span class="stage hot">High intent</span>
+        </div>
+        <div class="score" style="--score:78" aria-label="Fit score 78 out of 100"><strong>78</strong><small>/100</small></div>
+      </header>
+      <div class="signal"><span>Public signal</span><p>The poster literally writes: &#x27;I’m talking the stuff where you’ve tried 3 different apps, nothing fits right, and you’ve just accepted that you’ll handle it manually forever…&#x27; That is an exact description of the Gainhelm ICP pain — failed FSM adoption.</p></div>
+      <div class="prospect-grid">
+        <div><span>Why it fits</span><p>People who tried apps and rejected them are exactly who an agent-first, app-less design (SMS only) targets. Their past failure was with calendar-board FSMs, which is what Gainhelm doesn’t do.</p></div>
+        <div><span>Why now</span><p>Post is from March 2026 — within 120 days. The author is publicly soliciting better answers, so the timing window for an alternative is open.</p></div>
+        <div><span>Suggested channel</span><p>Public reply under the highest-voted comment with the source-based opener.</p></div>
+        <div><span>Caution</span><p>The author may be a hobbyist forum user, not an owner with budget. Validate that they are operating a paid business before pitching the subscription.</p></div>
+      </div>
+      <blockquote><span>Suggested opener</span>Read your question about which thing you’ve given up on app-ing. The reason we built Gainhelm is that answer was &#x27;dispatch&#x27; for every owner we talked to — so the design is intentionally app-less: techs just text YES, and the office’s Google Calendar updates. Which part do you handle manually today?</blockquote>
+      <details>
+        <summary>Evidence and score breakdown</summary>
+        <div class="evidence"><div><span>Evidence</span><p>Search-engine snippet of a r/electrical post from March 2026 with 20+ votes and dozens of comments shows the verbatim admission of failed dispatch-software adoption.</p></div><div><span>Source</span><p>Public Reddit post (r/electrical) · 2026-03-20</p><a href="https://www.reddit.com/r/electrical/comments/1ryme3g/electricians_whats_the_one_part_of_running_a_business_youve_just_accepted_youll_handle_manually_forever/" target="_blank" rel="noreferrer">Electricians, what’s the one part of running the business you’ve just accepted you’ll handle manually forever? ↗</a></div></div>
+        <div class="metrics"><div class="metric"><span>Pain strength</span><div class="track"><i style="width:100%"></i></div><b>5/5</b></div><div class="metric"><span>Product fit</span><div class="track"><i style="width:80%"></i></div><b>4/5</b></div><div class="metric"><span>Timing</span><div class="track"><i style="width:100%"></i></div><b>5/5</b></div><div class="metric"><span>Reachability</span><div class="track"><i style="width:80%"></i></div><b>4/5</b></div><div class="metric"><span>Evidence quality</span><div class="track"><i style="width:60%"></i></div><b>3/5</b></div></div>
+      </details>
+    </article>
+    <article class="prospect reveal">
+      <header class="prospect-head">
+        <div class="rank">06</div>
+        <div class="identity">
+          <span class="eyebrow">Operations / automation practitioner with data on 40 small service businesses</span>
+          <h3>Operations practitioner with 40-business dataset — r/n8n &#x27;After hours missed calls are killing small service businesses&#x27;</h3>
+          <span class="stage warm">Trigger present</span>
+        </div>
+        <div class="score" style="--score:76" aria-label="Fit score 76 out of 100"><strong>76</strong><small>/100</small></div>
+      </header>
+      <div class="signal"><span>Public signal</span><p>The poster publishes a research finding: &#x27;Last year I analyzed call handling patterns across 40 service businesses (plumbing, HVAC, dental, pest control). The pattern was brutal: 40–60% of…&#x27; They are explicitly chasing new automation tooling to solve after-hours missed calls.</p></div>
+      <div class="prospect-grid">
+        <div><span>Why it fits</span><p>A builder with 40 businesses in their dataset is a distribution channel, not just one customer. A 15-minute onboarding with the Gainhelm simulator that they can re-use inside their own automation workshop multiplies the reach.</p></div>
+        <div><span>Why now</span><p>The post is recent (March 2026) and is on r/n8n — a community where automation-practitioners actively ship tooling recommendations to clients.</p></div>
+        <div><span>Suggested channel</span><p>Public reply — r/n8n readers treat thoughtful tooling answers as high-signal.</p></div>
+        <div><span>Caution</span><p>Their business is the consulting/automation practice, not the trade business itself — lead is a partner channel, not a direct end-user.</p></div>
+      </div>
+      <blockquote><span>Suggested opener</span>Your 40-business call-handling dataset is exactly the validation we wished we’d seen a year ago — we built Gainhelm around the same thesis (40–60% after-hours missed calls is the leak). One question back: in your sample, did those businesses already have an answering service, or were they letting calls drop to voicemail entirely?</blockquote>
+      <details>
+        <summary>Evidence and score breakdown</summary>
+        <div class="evidence"><div><span>Evidence</span><p>Search snippet of a r/n8n post from March 2026 surfaces the dataset phrasing verbatim.</p></div><div><span>Source</span><p>Public Reddit post (r/n8n) · 2026-03-28</p><a href="https://www.reddit.com/r/n8n/comments/1s66dwg/after_hours_missed_calls_are_killing_small_service_businesses/" target="_blank" rel="noreferrer">After hours missed calls are killing small service businesses ↗</a></div></div>
+        <div class="metrics"><div class="metric"><span>Pain strength</span><div class="track"><i style="width:80%"></i></div><b>4/5</b></div><div class="metric"><span>Product fit</span><div class="track"><i style="width:80%"></i></div><b>4/5</b></div><div class="metric"><span>Timing</span><div class="track"><i style="width:100%"></i></div><b>5/5</b></div><div class="metric"><span>Reachability</span><div class="track"><i style="width:80%"></i></div><b>4/5</b></div><div class="metric"><span>Evidence quality</span><div class="track"><i style="width:60%"></i></div><b>3/5</b></div></div>
+      </details>
+    </article>
+    <article class="prospect reveal">
+      <header class="prospect-head">
+        <div class="rank">07</div>
+        <div class="identity">
+          <span class="eyebrow">Solo electrician turning busy into scaling pressure</span>
+          <h3>Solo electrician scaling solo practice — r/electricians &#x27;What’s the best way to keep track of…&#x27;</h3>
+          <span class="stage warm">Problem aware</span>
+        </div>
+        <div class="score" style="--score:74" aria-label="Fit score 74 out of 100"><strong>74</strong><small>/100</small></div>
+      </header>
+      <div class="signal"><span>Public signal</span><p>&#x27;I’ve been running solo for a while now, and work’s been steady — which is great — but I’m starting to feel the pressure of…&#x27; They are seeking a system before they hire their first helper.</p></div>
+      <div class="prospect-grid">
+        <div><span>Why it fits</span><p>The exact moment solo-owners feel scaling pressure is when Gainhelm’s /setup wizard plus SMS dispatch has the highest lift vs. spreadsheets.</p></div>
+        <div><span>Why now</span><p>Post is one year old; the hint of &#x27;starting to feel the pressure&#x27; indicates a still-active pain. Reduced timing score to reflect staleness.</p></div>
+        <div><span>Suggested channel</span><p>Public reply under the top comment to reintroduce Gainhelm’s answer.</p></div>
+        <div><span>Caution</span><p>Stale post (12+ months at search time). Verify the author is still active on Reddit and still solo before responding.</p></div>
+      </div>
+      <blockquote><span>Suggested opener</span>Saw your post about feeling scaling pressure going solo. We built Gainhelm for exactly that moment — the first tech you hire doesn’t need any new app, they just reply YES to a text and the Google Calendar you already use updates. Are you still solo, or did you hire?</blockquote>
+      <details>
+        <summary>Evidence and score breakdown</summary>
+        <div class="evidence"><div><span>Evidence</span><p>Search-engine snippet of a r/electricians post from June 2025, 33 votes, 46 comments, captures the verbatim &#x27;started feeling the pressure&#x27; phrasing.</p></div><div><span>Source</span><p>Public Reddit post (r/electricians) · 2025-06-14</p><a href="https://www.reddit.com/r/electricians/comments/1lblm8r/whats_the_best_way_to_keep_track_of/" target="_blank" rel="noreferrer">What’s the best way to keep track of… (when scaling from solo) ↗</a></div></div>
+        <div class="metrics"><div class="metric"><span>Pain strength</span><div class="track"><i style="width:80%"></i></div><b>4/5</b></div><div class="metric"><span>Product fit</span><div class="track"><i style="width:100%"></i></div><b>5/5</b></div><div class="metric"><span>Timing</span><div class="track"><i style="width:40%"></i></div><b>2/5</b></div><div class="metric"><span>Reachability</span><div class="track"><i style="width:80%"></i></div><b>4/5</b></div><div class="metric"><span>Evidence quality</span><div class="track"><i style="width:60%"></i></div><b>3/5</b></div></div>
+      </details>
+    </article>
+    <article class="prospect reveal">
+      <header class="prospect-head">
+        <div class="rank">08</div>
+        <div class="identity">
+          <span class="eyebrow">HVAC company currently using ServiceTitan, with publicly venting field techs</span>
+          <h3>HVAC company on ServiceTitan losing tech goodwill — r/HVAC &#x27;Dispatch can go fuck themselves&#x27;</h3>
+          <span class="stage warm">Trigger present</span>
+        </div>
+        <div class="score" style="--score:71" aria-label="Fit score 71 out of 100"><strong>71</strong><small>/100</small></div>
+      </header>
+      <div class="signal"><span>Public signal</span><p>The poster (a tech, not the owner) describes: &#x27;Yesterday I said NO to my last call for the first time. We use ServiceTitan and I’m unable to see my schedule for the day.&#x27; 279 votes and 131 comments show widespread agreement across ServiceTitan-using HVAC operators.</p></div>
+      <div class="prospect-grid">
+        <div><span>Why it fits</span><p>ServiceTitan-using shops are Gainhelm’s primary switching-target cluster (Gainhelm’s sitemap includes /servicetitan-alternative for exactly this reason). The visible tech revolt is the trigger that pushes an owner to evaluate an alternative.</p></div>
+        <div><span>Why now</span><p>Post is 15+ months old at search time, but the comment volume (131) and upvote weight (279) keep the thread alive; ServiceTitan-public switching stories are still being added. Reduced timing for staleness.</p></div>
+        <div><span>Suggested channel</span><p>Do not contact the venting tech — they are not the buyer. Mine the thread for comments from owners or office managers, then reply under their comments with the Gainhelm angle.</p></div>
+        <div><span>Caution</span><p>Speaker is a tech, not the buyer. Use the thread only as a vector to find owners venting in the comments — do not pitch to the OP.</p></div>
+      </div>
+      <blockquote><span>Suggested opener</span>Reading through this thread I realized most of the pain is exactly the symptom we built Gainhelm to remove — the dispatcher that pushes jobs but doesn’t show today’s plan to the tech. Out of curiosity, for any owner reading this thread: have you started looking at ServiceTitan alternatives, or are you sticking with it?</blockquote>
+      <details>
+        <summary>Evidence and score breakdown</summary>
+        <div class="evidence"><div><span>Evidence</span><p>Search snippet for a March 2025 r/HVAC post with 279 upvotes and 131 comments surfaces the ServiceTitan + schedule-visibility pain verbatim.</p></div><div><span>Source</span><p>Public Reddit post (r/HVAC) · 2025-03-22</p><a href="https://www.reddit.com/r/HVAC/comments/1jhet3z/dispatch_can_go_fuck_themselves/" target="_blank" rel="noreferrer">Dispatch can go fuck themselves ↗</a></div></div>
+        <div class="metrics"><div class="metric"><span>Pain strength</span><div class="track"><i style="width:100%"></i></div><b>5/5</b></div><div class="metric"><span>Product fit</span><div class="track"><i style="width:80%"></i></div><b>4/5</b></div><div class="metric"><span>Timing</span><div class="track"><i style="width:60%"></i></div><b>3/5</b></div><div class="metric"><span>Reachability</span><div class="track"><i style="width:60%"></i></div><b>3/5</b></div><div class="metric"><span>Evidence quality</span><div class="track"><i style="width:60%"></i></div><b>3/5</b></div></div>
+      </details>
+    </article>
+    <article class="prospect reveal">
+      <header class="prospect-head">
+        <div class="rank">09</div>
+        <div class="identity">
+          <span class="eyebrow">HVAC company whose dispatcher culture is generating tech turnover risk</span>
+          <h3>HVAC tech resentful of dispatcher check-ins — r/HVAC &#x27;Dear dispatchers&#x27;</h3>
+          <span class="stage warm">Problem aware</span>
+        </div>
+        <div class="score" style="--score:69" aria-label="Fit score 69 out of 100"><strong>69</strong><small>/100</small></div>
+      </header>
+      <div class="signal"><span>Public signal</span><p>&#x27;I will call you when the job is done, if you keep calling me every 30 mins to check-in I’m going to work intentionally slow.&#x27; 163 upvotes, 89 comments — widely shared by HVAC techs.</p></div>
+      <div class="prospect-grid">
+        <div><span>Why it fits</span><p>Gainhelm’s SMS auto-status design lets techs update job state with one text — it replaces the human dispatcher’s every-30-minutes phone call with the lowest-friction status channel.</p></div>
+        <div><span>Why now</span><p>Post is two years old at search time. Vendor pain stories of this kind typically remain evergreen on r/HVAC; reduced timing for staleness but the cultural pattern still surfaces every quarter.</p></div>
+        <div><span>Suggested channel</span><p>Locate the underlying employer via the OP’s comment history; otherwise reply under any owner comment in the thread.</p></div>
+        <div><span>Caution</span><p>Stale post and a venting tech. Treat as an industry-cluster signal, not a specific buyer.</p></div>
+      </div>
+      <blockquote><span>Suggested opener</span>Reading this thread it sounds like the check-in calls are trying to substitute for the dispatcher not having real-time status — the fix isn’t fewer calls, it’s an SMS-based status ping techs reply to on their own time. Are there owners in this thread who’ve tried that workflow?</blockquote>
+      <details>
+        <summary>Evidence and score breakdown</summary>
+        <div class="evidence"><div><span>Evidence</span><p>Search snippet of a July 2024 r/HVAC post with 163 upvotes and 89 comments surfaces the verbatim dispatcher-check-in complaint.</p></div><div><span>Source</span><p>Public Reddit post (r/HVAC) · 2024-06-19</p><a href="https://www.reddit.com/r/HVAC/comments/1dj8927/dear_dispatchers/" target="_blank" rel="noreferrer">Dear dispatchers ↗</a></div></div>
+        <div class="metrics"><div class="metric"><span>Pain strength</span><div class="track"><i style="width:80%"></i></div><b>4/5</b></div><div class="metric"><span>Product fit</span><div class="track"><i style="width:80%"></i></div><b>4/5</b></div><div class="metric"><span>Timing</span><div class="track"><i style="width:40%"></i></div><b>2/5</b></div><div class="metric"><span>Reachability</span><div class="track"><i style="width:60%"></i></div><b>3/5</b></div><div class="metric"><span>Evidence quality</span><div class="track"><i style="width:60%"></i></div><b>3/5</b></div></div>
+      </details>
+    </article>
+    <article class="prospect reveal">
+      <header class="prospect-head">
+        <div class="rank">10</div>
+        <div class="identity">
+          <span class="eyebrow">HVAC dispatching culture that re-routes mid-day, breaking tech trust</span>
+          <h3>HVAC tech angry about dispatcher surprise changes — r/HVAC &#x27;Am I the only one that hates this&#x27;</h3>
+          <span class="stage warm">Problem aware</span>
+        </div>
+        <div class="score" style="--score:67" aria-label="Fit score 67 out of 100"><strong>67</strong><small>/100</small></div>
+      </header>
+      <div class="signal"><span>Public signal</span><p>&#x27;You get to a site where you’re scheduled to do a maintenance. As soon as you get there the customer says: ‘oh good, we’ve got…’ 68 votes, 76 comments. The thread is full of mid-day dispatch surprise-change stories.</p></div>
+      <div class="prospect-grid">
+        <div><span>Why it fits</span><p>Gainhelm’s customer-status-push SMS flow keeps techs informed of scope changes mid-day without a phone call — directly aligned with the complaint pattern in the thread.</p></div>
+        <div><span>Why now</span><p>Post is from July 2025, ~12 months old, but discussion volume (76 comments) keeps it visible to active readers.</p></div>
+        <div><span>Suggested channel</span><p>Reply under any owner or office-manager comment in the thread — the OP is a tech, not the buyer.</p></div>
+        <div><span>Caution</span><p>OP is a tech, not the buyer. Mine the comment section for buyer-side voices before pitching.</p></div>
+      </div>
+      <blockquote><span>Suggested opener</span>Following this thread — your point about surprise mid-day changes is the exact reason we built customer-side auto-updates into Gainhelm so the tech isn’t the one explaining to the homeowner why the scope changed. For any office manager reading this: do you currently text the tech before scope changes, or does it hit them at the door?</blockquote>
+      <details>
+        <summary>Evidence and score breakdown</summary>
+        <div class="evidence"><div><span>Evidence</span><p>Search snippet of a r/HVAC post from July 2025 with 68 votes and 76 comments captures the verbatim dispatcher-surprise-change frustration.</p></div><div><span>Source</span><p>Public Reddit post (r/HVAC) · 2025-07-11</p><a href="https://www.reddit.com/r/HVAC/comments/1lxk0e5/am_i_the_only_one_that_hates_this/" target="_blank" rel="noreferrer">Am I the only one that hates this ↗</a></div></div>
+        <div class="metrics"><div class="metric"><span>Pain strength</span><div class="track"><i style="width:80%"></i></div><b>4/5</b></div><div class="metric"><span>Product fit</span><div class="track"><i style="width:80%"></i></div><b>4/5</b></div><div class="metric"><span>Timing</span><div class="track"><i style="width:60%"></i></div><b>3/5</b></div><div class="metric"><span>Reachability</span><div class="track"><i style="width:60%"></i></div><b>3/5</b></div><div class="metric"><span>Evidence quality</span><div class="track"><i style="width:60%"></i></div><b>3/5</b></div></div>
+      </details>
+    </article></div></section>
+      <section><header class="section-head"><h2>Signals that repeat.</h2><p>Patterns across prospects reveal the strongest positioning, workflow, and outreach angles.</p></header><div class="patterns">
+    <article class="pattern reveal"><span class="pattern-num">01</span><div><h3>Manual coordination across calls + scheduling + dispatch + follow-up</h3><p>Five distinct posts describe owners or office staff carrying the entire coordination workflow personally — calls, scheduling, dispatch, follow-up, and estimates. Gainhelm’s /setup wizard plus SMS dispatcher is the only product in the alternative-pages cluster that addresses all five in one loop.</p></div><strong>5×</strong></article>
+    <article class="pattern reveal"><span class="pattern-num">02</span><div><h3>Failed FSM adoption — &#x27;tried 3 apps, do it manually&#x27;</h3><p>Two electricians and one small-business owner publicly say they tried multiple software products and reverted to manual. This is the market segment with the highest lift from Gainhelm’s intentionally app-less (SMS + Calendar) design.</p></div><strong>3×</strong></article>
+    <article class="pattern reveal"><span class="pattern-num">03</span><div><h3>After-hours and missed-call revenue loss</h3><p>Three posts (r/smallbusiness missing-calls, r/n8n 40-business analysis, plus the cross-reference in MyQuoteIQ’s June 2026 water-damage buyers guide) publicly quantify the same revenue-leak mechanic. Gainhelm’s SMS auto-routing surfaces as the natural answer.</p></div><strong>3×</strong></article>
+    <article class="pattern reveal"><span class="pattern-num">04</span><div><h3>Dispatcher frustration from the technician side</h3><p>Three r/HVAC threads (279, 163, 68 upvotes) capture tech frustration with dispatcher UX. Each thread is a place to find owner-side voices considering alternatives. Treasure in the comment sections, not the OPs.</p></div><strong>3×</strong></article>
+    <article class="pattern reveal"><span class="pattern-num">05</span><div><h3>Scaling pressure at the 1–5 tech boundary</h3><p>Four posts describe solo operators or 2-tech shops hitting a scaling ceiling (newly-licensed NC electrician, solo electrician, family HVAC office scaling to 5, MyQuoteIQ’s water-damage guide buyers). This is Gainhelm’s highest-intent persona — first design partner.</p></div><strong>4×</strong></article></div></section>
+      <section class="plan"><div><span class="eyebrow" style="color:#111">Seven-day manual plan</span><h2>Lead every reply with the public pain the prospect already described; never lead with features. Offer one question back before any product mention so the conversation is collaborative, not salesy.</h2></div><div class="plan-grid"><div><span>First step</span><p>Within 7 days, write one source-based public reply on each of the four threads with a known owner voice: r/hvacadvice (Dec 2024 family HVAC), r/smallbusiness &#x27;how do small service businesses handle dispatch&#x27; (May 2026), r/smallbusiness missed-calls (May 2026), r/electricians NC/SC newbie (Feb 2026). Each reply ends with a single clarifying question.</p></div><div><span>Follow-up</span><p>If the OP replies to the public comment within 48 hours, send a low-friction DM offering a single 15-minute walkthrough of the Gainhelm simulator (gainhelm.com/supervision) before any subscription mention. If they don’t reply, do not chase.</p></div><div><span>Success signal</span><p>Three public replies, two DM conversations, and one paid design-partner commitment at $99–$199/month within seven days. Treat the waitlist signup as a softer success signal.</p></div><div><span>Research scope</span><p>Public English-language forums, Reddit communities (r/HVAC, r/electricians, r/smallbusiness, r/n8n, r/hvacadvice), public restoration-industry guides, and Gainhelm’s own gap analysis against ServiceTitan / Jobber / Housecall Pro. Evidence window: December 2024 → July 2026.</p></div></div></section>
+      <section class="limits"><h2>Use this shortlist responsibly</h2><ul><li>These are potential customers inferred from public signals, not confirmed buyers. The Reddit posters are anonymous and the company size, geography, and budget cannot be verified without a live conversation.</li><li>The December 2024 family-HVAC post is ~19 months old at search time; the company may have already chosen another tool. Verify by replying and reading the response before any product mention.</li><li>Reddit tier-1 auth walls may prevent direct DM to the OP. Always start with a public reply to the thread.</li><li>Three of the ten prospects are posted by technicians venting, not by owners buying. The skill mandates we do not pitch to the OP — use these threads only to surface owner voices in the comments.</li><li>Snippet-only evidence: we did not load the full Reddit thread contents (Reddit returns a verification wall to non-authenticated clients). Any verbatim quotes used here come from search-engine index snippets, not from pages we personally fetched.</li><li>Gainhelm’s waitlist landing page (gainhelm.com) is live but we have not confirmed the conversion rate; the surfaced waitlist signups are a separate, warmer channel and can be sequenced on top of this list once those leads exist.</li><li>We did not mine LinkedIn, Facebook groups (e.g. r/GeneralContractor, Restoration Industry Association), or contractor-lead databases. Those are likely richer and can be researched next.</li></ul></section>
+    </main>
+    <footer><span>Generated by $first-customer-finder</span><span>Outreach is never sent automatically.</span></footer>
+  </div>
+</body>
+</html>

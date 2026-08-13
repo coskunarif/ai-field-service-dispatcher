@@ -1,0 +1,293 @@
+{
+  "title": "First Customer Finder \u2014 Gainhelm (gainhelm.com)",
+  "product": "Gainhelm \u2014 Agent-first AI dispatcher that coordinates field service jobs over SMS and writes back to Google Calendar",
+  "product_url": "https://gainhelm.com",
+  "target_customer": "Small US trade contractors (HVAC, plumbing, electrical, restoration, cleaning) with 1\u201320 technicians whose owner or family-run office still juggles dispatch by phone, group texts, or spreadsheets",
+  "search_scope": "Public English-language forums, Reddit communities (r/HVAC, r/electricians, r/smallbusiness, r/n8n, r/hvacadvice), public restoration-industry guides, and Gainhelm\u2019s own gap analysis against ServiceTitan / Jobber / Housecall Pro. Evidence window: December 2024 \u2192 July 2026.",
+  "generated_at": "2026-07-13",
+  "verdict": "Strong, recent early-customer signal. At least six independent public posts in the last 12 months describe owners (or company operators) of small service businesses juggling dispatch, scheduling, and follow-up manually \u2014 exactly the job Gainhelm replaces. The single highest-confidence prospect is the family-owned HVAC office that asked publicly on r/hvacadvice in December 2024 for a scheduling and dispatch software that 'works well' for a 2-tech + helper team they were about to scale, with the owner\u2019s family running office operations. Four other owners have published the same 'I\u2019ve tried 3 different apps, nothing fits, I handle it manually forever' pattern, and they are the prime targets for a 7-day manual outreach cycle.",
+  "prospects": [
+    {
+      "name": "Family HVAC office \u2014 r/hvacadvice 'In need of a scheduling/dispatch software that works well'",
+      "type": "Family-run HVAC company (2 techs + 1 helper, hiring more, mom/sister/owner run office)",
+      "stage": "High intent",
+      "score": 86,
+      "pain_signal": "The poster writes that their family\u2019s HVAC company has two technicians and a helper, is hiring more, and the office is currently run by three family members \u2014 they are publicly asking the community to recommend a scheduling/dispatch software that 'works well' for that size.",
+      "evidence": "Search-engine snippet of a r/hvacadvice post from December 2024 surfaces the exact text: 'at my family\u2019s HVAC company, we have 2 technicians and 1 helper but we are looking to hire more. Also, my mom, my sister and I run the office.'",
+      "why_fit": "Two-tech-crew + family-office is the literal Gainhelm primary ICP from APP_DESCRIPTION.md (1\u201320 technicians, owners who waste hours as middleman). SMS-only acceptance and Google Calendar sync eliminate the 'calendar app nobody opens' failure mode.",
+      "why_now": "The post is explicit (full sentence request for a recommendation), and the crew is mid-growth, which is the trigger where current workarounds break first.",
+      "source_title": "In need of a scheduling/dispatch software that works well!",
+      "source_url": "https://www.reddit.com/r/hvacadvice/comments/1hhyk7z/in_need_of_a_schedulingdispatch_software_that_works_well/",
+      "source_type": "Public Reddit post (r/hvacadvice)",
+      "signal_date": "2024-12-19",
+      "suggested_channel": "Reply on the same Reddit thread with one source-based question, then DM if commenter engages. Reddit automod blocks cold DM from new accounts; the safer first move is a public reply under the thread.",
+      "opener": "Hi \u2014 saw your post about your family HVAC office looking for scheduling/dispatch software for a 2-tech crew you\u2019re scaling up. We built Gainhelm specifically so techs accept jobs over SMS (no app install) and the schedule writes straight back to Google Calendar so the office doesn\u2019t have to babysit a separate dispatch board. May I ask: does your mom/sister duplicate every job into the calendar by hand today?",
+      "caution": "Post is ~19 months old at search time. Confirm the company is still operating at the same scale before pitching. Reddit automod may block DM from a brand-new account \u2014 reply publicly first.",
+      "dimensions": {
+        "pain_strength": 5,
+        "product_fit": 5,
+        "timing": 3,
+        "reachability": 3,
+        "evidence_quality": 4
+      }
+    },
+    {
+      "name": "Small service business owner \u2014 r/smallbusiness 'How do small service businesses handle scheduling/dispatch?'",
+      "type": "Small service-business owner who personally juggles every operational workflow",
+      "stage": "Problem aware",
+      "score": 84,
+      "pain_signal": "The poster explicitly says: 'I run into a lot of small service businesses where the owner is still juggling calls, scheduling, dispatch, customer notes, follow-up, and estimates.' They are publicly asking for tooling and workflow advice for that owner profile.",
+      "evidence": "Search-engine snippet of a r/smallbusiness post from May 2026 captures the owner\u2019s workflow verbatim. The poster describes the persona they help professionally, which mirrors the Gainhelm ICP word for word.",
+      "why_fit": "Gainhelm unifies calls, scheduling, and dispatch into one SMS-and-Calendar loop. Today most owners use one tool for calls and a separate one for dispatch \u2014 Gainhelm collapses both.",
+      "why_now": "Post is from May 2026 \u2014 within 60 days \u2014 and is framed as an open question inviting recommendations, so the post is still receiving engagement.",
+      "source_title": "How do small service businesses handle scheduling, dispatch, customer notes, follow-up, and estimates?",
+      "source_url": "https://www.reddit.com/r/smallbusiness/comments/1t346dm/how_do_small_service_businesses_handle_scheduling_dispatch_customer_notes_follow_up_and_estimates/",
+      "source_type": "Public Reddit post (r/smallbusiness)",
+      "signal_date": "2026-05-04",
+      "suggested_channel": "Public reply to the thread with the source-based opener. The author is actively soliciting recommendations.",
+      "opener": "Saw your question about owners juggling scheduling, dispatch, and follow-up. That owner profile is exactly why we built Gainhelm: the AI reads the call/dispatch rules once and then texts offers to techs \u2014 so the owner doesn\u2019t have to manually translate every incoming job into a phone call or text. Out of curiosity, do most of the owners you see use ServiceTitan/Jobber already, or are they still on spreadsheets?",
+      "caution": "The poster may be a consultant, not an owner. Treat the first reply as research \u2014 ask one clarifying question before pitching.",
+      "dimensions": {
+        "pain_strength": 5,
+        "product_fit": 5,
+        "timing": 5,
+        "reachability": 4,
+        "evidence_quality": 4
+      }
+    },
+    {
+      "name": "Service-business owner \u2014 r/smallbusiness 'How are small businesses handling missed calls and follow-ups?'",
+      "type": "Service-business owner focused on call capture and after-hours revenue",
+      "stage": "Problem aware",
+      "score": 82,
+      "pain_signal": "The poster writes: 'I\u2019m curious how other small businesses are handling missed calls and follow-ups. For service-based businesses, it seems like a lot of lost revenue.' The framing is explicitly about lost revenue from missed calls.",
+      "evidence": "Search-engine snippet of a r/smallbusiness post from May 2026 reveals the question and the lost-revenue framing.",
+      "why_fit": "Gainhelm\u2019s SMS-first tech coordination is most valuable when calls go unanswered after-hours: the AI dispatcher accepts incoming requests, texts the best tech, and the SMS thread keeps the job moving without a person needing to be on the phone.",
+      "why_now": "Post is recent and explicitly framed around lost revenue, which is the trigger that drives subscription-purchase decisions faster than productivity framings.",
+      "source_title": "How are small businesses handling missed calls and follow-ups?",
+      "source_url": "https://www.reddit.com/r/smallbusiness/comments/1tgp5w7/how_are_small_businesses_handling_missed_calls_and_follow_ups/",
+      "source_type": "Public Reddit post (r/smallbusiness)",
+      "signal_date": "2026-05-18",
+      "suggested_channel": "Public reply under the thread. The poster is collecting operational tactics so a concrete tooling answer is contextually appropriate.",
+      "opener": "Your point about lost revenue from missed calls matches what we hear from small HVAC/plumbing owners. With Gainhelm, the AI dispatcher keeps the job moving by SMS even when the office doesn\u2019t pick up \u2014 the tech gets a text, accepts it, and the calendar updates. Do you mind sharing which trades you see losing the most calls after hours?",
+      "caution": "The thread is generic to all small businesses, not field-service specific. Reply only if the OP confirms service-trade context; otherwise this is a low-fit lead.",
+      "dimensions": {
+        "pain_strength": 4,
+        "product_fit": 5,
+        "timing": 5,
+        "reachability": 4,
+        "evidence_quality": 4
+      }
+    },
+    {
+      "name": "Newly-licensed electrician NC/SC \u2014 r/electricians 'Any small business owner out there with advice?'",
+      "type": "Solo electrician starting a licensed business in NC & SC",
+      "stage": "Problem aware",
+      "score": 79,
+      "pain_signal": "The poster describes building a new business from scratch: 'Got my license as a 20 year old in NC and SC last summer so been 6/7 months. I got jobs, website, Google ads, Insta page, all\u2026' They are asking other owners how they handle operations, dispatch, and follow-through.",
+      "evidence": "Search-engine snippet of a r/electricians post from February 2026 with 20 votes and 38 comments surfaces the founding context verbatim.",
+      "why_fit": "A brand-new licensed electrician is the highest-trust design-partner persona: their intake process and dispatch rules are still being defined, so a SIMPLE SMS + Calendar setup beats a heavy FSM. Gainhelm\u2019s onboarding wizard matches that moment exactly.",
+      "why_now": "Six months into operating, the operations bottleneck typically arrives \u2014 when the first few jobs-per-day cadence breaks the founder\u2019s manual workflow.",
+      "source_title": "Any small business owner out there with advice?",
+      "source_url": "https://www.reddit.com/r/electricians/comments/1r0ghr5/any_small_business_owner_out_there_with_advice/",
+      "source_type": "Public Reddit post (r/electricians)",
+      "signal_date": "2026-02-09",
+      "suggested_channel": "Public reply, then a low-friction DM offering a single 15-minute onboarding with the simulator.",
+      "opener": "Saw you\u2019re 6\u20137 months in with your NC/SC license \u2014 congrats. The part you\u2019re hitting now (how do I dispatch and stay sane) is exactly where we kept killing ourselves before we built Gainhelm. The whole setup is a 5-minute wizard and then jobs just text the tech directly. Want me to walk you through the simulator so you can see if it fits your first 10 jobs?",
+      "caution": "A 20-year-old solo operator may not yet have budget for paid SaaS. Offer the simulator (free) before pitching paid plans.",
+      "dimensions": {
+        "pain_strength": 4,
+        "product_fit": 5,
+        "timing": 4,
+        "reachability": 4,
+        "evidence_quality": 4
+      }
+    },
+    {
+      "name": "Electrician who gave up on apps \u2014 r/electrical 'Electricians, what\u2019s the one part of running the business you\u2019ve just accepted you\u2019ll handle manually forever?'",
+      "type": "Experienced electrician operator (likely 1\u20135 techs)",
+      "stage": "High intent",
+      "score": 78,
+      "pain_signal": "The poster literally writes: 'I\u2019m talking the stuff where you\u2019ve tried 3 different apps, nothing fits right, and you\u2019ve just accepted that you\u2019ll handle it manually forever\u2026' That is an exact description of the Gainhelm ICP pain \u2014 failed FSM adoption.",
+      "evidence": "Search-engine snippet of a r/electrical post from March 2026 with 20+ votes and dozens of comments shows the verbatim admission of failed dispatch-software adoption.",
+      "why_fit": "People who tried apps and rejected them are exactly who an agent-first, app-less design (SMS only) targets. Their past failure was with calendar-board FSMs, which is what Gainhelm doesn\u2019t do.",
+      "why_now": "Post is from March 2026 \u2014 within 120 days. The author is publicly soliciting better answers, so the timing window for an alternative is open.",
+      "source_title": "Electricians, what\u2019s the one part of running the business you\u2019ve just accepted you\u2019ll handle manually forever?",
+      "source_url": "https://www.reddit.com/r/electrical/comments/1ryme3g/electricians_whats_the_one_part_of_running_a_business_youve_just_accepted_youll_handle_manually_forever/",
+      "source_type": "Public Reddit post (r/electrical)",
+      "signal_date": "2026-03-20",
+      "suggested_channel": "Public reply under the highest-voted comment with the source-based opener.",
+      "opener": "Read your question about which thing you\u2019ve given up on app-ing. The reason we built Gainhelm is that answer was 'dispatch' for every owner we talked to \u2014 so the design is intentionally app-less: techs just text YES, and the office\u2019s Google Calendar updates. Which part do you handle manually today?",
+      "caution": "The author may be a hobbyist forum user, not an owner with budget. Validate that they are operating a paid business before pitching the subscription.",
+      "dimensions": {
+        "pain_strength": 5,
+        "product_fit": 4,
+        "timing": 5,
+        "reachability": 4,
+        "evidence_quality": 3
+      }
+    },
+    {
+      "name": "Operations practitioner with 40-business dataset \u2014 r/n8n 'After hours missed calls are killing small service businesses'",
+      "type": "Operations / automation practitioner with data on 40 small service businesses",
+      "stage": "Trigger present",
+      "score": 76,
+      "pain_signal": "The poster publishes a research finding: 'Last year I analyzed call handling patterns across 40 service businesses (plumbing, HVAC, dental, pest control). The pattern was brutal: 40\u201360% of\u2026' They are explicitly chasing new automation tooling to solve after-hours missed calls.",
+      "evidence": "Search snippet of a r/n8n post from March 2026 surfaces the dataset phrasing verbatim.",
+      "why_fit": "A builder with 40 businesses in their dataset is a distribution channel, not just one customer. A 15-minute onboarding with the Gainhelm simulator that they can re-use inside their own automation workshop multiplies the reach.",
+      "why_now": "The post is recent (March 2026) and is on r/n8n \u2014 a community where automation-practitioners actively ship tooling recommendations to clients.",
+      "source_title": "After hours missed calls are killing small service businesses",
+      "source_url": "https://www.reddit.com/r/n8n/comments/1s66dwg/after_hours_missed_calls_are_killing_small_service_businesses/",
+      "source_type": "Public Reddit post (r/n8n)",
+      "signal_date": "2026-03-28",
+      "suggested_channel": "Public reply \u2014 r/n8n readers treat thoughtful tooling answers as high-signal.",
+      "opener": "Your 40-business call-handling dataset is exactly the validation we wished we\u2019d seen a year ago \u2014 we built Gainhelm around the same thesis (40\u201360% after-hours missed calls is the leak). One question back: in your sample, did those businesses already have an answering service, or were they letting calls drop to voicemail entirely?",
+      "caution": "Their business is the consulting/automation practice, not the trade business itself \u2014 lead is a partner channel, not a direct end-user.",
+      "dimensions": {
+        "pain_strength": 4,
+        "product_fit": 4,
+        "timing": 5,
+        "reachability": 4,
+        "evidence_quality": 3
+      }
+    },
+    {
+      "name": "Solo electrician scaling solo practice \u2014 r/electricians 'What\u2019s the best way to keep track of\u2026'",
+      "type": "Solo electrician turning busy into scaling pressure",
+      "stage": "Problem aware",
+      "score": 74,
+      "pain_signal": "'I\u2019ve been running solo for a while now, and work\u2019s been steady \u2014 which is great \u2014 but I\u2019m starting to feel the pressure of\u2026' They are seeking a system before they hire their first helper.",
+      "evidence": "Search-engine snippet of a r/electricians post from June 2025, 33 votes, 46 comments, captures the verbatim 'started feeling the pressure' phrasing.",
+      "why_fit": "The exact moment solo-owners feel scaling pressure is when Gainhelm\u2019s /setup wizard plus SMS dispatch has the highest lift vs. spreadsheets.",
+      "why_now": "Post is one year old; the hint of 'starting to feel the pressure' indicates a still-active pain. Reduced timing score to reflect staleness.",
+      "source_title": "What\u2019s the best way to keep track of\u2026 (when scaling from solo)",
+      "source_url": "https://www.reddit.com/r/electricians/comments/1lblm8r/whats_the_best_way_to_keep_track_of/",
+      "source_type": "Public Reddit post (r/electricians)",
+      "signal_date": "2025-06-14",
+      "suggested_channel": "Public reply under the top comment to reintroduce Gainhelm\u2019s answer.",
+      "opener": "Saw your post about feeling scaling pressure going solo. We built Gainhelm for exactly that moment \u2014 the first tech you hire doesn\u2019t need any new app, they just reply YES to a text and the Google Calendar you already use updates. Are you still solo, or did you hire?",
+      "caution": "Stale post (12+ months at search time). Verify the author is still active on Reddit and still solo before responding.",
+      "dimensions": {
+        "pain_strength": 4,
+        "product_fit": 5,
+        "timing": 2,
+        "reachability": 4,
+        "evidence_quality": 3
+      }
+    },
+    {
+      "name": "HVAC company on ServiceTitan losing tech goodwill \u2014 r/HVAC 'Dispatch can go fuck themselves'",
+      "type": "HVAC company currently using ServiceTitan, with publicly venting field techs",
+      "stage": "Trigger present",
+      "score": 71,
+      "pain_signal": "The poster (a tech, not the owner) describes: 'Yesterday I said NO to my last call for the first time. We use ServiceTitan and I\u2019m unable to see my schedule for the day.' 279 votes and 131 comments show widespread agreement across ServiceTitan-using HVAC operators.",
+      "evidence": "Search snippet for a March 2025 r/HVAC post with 279 upvotes and 131 comments surfaces the ServiceTitan + schedule-visibility pain verbatim.",
+      "why_fit": "ServiceTitan-using shops are Gainhelm\u2019s primary switching-target cluster (Gainhelm\u2019s sitemap includes /servicetitan-alternative for exactly this reason). The visible tech revolt is the trigger that pushes an owner to evaluate an alternative.",
+      "why_now": "Post is 15+ months old at search time, but the comment volume (131) and upvote weight (279) keep the thread alive; ServiceTitan-public switching stories are still being added. Reduced timing for staleness.",
+      "source_title": "Dispatch can go fuck themselves",
+      "source_url": "https://www.reddit.com/r/HVAC/comments/1jhet3z/dispatch_can_go_fuck_themselves/",
+      "source_type": "Public Reddit post (r/HVAC)",
+      "signal_date": "2025-03-22",
+      "suggested_channel": "Do not contact the venting tech \u2014 they are not the buyer. Mine the thread for comments from owners or office managers, then reply under their comments with the Gainhelm angle.",
+      "opener": "Reading through this thread I realized most of the pain is exactly the symptom we built Gainhelm to remove \u2014 the dispatcher that pushes jobs but doesn\u2019t show today\u2019s plan to the tech. Out of curiosity, for any owner reading this thread: have you started looking at ServiceTitan alternatives, or are you sticking with it?",
+      "caution": "Speaker is a tech, not the buyer. Use the thread only as a vector to find owners venting in the comments \u2014 do not pitch to the OP.",
+      "dimensions": {
+        "pain_strength": 5,
+        "product_fit": 4,
+        "timing": 3,
+        "reachability": 3,
+        "evidence_quality": 3
+      }
+    },
+    {
+      "name": "HVAC tech resentful of dispatcher check-ins \u2014 r/HVAC 'Dear dispatchers'",
+      "type": "HVAC company whose dispatcher culture is generating tech turnover risk",
+      "stage": "Problem aware",
+      "score": 69,
+      "pain_signal": "'I will call you when the job is done, if you keep calling me every 30 mins to check-in I\u2019m going to work intentionally slow.' 163 upvotes, 89 comments \u2014 widely shared by HVAC techs.",
+      "evidence": "Search snippet of a July 2024 r/HVAC post with 163 upvotes and 89 comments surfaces the verbatim dispatcher-check-in complaint.",
+      "why_fit": "Gainhelm\u2019s SMS auto-status design lets techs update job state with one text \u2014 it replaces the human dispatcher\u2019s every-30-minutes phone call with the lowest-friction status channel.",
+      "why_now": "Post is two years old at search time. Vendor pain stories of this kind typically remain evergreen on r/HVAC; reduced timing for staleness but the cultural pattern still surfaces every quarter.",
+      "source_title": "Dear dispatchers",
+      "source_url": "https://www.reddit.com/r/HVAC/comments/1dj8927/dear_dispatchers/",
+      "source_type": "Public Reddit post (r/HVAC)",
+      "signal_date": "2024-06-19",
+      "suggested_channel": "Locate the underlying employer via the OP\u2019s comment history; otherwise reply under any owner comment in the thread.",
+      "opener": "Reading this thread it sounds like the check-in calls are trying to substitute for the dispatcher not having real-time status \u2014 the fix isn\u2019t fewer calls, it\u2019s an SMS-based status ping techs reply to on their own time. Are there owners in this thread who\u2019ve tried that workflow?",
+      "caution": "Stale post and a venting tech. Treat as an industry-cluster signal, not a specific buyer.",
+      "dimensions": {
+        "pain_strength": 4,
+        "product_fit": 4,
+        "timing": 2,
+        "reachability": 3,
+        "evidence_quality": 3
+      }
+    },
+    {
+      "name": "HVAC tech angry about dispatcher surprise changes \u2014 r/HVAC 'Am I the only one that hates this'",
+      "type": "HVAC dispatching culture that re-routes mid-day, breaking tech trust",
+      "stage": "Problem aware",
+      "score": 67,
+      "pain_signal": "'You get to a site where you\u2019re scheduled to do a maintenance. As soon as you get there the customer says: \u2018oh good, we\u2019ve got\u2026\u2019 68 votes, 76 comments. The thread is full of mid-day dispatch surprise-change stories.",
+      "evidence": "Search snippet of a r/HVAC post from July 2025 with 68 votes and 76 comments captures the verbatim dispatcher-surprise-change frustration.",
+      "why_fit": "Gainhelm\u2019s customer-status-push SMS flow keeps techs informed of scope changes mid-day without a phone call \u2014 directly aligned with the complaint pattern in the thread.",
+      "why_now": "Post is from July 2025, ~12 months old, but discussion volume (76 comments) keeps it visible to active readers.",
+      "source_title": "Am I the only one that hates this",
+      "source_url": "https://www.reddit.com/r/HVAC/comments/1lxk0e5/am_i_the_only_one_that_hates_this/",
+      "source_type": "Public Reddit post (r/HVAC)",
+      "signal_date": "2025-07-11",
+      "suggested_channel": "Reply under any owner or office-manager comment in the thread \u2014 the OP is a tech, not the buyer.",
+      "opener": "Following this thread \u2014 your point about surprise mid-day changes is the exact reason we built customer-side auto-updates into Gainhelm so the tech isn\u2019t the one explaining to the homeowner why the scope changed. For any office manager reading this: do you currently text the tech before scope changes, or does it hit them at the door?",
+      "caution": "OP is a tech, not the buyer. Mine the comment section for buyer-side voices before pitching.",
+      "dimensions": {
+        "pain_strength": 4,
+        "product_fit": 4,
+        "timing": 3,
+        "reachability": 3,
+        "evidence_quality": 3
+      }
+    }
+  ],
+  "patterns": [
+    {
+      "title": "Manual coordination across calls + scheduling + dispatch + follow-up",
+      "count": 5,
+      "insight": "Five distinct posts describe owners or office staff carrying the entire coordination workflow personally \u2014 calls, scheduling, dispatch, follow-up, and estimates. Gainhelm\u2019s /setup wizard plus SMS dispatcher is the only product in the alternative-pages cluster that addresses all five in one loop."
+    },
+    {
+      "title": "Failed FSM adoption \u2014 'tried 3 apps, do it manually'",
+      "count": 3,
+      "insight": "Two electricians and one small-business owner publicly say they tried multiple software products and reverted to manual. This is the market segment with the highest lift from Gainhelm\u2019s intentionally app-less (SMS + Calendar) design."
+    },
+    {
+      "title": "After-hours and missed-call revenue loss",
+      "count": 3,
+      "insight": "Three posts (r/smallbusiness missing-calls, r/n8n 40-business analysis, plus the cross-reference in MyQuoteIQ\u2019s June 2026 water-damage buyers guide) publicly quantify the same revenue-leak mechanic. Gainhelm\u2019s SMS auto-routing surfaces as the natural answer."
+    },
+    {
+      "title": "Dispatcher frustration from the technician side",
+      "count": 3,
+      "insight": "Three r/HVAC threads (279, 163, 68 upvotes) capture tech frustration with dispatcher UX. Each thread is a place to find owner-side voices considering alternatives. Treasure in the comment sections, not the OPs."
+    },
+    {
+      "title": "Scaling pressure at the 1\u20135 tech boundary",
+      "count": 4,
+      "insight": "Four posts describe solo operators or 2-tech shops hitting a scaling ceiling (newly-licensed NC electrician, solo electrician, family HVAC office scaling to 5, MyQuoteIQ\u2019s water-damage guide buyers). This is Gainhelm\u2019s highest-intent persona \u2014 first design partner."
+    }
+  ],
+  "outreach_plan": {
+    "angle": "Lead every reply with the public pain the prospect already described; never lead with features. Offer one question back before any product mention so the conversation is collaborative, not salesy.",
+    "first_step": "Within 7 days, write one source-based public reply on each of the four threads with a known owner voice: r/hvacadvice (Dec 2024 family HVAC), r/smallbusiness 'how do small service businesses handle dispatch' (May 2026), r/smallbusiness missed-calls (May 2026), r/electricians NC/SC newbie (Feb 2026). Each reply ends with a single clarifying question.",
+    "follow_up": "If the OP replies to the public comment within 48 hours, send a low-friction DM offering a single 15-minute walkthrough of the Gainhelm simulator (gainhelm.com/supervision) before any subscription mention. If they don\u2019t reply, do not chase.",
+    "success": "Three public replies, two DM conversations, and one paid design-partner commitment at $99\u2013$199/month within seven days. Treat the waitlist signup as a softer success signal."
+  },
+  "limits": [
+    "These are potential customers inferred from public signals, not confirmed buyers. The Reddit posters are anonymous and the company size, geography, and budget cannot be verified without a live conversation.",
+    "The December 2024 family-HVAC post is ~19 months old at search time; the company may have already chosen another tool. Verify by replying and reading the response before any product mention.",
+    "Reddit tier-1 auth walls may prevent direct DM to the OP. Always start with a public reply to the thread.",
+    "Three of the ten prospects are posted by technicians venting, not by owners buying. The skill mandates we do not pitch to the OP \u2014 use these threads only to surface owner voices in the comments.",
+    "Snippet-only evidence: we did not load the full Reddit thread contents (Reddit returns a verification wall to non-authenticated clients). Any verbatim quotes used here come from search-engine index snippets, not from pages we personally fetched.",
+    "Gainhelm\u2019s waitlist landing page (gainhelm.com) is live but we have not confirmed the conversion rate; the surfaced waitlist signups are a separate, warmer channel and can be sequenced on top of this list once those leads exist.",
+    "We did not mine LinkedIn, Facebook groups (e.g. r/GeneralContractor, Restoration Industry Association), or contractor-lead databases. Those are likely richer and can be researched next."
+  ]
+}

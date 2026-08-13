@@ -1,7 +1,13 @@
 import postgres from 'postgres';
 
-const connectionString =
-  process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/postgres';
+if (!process.env.DATABASE_URL) {
+  console.warn(
+    '[WARN] DATABASE_URL environment variable is not defined. Skipping database migration.'
+  );
+  process.exit(0);
+}
+
+const connectionString = process.env.DATABASE_URL;
 const sql = postgres(connectionString);
 
 async function createTable() {
