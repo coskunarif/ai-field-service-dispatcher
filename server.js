@@ -214,6 +214,11 @@ const pages = {
   '/tools/facebook-post-generator': 'tools-facebook-post-generator.html',
   '/tools/lead-queue': 'tools-lead-queue.html',
   '/tools/contractor-leads': 'tools-contractor-leads.html',
+  '/tools/dispatch-roi-calculator': 'tools-dispatch-roi-calculator.html',
+  '/how-to-automate-after-hours-plumbing-dispatch':
+    'how-to-automate-after-hours-plumbing-dispatch.html',
+  '/how-to-sync-google-calendar-with-technician-dispatch':
+    'how-to-sync-google-calendar-with-technician-dispatch.html',
 };
 
 for (const [route, file] of Object.entries(pages)) {

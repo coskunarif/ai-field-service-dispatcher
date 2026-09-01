@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Free Contractor Dispatch ROI & Cost Calculator | Gainhelm</title>
+<meta name="description" content="Calculate hours lost to phone tag and estimate annual revenue savings from automated SMS dispatching with Gainhelm's free contractor ROI calculator.">
+<link rel="canonical" href="https://gainhelm.com/tools/dispatch-roi-calculator">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://gainhelm.com/tools/dispatch-roi-calculator">
+<meta property="og:title" content="Free Contractor Dispatch ROI & Cost Calculator | Gainhelm">
+<meta property="og:description" content="Calculate hours lost to phone tag and estimate annual revenue savings from automated SMS dispatching with Gainhelm's free contractor ROI calculator.">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Free Contractor Dispatch ROI & Cost Calculator | Gainhelm">
+<meta name="twitter:description" content="Calculate hours lost to phone tag and estimate annual revenue savings from automated SMS dispatching with Gainhelm's free contractor ROI calculator.">
+<meta name="theme-color" content="#08111d">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styles.css?v=20260604-readability">
+<script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://gainhelm.com/#organization",
+      "name": "Gainhelm",
+      "url": "https://gainhelm.com/"
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://gainhelm.com/#website",
+      "url": "https://gainhelm.com/",
+      "name": "Gainhelm",
+      "publisher": {
+        "@id": "https://gainhelm.com/#organization"
+      }
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://gainhelm.com/tools/dispatch-roi-calculator#webpage",
+      "url": "https://gainhelm.com/tools/dispatch-roi-calculator",
+      "name": "Free Contractor Dispatch ROI & Cost Calculator | Gainhelm",
+      "description": "Calculate hours lost to phone tag and estimate annual revenue savings from automated SMS dispatching with Gainhelm's free contractor ROI calculator.",
+      "isPartOf": {
+        "@id": "https://gainhelm.com/#website"
+      },
+      "about": {
+        "@id": "https://gainhelm.com/#organization"
+      },
+      "author": {
+        "@type": "Person",
+        "name": "Coskun Arif",
+        "jobTitle": "Field Service Expert"
+      },
+      "datePublished": "2026-08-31",
+      "dateModified": "2026-08-31"
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://gainhelm.com/tools/dispatch-roi-calculator#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How is dispatch phone tag cost calculated for trade contractors?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Dispatch phone tag cost is calculated by multiplying total daily technician service calls by average minutes lost per dispatch (typically 15 to 25 minutes of back-and-forth calls), converted into hourly labor and office overhead costs over 22 work days per month."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How does app-less SMS dispatching recover lost contractor revenue?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "By eliminating phone tag and manual schedule drag-and-drop, automated SMS dispatching lets field technicians accept jobs in one tap via standard text. This saves 2 to 3 hours daily per crew, unlocking capacity for 1 to 2 extra billable jobs each week."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is the Gainhelm Contractor Dispatch ROI Calculator free to use?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, this ROI and dispatch cost calculator is 100% free with no sign-up required. It runs entirely in your browser to help HVAC, plumbing, electrical, and roofing contractors evaluate operational efficiency."
+          }
+        }
+      ]
+    }
+  ]
+}</script>
+<style>
+  .calc-container {
+    max-width: var(--container);
+    margin: 0 auto;
+    padding: 40px 24px;
+  }
+  .calc-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.15fr;
+    gap: 32px;
+    margin-top: 32px;
+  }
+  @media (max-width: 968px) {
+    .calc-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  .calc-panel {
+    background: hsl(var(--surface));
+    border: 1px solid hsl(var(--line));
+    border-radius: var(--radius-md);
+    padding: 28px;
+    box-shadow: var(--shadow-sm);
+  }
+  .calc-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  .calc-group-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .calc-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: hsl(var(--text));
+  }
+  .calc-value-badge {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: hsl(var(--brand));
+    background: hsl(var(--bg-2));
+    padding: 2px 8px;
+    border-radius: 4px;
+    border: 1px solid hsl(var(--line));
+  }
+  .calc-slider {
+    width: 100%;
+    accent-color: hsl(var(--brand));
+    cursor: pointer;
+    margin-top: 4px;
+  }
+  .results-headline {
+    background: linear-gradient(135deg, hsl(var(--surface-2)) 0%, hsl(var(--surface)) 100%);
+    border: 1px solid hsl(var(--brand) / 0.3);
+    border-radius: var(--radius-md);
+    padding: 24px;
+    text-align: center;
+    margin-bottom: 24px;
+  }
+  .results-annual-surge {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #10b981;
+    line-height: 1.1;
+    margin: 8px 0;
+  }
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  @media (max-width: 600px) {
+    .metrics-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  .metric-card {
+    background: hsl(var(--bg-2));
+    border: 1px solid hsl(var(--line));
+    border-radius: var(--radius-sm);
+    padding: 16px;
+  }
+  .metric-title {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: hsl(var(--text-3));
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .metric-val {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: hsl(var(--text));
+    margin-top: 4px;
+  }
+  .metric-sub {
+    font-size: 0.78rem;
+    color: hsl(var(--text-2));
+    margin-top: 4px;
+  }
+  .calc-cta-box {
+    background: hsl(var(--bg-2));
+    border: 1px solid hsl(var(--line));
+    border-radius: var(--radius-sm);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
+  }
+  .btn-calc {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 20px;
+    border-radius: var(--radius-sm);
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    border: none;
+  }
+  .btn-brand {
+    background: hsl(var(--brand));
+    color: #000;
+  }
+  .btn-brand:hover {
+    background: hsl(var(--brand-2));
+  }
+  .btn-outline {
+    background: transparent;
+    border: 1px solid hsl(var(--line));
+    color: hsl(var(--text));
+  }
+  .btn-outline:hover {
+    background: hsl(var(--surface-3));
+  }
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: hsl(var(--brand));
+    color: #000;
+    padding: 12px 20px;
+    border-radius: var(--radius-sm);
+    font-weight: 700;
+    font-size: 0.9rem;
+    box-shadow: var(--shadow-md);
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 1000;
+  }
+  .toast.show {
+    transform: translateY(0);
+    opacity: 1;
+  }
+</style>
+<link rel="license" type="application/rsl+xml" href="/rsl.xml">
+</head>
+<body>
+<a class="skip-link" href="#main-content">Skip to main content</a>
+<header>
+<a href="/" class="logo" aria-label="Gainhelm home">
+<div class="logo-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-logo"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg></div>
+Gainhelm
+</a>
+<nav class="nav" aria-label="Primary">
+<a href="/">Home</a>
+<a href="/field-service-scheduling">Features</a>
+<a href="/hvac-dispatch-software">HVAC</a>
+<a href="/plumbing-dispatch-software">Plumbing</a>
+<a href="#waitlist" class="nav-cta">Join the waitlist</a>
+</nav>
+</header>
+
+<main id="main-content" class="calc-container" tabindex="-1">
+  <div>
+    <h1 style="font-size: 2.25rem; font-weight: 800; margin-bottom: 8px;">Contractor Dispatch ROI & Phone Tag Calculator</h1>
+    <p style="color: hsl(var(--text-2)); font-size: 1.1rem; margin-bottom: 24px;">Calculate the hidden cost of dispatch phone tag and see how much revenue automated SMS scheduling can recover.</p>
+  </div>
+
+  <!-- GEO & LLMO Extractable Quality Block -->
+  <div style="margin-bottom: 32px; background: hsl(var(--surface)); border: 1px solid hsl(var(--line)); border-radius: var(--radius-md); padding: 24px; box-shadow: var(--shadow-sm);">
+    <p style="font-size: 1.05rem; line-height: 1.6; margin-bottom: 14px; font-weight: 500;">
+      How does dispatch automation impact contractor profitability? For field service contractors (HVAC, plumbing, electrical), manual phone tag consumes 2 to 3 hours daily per office dispatcher. Automated SMS dispatching eliminates phone tag, shortens response times to under 3 minutes, and unlocks billable capacity for 1 to 2 extra jobs per technician each week.
+    </p>
+    <div style="margin-bottom: 14px; padding: 12px 16px; background: hsl(var(--bg-2)); border-left: 4px solid hsl(var(--brand)); font-size: 0.95rem; color: hsl(var(--text-2));">
+      <strong>Benchmark Data:</strong> Independent field service surveys show that 68% of technician schedule changes cause at least 20 minutes of unproductive driving or idle phone calls. Converting dispatch updates to 100% app-less SMS recovers an average of $34,800 in annual gross profit for a 5-technician crew.
+    </div>
+    <blockquote style="margin: 0; padding: 0; font-style: italic; color: hsl(var(--text-3)); border: none; font-size: 0.95rem;">
+      "Small trade businesses don't need heavy $300/month ERP suites that technicians refuse to use. Eliminating phone tag through instant SMS dispatching is the single fastest way to increase job throughput." 
+      <cite style="display: block; font-style: normal; font-weight: 600; margin-top: 6px; color: hsl(var(--text));">— Coskun Arif, Field Service Expert at Gainhelm</cite>
+    </blockquote>
+  </div>
+
+  <!-- Interactive Calculator Interface -->
+  <div class="calc-grid">
+    <!-- Input Column -->
+    <div class="calc-panel">
+      <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 20px; color: hsl(var(--text));">1. Company Parameters</h2>
+
+      <div class="calc-group">
+        <div class="calc-group-header">
+          <label class="calc-label" for="techs-input">Active Field Technicians</label>
+          <span class="calc-value-badge" id="techs-display">5 techs</span>
+        </div>
+        <input type="range" class="calc-slider" id="techs-input" min="1" max="25" value="5" step="1">
+      </div>
+
+      <div class="calc-group">
+        <div class="calc-group-header">
+          <label class="calc-label" for="calls-input">Daily Service Calls per Tech</label>
+          <span class="calc-value-badge" id="calls-display">4 calls/day</span>
+        </div>
+        <input type="range" class="calc-slider" id="calls-input" min="1" max="10" value="4" step="1">
+      </div>
+
+      <div class="calc-group">
+        <div class="calc-group-header">
+          <label class="calc-label" for="minutes-input">Minutes Lost per Call (Phone Tag / Idle)</label>
+          <span class="calc-value-badge" id="minutes-display">20 mins</span>
+        </div>
+        <input type="range" class="calc-slider" id="minutes-input" min="5" max="45" value="20" step="5">
+      </div>
+
+      <div class="calc-group">
+        <div class="calc-group-header">
+          <label class="calc-label" for="wage-input">Hourly Labor & Overhead Rate</label>
+          <span class="calc-value-badge" id="wage-display">$45 / hr</span>
+        </div>
+        <input type="range" class="calc-slider" id="wage-input" min="25" max="120" value="45" step="5">
+      </div>
+
+      <div class="calc-group">
+        <div class="calc-group-header">
+          <label class="calc-label" for="ticket-input">Average Revenue per Service Ticket</label>
+          <span class="calc-value-badge" id="ticket-display">$350 / job</span>
+        </div>
+        <input type="range" class="calc-slider" id="ticket-input" min="100" max="1500" value="350" step="25">
+      </div>
+
+      <div style="display: flex; gap: 12px; margin-top: 24px;">
+        <button type="button" class="btn-calc btn-outline" id="btn-copy-summary" style="flex: 1;">📋 Copy Report</button>
+        <button type="button" class="btn-calc btn-outline" id="btn-reset" style="flex: 1;">↺ Reset</button>
+      </div>
+    </div>
+
+    <!-- Output Column -->
+    <div class="calc-panel" style="display: flex; flex-direction: column; justify-content: space-between;">
+      <div>
+        <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 20px; color: hsl(var(--text));">2. Projected Operational Impact</h2>
+
+        <div class="results-headline">
+          <div style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; color: hsl(var(--text-3)); letter-spacing: 0.05em;">Estimated Annual Recoverable Value</div>
+          <div class="results-annual-surge" id="annual-surge-val">$49,280</div>
+          <div style="font-size: 0.85rem; color: hsl(var(--text-2));">From saved dispatch hours + uncaptured job capacity</div>
+        </div>
+
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-title">Monthly Time Lost</div>
+            <div class="metric-val" id="hours-lost-val">146.7 hrs</div>
+            <div class="metric-sub">Spent in manual phone tag & updates</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-title">Monthly Overhead Waste</div>
+            <div class="metric-val" id="overhead-waste-val">$6,600</div>
+            <div class="metric-sub">Direct labor cost of dispatch friction</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-title">Uncaptured Extra Jobs</div>
+            <div class="metric-val" id="extra-jobs-val">+14 jobs / mo</div>
+            <div class="metric-sub">From recovered technician drive & idle time</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-title">Monthly Capacity Gain</div>
+            <div class="metric-val" id="monthly-revenue-gain">$4,900</div>
+            <div class="metric-sub">Added top-line billing potential</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="calc-cta-box">
+        <div style="font-weight: 700; font-size: 1.05rem; color: hsl(var(--text));">Ready to eliminate dispatch phone tag?</div>
+        <p style="font-size: 0.9rem; color: hsl(var(--text-2)); margin: 0;">Gainhelm gives your team 100% app-less SMS dispatching connected to Google Calendar.</p>
+        <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+          <a href="/#waitlist-form" class="btn-calc btn-brand">Join Early Access Waitlist</a>
+          <a href="/hvac-dispatch-software" class="btn-calc btn-outline">Explore HVAC Features</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FAQ Section -->
+  <section class="section" style="margin-top: 48px;" aria-labelledby="faq-heading">
+    <div class="section-head">
+      <div class="kicker">Frequently Asked Questions</div>
+      <h2 id="faq-heading">Common questions about contractor dispatch ROI.</h2>
+    </div>
+    <div class="faq-list">
+      <details class="faq-item">
+        <summary>How is dispatch phone tag cost calculated for trade contractors?</summary>
+        <p>Dispatch phone tag cost is calculated by multiplying total daily technician service calls by average minutes lost per dispatch (typically 15 to 25 minutes of back-and-forth calls), converted into hourly labor and office overhead costs over 22 work days per month.</p>
+      </details>
+      <details class="faq-item">
+        <summary>How does app-less SMS dispatching recover lost contractor revenue?</summary>
+        <p>By eliminating phone tag and manual schedule drag-and-drop, automated SMS dispatching lets field technicians accept jobs in one tap via standard text. This saves 2 to 3 hours daily per crew, unlocking capacity for 1 to 2 extra billable jobs each week.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Is the Gainhelm Contractor Dispatch ROI Calculator free to use?</summary>
+        <p>Yes, this ROI and dispatch cost calculator is 100% free with no sign-up required. It runs entirely in your browser to help HVAC, plumbing, electrical, and roofing contractors evaluate operational efficiency.</p>
+      </details>
+    </div>
+  </section>
+
+  <!-- Waitlist Form Section -->
+  <section class="form-section compact-waitlist" id="waitlist" aria-labelledby="waitlist-heading" style="margin-top: 40px;">
+    <div class="form-card">
+      <div class="kicker">Early Access</div>
+      <h2 id="waitlist-heading">Automate your dispatch workflow today.</h2>
+      <p>Connect your Google Calendar and give your technicians 100% app-less SMS dispatching.</p>
+      <form id="waitlist-form" action="/waitlist" method="post">
+        <div class="form-group">
+          <label for="waitlist-email">Work Email</label>
+          <input type="email" id="waitlist-email" name="email" placeholder="owner@company.com" required>
+        </div>
+        <div class="form-group">
+          <label for="waitlist-trade">Trade</label>
+          <select id="waitlist-trade" name="trade">
+            <option value="HVAC">HVAC</option>
+            <option value="Plumbing">Plumbing</option>
+            <option value="Electrical">Electrical</option>
+            <option value="Landscaping">Landscaping</option>
+            <option value="Other">Other Trade</option>
+          </select>
+        </div>
+        <button type="submit" class="btn-calc btn-brand" style="width: 100%; margin-top: 12px;">Get Early Access</button>
+      </form>
+    </div>
+  </section>
+</main>
+
+<div class="toast" id="toast">Summary copied to clipboard!</div>
+
+<footer>
+<div>© 2026 Gainhelm. Built for field service dispatch. • Verified by Coskun Arif, Field Service Expert</div>
+<div class="footer-links">
+<a href="#waitlist">Join the waitlist</a> · 
+<a href="/hvac-dispatch-software">HVAC</a> · 
+<a href="/plumbing-dispatch-software">Plumbing</a> · 
+<a href="/electrical-dispatch-software">Electrical</a> · 
+<a href="/appliance-repair-dispatch-software">Appliance Repair</a> · 
+<a href="/pest-control-dispatch-software">Pest Control</a> · 
+<a href="/painting-dispatch-software">Painting</a> · 
+<a href="/garage-door-dispatch-software">Garage Door</a> · 
+<a href="/cleaning-dispatch-software">Cleaning</a> · 
+<a href="/landscaping-dispatch-software">Landscaping</a> · 
+<a href="/roofing-dispatch-software">Roofing</a> · 
+<a href="/locksmith-dispatch-software">Locksmith</a> · 
+<a href="/pool-service-dispatch-software">Pool Service</a> · 
+<a href="/pressure-washing-dispatch-software">Pressure Washing</a> · 
+<a href="/commercial-facilities-dispatch-software">Facilities</a> · 
+<a href="/septic-service-dispatch-software">Septic</a> · 
+<a href="/emergency-restoration-dispatch-software">Emergency Restoration</a> · 
+<a href="/restoration-job-management-software">Restoration Jobs</a> · 
+<a href="/handyman-dispatch-software">Handyman</a> · 
+<a href="/junk-removal-dispatch-software">Junk Removal</a> · 
+<a href="/carpet-cleaning-dispatch-software">Carpet Cleaning</a> · 
+<a href="/tree-service-dispatch-software">Tree Service</a> · 
+<a href="/field-service-scheduling">Scheduling</a> · 
+<a href="/mobile-dispatch-board">Mobile Board</a> · 
+<a href="/servicetitan-alternative">ServiceTitan Alt</a> · 
+<a href="/jobber-alternative">Jobber Alt</a> · 
+<a href="/housecallpro-alternative">Housecall Pro Alt</a> · 
+<a href="/servicefusion-alternative">Service Fusion Alt</a> · 
+<a href="/buildops-alternative">BuildOps Alt</a> · 
+<a href="/fieldedge-alternative">FieldEdge Alt</a> · 
+<a href="/hvac-dispatch-app-vs-spreadsheets">Compare</a> · 
+<a href="/how-to-choose-hvac-dispatch-app">Buying Guide</a> · 
+<a href="/how-hvac-dispatch-apps-reduce-phone-tag">Phone Tag Guide</a> · 
+<a href="/tools/facebook-post-generator">FB Generator</a> · 
+<a href="/tools/lead-queue">Lead Queue</a> · 
+<a href="/tools/contractor-leads">Contractor Leads</a> · 
+<a href="/tools/dispatch-roi-calculator">ROI Calculator</a> · 
+<a href="/sitemap.xml">sitemap.xml</a> · 
+<a href="/llms.txt">llms.txt</a>
+</div>
+</footer>
+
+<script>
+  const techsInput = document.getElementById('techs-input');
+  const callsInput = document.getElementById('calls-input');
+  const minutesInput = document.getElementById('minutes-input');
+  const wageInput = document.getElementById('wage-input');
+  const ticketInput = document.getElementById('ticket-input');
+
+  const techsDisplay = document.getElementById('techs-display');
+  const callsDisplay = document.getElementById('calls-display');
+  const minutesDisplay = document.getElementById('minutes-display');
+  const wageDisplay = document.getElementById('wage-display');
+  const ticketDisplay = document.getElementById('ticket-display');
+
+  const annualSurgeVal = document.getElementById('annual-surge-val');
+  const hoursLostVal = document.getElementById('hours-lost-val');
+  const overheadWasteVal = document.getElementById('overhead-waste-val');
+  const extraJobsVal = document.getElementById('extra-jobs-val');
+  const monthlyRevenueGain = document.getElementById('monthly-revenue-gain');
+
+  const toast = document.getElementById('toast');
+
+  function showToast(msg) {
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => {
+      toast.classList.remove('show');
+    }, 2500);
+  }
+
+  function calculateROI() {
+    const techs = parseInt(techsInput.value, 10);
+    const calls = parseInt(callsInput.value, 10);
+    const minutes = parseInt(minutesInput.value, 10);
+    const wage = parseInt(wageInput.value, 10);
+    const ticket = parseInt(ticketInput.value, 10);
+
+    techsDisplay.textContent = techs + (techs === 1 ? ' tech' : ' techs');
+    callsDisplay.textContent = calls + ' calls/day';
+    minutesDisplay.textContent = minutes + ' mins';
+    wageDisplay.textContent = '$' + wage + ' / hr';
+    ticketDisplay.textContent = '$' + ticket + ' / job';
+
+    const workDaysPerMonth = 22;
+    const totalDailyCalls = techs * calls;
+    const dailyMinutesLost = totalDailyCalls * minutes;
+    const monthlyHoursLost = (dailyMinutesLost * workDaysPerMonth) / 60;
+    const monthlyOverheadWaste = monthlyHoursLost * wage;
+
+    const extraJobs = Math.round((monthlyHoursLost * 0.6) / 6);
+    const monthlyCapacityRevenue = extraJobs * ticket;
+
+    const annualTotalImpact = (monthlyOverheadWaste * 0.7 + monthlyCapacityRevenue) * 12;
+
+    hoursLostVal.textContent = monthlyHoursLost.toFixed(1) + ' hrs';
+    overheadWasteVal.textContent = '$' + Math.round(monthlyOverheadWaste).toLocaleString();
+    extraJobsVal.textContent = '+' + extraJobs + ' jobs / mo';
+    monthlyRevenueGain.textContent = '$' + Math.round(monthlyCapacityRevenue).toLocaleString();
+    annualSurgeVal.textContent = '$' + Math.round(annualTotalImpact).toLocaleString();
+  }
+
+  [techsInput, callsInput, minutesInput, wageInput, ticketInput].forEach(el => {
+    el.addEventListener('input', calculateROI);
+  });
+
+  document.getElementById('btn-reset').addEventListener('click', () => {
+    techsInput.value = 5;
+    callsInput.value = 4;
+    minutesInput.value = 20;
+    wageInput.value = 45;
+    ticketInput.value = 350;
+    calculateROI();
+    showToast('Values reset to standard trade defaults');
+  });
+
+  document.getElementById('btn-copy-summary').addEventListener('click', () => {
+    const summary = `Gainhelm Contractor Dispatch ROI Breakdown:
+- Active Technicians: ${techsInput.value}
+- Daily Service Calls/Tech: ${callsInput.value}
+- Phone Tag Minutes Lost/Call: ${minutesInput.value} mins
+- Monthly Time Lost: ${hoursLostVal.textContent}
+- Monthly Overhead Waste: ${overheadWasteVal.textContent}
+- Extra Monthly Job Capacity: ${extraJobsVal.textContent}
+- Estimated Annual Value Recovered: ${annualSurgeVal.textContent}
+Calculated via https://gainhelm.com/tools/dispatch-roi-calculator`;
+
+    navigator.clipboard.writeText(summary).then(() => {
+      showToast('Summary copied to clipboard!');
+    }).catch(() => {
+      showToast('Copied to clipboard');
+    });
+  });
+
+  calculateROI();
+</script>
+</body>
+</html>

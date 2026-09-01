@@ -44,6 +44,7 @@
 - [Facebook Post Generator Tool](https://gainhelm.com/tools/facebook-post-generator): Free AI Facebook post generator for contractor marketing and lead generation.
 - [Lead Queue Tool](https://gainhelm.com/tools/lead-queue): Free contractor lead queue and incoming call simulator.
 - [Contractor Leads Tool](https://gainhelm.com/tools/contractor-leads): Free contractor marketing leads dashboard.
+- [Contractor Dispatch ROI Calculator](https://gainhelm.com/tools/dispatch-roi-calculator): Free interactive calculator estimating hours lost to phone tag and annual recoverable revenue for trade contractors.
 - [Painting Dispatch Software](https://gainhelm.com/painting-dispatch-software): Painting dispatch and crew scheduling software.
 - [Pressure Washing Dispatch Software](https://gainhelm.com/pressure-washing-dispatch-software): Pressure washing dispatch and technician scheduling software.
 - [Junk Removal Dispatch Software](https://gainhelm.com/junk-removal-dispatch-software): Junk removal dispatch and truck scheduling software.
@@ -99,6 +100,10 @@
 - ai dispatch agent for OpenClaw
 - agentic field service dispatch software
 - llm agent dispatch integration
+- contractor dispatch roi calculator
+- hvac dispatch pricing calculator
+- field service dispatch cost calculator
+- phone tag cost calculator for contractors
 
 ## Agentic & LLM Harness Compatibility
 Gainhelm is an agent-first, context-driven AI dispatcher built explicitly for the agentic era. It features native, seamless integration and compatibility with major LLM agent frameworks and harnesses, including:

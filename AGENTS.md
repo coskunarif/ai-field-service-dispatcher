@@ -1,6 +1,19 @@
-# AI Agent Playbook: Testing Architecture & Guidelines
+# Gainhelm (ai-field-service-dispatcher) — AI Agent Playbook & Mechanical Contracts
 
-Welcome! To keep the Gainhelm codebase stable, maintainable, and regression-free, you **must** follow the testing rules and architecture described below. Do not create test files in ad-hoc folders or place them next to source code.
+**Stack**: Fastify Web Server + Playwright E2E Sandbox Simulator + SEO/GEO Generator (`geo-generator.mjs`)
+
+## Ground Truth Verification Oracles (The Oracles)
+- **Micro / Fast Check (Inner Loop):** `npx vitest run` (or `npx playwright test tests/<spec_file>.spec.js`)
+- **Baseline Test Suite (Gate 2):** `npm run test`
+- **SEO & GEO Compliance Audit:** `npm run audit:seo-geo` (validates `llms.txt`, `sitemap.xml`, canonicals, single `<h1>`)
+- **Linter & Format:** `npm run lint`
+
+## Non-Negotiable Invariants & Boundaries
+1. **Port 3005 Discipline:** Always kill stale listeners on port 3005 before/after runs (`kill $(lsof -t -i:3005) 2>/dev/null || true`).
+2. **Hermetic E2E Sandbox:** Never trigger live Twilio SMS or external Google Calendar writes in tests. Use the dual-screen sandbox simulator (`tests/sandbox_simulator.spec.js`).
+3. **100% LLMO & SEO Health:** Every landing page must have exactly one `<h1>`, valid JSON-LD schema, non-empty meta description, and match `sitemap.xml` and `llms.txt`.
+4. **Draft Persistence:** Setup wizard state must seamlessly serialize to `localStorage` and recover across browser reloads.
+5. **Immutable Test Suites:** Pre-existing test files in `tests/` are strictly read-only. Verification requires process exit code `0`.
 
 ---
 

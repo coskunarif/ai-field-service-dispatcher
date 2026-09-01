@@ -1,6 +1,6 @@
 # Local Contractor Discovery Report
 
-**Generated At**: 2026-08-12T22:25:56.067Z
+**Generated At**: 2026-08-31T19:48:48.218Z
 **Newly Discovered in this run**: 10 leads
 **Total Leads in Registry**: 10 leads
 

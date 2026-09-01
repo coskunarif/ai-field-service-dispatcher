@@ -7,6 +7,9 @@ node_modules/
 
 # Local agent workspace skills are indexed by Vault, not committed here
 .agents/skills/
+.agents/skill
+.factory/skills/
+.factory/skills
 
 # Generated proof artifacts: commit only curated SEO evidence bundles
 artifacts/*
