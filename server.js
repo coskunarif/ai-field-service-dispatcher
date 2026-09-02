@@ -17,6 +17,7 @@ import { renderAccessDeniedPage } from './lib/templates/access-denied.js';
 import { renderSandboxPage } from './lib/templates/sandbox.js';
 import { renderSetupPage } from './lib/templates/setup.js';
 import { renderAppPage } from './lib/templates/app.js';
+import { notifyEmergencyDispatch } from './lib/dispatch-notifier.js';
 
 const fastify = Fastify({ logger: true });
 const sql = process.env.DATABASE_URL ? postgres(process.env.DATABASE_URL) : null;
@@ -1224,6 +1225,30 @@ fastify.post('/api/emergency-dispatch', async (request, reply) => {
     // ignore in-memory buffer errors
   }
 
+  let notifications = null;
+  try {
+    notifications = await notifyEmergencyDispatch({
+      dispatch: {
+        id,
+        trade,
+        issue,
+        urgency: urgencyLevel,
+        zipCode: cleanZip,
+        phone,
+        address,
+        notes,
+        minCost,
+        maxCost,
+        etaMins,
+        assignedTech: `${assigned.name} (${assigned.title})`,
+        trackingUrl: `/app/track/${id}`,
+      },
+      env: process.env,
+    });
+  } catch (err) {
+    fastify.log.error('Dispatch notification error:', err);
+  }
+
   return {
     ok: true,
     trackingId: id,
@@ -1231,6 +1256,7 @@ fastify.post('/api/emergency-dispatch', async (request, reply) => {
     etaMins,
     assignedTech: `${assigned.name} (${assigned.title})`,
     status: 'dispatched',
+    notifications,
     message: 'Emergency technician dispatched successfully. SMS notification sent.',
   };
 });
