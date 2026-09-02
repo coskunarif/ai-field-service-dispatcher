@@ -107,9 +107,9 @@ export function renderTrackingPage(dispatch, context) {
   }
 
   const technicians =
-    typeof context.technicians === 'string'
+    context && typeof context.technicians === 'string'
       ? JSON.parse(context.technicians)
-      : context.technicians || [];
+      : context?.technicians || [];
 
   const techName = dispatch.dispatched_to_name || 'Sarah Connor';
   const tech = technicians.find(t => t.name === techName) || technicians[0];

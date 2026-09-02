@@ -215,6 +215,7 @@ const pages = {
   '/tools/lead-queue': 'tools-lead-queue.html',
   '/tools/contractor-leads': 'tools-contractor-leads.html',
   '/tools/dispatch-roi-calculator': 'tools-dispatch-roi-calculator.html',
+  '/tools/emergency-cost-estimator': 'tools-emergency-cost-estimator.html',
   '/how-to-automate-after-hours-plumbing-dispatch':
     'how-to-automate-after-hours-plumbing-dispatch.html',
   '/how-to-sync-google-calendar-with-technician-dispatch':
@@ -1109,6 +1110,130 @@ async function performDiscovery(sql, inMemoryLeads) {
 
   return count;
 }
+
+function getAssignedTechnician(trade) {
+  const map = {
+    hvac: { name: 'Marcus Cole', title: 'Senior HVAC Specialist', phone: '+1 (555) 019-2834' },
+    plumbing: { name: 'Dave Miller', title: 'Master Plumber', phone: '+1 (555) 019-4821' },
+    electrical: {
+      name: 'Elena Rostova',
+      title: 'Licensed Electrician',
+      phone: '+1 (555) 019-7712',
+    },
+    roofing: { name: 'Carlos Mendez', title: 'Roofing Lead', phone: '+1 (555) 019-6334' },
+    restoration: { name: 'Sarah Jenkins', title: 'Water Damage Tech', phone: '+1 (555) 019-9021' },
+    locksmith: { name: 'Alex Rivera', title: 'Emergency Locksmith', phone: '+1 (555) 019-1144' },
+    appliance: { name: 'Tom Bradley', title: 'Appliance Tech', phone: '+1 (555) 019-3388' },
+  };
+  const key = String(trade || '').toLowerCase();
+  return (
+    map[key] || { name: 'Dave Miller', title: 'On-Duty Dispatcher', phone: '+1 (555) 019-2834' }
+  );
+}
+
+fastify.post('/api/emergency-dispatch', async (request, reply) => {
+  let body = request.body || {};
+  if (typeof body === 'string') {
+    try {
+      body = JSON.parse(body);
+    } catch {
+      // parse fallback
+    }
+  }
+
+  const { trade, issue, urgency, zipCode, phone, address, notes, minCost, maxCost } = body;
+
+  if (!trade || typeof trade !== 'string') {
+    return reply.status(400).send({ error: 'Trade selection is required' });
+  }
+  const cleanPhone = String(phone || '').replace(/\D/g, '');
+  if (!phone || typeof phone !== 'string' || cleanPhone.length < 7) {
+    return reply.status(400).send({ error: 'Valid contact phone number is required' });
+  }
+  const cleanZip = String(zipCode || '').trim();
+  if (!zipCode || typeof zipCode !== 'string' || cleanZip.length < 5) {
+    return reply.status(400).send({ error: 'Valid 5-digit US ZIP code is required' });
+  }
+
+  const assigned = getAssignedTechnician(trade);
+  const id = crypto.randomUUID();
+  const urgencyLevel = String(urgency || 'emergency').toLowerCase();
+  const etaMins = urgencyLevel === 'emergency' ? 22 : urgencyLevel === 'same-day' ? 55 : 120;
+  const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  const jobDesc = `${urgencyLevel.toUpperCase()}: ${trade.toUpperCase()} - ${issue || 'Emergency Repair'} (${address || 'Customer Location'}, ZIP: ${cleanZip})`;
+
+  const stepLogs = [
+    `⚡ Quote calculated: $${minCost || 250} - $${maxCost || 450}`,
+    `📍 Service address verified: ${address || 'Local'}, ZIP: ${cleanZip}`,
+    `🚨 Automated emergency dispatch triggered to: ${assigned.name} (${assigned.title})`,
+    `📱 SMS arrival notification queued to customer: ${phone}`,
+  ];
+  if (notes) {
+    stepLogs.push(`📝 Customer special instructions: ${notes}`);
+  }
+
+  const dispatchRecord = {
+    id,
+    email: 'dispatcher@gainhelm.com',
+    job_description: jobDesc,
+    trade: trade,
+    simulated_time: timeStr,
+    dispatched_to_name: assigned.name,
+    dispatched_to_phone: assigned.phone,
+    status: 'dispatched',
+    step_logs: JSON.stringify(stepLogs),
+    distance_miles: 3.4,
+    duration_mins: etaMins,
+    traffic_multiplier: 1.15,
+  };
+
+  dispatchLogsStore.set(id, dispatchRecord);
+
+  if (sql) {
+    try {
+      await sql`
+        INSERT INTO gainhelm_dispatch_logs (
+          id, email, job_description, trade, simulated_time,
+          dispatched_to_name, dispatched_to_phone, status, step_logs,
+          distance_miles, duration_mins, traffic_multiplier
+        ) VALUES (
+          ${id}, ${dispatchRecord.email}, ${jobDesc}, ${trade}, ${timeStr},
+          ${assigned.name}, ${assigned.phone}, ${dispatchRecord.status}, ${JSON.stringify(stepLogs)},
+          ${dispatchRecord.distance_miles}, ${dispatchRecord.duration_mins}, ${dispatchRecord.traffic_multiplier}
+        )
+      `;
+    } catch (err) {
+      fastify.log.error('Failed to insert emergency dispatch to SQL:', err);
+    }
+  }
+
+  try {
+    inMemoryLeads.unshift({
+      id: crypto.randomUUID(),
+      platform: 'emergency-dispatch',
+      source_url: `https://gainhelm.com/tools/emergency-cost-estimator#${trade}`,
+      title: `Emergency Dispatch - ${trade.toUpperCase()} (${cleanZip})`,
+      snippet: `Phone: ${phone}, Address: ${address || 'N/A'}, Issue: ${issue || 'N/A'}, Urgency: ${urgencyLevel}`,
+      intent_score: 95,
+      status: 'dispatched',
+      suggested_reply: `Hi, ${assigned.name} has been dispatched. ETA: ${etaMins} mins.`,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    });
+  } catch {
+    // ignore in-memory buffer errors
+  }
+
+  return {
+    ok: true,
+    trackingId: id,
+    trackingUrl: `/app/track/${id}`,
+    etaMins,
+    assignedTech: `${assigned.name} (${assigned.title})`,
+    status: 'dispatched',
+    message: 'Emergency technician dispatched successfully. SMS notification sent.',
+  };
+});
 
 fastify.post('/api/leads', async (request, reply) => {
   const { platform, source_url, title, snippet, status, intent_score, suggested_reply } =

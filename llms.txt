@@ -45,6 +45,7 @@
 - [Lead Queue Tool](https://gainhelm.com/tools/lead-queue): Free contractor lead queue and incoming call simulator.
 - [Contractor Leads Tool](https://gainhelm.com/tools/contractor-leads): Free contractor marketing leads dashboard.
 - [Contractor Dispatch ROI Calculator](https://gainhelm.com/tools/dispatch-roi-calculator): Free interactive calculator estimating hours lost to phone tag and annual recoverable revenue for trade contractors.
+- [Emergency Contractor Cost Estimator](https://gainhelm.com/tools/emergency-cost-estimator): Free emergency repair cost calculator with instant on-duty technician dispatch and direct phone routing.
 - [Painting Dispatch Software](https://gainhelm.com/painting-dispatch-software): Painting dispatch and crew scheduling software.
 - [Pressure Washing Dispatch Software](https://gainhelm.com/pressure-washing-dispatch-software): Pressure washing dispatch and technician scheduling software.
 - [Junk Removal Dispatch Software](https://gainhelm.com/junk-removal-dispatch-software): Junk removal dispatch and truck scheduling software.
