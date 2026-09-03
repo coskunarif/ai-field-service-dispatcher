@@ -11,11 +11,11 @@
   --text: 210 40% 98%; /* Slate-50 Primary Text */
   --text-2: 215 20% 82%; /* Slate-300 Secondary Text */
   --text-3: 215 16% 62%; /* Slate-400 Muted Text */
-  --brand: 38 92% 52%; /* Warm Gold-Amber */
-  --brand-2: 43 96% 56%; /* Radiant Amber Focus */
-  --brand-3: 32 88% 40%; /* Deep Gold-Amber Accent */
-  --cta: 38 92% 52%; /* Primary CTA Color */
-  --cta-2: 28 84% 45%; /* Secondary CTA Gradient End */
+  --brand: 160 84% 39%; /* Emerald 500 #10B981 */
+  --brand-2: 160 84% 48%; /* Emerald 400 #34D399 */
+  --brand-3: 161 94% 30%; /* Emerald 600 #059669 */
+  --cta: 160 84% 39%; /* Primary CTA Emerald */
+  --cta-2: 161 94% 30%; /* Secondary CTA Emerald */
   --hero: 224 45% 7%; /* Slate-950 for hero background */
   --hero-2: 224 45% 4%; /* Slate-990 for hero background */
   --hero-line: 222 30% 16%;
@@ -243,20 +243,20 @@ header {
 }
 
 .logo-icon {
-  width: 36px;
-  height: 36px;
+  width: 34px;
+  height: 34px;
   display: grid;
   place-items: center;
-  border-radius: 8px;
-  background: hsl(var(--brand));
-  box-shadow: 0 10px 20px hsl(var(--brand) / 0.2);
+  border-radius: 9px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
   flex: none;
 }
 
 .logo-icon svg {
-  width: 20px;
-  height: 20px;
-  color: #030712;
+  width: 19px;
+  height: 19px;
+  color: #020617;
 }
 
 .nav {
@@ -374,17 +374,24 @@ header {
 }
 
 .nav a.nav-cta {
-  background: linear-gradient(135deg, hsl(var(--cta)), hsl(var(--cta-2)));
-  color: hsl(220 34% 10%) !important;
+  background: linear-gradient(180deg, #10b981 0%, #059669 100%);
+  color: #020617 !important;
   font-weight: 800;
+  padding: 10px 20px;
+  border-radius: 9999px;
   box-shadow:
-    0 14px 28px hsl(var(--cta) / 0.24),
-    inset 0 1px 0 hsl(0 0% 100% / 0.24);
+    0 4px 14px rgba(16, 185, 129, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .nav-cta:hover {
+  background: linear-gradient(180deg, #34d399 0%, #10b981 100%);
   transform: translateY(-1px);
-  color: hsl(220 34% 10%);
+  color: #020617 !important;
+  box-shadow:
+    0 6px 18px rgba(16, 185, 129, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
 }
 
 .nav a:hover,
@@ -417,14 +424,14 @@ main {
   display: block;
   border-radius: var(--radius-xl);
   background:
-    radial-gradient(1100px 680px at 18% -10%, hsl(var(--brand) / 0.22), transparent 44%),
-    radial-gradient(900px 540px at 96% 8%, hsl(var(--cta) / 0.14), transparent 42%),
+    radial-gradient(1100px 680px at 18% -10%, rgba(16, 185, 129, 0.14), transparent 50%),
+    radial-gradient(900px 540px at 96% 8%, rgba(5, 150, 105, 0.08), transparent 48%),
     linear-gradient(145deg, hsl(var(--hero)) 0%, hsl(var(--hero-2)) 100%);
   color: hsl(var(--hero-text));
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--shadow-lg), 0 20px 40px -15px rgba(0, 0, 0, 0.6);
   position: relative;
   overflow: hidden;
-  border: 1px solid hsl(0 0% 100% / 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .hero::before,
@@ -441,7 +448,7 @@ main {
   height: 620px;
   top: -310px;
   right: -210px;
-  background: radial-gradient(circle, hsl(var(--brand) / 0.3), transparent 70%);
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.14), transparent 70%);
 }
 
 .hero::after {
@@ -449,7 +456,7 @@ main {
   height: 460px;
   left: -210px;
   bottom: -220px;
-  background: radial-gradient(circle, hsl(var(--cta) / 0.16), transparent 72%);
+  background: radial-gradient(circle, rgba(5, 150, 105, 0.08), transparent 72%);
 }
 
 .hero-layout {
@@ -477,14 +484,14 @@ main {
   align-items: center;
   gap: 8px;
   width: fit-content;
-  padding: 8px 14px;
-  border-radius: 999px;
-  background: hsl(var(--surface) / 0.12);
-  color: hsl(var(--hero-text));
-  border: 1px solid hsl(0 0% 100% / 0.12);
-  font-size: 0.8rem;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  background: rgba(16, 185, 129, 0.1);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  font-size: 0.76rem;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   backdrop-filter: blur(12px);
 }
@@ -596,28 +603,28 @@ main {
 .cta-primary,
 .form-submit {
   padding: 14px 24px;
-  background: hsl(var(--brand));
-  color: #030712;
+  background: linear-gradient(180deg, #10b981 0%, #059669 100%);
+  color: #020617;
+  font-weight: 800;
   box-shadow:
-    0 1px 2px rgba(0, 0, 0, 0.2),
-    0 4px 12px hsl(var(--brand) / 0.25),
-    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    0 4px 16px rgba(16, 185, 129, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
   letter-spacing: -0.01em;
 }
 
 .cta-primary:hover,
 .form-submit:hover {
   transform: translateY(-1px);
-  background: hsl(var(--brand-2));
+  background: linear-gradient(180deg, #34d399 0%, #10b981 100%);
   box-shadow:
-    0 4px 16px hsl(var(--brand) / 0.35),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    0 6px 22px rgba(16, 185, 129, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
 }
 
 .cta-primary:active,
 .form-submit:active {
   transform: translateY(0) scale(0.98);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3);
 }
 
 .cta-secondary {
@@ -1100,8 +1107,15 @@ section:not(.hero):not(.form-section) > * {
 .card {
   position: relative;
   overflow: hidden;
-  border-radius: 22px;
+  border-radius: 20px;
   padding: 24px;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(16, 185, 129, 0.25);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4), 0 0 20px rgba(16, 185, 129, 0.05);
 }
 
 .card::before {
@@ -1109,8 +1123,9 @@ section:not(.hero):not(.form-section) > * {
   position: absolute;
   inset: 0 auto auto 0;
   width: 100%;
-  height: 3px;
-  background: linear-gradient(90deg, hsl(var(--brand)), hsl(var(--cta)));
+  height: 2px;
+  background: linear-gradient(90deg, #10b981, #059669);
+  opacity: 0.7;
 }
 
 .card h2,
@@ -1802,25 +1817,24 @@ section:not(.hero):not(.form-section) > * {
   margin-top: 6px;
   border: none;
   border-radius: 12px;
-  background: linear-gradient(135deg, hsl(var(--brand-2)), hsl(var(--brand)));
-  color: hsl(222 47% 11%);
+  background: linear-gradient(180deg, #10b981 0%, #059669 100%);
+  color: #020617;
   font-weight: 800;
-  box-shadow: 0 10px 20px hsl(var(--brand) / 0.2);
+  font-size: 1rem;
+  letter-spacing: -0.01em;
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.3);
   cursor: pointer;
-  transition:
-    transform 180ms ease,
-    background-color 180ms ease,
-    box-shadow 180ms ease;
+  transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .hero #waitlist-form .form-submit:hover {
-  transform: translateY(-2px);
-  background: hsl(var(--brand-2));
-  box-shadow: 0 10px 25px hsl(var(--brand) / 0.3);
+  transform: translateY(-1px);
+  background: linear-gradient(180deg, #34d399 0%, #10b981 100%);
+  box-shadow: 0 6px 22px rgba(16, 185, 129, 0.45);
 }
 
 .hero #waitlist-form .form-submit:focus-visible {
-  outline: 3px solid hsl(var(--brand-3));
+  outline: 3px solid #10b981;
   outline-offset: 4px;
 }
 
@@ -2321,13 +2335,14 @@ footer {
   position: relative;
   display: flex;
   flex-direction: column;
-  background: hsl(var(--surface-2) / 0.85);
-  border: 1px solid hsl(var(--line));
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.09);
   border-radius: 20px;
   box-shadow:
-    var(--shadow-lg),
-    0 30px 60px -15px rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(12px);
+    0 25px 50px -12px rgba(0, 0, 0, 0.7),
+    0 0 40px rgba(16, 185, 129, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(16px);
   width: 100%;
   max-width: 540px;
   margin: 0 auto;
@@ -2542,12 +2557,12 @@ footer {
 }
 
 .log-line.ai {
-  background: rgba(147, 51, 234, 0.05);
-  border-left: 2px solid hsl(var(--brand));
+  background: rgba(16, 185, 129, 0.08);
+  border-left: 2px solid #10b981;
 }
 
 .log-line.ai .log-text {
-  color: hsl(var(--brand-2));
+  color: #34d399;
 }
 
 .log-line.success {

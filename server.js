@@ -502,15 +502,35 @@ fastify.get('/setup', async (request, reply) => {
 <link rel="stylesheet" href="/styles.css?v=20260604-redesign">
 <script src="/route-optimizer.js"></script>
 <style>
+  body {
+    background: radial-gradient(circle at 50% 10%, rgba(16, 185, 129, 0.08) 0%, #080D17 55%) !important;
+    min-height: 100vh;
+  }
   .setup-container {
-    max-width: 480px;
-    margin: 100px auto;
-    padding: 32px;
-    background: hsl(var(--surface) / 0.95);
-    border: 1px solid hsl(var(--line));
-    border-radius: 20px;
-    box-shadow: var(--shadow-lg);
+    max-width: 440px;
+    margin: 80px auto;
+    padding: 36px 32px;
+    background: rgba(15, 23, 42, 0.8);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.08);
     text-align: center;
+  }
+  .setup-container input[type="email"] {
+    width: 100%;
+    padding: 12px 16px;
+    background: #030712;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    color: #fff;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+  }
+  .setup-container input[type="email"]:focus {
+    border-color: #10b981;
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.25);
+    outline: none;
   }
 </style>
 </head>
@@ -518,20 +538,23 @@ fastify.get('/setup', async (request, reply) => {
 <header>
   <a href="/" class="logo">
     <div class="logo-icon">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
     </div>
     <span>Gainhelm</span>
   </a>
 </header>
 <main style="padding: 0 20px;">
   <div class="setup-container">
-    <h2 style="color: #fff; margin-bottom: 12px;">Access AI Configuration</h2>
-    <p style="color: hsl(var(--text-3)); font-size: 0.9rem; margin-bottom: 24px;">
+    <div style="width: 44px; height: 44px; border-radius: 12px; background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.25); display: flex; align-items: center; justify-content: center; margin: 0 auto 16px auto; color: #10b981;">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+    </div>
+    <h2 style="color: #fff; margin-bottom: 8px; font-size: 1.4rem; font-weight: 800; letter-spacing: -0.02em;">Access AI Configuration</h2>
+    <p style="color: #94a3b8; font-size: 0.88rem; margin-bottom: 24px; line-height: 1.5;">
       Enter the email you used to register on the waitlist to access your Gainhelm dispatcher settings.
     </p>
-    <form action="/setup" method="GET" style="display: flex; flex-direction: column; gap: 12px;">
+    <form action="/setup" method="GET" style="display: flex; flex-direction: column; gap: 14px;">
       <input type="email" name="email" placeholder="work@company.com" required>
-      <button type="submit" class="cta-primary" style="border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer;">Continue to Setup</button>
+      <button type="submit" class="cta-primary" style="border: none; padding: 12px; border-radius: 8px; font-weight: 700; cursor: pointer; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #020617; box-shadow: 0 2px 10px rgba(16, 185, 129, 0.3); font-size: 0.95rem;">Continue to Setup →</button>
     </form>
   </div>
 </main>
