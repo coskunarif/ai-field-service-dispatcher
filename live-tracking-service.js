@@ -380,7 +380,7 @@ export function renderTrackingPage(dispatch, context) {
       map.fitBounds([[techLat, techLng], [jobLat, jobLng]], { padding: [50, 50] });
 
       const polyline = L.polyline([[techLat, techLng], [jobLat, jobLng]], {
-        color: '#f59e0b',
+        color: '#10b981',
         dashArray: '5, 10',
         weight: 3
       }).addTo(map);

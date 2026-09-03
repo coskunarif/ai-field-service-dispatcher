@@ -538,7 +538,7 @@ fastify.get('/setup', async (request, reply) => {
 <header>
   <a href="/" class="logo">
     <div class="logo-icon">
-      <svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="#020617" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
     </div>
     <span>Gainhelm</span>
   </a>
@@ -548,7 +548,7 @@ fastify.get('/setup', async (request, reply) => {
     <div style="width: 44px; height: 44px; border-radius: 12px; background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.25); display: flex; align-items: center; justify-content: center; margin: 0 auto 16px auto; color: #10b981;">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
     </div>
-    <h2 style="color: #fff; margin-bottom: 8px; font-size: 1.4rem; font-weight: 800; letter-spacing: -0.02em;">Access AI Configuration</h2>
+    <h1 style="color: #fff; margin-bottom: 8px; font-size: 1.4rem; font-weight: 800; letter-spacing: -0.02em;">Access AI Configuration</h1>
     <p style="color: #94a3b8; font-size: 0.88rem; margin-bottom: 24px; line-height: 1.5;">
       Enter the email you used to register on the waitlist to access your Gainhelm dispatcher settings.
     </p>
