@@ -135,128 +135,145 @@ export function renderTrackingPage(dispatch, context) {
 <script src="/route-optimizer.js"></script>
 <style>
   :root {
-    --bg: #030712;
-    --bg-2: #0f172a;
-    --border: #374151;
-    --text: #f3f4f6;
-    --text-muted: #9ca3af;
-    --brand: #f59e0b;
-    --brand-dark: #d97706;
+    --bg: #080d17;
+    --bg-2: rgba(15, 23, 42, 0.75);
+    --border: rgba(255, 255, 255, 0.08);
+    --text: #f8fafc;
+    --text-muted: #94a3b8;
+    --brand: #10b981;
+    --brand-dark: #059669;
   }
   body {
     background-color: var(--bg);
     color: var(--text);
-    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     margin: 0;
     padding: 0;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    -webkit-font-smoothing: antialiased;
   }
   .container {
-    max-width: 800px;
+    max-width: 840px;
     margin: 0 auto;
-    padding: 20px;
+    padding: 24px 20px 60px 20px;
     width: 100%;
     box-sizing: border-box;
   }
   header {
     border-bottom: 1px solid var(--border);
-    padding-bottom: 12px;
-    margin-bottom: 20px;
+    padding-bottom: 16px;
+    margin-bottom: 24px;
     display: flex;
     justify-content: space-between;
     align-items: center;
   }
   h1 {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
     margin: 0;
     color: #fff;
+    font-weight: 700;
+    letter-spacing: -0.02em;
   }
   .card {
     background-color: var(--bg-2);
+    backdrop-filter: blur(16px);
     border: 1px solid var(--border);
     border-radius: 12px;
-    padding: 20px;
+    padding: 20px 24px;
     margin-bottom: 20px;
+    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.06);
   }
   .flex-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
-    gap: 12px;
+    gap: 16px;
   }
   .eta-badge {
-    font-size: 1.25rem;
-    font-weight: bold;
-    color: var(--brand);
-    background: rgba(245, 158, 11, 0.1);
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #34d399;
+    background: rgba(16, 185, 129, 0.1);
     padding: 8px 16px;
     border-radius: 8px;
-    border: 1px solid rgba(245, 158, 11, 0.2);
+    border: 1px solid rgba(16, 185, 129, 0.25);
+    font-family: 'JetBrains Mono', monospace;
   }
   #map {
     height: 400px;
     border-radius: 12px;
     border: 1px solid var(--border);
     margin-bottom: 20px;
+    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
   }
   .tech-info {
     display: flex;
     align-items: center;
-    gap: 12px;
-    margin-bottom: 16px;
+    gap: 14px;
   }
   .tech-avatar {
-    width: 48px;
-    height: 48px;
+    width: 46px;
+    height: 46px;
     border-radius: 50%;
-    background: #4b5563;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: bold;
-    font-size: 1.25rem;
+    font-weight: 800;
+    font-size: 1.2rem;
     color: #fff;
+    box-shadow: 0 0 16px rgba(16, 185, 129, 0.35);
   }
   .form-group {
     margin-top: 16px;
   }
   textarea {
     width: 100%;
-    height: 80px;
-    background: #1f2937;
+    height: 84px;
+    background: #030712;
     border: 1px solid var(--border);
     border-radius: 8px;
     color: var(--text);
-    padding: 12px;
-    font-size: 0.95rem;
+    padding: 12px 14px;
+    font-size: 0.9rem;
+    font-family: inherit;
     resize: none;
     box-sizing: border-box;
     margin-bottom: 12px;
+    transition: all 0.2s ease;
   }
   textarea:focus {
     outline: none;
     border-color: var(--brand);
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
   }
   button {
-    background: var(--brand);
-    color: #111827;
-    font-weight: bold;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: #020617;
+    font-weight: 700;
     border: none;
     padding: 10px 20px;
     border-radius: 8px;
     cursor: pointer;
-    font-size: 0.95rem;
-    transition: background 0.2s;
+    font-size: 0.9rem;
+    transition: all 0.15s ease;
+    box-shadow: 0 2px 10px rgba(16, 185, 129, 0.3);
   }
   button:hover {
-    background: var(--brand-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(16, 185, 129, 0.4);
+  }
+  button:active {
+    transform: translateY(0) scale(0.98);
   }
   .notes-section h3 {
     margin-top: 0;
     margin-bottom: 12px;
+    font-size: 1.1rem;
+    color: #fff;
   }
   #notes-list {
     list-style: none;
@@ -264,12 +281,13 @@ export function renderTrackingPage(dispatch, context) {
     margin: 0;
   }
   #notes-list li {
-    background: #1f2937;
+    background: #030712;
     border: 1px solid var(--border);
     padding: 10px 14px;
     border-radius: 6px;
     margin-bottom: 8px;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
+    color: #cbd5e1;
   }
 </style>
 </head>

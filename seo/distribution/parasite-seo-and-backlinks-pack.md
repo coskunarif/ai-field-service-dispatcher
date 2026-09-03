@@ -9,6 +9,7 @@
 These posts leverage LinkedIn's DR 98+ authority to rank on Google's Page 1 for high-intent search queries within 24 to 48 hours.
 
 ### Post 1: The ServiceTitan Alternative Breakdown
+
 - **Target Search Intent**: `servicetitan alternative for small contractors`, `servicetitan pricing alternative`
 - **Target URL**: `https://gainhelm.com/servicetitan-alternative`
 
@@ -21,7 +22,7 @@ If you run a 3–10 technician HVAC or plumbing shop, enterprise FSM software li
 2. 6-week onboarding cycles with mandatory software training
 3. Technician app mutiny: techs hate logging into heavy apps with spotty cell service
 
-The core bottleneck in trade service isn’t complex ERP accounting—it’s dispatch phone tag. 
+The core bottleneck in trade service isn’t complex ERP accounting—it’s dispatch phone tag.
 
 When emergency service calls stream in, dispatchers spend 2 to 3 hours a day manually calling techs, dragging calendar blocks, and confirming addresses.
 
@@ -39,6 +40,7 @@ If you are evaluating field service management options this quarter, check out t
 ---
 
 ### Post 2: Solving the After-Hours Plumbing Dispatch Bottleneck
+
 - **Target Search Intent**: `emergency plumbing dispatch software`, `automate after hours plumbing dispatch`
 - **Target URL**: `https://gainhelm.com/how-to-automate-after-hours-plumbing-dispatch`
 
@@ -67,6 +69,7 @@ Step-by-step breakdown and flow architecture:
 ---
 
 ### Post 3: Why iPad & Browser Dispatch Boards Beat Bloated Desktop Software
+
 - **Target Search Intent**: `hvac dispatch app for ipad`, `best hvac dispatch software mac`
 - **Target URL**: `https://gainhelm.com/hvac-dispatch-software`
 
@@ -93,6 +96,7 @@ We just launched an interactive Contractor Dispatch ROI Calculator that computes
 Create a free Google Sites hub at `sites.google.com/view/gainhelm-dispatch-guide` to create a high-DR entity stack that reinforces brand signals in Google Knowledge Graph.
 
 ### Site Architecture & Interlinking:
+
 ```
 [ Google Sites: /view/gainhelm-dispatch-guide ]
   ├── /home ────────► Canonical Entity Summary & Brand Definition
@@ -116,14 +120,14 @@ Targeting high-authority contractor blogs, software review directories, and trad
 
 ### Target Opportunity List (DR 50–85+):
 
-| Publication / Domain | Target Section / URL | Outreach Pitch Angle |
-| :--- | :--- | :--- |
-| **AchrNews.com** (DR 68) | HVAC Business & Software Tools | Resource contribution on reducing technician phone tag |
-| **PlumbingPerspective.com** (DR 54) | Plumbing Tech & Contractor Best Practices | Feature on after-hours SMS emergency dispatch |
-| **ContractorMag.com** (DR 66) | Operations & Field Management | Quote/data contribution from the Dispatch ROI benchmarks |
-| **AlternativeTo.net** (DR 81) | Software Category: ServiceTitan / Jobber | Add Gainhelm as a lightweight, app-less SMS alternative |
-| **SaaSHub.com** (DR 74) | Field Service Management category | Submit verified product profile and alternatives mapping |
-| **ToolTester.com / Capterra** | Micro-SaaS for Small Contractors | Submit free Contractor ROI Calculator as a featured tool |
+| Publication / Domain                | Target Section / URL                      | Outreach Pitch Angle                                     |
+| :---------------------------------- | :---------------------------------------- | :------------------------------------------------------- |
+| **AchrNews.com** (DR 68)            | HVAC Business & Software Tools            | Resource contribution on reducing technician phone tag   |
+| **PlumbingPerspective.com** (DR 54) | Plumbing Tech & Contractor Best Practices | Feature on after-hours SMS emergency dispatch            |
+| **ContractorMag.com** (DR 66)       | Operations & Field Management             | Quote/data contribution from the Dispatch ROI benchmarks |
+| **AlternativeTo.net** (DR 81)       | Software Category: ServiceTitan / Jobber  | Add Gainhelm as a lightweight, app-less SMS alternative  |
+| **SaaSHub.com** (DR 74)             | Field Service Management category         | Submit verified product profile and alternatives mapping |
+| **ToolTester.com / Capterra**       | Micro-SaaS for Small Contractors          | Submit free Contractor ROI Calculator as a featured tool |
 
 ### 1-to-1 Outreach Email Pitch (Under 100 Words)
 
@@ -143,4 +147,3 @@ Best,
 Coskun Arif
 Founder, Gainhelm.com
 ```
-
